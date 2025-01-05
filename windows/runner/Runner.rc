@@ -89,6 +89,7 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
+<<<<<<< HEAD
             VALUE "CompanyName", "com.example.agricplant" "\0"
             VALUE "FileDescription", "agriplant" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
@@ -96,6 +97,15 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example.agricplant. All rights reserved." "\0"
             VALUE "OriginalFilename", "agriplant.exe" "\0"
             VALUE "ProductName", "agriplant" "\0"
+=======
+            VALUE "CompanyName", "com.example" "\0"
+            VALUE "FileDescription", "startupapp" "\0"
+            VALUE "FileVersion", VERSION_AS_STRING "\0"
+            VALUE "InternalName", "startupapp" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "startupapp.exe" "\0"
+            VALUE "ProductName", "startupapp" "\0"
+>>>>>>> 8744601f3f904c6037dab201a6b10a61d1f91dcb
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

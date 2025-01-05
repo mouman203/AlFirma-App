@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
     "name": "agriplant",
     "short_name": "agriplant",
+=======
+    "name": "startupapp",
+    "short_name": "startupapp",
+>>>>>>> 8744601f3f904c6037dab201a6b10a61d1f91dcb
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
