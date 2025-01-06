@@ -1,7 +1,9 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
-<<<<<<< HEAD
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -31,77 +33,41 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_20
+        targetCompatibility JavaVersion.VERSION_20
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '20'
     }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-=======
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id "dev.flutter.flutter-gradle-plugin"
-}
-
-android {
-    namespace = "com.example.startupapp"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
->>>>>>> 8744601f3f904c6037dab201a6b10a61d1f91dcb
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-<<<<<<< HEAD
         applicationId "com.example.agricplant.agriplant"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 23
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-=======
-        applicationId = "com.example.startupapp"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
->>>>>>> 8744601f3f904c6037dab201a6b10a61d1f91dcb
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-<<<<<<< HEAD
             signingConfig signingConfigs.debug
-=======
-            signingConfig = signingConfigs.debug
->>>>>>> 8744601f3f904c6037dab201a6b10a61d1f91dcb
         }
     }
 }
 
 flutter {
-<<<<<<< HEAD
     source '../..'
 }
 
 dependencies {
-=======
-    source = "../.."
->>>>>>> 8744601f3f904c6037dab201a6b10a61d1f91dcb
 }

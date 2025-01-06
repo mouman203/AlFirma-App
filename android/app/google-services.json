@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "481243125761",
+    "project_id": "agri-plantt",
+    "storage_bucket": "agri-plantt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481243125761:android:b671e4f5fdc177e1324800",
+        "android_client_info": {
+          "package_name": "com.example.agricplant.agriplant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDp0y4hjjMRnarQSDl1WiUAD-HBabSTjbU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
