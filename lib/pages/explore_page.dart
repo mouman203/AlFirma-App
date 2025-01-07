@@ -1,5 +1,5 @@
-import 'package:agriplant/data/products.dart';
-import 'package:agriplant/widgets/product_card.dart';
+import 'package:agriplant/data/products.dart';//firebse
+import 'package:agriplant/widgets_UI/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
@@ -42,7 +42,8 @@ class ExplorePage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 12),
-                  child: IconButton.filled(onPressed: () {}, icon: const Icon(IconlyLight.filter)),
+                  child: IconButton.filled(
+                      onPressed: () {}, icon: const Icon(IconlyLight.filter)),
                 ),
               ],
             ),
@@ -67,11 +68,15 @@ class ExplorePage extends StatelessWidget {
                           children: [
                             Text(
                               "Free consultation",
-                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
                                     color: Colors.green.shade700,
                                   ),
                             ),
-                            const Text("Get free support from our customer service"),
+                            const Text(
+                                "Get free support from our customer service"),
                             FilledButton(
                               onPressed: () {},
                               child: const Text("Call now"),
@@ -108,9 +113,9 @@ class ExplorePage extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.9,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
+              childAspectRatio: 0.87,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {
               return ProductCard(product: products[index]);

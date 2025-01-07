@@ -1,5 +1,5 @@
 import 'package:agriplant/data/products.dart';
-import 'package:agriplant/widgets/cart_item.dart';
+import 'package:agriplant/widgets_UI/cart_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 

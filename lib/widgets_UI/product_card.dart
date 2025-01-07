@@ -1,4 +1,4 @@
-import 'package:agriplant/models/product.dart';
+import 'package:agriplant/models/product.dart';// les classe de diagramme de classe
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
