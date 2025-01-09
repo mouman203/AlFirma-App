@@ -67,7 +67,7 @@ class OrderItem extends StatelessWidget {
                     builder: (context) {
                       return Container(
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.background,
+                          color: theme.colorScheme.surface,
                         ),
                         height: MediaQuery.of(context).size.height * 0.5,
                         child: ListView.builder(

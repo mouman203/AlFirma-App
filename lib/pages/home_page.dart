@@ -1,3 +1,4 @@
+import 'package:agriplant/pages/LoginPage.dart';
 import 'package:agriplant/pages/cart_page.dart';
 import 'package:agriplant/pages/explore_page.dart';
 import 'package:agriplant/pages/profile_page.dart';
@@ -14,8 +15,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final pages = [const ExplorePage(), const ServicesPage(), const CartPage(), const ProfilePage()];
+  final pages = [
+    const ExplorePage(),
+    const ServicesPage(),
+    const CartPage(),
+    const ProfilePage()
+  ];
   int currentPageIndex = 0;
+  bool isSignedIn = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -38,7 +45,8 @@ class _HomePageState extends State<HomePage> {
               "Hi Wilson 👋🏾",
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            Text("Enjoy our services", style: Theme.of(context).textTheme.bodySmall)
+            Text("Enjoy our services",
+                style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         actions: [
@@ -64,7 +72,40 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: pages[currentPageIndex],
+      body: Column(
+        children: [
+          SafeArea(
+            child: Container(
+              width: double.infinity,
+              color: Colors.blue,
+              child: Center(
+                child: isSignedIn
+                    ? Container() // إذا كان المستخدم مسجلًا، لا يظهر الزر
+                    : TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          ).then((isLoggedIn) {
+                            // تحديث حالة تسجيل الدخول بعد العودة من صفحة تسجيل الدخول
+                            setState(() {
+                              isSignedIn = isLoggedIn ??
+                                  false; // تعيين القيمة التي تم إرجاعها
+                            });
+                          });
+                        },
+                        child: const Text(
+                          "Sign In",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+              ),
+            ),
+          ),
+          Expanded(child: pages[currentPageIndex]),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currentPageIndex,
