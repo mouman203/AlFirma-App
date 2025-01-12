@@ -1,3 +1,4 @@
+import 'package:agriplant/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -222,15 +223,19 @@ class _LoginPageState extends State<LoginPage> {
 
             // زر إنشاء حساب جديد
             TextButton(
-              onPressed: () {
-                // هنا يمكنك إضافة منطق التنقل إلى صفحة إنشاء الحساب
-                print("إنشاء حساب");
-              },
-              child: Text(
-                "SIGN_UP",
-                style: GoogleFonts.roboto(color: Colors.green, fontSize: 16),
-              ),
-            ),
+  onPressed: () {
+    // Navigate to the SignUpPage
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignUpPage()),
+    );
+  },
+  child: Text(
+    "SIGN UP",
+    style: GoogleFonts.roboto(color: Colors.green, fontSize: 16),
+  ),
+),
+
 
             // sign in another way
 
