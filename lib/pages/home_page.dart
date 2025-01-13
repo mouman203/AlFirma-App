@@ -1,4 +1,4 @@
-import 'package:agriplant/pages/LoginPage.dart';
+import 'package:agriplant/pages/auth/LoginPage.dart';
 import 'package:agriplant/pages/cart_page.dart';
 import 'package:agriplant/pages/explore_page.dart';
 import 'package:agriplant/pages/profile_page.dart';

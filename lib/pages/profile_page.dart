@@ -1,8 +1,12 @@
 import 'package:agriplant/pages/orders_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ProfilePage extends StatelessWidget {
+  //final user = FirebaseAuth.instance.currentUser!;
   const ProfilePage({super.key});
 
   @override
@@ -30,7 +34,8 @@ class ProfilePage extends StatelessWidget {
           ),
           Center(
             child: Text(
-              "jessiwills@gmail.com",
+              //user.email!,
+              "go check the profile page code :)",
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -54,7 +59,13 @@ class ProfilePage extends StatelessWidget {
           ListTile(
             title: const Text("Logout"),
             leading: const Icon(IconlyLight.logout),
-            onTap: () {},
+            onTap: () async {
+              GoogleSignIn googleSignIn = GoogleSignIn();
+              googleSignIn.disconnect();
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil("login_page", (route) => false);
+            },
           ),
         ],
       ),

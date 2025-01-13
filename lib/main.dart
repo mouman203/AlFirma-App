@@ -1,4 +1,7 @@
+import 'package:agriplant/pages/auth/LoginPage.dart';
 import 'package:agriplant/pages/home_page.dart';
+import 'package:agriplant/pages/auth/sign_up_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +28,16 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoTextTheme(),
       ),
-      home: const HomePage(),
+      home: (FirebaseAuth.instance.currentUser != null &&
+              FirebaseAuth.instance.currentUser!.emailVerified)
+          ? HomePage()
+          : LoginPage(),
+      //WHAT IS THIS ???
+      routes: {
+        'home_page': (context) => const HomePage(),
+        'sign_up_page': (context) => const SignUpPage(),
+        'login_page': (context) => const LoginPage(),
+      },
     );
   }
 }
