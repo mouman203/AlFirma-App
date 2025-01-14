@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   String? emailError;
   String? passwordError;
   bool _obscurePassword = true; // التحكم في إخفاء أو إظهار كلمة المرور
-  bool _rememberMe = false; // حالة "تذكرني"
+ 
 
 //google sign in
   Future signInWithGoogle() async {
@@ -163,26 +164,6 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Transform.scale(
-                            scale:
-                                0.8, // النسبة المطلوبة لتكبير أو تصغير حجم الـ Checkbox
-                            child: Checkbox(
-                              value: _rememberMe,
-                              onChanged: (value) {
-                                setState(() {
-                                  _rememberMe = value!;
-                                });
-                              },
-                            ),
-                          ),
-                          Text(
-                            "Remember me",
-                            style: GoogleFonts.roboto(fontSize: 14),
-                          ),
-                        ],
-                      ),
                       TextButton(
                         onPressed: () async {
                           // منطق إعادة تعيين كلمة المرور

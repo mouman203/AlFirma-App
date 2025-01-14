@@ -92,30 +92,61 @@ class _SignUpPageState extends State<SignUpPage> {
     String password = _passwordController.text.trim();
     bool verify = false;
 
+    CollectionReference users = FirebaseFirestore.instance.collection('Users');
+    QuerySnapshot querySnapshot =
+        await users.where('email', isEqualTo: email).get();
+
     try {
-      // Step 1: Create user in Firebase Authentication
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+      // Step 0: Check if email exists
+      if (querySnapshot.docs.isNotEmpty) {
+        // User exists
+        print("User with email $email exists in Firestore.");
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.error,
+                animType: AnimType.scale,
+                title: 'E-mail Existing',
+                desc: '$email exist already')
+            .show();
+      } else {
+        // User does not exist
+        print("User with email $email does not exist in Firestore.");
 
-      // Send verification email
-      User? user = userCredential.user;
-      if (user != null && !user.emailVerified) {
-        await user.sendEmailVerification();
+        // Step 1: Create user in Firebase Authentication
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+
+        // Send verification email
+        User? user = userCredential.user;
+        if (user != null && !user.emailVerified) {
+          await user.sendEmailVerification();
+        }
+
+        String uid = userCredential.user!.uid;
+
+        // Step 2: Add user details to Firestore
+        await FirebaseFirestore.instance.collection('Users').doc(uid).set({
+          'first_name': first_name,
+          'last_name': last_name,
+          'phone': phone,
+          'email': email,
+          'password': password,
+          'createdAt': FieldValue.serverTimestamp(),
+          'Verify': verify,
+        });
+        print('User registered successfully');
+
+        Navigator.of(context).pushNamed("login_page");
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.info,
+                animType: AnimType.scale,
+                title: 'Noiiiiice',
+                desc:
+                    'know you are one of us .. \n last step : plz go to verify your e-mail')
+            .show();
+        print("Verification E-mail sent successfully");
       }
-
-      String uid = userCredential.user!.uid;
-
-      // Step 2: Add user details to Firestore
-      await FirebaseFirestore.instance.collection('Users').doc(uid).set({
-        'first_name': first_name,
-        'last_name': last_name,
-        'phone': phone,
-        'email': email,
-        'password': password,
-        'createdAt': FieldValue.serverTimestamp(),
-        'Verify': verify,
-      });
-      print('User registered successfully');
     } catch (e) {
       print('Registration failed: $e');
     }
@@ -124,226 +155,223 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("SIGN UP")),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text("SIGN UP",
-                style: GoogleFonts.roboto(
-                    fontSize: 40, fontWeight: FontWeight.bold)),
-            Text("Join our platform and get started",
-                style: GoogleFonts.roboto(
-                  fontSize: 18,
-                )),
-            const SizedBox(height: 20),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Text("SIGN UP",
+                  style: GoogleFonts.roboto(
+                      fontSize: 40, fontWeight: FontWeight.bold)),
+              Text("Join our platform and get started",
+                  style: GoogleFonts.roboto(
+                    fontSize: 18,
+                  )),
+              const SizedBox(height: 20),
 
-            // firstName field
-            _buildTextField(
-              controller: _firstNameController,
-              icon: Icons.person,
-              hintText: "First Name",
-              errorText: firstNameError,
-            ),
-
-            const SizedBox(height: 20),
-            // lastName field
-            _buildTextField(
-              controller: _lastNameController,
-              icon: Icons.person,
-              hintText: "Last Name",
-              errorText: lastNameError,
-            ),
-            const SizedBox(height: 20),
-
-            // Email field
-            _buildTextField(
-              controller: _emailController,
-              icon: Icons.email,
-              hintText: "Email",
-              errorText: emailError,
-            ),
-            const SizedBox(height: 20),
-
-            // Phone number field
-            _buildTextField(
-              controller: _phoneController,
-              icon: Icons.phone,
-              hintText: "Phone Number",
-              errorText: phoneError,
-            ),
-            const SizedBox(height: 20),
-
-            // Wilaya dropdown
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  hint: const Text("Select your Wilaya"),
-                  value: _selectedWilaya,
-                  items: _wilayas
-                      .map((wilaya) => DropdownMenuItem(
-                            value: wilaya,
-                            child: Text(wilaya),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedWilaya = value;
-                    });
-                  },
-                ),
+              // firstName field
+              _buildTextField(
+                controller: _firstNameController,
+                icon: Icons.person,
+                hintText: "First Name",
+                errorText: firstNameError,
               ),
-            ),
-            const SizedBox(height: 20),
 
-            // Password field
-            _buildPasswordField(
-              controller: _passwordController,
-              obscureText: _obscurePassword,
-              hintText: "Password",
-              errorText: passwordError,
-              toggleObscure: () {
-                setState(() {
-                  _obscurePassword = !_obscurePassword;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
+              // lastName field
+              _buildTextField(
+                controller: _lastNameController,
+                icon: Icons.person,
+                hintText: "Last Name",
+                errorText: lastNameError,
+              ),
+              const SizedBox(height: 20),
 
-            // Confirm Password field
-            _buildPasswordField(
-              controller: _confirmPasswordController,
-              obscureText: _obscureConfirmPassword,
-              hintText: "Confirm Password",
-              errorText: confirmPasswordError,
-              toggleObscure: () {
-                setState(() {
-                  _obscureConfirmPassword = !_obscureConfirmPassword;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
+              // Email field
+              _buildTextField(
+                controller: _emailController,
+                icon: Icons.email,
+                hintText: "Email",
+                errorText: emailError,
+              ),
+              const SizedBox(height: 20),
 
-            // زر التسجيل
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      firstNameError = null;
-                      lastNameError = null;
-                      emailError = null;
-                      passwordError = null;
-                      confirmPasswordError = null;
-                    });
+              // Phone number field
+              _buildTextField(
+                controller: _phoneController,
+                icon: Icons.phone,
+                hintText: "Phone Number",
+                errorText: phoneError,
+              ),
+              const SizedBox(height: 20),
 
-                    // الحصول على النصوص المدخلة
-                    String firstName = _firstNameController.text.trim();
-                    String lastName = _lastNameController.text.trim();
-                    String email = _emailController.text.trim();
-                    String phone = _phoneController.text.trim();
-                    String password = _passwordController.text.trim();
-                    String confirmPassword =
-                        _confirmPasswordController.text.trim();
-
-                    // تعبيرات منتظمة للتحقق من صحة البريد الإلكتروني ورقم الهاتف
-                    RegExp emailRegex = RegExp(
-                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                    RegExp phoneRegex = RegExp(
-                        r'^[0-9]{9,10}$'); // التحقق من أن الرقم يحتوي على 9 أو 10 أرقام
-
-                    // التحقق من الحقول
-                    if (firstName.isEmpty ||
-                        lastName.isEmpty ||
-                        email.isEmpty ||
-                        phone.isEmpty ||
-                        password.isEmpty ||
-                        confirmPassword.isEmpty) {
-                      setState(() {
-                        if (firstName.isEmpty)
-                          firstNameError = "يرجى إدخال الاسم";
-                        if (lastName.isEmpty)
-                          lastNameError = "يرجى إدخال اللقب";
-                        if (email.isEmpty)
-                          emailError = "يرجى إدخال البريد الإلكتروني";
-                        if (phone.isEmpty) phoneError = "يرجى إدخال رقم الهاتف";
-                        if (password.isEmpty)
-                          passwordError = "يرجى إدخال كلمة المرور";
-                        if (confirmPassword.isEmpty)
-                          confirmPasswordError = "يرجى تأكيد كلمة المرور";
-                      });
-                    } else if (!emailRegex.hasMatch(email)) {
-                      setState(() {
-                        emailError = "البريد الإلكتروني غير صالح";
-                      });
-                    } else if (!phoneRegex.hasMatch(phone)) {
-                      setState(() {
-                        phoneError =
-                            "رقم الهاتف غير صالح (يجب أن يحتوي على 9 أو 10 أرقام)";
-                      });
-                    } else if (password.length < 8) {
-                      setState(() {
-                        passwordError =
-                            "كلمة المرور يجب أن تكون 8 أحرف على الأقل";
-                      });
-                    } else if (password != confirmPassword) {
-                      setState(() {
-                        confirmPasswordError = "كلمتا المرور غير متطابقتين";
-                      });
-                    } else {
-                      // إذا كان كل شيء صحيحًا
-                      /*print("Name: $firstName");
-                      print("Last Name: $lastName");
-                      print("Email: $email");
-                      print("Phone: $phone");
-                      print("Wilaya: $_selectedWilaya");
-                      print("Password: $password");*/
-                      // هنا يمكنك إضافة منطق تسجيل الحساب
-                      addUser();
-                      Navigator.of(context).pushNamed("login_page");
-                      AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.info,
-                              animType: AnimType.scale,
-                              title: 'Noiiiiice',
-                              desc:
-                                  'know you are one of us .. last step : plz go to verify your e-mail')
-                          .show();
-                      print("Verification E-mail sent successfully");
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade700,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              // Wilaya dropdown
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    hint: const Text("Select your Wilaya"),
+                    value: _selectedWilaya,
+                    items: _wilayas
+                        .map((wilaya) => DropdownMenuItem(
+                              value: wilaya,
+                              child: Text(wilaya),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedWilaya = value;
+                      });
+                    },
                   ),
-                  child: Text("Sign Up",
-                      style: GoogleFonts.roboto(
-                          fontSize: 18, color: Colors.white)),
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate back to SignInPage
-                Navigator.pushNamed(context, 'login_page');
-              },
-              child: Text('Back to Sign In'),
-            ),
-          ],
+              const SizedBox(height: 20),
+
+              // Password field
+              _buildPasswordField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                hintText: "Password",
+                errorText: passwordError,
+                toggleObscure: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+
+              // Confirm Password field
+              _buildPasswordField(
+                controller: _confirmPasswordController,
+                obscureText: _obscureConfirmPassword,
+                hintText: "Confirm Password",
+                errorText: confirmPasswordError,
+                toggleObscure: () {
+                  setState(() {
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+
+              // زر التسجيل
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        firstNameError = null;
+                        lastNameError = null;
+                        emailError = null;
+                        passwordError = null;
+                        confirmPasswordError = null;
+                      });
+
+                      // الحصول على النصوص المدخلة
+                      String firstName = _firstNameController.text.trim();
+                      String lastName = _lastNameController.text.trim();
+                      String email = _emailController.text.trim();
+                      String phone = _phoneController.text.trim();
+                      String password = _passwordController.text.trim();
+                      String confirmPassword =
+                          _confirmPasswordController.text.trim();
+
+                      // تعبيرات منتظمة للتحقق من صحة البريد الإلكتروني ورقم الهاتف
+                      RegExp emailRegex = RegExp(
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                      RegExp phoneRegex = RegExp(
+                          r'^[0-9]{9,10}$'); // التحقق من أن الرقم يحتوي على 9 أو 10 أرقام
+
+                      // التحقق من الحقول
+
+                      // if (test()) {
+                      //   emailError = "البريد الإلكتروني موجود مسبقاً";
+                      // }
+
+                      if (firstName.isEmpty ||
+                          lastName.isEmpty ||
+                          email.isEmpty ||
+                          phone.isEmpty ||
+                          password.isEmpty ||
+                          confirmPassword.isEmpty) {
+                        setState(() {
+                          if (firstName.isEmpty)
+                            firstNameError = "يرجى إدخال الاسم";
+                          if (lastName.isEmpty)
+                            lastNameError = "يرجى إدخال اللقب";
+                          if (email.isEmpty)
+                            emailError = "يرجى إدخال البريد الإلكتروني";
+                          if (phone.isEmpty)
+                            phoneError = "يرجى إدخال رقم الهاتف";
+                          if (password.isEmpty)
+                            passwordError = "يرجى إدخال كلمة المرور";
+                          if (confirmPassword.isEmpty)
+                            confirmPasswordError = "يرجى تأكيد كلمة المرور";
+                        });
+                      } else if (!emailRegex.hasMatch(email)) {
+                        setState(() {
+                          emailError = "البريد الإلكتروني غير صالح";
+                        });
+                      } else if (!phoneRegex.hasMatch(phone)) {
+                        setState(() {
+                          phoneError =
+                              "رقم الهاتف غير صالح (يجب أن يحتوي على 9 أو 10 أرقام)";
+                        });
+                      } else if (password.length < 8) {
+                        setState(() {
+                          passwordError =
+                              "كلمة المرور يجب أن تكون 8 أحرف على الأقل";
+                        });
+                      } else if (password != confirmPassword) {
+                        setState(() {
+                          confirmPasswordError = "كلمتا المرور غير متطابقتين";
+                        });
+                      } else {
+                        // إذا كان كل شيء صحيحًا
+                        /*print("Name: $firstName");
+                        print("Last Name: $lastName");
+                        print("Email: $email");
+                        print("Phone: $phone");
+                        print("Wilaya: $_selectedWilaya");
+                        print("Password: $password");*/
+                        // هنا يمكنك إضافة منطق تسجيل الحساب
+                        addUser();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    child: Text("Sign Up",
+                        style: GoogleFonts.roboto(
+                            fontSize: 18, color: Colors.white)),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Navigate back to SignInPage
+                  Navigator.pushNamed(context, 'login_page');
+                },
+                child: Text('Back to Sign In'),
+              ),
+            ],
+          ),
         ),
       ),
     );
