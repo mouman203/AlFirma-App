@@ -1,9 +1,7 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:agriplant/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:agriplant/pages/auth/auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,6 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final auth _authService = auth(); // كائن من كلاس Auth
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -21,31 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true; // التحكم في إخفاء أو إظهار كلمة المرور
  
 
-//google sign in
-  Future signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    //if the googleUser == null we have to go out from the function
-    if (googleUser == null) {
-      return;
-    }
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    await FirebaseAuth.instance.signInWithCredential(credential);
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil("home_page", (route) => false);
-  }
 
 // i removed from here
 
@@ -156,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              // خيارات "تذكرني" و "نسيت كلمة المرور"
+              //  و "نسيت كلمة المرور؟"
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: SizedBox(
@@ -167,28 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                       TextButton(
                         onPressed: () async {
                           // منطق إعادة تعيين كلمة المرور
-
-                          try {
-                            await FirebaseAuth.instance.sendPasswordResetEmail(
-                                email: _emailController.text);
-                            AwesomeDialog(
-                                    context: context,
-                                    dialogType: DialogType.success,
-                                    animType: AnimType.scale,
-                                    title: 'Hey Yeeeeeeeh',
-                                    desc:
-                                        'we sent a reset password e-mail .. go to check it ;)')
-                                .show();
-                          } catch (e) {
-                            AwesomeDialog(
-                                    context: context,
-                                    dialogType: DialogType.error,
-                                    animType: AnimType.scale,
-                                    title: 'Hmmmmmmmm',
-                                    desc:
-                                        'we faced a problem with your reset password request): => $e ')
-                                .show();
-                          }
+                          _authService.resetPassword(context: context, email: _emailController.text);
                         },
                         child: Text(
                           "Forgot Password?",
@@ -208,73 +161,12 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      // الحصول على النص المدخل
-                      String email = _emailController.text;
-                      String password = _passwordController.text;
-
-                      // التحقق من صحة البريد الإلكتروني باستخدام تعبير عادي
-                      RegExp emailRegex = RegExp(
-                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-
-                      if (email.isEmpty || password.isEmpty) {
-                        setState(() {
-                          if (email.isEmpty) {
-                            emailError = "يرجى إدخال البريد الإلكتروني";
-                          }
-                          if (password.isEmpty) {
-                            passwordError = "يرجى إدخال كلمة المرور";
-                          }
-                        });
-                      } else if (!emailRegex.hasMatch(email)) {
-                        setState(() {
-                          emailError = "البريد الإلكتروني غير صالح";
-                        });
-                      } else {
-                        // إذا كان كل شيء صحيحًا
-
-                        try {
-                          UserCredential userCredential = await FirebaseAuth
-                              .instance
-                              .signInWithEmailAndPassword(
-                            email: email,
-                            password: password,
-                          );
-                          User? user = userCredential.user;
-
-                          if (user != null && user.emailVerified) {
-                            Navigator.of(context).pushNamed("home_page");
-
-                            AwesomeDialog(
-                                    context: context,
-                                    dialogType: DialogType.success,
-                                    animType: AnimType.scale,
-                                    title: 'Success',
-                                    desc: 'Welcome ${user.email}')
-                                .show();
-
-                            print("User signed in: ${user.email}");
-                          } else {
-                            AwesomeDialog(
-                                    context: context,
-                                    dialogType: DialogType.error,
-                                    animType: AnimType.scale,
-                                    title: 'Hmmmmmmmm',
-                                    desc: 'Your E-mail is not verified ):')
-                                .show();
-                            print("Email not verified");
-                          }
-                        } catch (e) {
-                          AwesomeDialog(
-                                  context: context,
-                                  dialogType: DialogType.error,
-                                  animType: AnimType.scale,
-                                  title: 'Hmmmmmmmm',
-                                  desc:
-                                      'we faced a problem with your sign in request ): => $e ')
-                              .show();
-                          print("Error signing in: $e");
-                        }
-                      }
+                     _authService.signInWithHandling(
+                      context: context,
+                      email: _emailController.text.trim(),
+                      password: _passwordController.text,
+                      homePage: const HomePage(),
+                    );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green.shade700, // لون الزر
@@ -311,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      signInWithGoogle();
+                     _authService.signInWithGoogle( context,const HomePage());
                     },
                     icon: Image.asset(
                       'assets/google.png', // مسار الأيقونة

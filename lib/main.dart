@@ -28,10 +28,7 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoTextTheme(),
       ),
-      home: (FirebaseAuth.instance.currentUser != null &&
-              FirebaseAuth.instance.currentUser!.emailVerified)
-          ? HomePage()
-          : LoginPage(),
+      home: const LoginPage() ,
       //WHAT IS THIS ???
       routes: {
         'home_page': (context) => const HomePage(),
