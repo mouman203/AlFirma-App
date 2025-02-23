@@ -1,7 +1,6 @@
 import 'package:agriplant/pages/auth/LoginPage.dart';
 import 'package:agriplant/pages/home_page.dart';
 import 'package:agriplant/pages/auth/sign_up_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';

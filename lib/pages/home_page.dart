@@ -6,6 +6,8 @@ import 'package:agriplant/pages/services_page.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,15 +18,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final pages = [
-    const ExplorePage(),
+     ExplorePage1(),
     const ServicesPage(),
     const CartPage(),
     const ProfilePage()
   ];
   int currentPageIndex = 0;
-  bool isSignedIn = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // يستخدم هذا الدالة للحصول على اسم المستخدم الحالي
+
+  Future<String?> getUserNameFromFirestore() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null){print("⚠️ لا يوجد مستخدم مسجل الدخول!");return null;}  // لا يوجد مستخدم مسجل
+
+  DocumentSnapshot userDoc = 
+      await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
+
+  if (userDoc.exists) {
+    return userDoc['first_name']; // جلب الاسم من Firestore
+  } else {
+    return null; // لا يوجد بيانات للمستخدم
+  }
+}
+ 
+ // يستخدم هذا الدالة للتحقق من تسجيل الدخول
+ bool isUserSignedIn() {
+  User? user = FirebaseAuth.instance.currentUser;
+  return user != null; // إذا كان هناك مستخدم مسجل، تعود `true`
+}
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,10 +64,21 @@ class _HomePageState extends State<HomePage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Hi Wilson 👋🏾",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            FutureBuilder<String?>(
+                future: getUserNameFromFirestore(), // استدعاء الدالة التي تجلب الاسم
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("⏳ جاري التحميل...",style: Theme.of(context).textTheme.titleMedium,); // أثناء جلب البيانات
+                  }
+                  if (snapshot.hasError || snapshot.data == null) {
+                    return Text("⚠️ لا يوجد اسم متاح",style: Theme.of(context).textTheme.titleMedium,); // عند حدوث خطأ أو عدم العثور على اسم
+                  }
+                  return Text(
+                    "Hi! ${snapshot.data}", // عرض الاسم بعد جلبه بنجاح
+                    style: Theme.of(context).textTheme.titleMedium,
+                  );
+                },
+                ),  
             Text("Enjoy our services",
                 style: Theme.of(context).textTheme.bodySmall)
           ],
@@ -79,7 +113,7 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               color: Colors.blue,
               child: Center(
-                child: isSignedIn
+                child: isUserSignedIn()
                     ? Container() // إذا كان المستخدم مسجلًا، لا يظهر الزر
                     : TextButton(
                         onPressed: () {
@@ -90,8 +124,9 @@ class _HomePageState extends State<HomePage> {
                           ).then((isLoggedIn) {
                             // تحديث حالة تسجيل الدخول بعد العودة من صفحة تسجيل الدخول
                             setState(() {
-                              isSignedIn = isLoggedIn ??
-                                  false; // تعيين القيمة التي تم إرجاعها
+                              if (isLoggedIn != null && isLoggedIn) {
+                                currentPageIndex = 0;
+                              }
                             });
                           });
                         },
@@ -106,6 +141,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(child: pages[currentPageIndex]),
         ],
       ),
+      
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currentPageIndex,
@@ -140,3 +176,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+

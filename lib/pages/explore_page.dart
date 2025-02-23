@@ -1,10 +1,66 @@
-import 'package:agriplant/data/products.dart';//firebse
+import 'package:agriplant/models/product.dart'; // import Product class
 import 'package:agriplant/widgets_UI/product_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+class ExplorePage1 extends StatefulWidget {
+  @override
+  _ExplorePage1State createState() => _ExplorePage1State();
+}
 
-class ExplorePage extends StatelessWidget {
-  const ExplorePage({super.key});
+class _ExplorePage1State extends State<ExplorePage1> {
+  List<Product> products = []; // قائمة المنتجات
+
+Future<void> fetchProducts() async {
+  try {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('Products').get();
+
+    if (querySnapshot.docs.isEmpty) {
+      print("⚠️ لا توجد منتجات في Firestore!");
+    }
+
+    List<Product?> fetchedProducts = querySnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      // تحقق مما إذا كانت جميع الحقول موجودة قبل استخدامها
+      if (!data.containsKey('name') || 
+          !data.containsKey('description') || 
+          !data.containsKey('image') || 
+          !data.containsKey('price') || 
+          !data.containsKey('unit') || 
+          !data.containsKey('rating')) {
+        print("⚠️ المستند ${doc.id} يفتقد بعض الحقول!");
+        return null; // إهمال المستند إذا كان غير مكتمل
+      }
+
+      return Product(
+        name: data['name'],
+        description: data['description'],
+        image: data['image'],
+        price: (data['price'] is num) ? data['price'].toDouble() : double.tryParse(data['price'].toString()) ?? 0.0,
+        unit: data['unit'],
+        rating: (data['rating'] is num) ? data['rating'].toDouble() : double.tryParse(data['rating'].toString()) ?? 0.0,
+      );
+    }).where((product) => product != null).toList().cast<Product>(); // إزالة العناصر الفارغة
+
+    setState(() {
+      products = fetchedProducts.cast<Product>(); // تحديث المنتجات
+    });
+
+    debugPrint("✅ تم جلب ${products.length} منتج!");
+  } catch (e) {
+    print("⚠️ خطأ أثناء جلب المنتجات: $e");
+  }
+}
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProducts(); // جلب المنتجات عند تشغيل الصفحة
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,20 +163,22 @@ class ExplorePage extends StatelessWidget {
               ),
             ],
           ),
-          GridView.builder(
-            itemCount: products.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.87,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 8,
+         products.isEmpty
+          ? const Center(child: CircularProgressIndicator()) // عرض مؤشر التحميل أثناء الجلب
+          : GridView.builder(
+              itemCount: products.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.87,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 8,
+              ),
+              itemBuilder: (context, index) {
+                return ProductCard(product: products[index]);
+              },
             ),
-            itemBuilder: (context, index) {
-              return ProductCard(product: products[index]);
-            },
-          )
         ],
       ),
     );

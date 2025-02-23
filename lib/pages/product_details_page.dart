@@ -1,4 +1,5 @@
 import 'package:agriplant/data/products.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -18,6 +19,39 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late TapGestureRecognizer readMoreGestureRecognizer;
   bool showMore = false;
 
+  // 1. جلب المنتج من قاعدة البيانات
+  Future<Product?> getProductById(String productId) async {
+  try {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('Products')
+        .doc(productId)
+        .get();
+
+    if (doc.exists) {
+      return Product(
+  name: doc['name'] ,
+  description: doc['description'] ,
+  image: doc['image'] ,
+  price: (doc['price'] as num).toDouble(),  // تأكد أنه double
+  unit: doc['unit'] ,
+  rating: (doc['rating'] as num).toDouble(), // تأكد أنه double
+);
+
+    } else {
+      print("⚠️ المنتج غير موجود!");
+      return null;
+    }
+  } catch (e) {
+    print("⚠️ حدث خطأ أثناء جلب المنتج: $e");
+    return null;
+  }
+}
+  Product? product;
+
+
+
+
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +61,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           showMore = !showMore;
         });
       };
+
+    getProductById('VnrT5qRPEcTBfUU2rwuF').then((product) {
+      setState(() {
+        this.product = product;
+      });
+    });
   }
 
   @override
@@ -56,14 +96,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(widget.product.image),
+                image: product != null ? AssetImage(product!.image) : AssetImage('assets/eror.jpg'),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
           Text(
-            widget.product.name,
+            product?.name ?? '',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 5),
@@ -80,10 +120,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                        text: "\$${widget.product.price}",
+                        text: product?.price.toString() ?? '',
                         style: Theme.of(context).textTheme.titleLarge),
                     TextSpan(
-                        text: "/${widget.product.unit}",
+                        text: product?.unit ?? '',
                         style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
@@ -99,7 +139,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 color: Colors.yellow.shade800,
               ),
               Text(
-                "${widget.product.rating} (15)",
+                product?.rating.toString() ?? '',
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const Spacer(),
               SizedBox(
@@ -115,7 +156,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
-                  "2 ${widget.product.unit}",
+                  "2 "+widget.product.unit,
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -146,8 +187,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               children: [
                 TextSpan(
                   text: showMore
-                      ? widget.product.description
-                      : '${widget.product.description.substring(0, widget.product.description.length - 100)}...',
+                      ? product?.description ?? ''
+                      : '${product?.description.substring(0, widget.product.description.length - 100) ?? ''}...',
                 ),
                 TextSpan(
                   recognizer: readMoreGestureRecognizer,
