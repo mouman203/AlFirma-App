@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
  // يستخدم هذا الدالة للتحقق من تسجيل الدخول
  bool isUserSignedIn() {
   User? user = FirebaseAuth.instance.currentUser;
-  return user != null; // إذا كان هناك مستخدم مسجل، تعود `true`
+  return user != null; // إذا كان هناك مستخدم مسجل، تعود true
 }
  
   @override
@@ -176,13 +176,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
 
