@@ -1,4 +1,3 @@
-import 'package:agriplant/pages/auth/LoginPage.dart';
 import 'package:agriplant/pages/cart_page.dart';
 import 'package:agriplant/pages/explore_page.dart';
 import 'package:agriplant/pages/profile_page.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final pages = [
-     ExplorePage1(),
+     const ExplorePage1(),
     const ServicesPage(),
     const CartPage(),
     const ProfilePage()
@@ -47,7 +47,38 @@ class _HomePageState extends State<HomePage> {
   User? user = FirebaseAuth.instance.currentUser;
   return user != null; // إذا كان هناك مستخدم مسجل، تعود true
 }
- 
+
+    //  
+    Future<void> _loadLastSelectedPage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(mounted){
+    setState(() {
+      currentPageIndex = prefs.getInt('lastPageIndex') ?? 0;
+    });}
+  }
+
+  Future<void> _saveLastSelectedPage(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('lastPageIndex', index);
+  }
+
+  Future<void> _refreshPage() async {
+  Navigator.pushReplacement(
+    context,
+    PageRouteBuilder(
+      pageBuilder: (context, _, __) => const HomePage(),
+      transitionDuration: Duration.zero,
+    ),
+  );
+}
+
+
+
+   @override
+  void initState() {
+    super.initState();
+    _loadLastSelectedPage();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,42 +137,15 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SafeArea(
-            child: Container(
-              width: double.infinity,
-              color: Colors.blue,
-              child: Center(
-                child: isUserSignedIn()
-                    ? Container() // إذا كان المستخدم مسجلًا، لا يظهر الزر
-                    : TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
-                          ).then((isLoggedIn) {
-                            // تحديث حالة تسجيل الدخول بعد العودة من صفحة تسجيل الدخول
-                            setState(() {
-                              if (isLoggedIn != null && isLoggedIn) {
-                                currentPageIndex = 0;
-                              }
-                            });
-                          });
-                        },
-                        child: const Text(
-                          "Sign In",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-              ),
-            ),
-          ),
-          Expanded(child: pages[currentPageIndex]),
-        ],
-      ),
-      
+      body: RefreshIndicator(
+        onRefresh: _refreshPage,
+        child: pages[currentPageIndex]),
+
+
+
+
+
+
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currentPageIndex,
@@ -149,6 +153,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             currentPageIndex = index;
           });
+          _saveLastSelectedPage(index); // Save selected page
         },
         items: const [
           BottomNavigationBarItem(

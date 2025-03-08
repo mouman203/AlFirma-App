@@ -16,6 +16,8 @@ dependencies:
   timelines: ^0.1.0
   easy_stepper: ^0.7.3
   awesome_dialog: ^3.2.1
+  shared_preferences: ^2.5.2
+
 #firebase packages
   firebase_core: ^3.9.0
   firebase_messaging: ^15.1.6

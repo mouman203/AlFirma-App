@@ -1,232 +1,345 @@
-import 'package:agriplant/models/product.dart'; // import Product class
+import 'package:agriplant/models/product.dart'; 
+import 'package:agriplant/pages/filter_bottom_sheet.dart';
 import 'package:agriplant/widgets_UI/product_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
-
-
-
 class ExplorePage1 extends StatefulWidget {
+  const ExplorePage1({super.key});
+
   @override
   _ExplorePage1State createState() => _ExplorePage1State();
 }
 
 class _ExplorePage1State extends State<ExplorePage1> {
-  List<Product> products = [];
-  final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  String hintText = "Search here...";
-  bool showCursor = false; // للتحكم في ظهور المؤشر |
+    List<Product> products = [];
+    List<String> filteredNames = []; // أسماء المنتجات المصفاة حسب البحث
+    List<String> productNames = []; // جميع أسماء المنتجات
+    final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
+    final TextEditingController _controller = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
-    fetchProducts();
+    fetchProducts(); 
+    fetchProductNames();
     _focusNode.addListener(() {
-      setState(() {
-        hintText = _focusNode.hasFocus ? "" : "Search here...";
-        showCursor = _focusNode.hasFocus; // إظهار المؤشر فقط أثناء التركيز
-      });
+      if (!_focusNode.hasFocus) {
+        setState(() {
+          filteredNames = [];
+        });
+      }
     });
-  }
 
+  }
   @override
   void dispose() {
+    _focusNode.dispose(); // تدمير الـ FocusNode عند انتهاء الصفحة لتجنب استهلاك الذاكرة
     _controller.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
 
   // يستخدم هذا الدالة لجلب المنتجات من Firestore
-Future<void> fetchProducts() async {
-  try {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('Products').get();
+  Future<void> fetchProducts() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('Products').get();
 
-    if (querySnapshot.docs.isEmpty) {
-      print("⚠️ لا توجد منتجات في Firestore!");
-    }
-
-    List<Product?> fetchedProducts = querySnapshot.docs.map((doc) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-      // تحقق مما إذا كانت جميع الحقول موجودة قبل استخدامها
-      if (!data.containsKey('name') || 
-          !data.containsKey('description') || 
-          !data.containsKey('image') || 
-          !data.containsKey('price') || 
-          !data.containsKey('unit') || 
-          !data.containsKey('rating')) {
-        print("⚠️ المستند ${doc.id} يفتقد بعض الحقول!");
-        return null; // إهمال المستند إذا كان غير مكتمل
+      if (querySnapshot.docs.isEmpty) {
+        print("⚠️ لا توجد منتجات في Firestore!");
       }
 
-      return Product(
-        name: data['name'],
-        description: data['description'],
-        image: data['image'],
-        price: (data['price'] is num) ? data['price'].toDouble() : double.tryParse(data['price'].toString()) ?? 0.0,
-        unit: data['unit'],
-        rating: (data['rating'] is num) ? data['rating'].toDouble() : double.tryParse(data['rating'].toString()) ?? 0.0,
-      );
-    }).where((product) => product != null).toList().cast<Product>(); // إزالة العناصر الفارغة
+      List<Product?> fetchedProducts = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-    setState(() {
-      products = fetchedProducts.cast<Product>(); // تحديث المنتجات
-    });
+        // تحقق مما إذا كانت جميع الحقول موجودة قبل استخدامها
+        if (!data.containsKey('name') ||
+            !data.containsKey('description') ||
+            !data.containsKey('image') ||
+            !data.containsKey('price') ||
+            !data.containsKey('unit') ||
+            !data.containsKey('rating')) {
+          print("⚠️ المستند ${doc.id} يفتقد بعض الحقول!");
+          return null; // إهمال المستند إذا كان غير مكتمل
+        }
 
-    debugPrint("✅ تم جلب ${products.length} منتج!");
-  } catch (e) {
-    print("⚠️ خطأ أثناء جلب المنتجات: $e");
+        return Product(
+          name: data['name'],
+          description: data['description'],
+          image: data['image'],
+          price: (data['price'] is num)
+              ? data['price'].toDouble()
+              : double.tryParse(data['price'].toString()) ?? 0.0,
+          unit: data['unit'],
+          category: data['category'] ?? " ",
+          rating: (data['rating'] is num)
+              ? data['rating'].toDouble()
+              : double.tryParse(data['rating'].toString()) ?? 0.0,
+        );
+      }).where((product) => product != null).toList().cast<Product>(); // إزالة العناصر الفارغة
+      if (mounted) {
+        setState(() {
+              products = fetchedProducts.cast<Product>(); // تحديث المنتجات
+        });
+      }
+
+
+      debugPrint("✅ تم جلب ${products.length} منتج!");
+    } catch (e) {
+      print("⚠️ خطأ أثناء جلب المنتجات: $e");
+    }
   }
+
+
+  Future<void> fetchProductNames() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('Products').get();
+
+      if (querySnapshot.docs.isEmpty) {
+        print("⚠️ لا توجد منتجات في Firestore!");
+      }
+
+      List<String> names = querySnapshot.docs
+          .map((doc) => (doc.data() as Map<String, dynamic>)['name'] as String)
+          .toList();
+      if(mounted){
+      setState(() {
+        productNames = names;
+        filteredNames = []; // في البداية، لا يتم عرض أي اقتراحات
+      });
+      }
+      debugPrint("✅ تم جلب ${productNames.length} اسم منتج!");
+    } catch (e) {
+      print("⚠️ خطأ أثناء جلب أسماء المنتجات: $e");
+    }
+  }
+
+  // ✅ البحث داخل أي جزء من الاسم وعرض الاقتراحات
+  void filterNames(String query) {
+    if(mounted){
+    setState(() {
+      if (query.isEmpty) {
+        filteredNames = []; // إخفاء الاقتراحات عند مسح البحث
+      } else {
+        filteredNames = productNames
+            .where((name) =>
+                name.toLowerCase().contains(query.toLowerCase())) // ✅ البحث في أي جزء من الاسم
+            .toList();
+      }
+    });
+    }
+  }
+
+  void applyFilter(String? category, double? minPrice, double? maxPrice) {
+  setState(() {
+    products = products.where((product) {
+      bool matchesCategory = category == null || product.category == category;
+      bool matchesPrice = (minPrice == null || product.price >= minPrice) &&
+                          (maxPrice == null || product.price <= maxPrice);
+      return matchesCategory && matchesPrice;
+    }).toList();
+  });
 }
 
- 
- 
- 
- 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-              padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10, top: 10),
+    return GestureDetector(
+      onTap: () {
+          _focusNode.unfocus(); // إلغاء التركيز عند الضغط خارج TextField
+        },
+      child: Scaffold(
+        body: Column(
+          children: [
+
+            // ✅ البحث والفلتر
+            Padding(
+              padding:
+                  const EdgeInsets.only(bottom: 5, left: 10, right: 10, top: 10),
               child: Row(
                 children: [
-                  Expanded(
+                 Expanded(
                     child: TextField(
+                      textInputAction: TextInputAction.search,
+                      onChanged: (value) => filterNames(value), // ✅ تحديث الاقتراحات
+                      onSubmitted: (value) {
+                        print("✅🔍 بحث عن: $value");
+                        _controller.clear();
+ 
+                      },
+                      focusNode: _focusNode, // تحديد الـ FocusNode
                       controller: _controller,
-                      focusNode: _focusNode,
-                      showCursor: true, // التحكم في ظهور المؤشر |
+                      autofocus: false,
                       decoration: InputDecoration(
-                        hintText: hintText,
+                        hintText: "Search here...",
                         isDense: true,
                         contentPadding: const EdgeInsets.all(12.0),
                         border: const OutlineInputBorder(
                           borderSide: BorderSide(),
-                          borderRadius: BorderRadius.all(Radius.circular(99)),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(99),
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(99)),
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade300,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(99),
+                          ),
                         ),
                         prefixIcon: const Icon(IconlyLight.search),
                       ),
-                      onEditingComplete: () {
-                        FocusScope.of(context).unfocus();
-                        setState(() {
-                          showCursor = false; // إخفاء المؤشر | بعد الكتابة
-                        });
-                      },
-                      onTapOutside: (event) {
-                        FocusScope.of(context).unfocus();
-                        setState(() {
-                          showCursor = false; // إخفاء المؤشر عند فقدان التركيز
-                        });
-                      },
-                      onChanged: (text) {
-                        if (text.isEmpty) {
-                          setState(() {
-                            hintText = "Search here...";
-                          });
-                        }
-                      },
                     ),
                   ),
-                  Padding(
+                 
+                 
+                 Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: IconButton.filled(
-                        onPressed: () {}, icon: const Icon(IconlyLight.filter)),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15), // ✅ شكل مستدير للحواف
+                                  ),
+                                  content: FilterBottomSheet(onApplyFilter: applyFilter), // ✅ مكون داخلي لعرض الفلاتر
+                                );
+                              },
+                            );
+
+                        }, icon: const Icon(IconlyLight.filter)),
                   ),
                 ],
               ),
             ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(10.0),
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 25),
-                child: SizedBox(
-                  height: 170,
-                  child: Card(
-                    color: Colors.green.shade50,
-                    elevation: 0.1,
-                    shadowColor: Colors.green.shade50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Free consultation",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        color: Colors.green.shade700,
-                                      ),
-                                ),
-                                const Text(
-                                    "Get free support from our customer service"),
-                                FilledButton(
-                                  onPressed: () {},
-                                  child: const Text("Call now"),
-                                ),
-                              ],
-                            ),
+            
+            // ✅ عرض الاقتراحات
+             if (filteredNames.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10, top: 10),
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 5,
+                            spreadRadius: 2,
                           ),
-                          Image.asset(
-                            'assets/contact_us.png',
-                            width: 140,
-                          )
                         ],
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredNames.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(filteredNames[index]),
+                            onTap: () {
+                              _controller.text = filteredNames[index]; // ✅ اختيار الاسم
+                              setState(() {
+                                filteredNames = []; // إخفاء القائمة بعد الاختيار
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+            
+            // ✅ عرض المنتجات
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(10.0),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 25),
+                    child: SizedBox(
+                      height: 170,
+                      child: Card(
+                        color: Colors.green.shade50,
+                        elevation: 0.1,
+                        shadowColor: Colors.green.shade50,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Free consultation",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(
+                                            color: Colors.green.shade700,
+                                          ),
+                                    ),
+                                    const Text(
+                                        "Get free support from our customer service"),
+                                    FilledButton(
+                                      onPressed: () {},
+                                      child: const Text("Call now"),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/contact_us.png',
+                                width: 140,
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Featured Products",
-                    style: Theme.of(context).textTheme.titleMedium,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Featured Products",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text("See all"),
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text("See all"),
-                  ),
+                  products.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : GridView.builder(
+                          itemCount: products.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.87,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 8,
+                          ),
+                          itemBuilder: (context, index) {
+                            return ProductCard(product: products[index]);
+                          },
+                        ),
                 ],
               ),
-             products.isEmpty
-              ? const Center(child: CircularProgressIndicator()) // عرض مؤشر التحميل أثناء الجلب
-              : GridView.builder(
-                  itemCount: products.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.87,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemBuilder: (context, index) {
-                    return ProductCard(product: products[index]);
-                  },
-                ),
-            ],
-          ),
+            ),
+           
+          ],
         ),
-        ],
       ),
     );
   }

@@ -13,10 +13,13 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (_) => ProductDetailsPage(product: product)),
-        );
+        Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => ProductDetailsPage(product: product),
+  ),
+);
+
       },
       child: Card(
         clipBehavior: Clip.antiAlias,

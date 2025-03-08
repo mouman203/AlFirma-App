@@ -1,5 +1,3 @@
-import 'package:agriplant/data/products.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -7,9 +5,10 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import '../models/product.dart';
 
 class ProductDetailsPage extends StatefulWidget {
-  const ProductDetailsPage({super.key, required this.product});
 
-  final Product product;
+   final Product product;
+   const ProductDetailsPage({super.key, required this.product});
+
 
   @override
   State<ProductDetailsPage> createState() => _ProductDetailsPageState();
@@ -18,39 +17,7 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late TapGestureRecognizer readMoreGestureRecognizer;
   bool showMore = false;
-
-  // 1. جلب المنتج من قاعدة البيانات
-  Future<Product?> getProductById(String productId) async {
-  try {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('Products')
-        .doc(productId)
-        .get();
-
-    if (doc.exists) {
-      return Product(
-  name: doc['name'] ,
-  description: doc['description'] ,
-  image: doc['image'] ,
-  price: (doc['price'] as num).toDouble(),  // تأكد أنه double
-  unit: doc['unit'] ,
-  rating: (doc['rating'] as num).toDouble(), // تأكد أنه double
-);
-
-    } else {
-      print("⚠️ المنتج غير موجود!");
-      return null;
-    }
-  } catch (e) {
-    print("⚠️ حدث خطأ أثناء جلب المنتج: $e");
-    return null;
-  }
-}
-  Product? product;
-
-
-
-
+  List<Product> products=List.empty();
 
   @override
   void initState() {
@@ -61,12 +28,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           showMore = !showMore;
         });
       };
-
-    getProductById('VnrT5qRPEcTBfUU2rwuF').then((product) {
-      setState(() {
-        this.product = product;
-      });
-    });
   }
 
   @override
@@ -96,14 +57,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: product != null ? AssetImage(product!.image) : AssetImage('assets/eror.jpg'),
+                image: AssetImage(widget.product.image),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
           Text(
-            product?.name ?? '',
+            widget.product.name ,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 5),
@@ -120,10 +81,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                        text: product?.price.toString() ?? '',
+                        text: widget.product.price.toString(),
                         style: Theme.of(context).textTheme.titleLarge),
                     TextSpan(
-                        text: product?.unit ?? '',
+                        text: widget.product.unit,
                         style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
@@ -139,7 +100,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 color: Colors.yellow.shade800,
               ),
               Text(
-                product?.rating.toString() ?? '',
+                widget.product.rating.toString(),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const Spacer(),
@@ -156,7 +117,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
-                  "2 "+widget.product.unit,
+                  "2 ${widget.product.unit}",
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -186,10 +147,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               style: Theme.of(context).textTheme.bodyMedium,
               children: [
                 TextSpan(
-                  text: showMore
-                      ? product?.description ?? ''
-                      : '${product?.description.substring(0, widget.product.description.length - 100) ?? ''}...',
-                ),
+  text: showMore
+      ? widget.product.description
+      : (widget.product.description.length > 100
+          ? '${widget.product.description.substring(0, 100)}...'
+          : widget.product.description),
+),
+
                 TextSpan(
                   recognizer: readMoreGestureRecognizer,
                   text: showMore ? " Read less" : " Read more",

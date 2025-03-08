@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class auth {
 
@@ -81,6 +82,8 @@ Future<bool> checkIfEmailExists(String email) async {
 
   return true;
 }
+ 
+ 
  // sign in التحقق من إدخال البيانات
  bool checkInfo_login(BuildContext context, String email, String password) {
   if (email.isEmpty || password.isEmpty) {
@@ -129,8 +132,8 @@ Future<bool> checkIfEmailExists(String email) async {
   required Widget homePage,
 }) async {
   if (!checkInfo_login(context, email, password)) return;
-
   try {
+    showLoadingDialog(context); // عرض مؤشر الانتظار
     // تسجيل الدخول
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
@@ -145,6 +148,9 @@ Future<bool> checkIfEmailExists(String email) async {
       await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
         'password': password, // تحديث كلمة المرور الجديدة
       });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('lastPageIndex', 0);
+      Navigator.pop(context);
     // ✅ التوجيه إلى الصفحة الرئيسية
     Navigator.pushReplacement(
       context,
@@ -182,12 +188,14 @@ Future<void> signUp({
   required String email,
   required String password,
   required String confirmationpassword,
+  required String wilaya,
   required bool verify,
   required Widget destPage,
 }) async {
   if (!checkInfo_signup(context,first_name,last_name,phone,email,verify, password,confirmationpassword)) return;
 
     try {
+      showLoadingDialog(context); // عرض مؤشر الانتظار
       // Step 0: Check if email exists
       if (await checkIfEmailExists(email)) {
         // User exists
@@ -219,7 +227,8 @@ Future<void> signUp({
           'Verify': verify,
         });
         print('User registered successfully');
-
+        Navigator.pop(context); // إغلاق مؤشر التحميل
+        // ✅ التوجيه إلى الصفحة المقصودة
         Navigator.of(context).pushNamed("login_page");
         AwesomeDialog(
                 context: context,
@@ -292,8 +301,8 @@ Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
 
     final GoogleSignIn googleSignIn = GoogleSignIn();
     
-    // تجربة تسجيل الدخول الصامت أولاً
-    await googleSignIn.signOut(); // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول  
+    // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
+    await googleSignIn.signOut();  
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     
     if (googleUser == null) {
@@ -310,10 +319,35 @@ Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
       idToken: googleAuth.idToken,
     );
 
-    await FirebaseAuth.instance.signInWithCredential(googleCredential);
+    // تسجيل الدخول إلى Firebase
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(googleCredential);
+    User? firebaseUser = userCredential.user;
+
+    if (firebaseUser != null) {
+      // تقسيم الاسم إلى اسم أول واسم أخير
+      List<String> nameParts = googleUser.displayName?.split(" ") ?? ["", ""];
+      String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+      String lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+
+      // مرجع إلى Firestore
+      final userRef = FirebaseFirestore.instance.collection("Users").doc(firebaseUser.uid);
+
+      // حفظ أو تحديث بيانات المستخدم في Firestore
+      await userRef.set({
+        "email": firebaseUser.email,
+        "verify": true,
+        "first_name": firstName,
+        "last_name": lastName,
+        "phone": firebaseUser.phoneNumber ?? "",
+        "password": "", // يجب أن يضبط المستخدم كلمة المرور يدويًا إذا لزم الأمر
+        "created_at": FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true)); // ✅ دمج البيانات بدلاً من استبدالها بالكامل
+    }
 
     Navigator.pop(context); // إغلاق مؤشر التحميل
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('lastPageIndex', 0);
     // الانتقال إلى الصفحة الرئيسية
     Navigator.pushReplacement(
       context,
@@ -334,8 +368,8 @@ void showLoadingDialog(BuildContext context) {
       return Dialog(
         backgroundColor: Colors.white, // لون الخلفية
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // تدوير الحواف
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
+        child: const Padding(
+          padding: EdgeInsets.all(20.0),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

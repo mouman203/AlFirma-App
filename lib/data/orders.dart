@@ -1,6 +1,6 @@
-import 'package:agriplant/data/products.dart';
 import 'package:agriplant/models/order.dart';
-
+import 'package:agriplant/models/product.dart';
+List<Product> products=[];
 List<Order> orders = [
   Order(
     id: "202304a5",

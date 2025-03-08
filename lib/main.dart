@@ -1,6 +1,4 @@
 import 'package:agriplant/pages/auth/LoginPage.dart';
-import 'package:agriplant/pages/home_page.dart';
-import 'package:agriplant/pages/auth/sign_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,17 +21,12 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(76, 175, 80, 1)),
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoTextTheme(),
       ),
       home: const LoginPage() ,
-      //WHAT IS THIS ???
-      routes: {
-        'home_page': (context) => const HomePage(),
-        'sign_up_page': (context) => const SignUpPage(),
-        'login_page': (context) => const LoginPage(),
-      },
+    
     );
   }
 }

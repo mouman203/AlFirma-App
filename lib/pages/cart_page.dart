@@ -1,4 +1,4 @@
-import 'package:agriplant/data/products.dart';
+import 'package:agriplant/models/product.dart';
 import 'package:agriplant/widgets_UI/cart_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -11,10 +11,11 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final cartItems = products.take(4).toList();
+  List<Product> products=[];
 
   @override
   Widget build(BuildContext context) {
+      final cartItems = products.take(4).toList();
     final total =
         cartItems.map((cartItem) => cartItem.price).reduce((value, element) => value + element).toStringAsFixed(2);
     return Scaffold(
