@@ -1,8 +1,8 @@
+import 'package:agriplant/pages/Sidebar.dart';
 import 'package:agriplant/pages/cart_page.dart';
 import 'package:agriplant/pages/explore_page.dart';
 import 'package:agriplant/pages/profile_page.dart';
 import 'package:agriplant/pages/services_page.dart';
-import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final pages = [
-     const ExplorePage1(),
+    const ExplorePage(),
     const ServicesPage(),
     const CartPage(),
     const ProfilePage()
@@ -26,35 +26,46 @@ class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // يستخدم هذا الدالة للحصول على اسم المستخدم الحالي
+  String? userName;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSelectedPage();
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    String? name = await getUserNameFromFirestore();
+    if (mounted) {
+      setState(() {
+        userName = name;
+        isLoading = false;
+      });
+    }
+  }
 
   Future<String?> getUserNameFromFirestore() async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user == null){print("⚠️ لا يوجد مستخدم مسجل الدخول!");return null;}  // لا يوجد مستخدم مسجل
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print("⚠️ No user is logged in!");
+      return null;
+    }
 
-  DocumentSnapshot userDoc = 
-      await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
 
-  if (userDoc.exists) {
-    return userDoc['first_name']; // جلب الاسم من Firestore
-  } else {
-    return null; // لا يوجد بيانات للمستخدم
+    return userDoc.exists ? userDoc['first_name'] : null;
   }
-}
- 
- // يستخدم هذا الدالة للتحقق من تسجيل الدخول
- bool isUserSignedIn() {
-  User? user = FirebaseAuth.instance.currentUser;
-  return user != null; // إذا كان هناك مستخدم مسجل، تعود true
-}
 
-    //  
-    Future<void> _loadLastSelectedPage() async {
+  Future<void> _loadLastSelectedPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(mounted){
-    setState(() {
-      currentPageIndex = prefs.getInt('lastPageIndex') ?? 0;
-    });}
+    if (mounted) {
+      setState(() {
+        currentPageIndex = prefs.getInt('lastPageIndex') ?? 0;
+      });
+    }
   }
 
   Future<void> _saveLastSelectedPage(int index) async {
@@ -63,28 +74,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _refreshPage() async {
-  Navigator.pushReplacement(
-    context,
-    PageRouteBuilder(
-      pageBuilder: (context, _, __) => const HomePage(),
-      transitionDuration: Duration.zero,
-    ),
-  );
-}
-
-
-
-   @override
-  void initState() {
-    super.initState();
-    _loadLastSelectedPage();
+    setState(() {
+      isLoading = true;
+    });
+    await _fetchUserName();
   }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       key: _scaffoldKey,
-      drawer: const Drawer(),
+      drawer: Sidebar(),
       appBar: AppBar(
+        backgroundColor: theme.brightness == Brightness.dark
+            ? colorScheme.background
+            : colorScheme.background,
         centerTitle: false,
         leading: IconButton.filledTonal(
           onPressed: () {
@@ -95,23 +102,17 @@ class _HomePageState extends State<HomePage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FutureBuilder<String?>(
-                future: getUserNameFromFirestore(), // استدعاء الدالة التي تجلب الاسم
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text("⏳ جاري التحميل...",style: Theme.of(context).textTheme.titleMedium,); // أثناء جلب البيانات
-                  }
-                  if (snapshot.hasError || snapshot.data == null) {
-                    return Text("⚠️ لا يوجد اسم متاح",style: Theme.of(context).textTheme.titleMedium,); // عند حدوث خطأ أو عدم العثور على اسم
-                  }
-                  return Text(
-                    "Hi! ${snapshot.data}", // عرض الاسم بعد جلبه بنجاح
+            isLoading
+                ? Text(
+                    "⏳ Loading...",
                     style: Theme.of(context).textTheme.titleMedium,
-                  );
-                },
-                ),  
+                  )
+                : Text(
+                    userName != null ? "Hi $userName 👋🏼" : "⚠️ No name available",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
             Text("Enjoy our services",
-                style: Theme.of(context).textTheme.bodySmall)
+                style: Theme.of(context).textTheme.bodyMedium)
           ],
         ),
         actions: [
@@ -119,41 +120,24 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton.filledTonal(
               onPressed: () {},
-              icon: badges.Badge(
-                badgeContent: const Text(
-                  '3',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
-                ),
-                position: badges.BadgePosition.topEnd(top: -15, end: -12),
-                badgeStyle: const badges.BadgeStyle(
-                  badgeColor: Colors.green,
-                ),
-                child: const Icon(IconlyBroken.notification),
-              ),
+              icon: const Icon(IconlyBroken.message),
             ),
           ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _refreshPage,
-        child: pages[currentPageIndex]),
-
-
-
-
-
-
+          onRefresh: _refreshPage, child: pages[currentPageIndex]),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        backgroundColor: colorScheme.background,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: colorScheme.onBackground.withOpacity(0.6),
         currentIndex: currentPageIndex,
         onTap: (index) {
           setState(() {
             currentPageIndex = index;
           });
-          _saveLastSelectedPage(index); // Save selected page
+          _saveLastSelectedPage(index);
         },
         items: const [
           BottomNavigationBarItem(
@@ -162,9 +146,9 @@ class _HomePageState extends State<HomePage> {
             activeIcon: Icon(IconlyBold.home),
           ),
           BottomNavigationBarItem(
-            icon: Icon(IconlyLight.call),
+            icon: Icon(IconlyLight.work),
             label: "Services",
-            activeIcon: Icon(IconlyBold.call),
+            activeIcon: Icon(IconlyBold.work),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.buy),
@@ -181,4 +165,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-

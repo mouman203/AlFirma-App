@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       //appBar: AppBar(title: const Text("SIGN IN")),
       body: SafeArea(
@@ -41,10 +42,14 @@ class _LoginPageState extends State<LoginPage> {
               // النص الترحيبي
               Text("SIGN IN",
                   style: GoogleFonts.roboto(
-                      fontSize: 40, fontWeight: FontWeight.bold)),
+                      fontSize: 40, fontWeight: FontWeight.bold,color: isDarkMode
+            ?  Colors.white  // white in dark mode
+            :  Colors.black,)),
               Text("Welcome to our platform",
                   style: GoogleFonts.roboto(
-                    fontSize: 18,
+                    fontSize: 18,color: isDarkMode
+            ?  Colors.white  // white in dark mode
+            :  Colors.black,
                   )),
               const SizedBox(height: 20),
 
@@ -53,23 +58,33 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.green.shade50,
+                    color: isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : Colors.green.shade50, // Light green in light mode
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                        const Icon(Icons.email),
+                        Icon(Icons.email,color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           child: TextField(
+                            style: TextStyle(color:isDarkMode
+                            ? Colors.white // white in dark mode
+                            : const Color.fromARGB(255, 42, 103, 34),
+                            fontSize: 16
+                            ),
                             controller: _emailController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Email",
+                              hintStyle: TextStyle(color:isDarkMode
+                            ? Colors.white // white in dark mode
+                            : const Color.fromARGB(255, 42, 103, 34)),
                               errorText: emailError,
                             ),
                           ),
@@ -86,33 +101,42 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.green.shade50,
+                    color: isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : Colors.green.shade50, // Light green in light mode
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                        const Icon(Icons.password),
+                       Icon(Icons.password, color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           child: TextField(
+                            style: TextStyle(color:isDarkMode
+                            ? Colors.white // white in dark mode
+                            : const Color.fromARGB(255, 42, 103, 34),
+                            fontSize: 16
+                            ),
                             controller: _passwordController,
                             obscureText:
                                 _obscurePassword, // إخفاء النص المدخل إذا كان true
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Password",
+                              hintStyle: TextStyle(color:isDarkMode
+                            ? Colors.white // white in dark mode
+                            : const Color.fromARGB(255, 42, 103, 34)),
                               errorText: passwordError,
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_off
                                       : Icons.visibility,
-                                  color: Colors
-                                      .black, // أيقونة العين لتبديل الحالة
+                                  color:  isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34) // أيقونة العين لتبديل الحالة
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -146,7 +170,9 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           "Forgot Password?",
                           style: GoogleFonts.roboto(
-                              fontSize: 16, color: Colors.green.shade700),
+                              fontSize: 16, color:isDarkMode
+            ? Colors.white 
+            : const Color.fromARGB(255, 42, 103, 34)),
                         ),
                       ),
                     ],
@@ -169,7 +195,9 @@ class _LoginPageState extends State<LoginPage> {
                     );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green.shade700, // لون الزر
+                      backgroundColor: isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : const Color.fromARGB(255, 44, 107, 36), // لون الزر
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -192,7 +220,9 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 child: Text(
                   "SIGN_UP",
-                  style: GoogleFonts.roboto(color: Colors.green, fontSize: 16),
+                  style: GoogleFonts.roboto(color: isDarkMode
+            ? Colors.white // white in dark mode
+            : const Color.fromARGB(255, 42, 103, 34), fontSize: 16),
                 ),
               ),
 
@@ -207,11 +237,11 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     icon: Image.asset(
                       'assets/google.png', // مسار الأيقونة
-                      width: 25.0, // عرض الصورة
-                      height: 25.0, // ارتفاع الصورة
+                      width: 45, // عرض الصورة
+                      height: 40, // ارتفاع الصورة
                     ),
                   ),
-                  const SizedBox(width: 40), // مسافة بين الأيقونا
+                  const SizedBox(width: 45), // مسافة بين الأيقونا
                   IconButton(
                     onPressed: () {
                       print("Facebook button pressed!");
@@ -219,7 +249,7 @@ class _LoginPageState extends State<LoginPage> {
                     icon: const Icon(
                       Icons.facebook,
                       color: Colors.blue,
-                      size: 30.0,
+                      size: 48,
                     ),
                   ),
                   const SizedBox(width: 40), // مسافة بين الأيقونات
@@ -229,8 +259,8 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     icon: const Icon(
                       Icons.apple,
-                      color: Colors.black,
-                      size: 30.0,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      size: 59,
                     ),
                   ),
                 ],

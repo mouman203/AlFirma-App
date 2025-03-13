@@ -26,6 +26,10 @@ dependencies:
   firebase_auth: ^5.3.4
   sign_in_button: ^3.2.0
   google_sign_in: ^6.2.2
+  provider: ^6.1.2
+  flutter_localizations:
+    sdk: flutter
+  app_settings: ^5.2.0
   
 
 

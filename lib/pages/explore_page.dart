@@ -5,14 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
-class ExplorePage1 extends StatefulWidget {
-  const ExplorePage1({super.key});
+class ExplorePage extends StatefulWidget {
+  const ExplorePage({super.key});
 
   @override
-  _ExplorePage1State createState() => _ExplorePage1State();
+  _ExplorePageState createState() => _ExplorePageState();
 }
 
-class _ExplorePage1State extends State<ExplorePage1> {
+class _ExplorePageState extends State<ExplorePage> {
     List<Product> products = [];
     List<String> filteredNames = []; // أسماء المنتجات المصفاة حسب البحث
     List<String> productNames = []; // جميع أسماء المنتجات
@@ -147,6 +147,7 @@ class _ExplorePage1State extends State<ExplorePage1> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
           _focusNode.unfocus(); // إلغاء التركيز عند الضغط خارج TextField
@@ -174,7 +175,7 @@ class _ExplorePage1State extends State<ExplorePage1> {
                       controller: _controller,
                       autofocus: false,
                       decoration: InputDecoration(
-                        hintText: "Search here...",
+                        hintText: "Search here",
                         isDense: true,
                         contentPadding: const EdgeInsets.all(12.0),
                         border: const OutlineInputBorder(
@@ -255,18 +256,22 @@ class _ExplorePage1State extends State<ExplorePage1> {
             // ✅ عرض المنتجات
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(16.0),
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 25),
                     child: SizedBox(
                       height: 170,
                       child: Card(
-                        color: Colors.green.shade50,
-                        elevation: 0.1,
-                        shadowColor: Colors.green.shade50,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
+                        color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color.fromARGB(255, 55, 72, 56) // Dark green for dark mode
+                    : Colors.green.shade50, // Light green for light mode
+                elevation: 0.1,
+                shadowColor: Theme.of(context).brightness == Brightness.dark
+                    ? const Color.fromARGB(255, 55, 72, 56)  // Match shadow to dark green
+                    : Colors.green.shade50,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -277,26 +282,30 @@ class _ExplorePage1State extends State<ExplorePage1> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Free consultation",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge!
-                                          .copyWith(
-                                            color: Colors.green.shade700,
-                                          ),
+                                      "Free AI Scanner",
+                                      style: TextStyle(
+                                  fontSize: 21,
+                                  color: const Color.fromARGB(255, 47, 114, 38),
+                                  fontWeight:
+                                      FontWeight.bold // Black in light mode
+                                  ),
                                     ),
                                     const Text(
-                                        "Get free support from our customer service"),
-                                    FilledButton(
-                                      onPressed: () {},
-                                      child: const Text("Call now"),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              "Get free Look from our AI Plant Disease Detector",
+                              style: TextStyle(fontSize: 14)),
+                              FilledButton(
+                              onPressed: () {},
+                              child: Text("Check it out",
+                                  style: TextStyle(
+                                      color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : const Color.fromARGB(255, 255, 255, 255),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17)),
+                            ),
+                          ],
+                        ),
+                      ),
                               Image.asset(
-                                'assets/contact_us.png',
-                                width: 140,
+                                'assets/Ai.png',
                               )
                             ],
                           ),

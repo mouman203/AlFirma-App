@@ -11,7 +11,7 @@ class ServicesPage extends StatelessWidget {
     return Scaffold(
       body: GridView.builder(
         itemCount: services.length,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(17),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.85,
@@ -23,27 +23,29 @@ class ServicesPage extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(25),
               image: DecorationImage(
                 image: AssetImage(services[index].image),
                 fit: BoxFit.cover,
               ),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(20),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                   ),
                   child: Text(
                     services[index].name,
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 21,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),

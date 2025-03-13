@@ -87,6 +87,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -132,30 +133,43 @@ class _SignUpPageState extends State<SignUpPage> {
               _buildTextField(
                 controller: _phoneController,
                 icon: Icons.phone,
-                hintText: "Phone Number",
+                hintText: "Phone Number ",
                 errorText: phoneError,
               ),
               const SizedBox(height: 20),
 
               // Wilaya dropdown
-              Padding(
+              Padding( 
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
-                    color: Colors.green.shade50,
+                    color:  isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : Colors.green.shade50, // Light green in light mode
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: DropdownButtonFormField<String>(
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                     ),
-                    hint: const Text("Select your Wilaya"),
+                    hint: Text("Select your Wilaya",style: TextStyle(color: isDarkMode
+            ? Colors.white 
+            : const Color.fromARGB(255, 42, 103, 34),)),
+                    
+                     dropdownColor:  isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : Colors.green.shade50, // Light green in light mode,
                     value: _selectedWilaya,
+                    icon: Icon(Icons.arrow_drop_down, // Default dropdown arrow icon
+                   color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
                     items: _wilayas
                         .map((wilaya) => DropdownMenuItem(
                               value: wilaya,
-                              child: Text(wilaya),
+                              child: Text(wilaya,style: TextStyle(color: isDarkMode
+            ? Colors.white 
+            : const Color.fromARGB(255, 42, 103, 34))),
+
                             ))
                         .toList(),
                     onChanged: (value) {
@@ -252,7 +266,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       );
                     }});},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green.shade700,
+                      backgroundColor: isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : const Color.fromARGB(255, 44, 107, 36),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -270,8 +286,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   // Navigate back to SignInPage
                   Navigator.pushNamed(context, 'login_page');
                 },
-                child: const Text('Back to Sign In',
-                    style: TextStyle(color: Colors.green, fontSize: 16)),
+                child: Text('Back to Sign In',
+                    style: TextStyle(color: isDarkMode
+            ? Colors.white 
+            : const Color.fromARGB(255, 42, 103, 34), fontSize: 17)),
               ),
             ],
           ),
@@ -287,18 +305,21 @@ class _SignUpPageState extends State<SignUpPage> {
     required String hintText,
     String? errorText,
   }) {
+     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.green.shade50,
+          color:  isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : Colors.green.shade50, // Light green in light mode
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(icon),
+              Icon(icon,color: isDarkMode ? Colors.white :const Color.fromARGB(255, 42, 103, 34)),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
@@ -306,6 +327,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
+                    hintStyle: TextStyle(color: isDarkMode
+                              ? Colors.white 
+                              : const Color.fromARGB(255, 42, 103, 34),),
                     errorText: errorText,
                   ),
                 ),
@@ -324,18 +348,21 @@ class _SignUpPageState extends State<SignUpPage> {
     String? errorText,
     required VoidCallback toggleObscure,
   }) {
+     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.green.shade50,
+          color: isDarkMode
+            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
+            : Colors.green.shade50, // Light green in light mode,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              const Icon(Icons.lock),
+              Icon(Icons.lock,color: isDarkMode ? Colors.white :const Color.fromARGB(255, 42, 103, 34)),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
@@ -348,6 +375,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     suffixIcon: IconButton(
                       icon: Icon(
                         obscureText ? Icons.visibility_off : Icons.visibility,
+                        color: isDarkMode ? Colors.white :const Color.fromARGB(255, 42, 103, 34)
                       ),
                       onPressed: toggleObscure,
                     ),

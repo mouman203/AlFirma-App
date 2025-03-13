@@ -15,9 +15,12 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-      final cartItems = products.take(4).toList();
-    final total =
-        cartItems.map((cartItem) => cartItem.price).reduce((value, element) => value + element).toStringAsFixed(2);
+      final cartItems = products.take(0).toList();
+final total = cartItems
+    .map((cartItem) => cartItem.price)
+    .fold(0.0, (value, element) => value + element)
+    .toStringAsFixed(2);
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

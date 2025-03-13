@@ -2,27 +2,27 @@ import '../models/service.dart';
 
 List<Service> services = [
   const Service(
-    name: "Seeds",
-    image: "assets/services/seeds.jpg",
+    name: "Rent",
+    image: "assets/services/Rent.png",
   ),
   const Service(
-    name: "Seedlings",
-    image: "assets/services/seedlings.jpg",
+    name: "Maintenance",
+    image: "assets/services/Maintenance.png",
   ),
   const Service(
-    name: "Machinery",
-    image: "assets/services/machinery.jpg",
+    name: "Consultation",
+    image: "assets/services/Consultation.png",
   ),
   const Service(
     name: "Hire Worker",
-    image: "assets/services/workers.jpg",
+    image: "assets/services/Workers.png",
   ),
   const Service(
-    name: "Cultivation process",
-    image: "assets/services/cultivation.jpg",
+    name: "Transportation",
+    image: "assets/services/Transportation.png",
   ),
   const Service(
-    name: "Crop disease solution",
-    image: "assets/services/crop_disease.jpg",
+    name: "Expertise",
+    image: "assets/services/Expertise.png",
   ),
 ];

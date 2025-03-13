@@ -1,6 +1,6 @@
-import 'package:agriplant/pages/orders_page.dart';
+import 'package:agriplant/pages/Saved.dart';
+import 'package:agriplant/pages/Settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,61 +11,76 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 15),
+            padding: const EdgeInsets.only(top: 54 , bottom: 26),
             child: CircleAvatar(
-              radius: 62,
+              radius: 93,
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: const CircleAvatar(
-                radius: 60,
-                foregroundImage: NetworkImage(
-                    'https://images.unsplash.com/photo-1464863979621-258859e62245?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3386&q=80'),
+                radius: 90,
+                backgroundImage: AssetImage( "assets/Profil.jpg"),
+
               ),
             ),
           ),
           Center(
             child: Text(
               "Jessi Williams",
-              style: Theme.of(context).textTheme.titleMedium,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          Center(
-            child: Text(
-              //user.email!,
-              "go check the profile page code :)",
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-          const SizedBox(height: 25),
-          ListTile(
-            title: const Text("My orders"),
-            leading: const Icon(IconlyLight.bag),
-            onTap: () {
-              Navigator.push(
+          const SizedBox(height: 40),
+           ListTile(
+              leading: Icon(IconlyBold.bookmark, 
+                  color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+              title: Text(
+                'Saved',
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              ),
+              onTap: () {
+                Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const OrdersPage(),
-                  ));
-            },
-          ),
-          ListTile(
-            title: const Text("About us"),
-            leading: const Icon(IconlyLight.infoSquare),
+                  MaterialPageRoute(builder: (context) => Saved()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings_sharp, 
+                  color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+              title: Text(
+                'Settings',
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Settings()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout_sharp, 
+                  color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+              title: Text(
+                'Log out',
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              ),
+              onTap: () async {
+                GoogleSignIn googleSignIn = GoogleSignIn();
+                googleSignIn.disconnect();
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil("login_page", (route) => false);
+              },
+            ),
+            ListTile(
+            title: const Text("About Us"),
+            leading: Icon(Icons.info_outline_rounded,color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
             onTap: () {},
-          ),
-          ListTile(
-            title: const Text("Logout"),
-            leading: const Icon(IconlyLight.logout),
-            onTap: () async {
-              GoogleSignIn googleSignIn = GoogleSignIn();
-              googleSignIn.disconnect();
-              await FirebaseAuth.instance.signOut();
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil("login_page", (route) => false);
-            },
           ),
         ],
       ),
