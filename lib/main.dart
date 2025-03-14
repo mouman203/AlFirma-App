@@ -1,11 +1,11 @@
+import 'package:agriplant/Front_end/LoginPage.dart';
+import 'package:agriplant/Front_end/sign_up_page.dart';
+import 'package:agriplant/Front_end/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:agriplant/pages/auth/LoginPage.dart';
-import 'package:agriplant/pages/home_page.dart';
-import 'package:agriplant/pages/auth/sign_up_page.dart';
-import 'package:agriplant/pages/settings.dart'; 
-import 'package:agriplant/pages/theme_provider.dart';
-import 'package:agriplant/pages/language_provider.dart';
+import 'package:agriplant/Front_end/home_page.dart';
+import 'package:agriplant/Front_end/theme_provider.dart';
+import 'package:agriplant/Front_end/language_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -58,7 +58,7 @@ class MainApp extends StatelessWidget {
       seedColor: Colors.green,
       brightness: Brightness.dark, // Adjusts colors for dark mode
     ),
-    scaffoldBackgroundColor: Color.fromARGB(255, 1, 20, 7), // Ensures dark mode background
+    scaffoldBackgroundColor: const Color.fromARGB(255, 1, 20, 7), // Ensures dark mode background
     appBarTheme: const AppBarTheme(
       backgroundColor: Color.fromARGB(255, 1, 24, 8), // Dark mode app bar color
       foregroundColor: Colors.white, // Dark mode text/icons
@@ -77,13 +77,13 @@ class MainApp extends StatelessWidget {
   ],
   home: (FirebaseAuth.instance.currentUser != null &&
           FirebaseAuth.instance.currentUser!.emailVerified)
-      ? HomePage()
-      : LoginPage(),
+      ? const HomePage()
+      : const LoginPage(),
   routes: {
     'home_page': (context) => const HomePage(),
     'sign_up_page': (context) => const SignUpPage(),
     'login_page': (context) => const LoginPage(),
-    'settings_page': (context) =>  Settings(),
+    'settings_page': (context) =>  const Settings(),
   },
     );
 

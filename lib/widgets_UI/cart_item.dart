@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:agriplant/models/product.dart';
+import 'package:agriplant/Back_end/Product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
 class CartItem extends StatelessWidget {
-  const CartItem({super.key, required this.cartItem});
+  const CartItem({super.key, required this.product});
 
-  final Product cartItem;
+  final Product product;
 
   @override
   Widget build(BuildContext context) {
@@ -66,27 +66,37 @@ class CartItem extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: Row(
               children: [
-                Container(
-                  height: double.infinity,
-                  width: 90,
-                  margin: const EdgeInsets.only(right: 15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(cartItem.image),
-                    ),
-                  ),
-                ),
+                SizedBox(
+  height: double.infinity, // جعل الارتفاع غير محدود ليتناسب مع الحاوية الأصلية
+  child: ListView.builder(
+    scrollDirection: Axis.horizontal, // التمرير أفقيًا
+    itemCount: product.photos.length,
+    itemBuilder: (context, index) {
+      return Container(
+        height: double.infinity,
+        width: 90,
+        margin: const EdgeInsets.only(right: 15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(product.photos[index]), // عرض الصورة الحالية
+          ),
+        ),
+      );
+    },
+  ),
+),
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(cartItem.name,
+                      Text(product.name,
                           style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 2),
                       Text(
-                        cartItem.description,
+                        product.description,
                         style: Theme.of(context).textTheme.bodySmall,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
@@ -96,7 +106,7 @@ class CartItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "\$${cartItem.price}",
+                            "\$${product.price}",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium

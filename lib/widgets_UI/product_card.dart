@@ -1,8 +1,8 @@
-import 'package:agriplant/models/product.dart';// les classe de diagramme de classe
+import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Front_end/product_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
-import '../pages/product_details_page.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({super.key, required this.product});
@@ -38,7 +38,7 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(product.image),
+                  image: AssetImage(product.photos[0]),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -75,7 +75,7 @@ class ProductCard extends StatelessWidget {
                                 text: "\$${product.price}",
                                 style: Theme.of(context).textTheme.bodyLarge),
                             TextSpan(
-                                text: "/${product.unit}",
+                                text: "/${product.unite}",
                                 style: Theme.of(context).textTheme.bodySmall),
                           ],
                         ),

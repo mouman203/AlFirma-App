@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Front_end/order_details_page.dart';
 import 'package:flutter/material.dart';
 
 import '../models/order.dart';
-import '../models/product.dart';
-import '../pages/order_details_page.dart';
 
 class OrderProduct extends StatelessWidget {
   const OrderProduct({
@@ -29,18 +29,31 @@ class OrderProduct extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 90,
-            width: 90,
-            margin: const EdgeInsets.only(right: 10, bottom: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(product.image),
+          SizedBox(
+  height: double.infinity,
+  child: product.photos.isNotEmpty
+      ? ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: product.photos.length,
+          itemBuilder: (context, index) {
+            return Container(
+              height: double.infinity,
+              width: 90,
+              margin: const EdgeInsets.only(right: 15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(product.photos[index]),
+                ),
               ),
-            ),
-          ),
+            );
+          },
+        )
+      : Center(child: Text("لا توجد صور متاحة")),
+),
+
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
