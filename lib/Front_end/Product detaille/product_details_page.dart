@@ -1,4 +1,5 @@
 import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Front_end/Product%20detaille/fullscreanimage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -52,24 +53,38 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         padding: const EdgeInsets.all(16),
         children: [
           SizedBox(
-  height: 250, // ارتفاع محدد للحاوية
+  height: 250, 
   width: double.infinity, 
   child: PageView.builder(
-    itemCount: widget.product.photos.length, // عدد الصور
+    itemCount: widget.product.photos.length,
     itemBuilder: (context, index) {
-      return Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(widget.product.photos[index]), // ✅ عرض جميع الصور
-            fit: BoxFit.cover,
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FullScreenImageViewer(
+                photos: widget.product.photos,
+                initialIndex: index,
+              ),
+            ),
+          );
+        },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(widget.product.photos[index]),
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.circular(10),
           ),
-          borderRadius: BorderRadius.circular(10),
         ),
       );
     },
   ),
 ),
+
           Text(
             widget.product.name ,
             style: Theme.of(context).textTheme.titleLarge,

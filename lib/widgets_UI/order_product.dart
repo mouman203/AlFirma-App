@@ -50,7 +50,7 @@ class OrderProduct extends StatelessWidget {
             );
           },
         )
-      : Center(child: Text("لا توجد صور متاحة")),
+      : const Center(child: Text("لا توجد صور متاحة")),
 ),
 
 

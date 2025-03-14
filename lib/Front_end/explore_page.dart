@@ -57,8 +57,8 @@ class _ExplorePageState extends State<ExplorePage> {
   name: data['name'] ?? '',
   description: data['description'] ?? '',
   photos: (data['photos'] is List) 
-      ? List<String>.from(data['photos']) // ✅ تحويل الصور إلى List<String>
-      : ["assets\eror.png"], 
+      ? List<String>.from(data['photos']) 
+      : ["assets/nophoto.png"], 
   price: (data['price'] is num)
       ? data['price'].toDouble()
       : double.tryParse(data['price'].toString()) ?? 0.0,
