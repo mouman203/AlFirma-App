@@ -1,17 +1,20 @@
 class Product {
-  // المتغيرات
+// المتغيرات
+  String id;
   String name;
   String productId;
   String category;
   double price;
   String description;
   int rate;
-  List<String> comments;
-  String unite;
+  List<Map<String, dynamic>> comments;  String unite;
   List<String> photos;
+  List<String> liked;
+  List<String> disliked;
 
   // المُنشئ (Constructor)
   Product({
+    required this.id,
      required this.name,
      required this.productId,
      required this.category,
@@ -21,5 +24,7 @@ class Product {
      required this.comments,
      required this.unite,
      required this.photos,
+     required this.liked,
+     required this.disliked,
   });
 }

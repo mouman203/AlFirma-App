@@ -430,6 +430,112 @@ Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
 }
 
 
+void likeProduct(Product product) async {
+  String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
 
-  
+  DocumentReference productRef =
+      FirebaseFirestore.instance.collection('Products').doc(product.id);
+
+  try {
+    // جلب البيانات المحدثة قبل التعديل
+    DocumentSnapshot doc = await productRef.get();
+
+    if (doc.exists) {
+      List<String> likedUsers =
+          List<String>.from(doc.get("liked") ?? []); // جلب قائمة الإعجابات
+
+      if (likedUsers.contains(userId)) {
+        // 👎 إزالة الإعجاب إذا كان موجودًا
+        await productRef.update({
+          'liked': FieldValue.arrayRemove([userId])
+        });
+        print("👎 Removed like from product ${product.id}");
+      } else {
+        // ✅ إضافة إلى قائمة الإعجابات
+        await productRef.update({
+          'liked': FieldValue.arrayUnion([userId]),
+          'disliked': FieldValue.arrayRemove([userId]), // إزالة من disliked إن وجد
+        });
+        print("👍 Liked product ${product.id}");
+      }
+    } else {
+      print("❌ Product not found!");
+    }
+  } catch (e) {
+    print("❌ Failed to like product: $e");
+  }
+}
+
+void dislikeProduct(Product product) async {
+  String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+  DocumentReference productRef =
+      FirebaseFirestore.instance.collection('Products').doc(product.id);
+
+  try {
+    // جلب البيانات المحدثة من Firestore
+    DocumentSnapshot doc = await productRef.get();
+
+    if (doc.exists) {
+      List<String> dislikedUsers =
+          List<String>.from(doc.get("disliked") ?? []); // جلب قائمة الـ disliked
+
+      if (dislikedUsers.contains(userId)) {
+        // 👎 إزالة "عدم الإعجاب" إذا كان موجودًا
+        await productRef.update({
+          'disliked': FieldValue.arrayRemove([userId])
+        });
+        print("👎 Removed dislike from product ${product.id}");
+      } else {
+        // ✅ إضافة إلى قائمة "عدم الإعجاب" وإزالة من قائمة الإعجابات إن كان موجودًا
+        await productRef.update({
+          'disliked': FieldValue.arrayUnion([userId]),
+          'liked': FieldValue.arrayRemove([userId]), // إزالة من liked إن وجد
+        });
+        print("👎 Disliked product ${product.id}");
+      }
+    } else {
+      print("❌ Product not found!");
+    }
+  } catch (e) {
+    print("❌ Failed to dislike product: $e");
+  }
+}
+
+Future<void> addComment(String productId, String userId, String commentText) async {
+  try {
+    DocumentReference productRef =
+        FirebaseFirestore.instance.collection('Products').doc(productId);
+
+    Map<String, String> newComment = {"userId": userId, "text": commentText};
+
+    // 🔥 إضافة التعليق مباشرةً دون الحاجة لجلب البيانات أولًا
+    await productRef.update({
+      "comments": FieldValue.arrayUnion([newComment])
+    });
+
+    print("✅ تم إضافة التعليق بنجاح!");
+  } catch (e) {
+    print("⚠️ خطأ أثناء إضافة التعليق: $e");
+  }
+}
+
+Future<void> deleteComment(String productId, String userId, String text) async {
+    try {
+      // الوصول إلى مستند المنتج
+      var productDoc = FirebaseFirestore.instance.collection('Products').doc(productId);
+
+      // تحديث الحقل "comments" بإزالة التعليق الذي يحتوي على userId و text
+      await productDoc.update({
+        'comments': FieldValue.arrayRemove([{'userId': userId, 'text': text}]),
+      });
+
+      // إذا تم الحذف بنجاح
+      print("Comment deleted successfully.");
+    } catch (e) {
+      // إذا حدث خطأ
+      print("Error deleting comment: $e");
+    }
+  }
+
+
 }

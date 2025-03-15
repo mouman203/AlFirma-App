@@ -14,7 +14,7 @@ class FullScreenImageViewer extends StatefulWidget {
 class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
   late PageController _pageController;
   int _currentIndex = 0;
-  TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController = TransformationController();
   bool _isZoomed = false;
 
 

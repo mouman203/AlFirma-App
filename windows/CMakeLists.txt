@@ -1,18 +1,11 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-<<<<<<< HEAD
-project(agriplant LANGUAGES CXX)
 
-# The name of the executable created for the application. Change this to change
-# the on-disk name of your application.
-set(BINARY_NAME "agriplant")
-=======
 project(startupapp LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "startupapp")
->>>>>>> 8744601f3f904c6037dab201a6b10a61d1f91dcb
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

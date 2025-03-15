@@ -54,24 +54,29 @@ class _ExplorePageState extends State<ExplorePage> {
       List<Product?> fetchedProducts = querySnapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return Product(
-  name: data['name'] ?? '',
-  description: data['description'] ?? '',
-  photos: (data['photos'] is List) 
-      ? List<String>.from(data['photos']) 
-      : ["assets/nophoto.png"], 
-  price: (data['price'] is num)
-      ? data['price'].toDouble()
-      : double.tryParse(data['price'].toString()) ?? 0.0,
-  unite: data['unit'] ?? 'DA',
-  category: data['category'] ?? '',
-  rate: (data['rating'] is num)
-      ? data['rating'].toInt()
-      : int.tryParse(data['rating'].toString()) ?? 0,
-  productId: data['id'] ?? '',
-  comments: (data['comments'] is List)
-      ? List<String>.from(data['comments'])
-      : [""], // تأكد من أن التعليقات أيضًا قائمة
-);
+          id:doc.id,
+          name: data['name'] ?? '',
+          description: data['description'] ?? '',
+          photos: (data['photos'] is List) 
+              ? List<String>.from(data['photos']) 
+              : ["assets/nophoto.png"], 
+          price: (data['price'] is num)
+              ? data['price'].toDouble()
+              : double.tryParse(data['price'].toString()) ?? 0.0,
+          unite: data['unit'] ?? 'DA',
+          category: data['category'] ?? '',
+          rate: (data['rating'] is num)
+              ? data['rating'].toInt()
+              : int.tryParse(data['rating'].toString()) ?? 0,
+          productId: data['id'] ?? '',
+          comments: (data['comments'] is List)
+            ? List<Map<String, String>>.from(
+                (data['comments'] as List)
+                    .map((comment) => Map<String, String>.from(comment)))
+            : [],
+          liked: (data["liked"] is List) ?List<String>.from(data["liked"]): [],
+          disliked: (data["dislike"] is List) ?List<String>.from(data["dislike"]): [],
+    );
       }).toList();
       if (mounted) {
         setState(() {

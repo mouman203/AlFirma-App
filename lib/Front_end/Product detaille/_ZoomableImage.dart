@@ -4,14 +4,14 @@ class ZoomableImage extends StatefulWidget {
   final String imagePath;
   final Function(bool) onZoomChanged;
 
-  const ZoomableImage(this.imagePath, {required this.onZoomChanged});
+  const ZoomableImage(this.imagePath, {super.key, required this.onZoomChanged});
 
   @override
   _ZoomableImageState createState() => _ZoomableImageState();
 }
 
 class _ZoomableImageState extends State<ZoomableImage> {
-  TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController = TransformationController();
   TapDownDetails? _doubleTapDetails;
   double _currentScale = 1.0;
   final double _maxScale = 4.0;
