@@ -11,7 +11,7 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final Users user = Users();
 
-  ProductCard({super.key, required this.product});
+  ProductCard({required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +33,12 @@ class ProductCard extends StatelessWidget {
         elevation: 0.1,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              height: 100,
+              height: 120,
               alignment: Alignment.topRight,
-              width: double.infinity,
+              width: double.maxFinite,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -88,6 +89,8 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
             ),
+
+
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('Products')
@@ -95,66 +98,97 @@ class ProductCard extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return const SizedBox();
+                  return SizedBox();
                 }
 
                 List<dynamic> liked = snapshot.data!['liked'] ?? [];
                 List<dynamic> disliked = snapshot.data!['disliked'] ?? [];
+                List<dynamic> comments = snapshot.data!['comments'] ?? [];
                 String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
                 bool isLiked = liked.contains(userId);
                 bool isDisliked = disliked.contains(userId);
-
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.thumb_up,
-                              size: 20, color: isLiked ? Colors.blue : Colors.grey),
-                          onPressed: () {
+                        SizedBox(width: 5,),
+                        GestureDetector(
+                          onTap: () {
                             user.likeProduct(product);
                           },
+                          child: Icon(Icons.thumb_up,
+                              size: 20, color: isLiked ? Colors.green : Colors.grey),
                         ),
+                        SizedBox(width: 5), // يمكنك إزالة هذه السطر إذا كنت تريد تلاصق كامل
                         Text(
                           "${liked.length}",
-                          style: TextStyle(fontSize: 14,
-                          color: Theme.of(context).brightness == Brightness.dark 
-                                                                              ? Colors.white 
-                                                                              : Colors.black
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 20,),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.thumb_down,
-                              size: 20, color: isDisliked ? Colors.red : Colors.grey),
-                          onPressed: () {
+                        GestureDetector(
+                          onTap: () {
                             user.dislikeProduct(product);
                           },
+                          child: Icon(Icons.thumb_down,
+                              size: 20, color: isDisliked ? Colors.red : Colors.grey),
                         ),
+                        SizedBox(width: 5),
                         Text(
                           "${disliked.length}",
-                          style: TextStyle(fontSize: 14,
-                          color: Theme.of(context).brightness == Brightness.dark 
-                                                                              ? Colors.white 
-                                                                              : Colors.black
-
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
+                          ),
                         ),
-                    )],
+                      ],
                     ),
-                    const SizedBox(width: 5),
-                    IconButton(
-                      icon: const Icon(Icons.comment, size: 20, color: Colors.grey),
-                      onPressed: () {
-                        print("Comment Clicked!");
-                      },
+                    SizedBox(width: 20,),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailsPage(
+                                  product: product,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Icon(Icons.comment, size: 20, color: Colors.grey),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "${comments.length}",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 );
+
+
               },
             )
           ],

@@ -20,6 +20,7 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late TapGestureRecognizer readMoreGestureRecognizer;
+   ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
   bool showMore = false;
   Users user =Users();
@@ -35,6 +36,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           showMore = !showMore;
         });
       };
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToComments();
+    });
   }
 
   @override
@@ -42,6 +46,20 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     super.dispose();
     readMoreGestureRecognizer.dispose();
   }
+
+    // دالة للتمرير إلى قسم التعليقات
+  void _scrollToComments() {
+    final commentsSectionKey = GlobalKey(); // تحديد المفتاح الخاص بالقسم
+    if (commentsSectionKey.currentContext != null) {
+      // التمرير إلى القسم باستخدام _scrollController
+      _scrollController.animateTo(
+        commentsSectionKey.currentContext!.findRenderObject()!.getTransformTo(null).getTranslation().y,
+        duration: Duration(seconds: 1),
+        curve: Curves.ease,
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -320,12 +338,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       IconButton(
         icon: Icon(Icons.send, color: Colors.green),
         onPressed: () {
+          if(controller.text.isEmpty){
+            user.showErrorDialog(context, "You can't add an empty comment");
+          }else{
           user.addComment(
             widget.product.id,
             FirebaseAuth.instance.currentUser?.uid ?? "guest",
             controller.text,
           );
           controller.clear();
+          }
         },
       ),
     ],
@@ -381,6 +403,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         }
 
         return ListView.builder(
+          controller: _scrollController,
   shrinkWrap: true,
   physics: const NeverScrollableScrollPhysics(),
   itemCount: comments.length,
@@ -391,26 +414,22 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? "guest"; // المعرف الحالي للمستخدم
 
     return Card(
-      margin: EdgeInsets.only(bottom: 10),
-      child: ListTile(
-        leading: CircleAvatar(child: Text(username[0].toUpperCase())),
-        title: Text(username),
-        subtitle: Text(comment['text']),
-        trailing: userId == currentUserId // تحقق من إذا كان التعليق يعود للمستخدم الحالي
-            ? IconButton(
-                icon: Icon(Icons.delete, color:Colors.grey),
-                onPressed: () {
-                  // استدعاء دالة حذف التعليق بناءً على userId والنص
-                  user.deleteComment(
-                    widget.product.id,  // معرّف المنتج
-                    currentUserId,       // معرّف المستخدم الحالي
-                    comment['text'],     // نص التعليق
-                  );
-                },
-              )
-            : null, // لا تعرض الأيقونة إذا كان التعليق ليس من قبل المستخدم الحالي
-      ),
-    );
+  margin: EdgeInsets.only(bottom: 10),
+  child: ListTile(
+    leading: CircleAvatar(child: Text(username[0].toUpperCase())),
+    title: Text(username),
+    subtitle: Text(comment['text']),
+    trailing: userId == currentUserId 
+        ? IconButton(
+            icon: Icon(Icons.delete, color: Colors.grey),
+            onPressed: () {
+             user.showDeleteConfirmationDialog(context, widget.product.id, currentUserId, comment['text']);
+            },
+          )
+        : null,
+  ),
+);
+
   },
 );
 
