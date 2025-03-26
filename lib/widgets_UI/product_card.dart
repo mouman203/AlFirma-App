@@ -35,63 +35,62 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 120,
-              alignment: Alignment.topRight,
-              width: double.maxFinite,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(product.photos[0]),
-                  fit: BoxFit.cover,
+            Expanded(
+              child: Container(
+                alignment: Alignment.topRight,
+                width: double.maxFinite,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(product.photos[0]),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: IconButton.filledTonal(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  iconSize: 18,
-                  icon: const Icon(IconlyLight.bookmark),
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: IconButton.filledTonal(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {},
+                    iconSize: 18,
+                    icon: const Icon(IconlyLight.bookmark),
+                  ),
                 ),
               ),
             ),
+           
+           
+           
             Padding(
-              padding: const EdgeInsets.only(top: 5.0, left: 5, right: 5),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    product.name,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 0.0),
-                    child: Text(
-                      product.name,
-                      style: Theme.of(context).textTheme.bodyLarge,
+                    padding: const EdgeInsets.only(top:8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                  text: "\$${product.price}",
+                                  style: Theme.of(context).textTheme.bodyLarge),
+                              TextSpan(
+                                  text: "/${product.unite}",
+                                  style: Theme.of(context).textTheme.bodySmall),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text: "\$${product.price}",
-                                style: Theme.of(context).textTheme.bodyLarge),
-                            TextSpan(
-                                text: "/${product.unite}",
-                                style: Theme.of(context).textTheme.bodySmall),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-
-
-            StreamBuilder<DocumentSnapshot>(
+                  StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('Products')
                   .doc(product.id)
@@ -100,99 +99,108 @@ class ProductCard extends StatelessWidget {
                 if (!snapshot.hasData || !snapshot.data!.exists) {
                   return SizedBox();
                 }
-
+                            
                 List<dynamic> liked = snapshot.data!['liked'] ?? [];
                 List<dynamic> disliked = snapshot.data!['disliked'] ?? [];
                 List<dynamic> comments = snapshot.data!['comments'] ?? [];
                 String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
                 bool isLiked = liked.contains(userId);
                 bool isDisliked = disliked.contains(userId);
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(width: 5,),
-                        GestureDetector(
-                          onTap: () {
-                            user.likeProduct(product);
-                          },
-                          child: Icon(Icons.thumb_up,
-                              size: 20, color: isLiked ? Colors.green : Colors.grey),
-                        ),
-                        SizedBox(width: 5), // يمكنك إزالة هذه السطر إذا كنت تريد تلاصق كامل
-                        Text(
-                          "${liked.length}",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                return Padding(
+                  padding: const EdgeInsets.only(top:8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(width: 5,),
+                          GestureDetector(
+                            onTap: () {
+                              user.likeProduct(product);
+                            },
+                            child: Icon(Icons.thumb_up,
+                                size: 20, color: isLiked ? Colors.green : Colors.grey),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 20,),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            user.dislikeProduct(product);
-                          },
-                          child: Icon(Icons.thumb_down,
-                              size: 20, color: isDisliked ? Colors.red : Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${disliked.length}",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                          SizedBox(width: 5), // يمكنك إزالة هذه السطر إذا كنت تريد تلاصق كامل
+                          Text(
+                            "${liked.length}",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 20,),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailsPage(
-                                  product: product,
+                        ],
+                      ),
+                      SizedBox(width: 20,),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              user.dislikeProduct(product);
+                            },
+                            child: Icon(Icons.thumb_down,
+                                size: 20, color: isDisliked ? Colors.red : Colors.grey),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            "${disliked.length}",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 20,),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductDetailsPage(
+                                    product: product,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          child: Icon(Icons.comment, size: 20, color: Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${comments.length}",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                              );
+                            },
+                            child: Icon(Icons.comment, size: 20, color: Colors.grey),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          SizedBox(width: 5),
+                          Text(
+                            "${comments.length}",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 );
-
-
+                            
+                            
               },
-            )
-          ],
-        ),
+                            )
+                ],
+              ),
+              
+              
+              
+                
+              ),
+         ]),
       ),
     );
   }

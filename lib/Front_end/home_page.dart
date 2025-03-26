@@ -1,6 +1,7 @@
 import 'package:agriplant/Front_end/Sidebar.dart';
-import 'package:agriplant/Front_end/cart_page.dart';
+import 'package:agriplant/Front_end/addproduct.dart';
 import 'package:agriplant/Front_end/explore_page.dart';
+import 'package:agriplant/Front_end/messeges.dart';
 import 'package:agriplant/Front_end/profile_page.dart';
 import 'package:agriplant/Front_end/services_page.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +21,9 @@ class _HomePageState extends State<HomePage> {
   final pages = [
     const ExplorePage(),
     const ServicesPage(),
-    const CartPage(),
-    const ProfilePage()
+        const Addproduct(),
+    const Messeges(),
+    const ProfilePage(),
   ];
   int currentPageIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -154,9 +156,14 @@ class _HomePageState extends State<HomePage> {
             activeIcon: Icon(IconlyBold.work),
           ),
           BottomNavigationBarItem(
-            icon: Icon(IconlyLight.buy),
-            label: "Cart",
+            icon: Icon(IconlyLight.addUser),
+            label: "Add",
             activeIcon: Icon(IconlyBold.buy),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(IconlyLight.message),
+            label: "Messeges",
+            activeIcon: Icon(IconlyBold.message),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.profile),
