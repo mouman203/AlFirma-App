@@ -7,6 +7,7 @@ class Product {
   double price;
   String description;
   int rate;
+  String ?ownerId;
   List<Map<String, dynamic>> comments;  String unite;
   List<String> photos;
   List<String> liked;
@@ -21,6 +22,7 @@ class Product {
      required this.price,
      required this.description,
      required this.rate,
+     required this.ownerId,
      required this.comments,
      required this.unite,
      required this.photos,

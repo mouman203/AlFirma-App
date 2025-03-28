@@ -53,8 +53,11 @@ class _ExplorePageState extends State<ExplorePage> {
 
       List<Product?> fetchedProducts = querySnapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        print("Product Data: $data");
+
         return Product(
           id:doc.id,
+          ownerId: data["ownerid"],
           name: data['name'] ?? '',
           description: data['description'] ?? '',
           photos: (data['photos'] is List) 
@@ -83,6 +86,7 @@ class _ExplorePageState extends State<ExplorePage> {
               products = fetchedProducts.cast<Product>(); // تحديث المنتجات
         });
       }
+      
 
 
       debugPrint("✅ تم جلب ${products.length} منتج!");

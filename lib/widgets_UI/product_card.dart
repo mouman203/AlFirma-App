@@ -11,7 +11,7 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final Users user = Users();
 
-  ProductCard({required this.product});
+  ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +97,7 @@ class ProductCard extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return SizedBox();
+                  return const SizedBox();
                 }
                             
                 List<dynamic> liked = snapshot.data!['liked'] ?? [];
@@ -114,7 +114,7 @@ class ProductCard extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SizedBox(width: 5,),
+                          const SizedBox(width: 5,),
                           GestureDetector(
                             onTap: () {
                               user.likeProduct(product);
@@ -122,7 +122,7 @@ class ProductCard extends StatelessWidget {
                             child: Icon(Icons.thumb_up,
                                 size: 20, color: isLiked ? Colors.green : Colors.grey),
                           ),
-                          SizedBox(width: 5), // يمكنك إزالة هذه السطر إذا كنت تريد تلاصق كامل
+                          const SizedBox(width: 5), // يمكنك إزالة هذه السطر إذا كنت تريد تلاصق كامل
                           Text(
                             "${liked.length}",
                             style: TextStyle(
@@ -134,7 +134,7 @@ class ProductCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(width: 20,),
+                      const SizedBox(width: 20,),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -145,7 +145,7 @@ class ProductCard extends StatelessWidget {
                             child: Icon(Icons.thumb_down,
                                 size: 20, color: isDisliked ? Colors.red : Colors.grey),
                           ),
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           Text(
                             "${disliked.length}",
                             style: TextStyle(
@@ -157,7 +157,7 @@ class ProductCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(width: 20,),
+                      const SizedBox(width: 20,),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -172,9 +172,9 @@ class ProductCard extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: Icon(Icons.comment, size: 20, color: Colors.grey),
+                            child: const Icon(Icons.comment, size: 20, color: Colors.grey),
                           ),
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           Text(
                             "${comments.length}",
                             style: TextStyle(

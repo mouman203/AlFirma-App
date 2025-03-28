@@ -1,6 +1,7 @@
 import 'package:agriplant/Back_end/Product.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Product%20detaille/fullscreanimage.dart';
+import 'package:agriplant/Front_end/userprofilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -20,7 +21,7 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late TapGestureRecognizer readMoreGestureRecognizer;
-   ScrollController _scrollController = ScrollController();
+   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
   bool showMore = false;
   Users user =Users();
@@ -54,7 +55,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       // التمرير إلى القسم باستخدام _scrollController
       _scrollController.animateTo(
         commentsSectionKey.currentContext!.findRenderObject()!.getTransformTo(null).getTranslation().y,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
         curve: Curves.ease,
       );
     }
@@ -115,7 +116,52 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       },
         ),
       ),
-      
+            // ✅ جلب بيانات المستخدم الذي أضاف المنتج
+            FutureBuilder<DocumentSnapshot>(
+           future:  FirebaseFirestore.instance.collection('Users').doc(widget.product.ownerId!.trim()).get(),
+          builder: (context, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            if (!userSnapshot.hasData || !userSnapshot.data!.exists ) {
+              print("User document not found for ID${widget.product.ownerId}"); // ❌ طباعة إذا لم يتم العثور على المستخدم
+              return const Text("User not ");
+            }
+            var userData = userSnapshot.data!;
+            print("User Data: ${userData.data()}"); // ✅ طباعة بيانات المستخدم للتحقق منها
+
+            String username = userData['first_name'] ?? "Unknown";
+            String userProfilePic = userData['photo'] ?? '';
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom :8,top:8),
+              child: Row(
+                children: [
+                  GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserProfilePage(userId: widget.product.ownerId!.trim()),
+                      ),
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundImage: userProfilePic.isNotEmpty ? NetworkImage(userProfilePic) : null,
+                    child: userProfilePic.isEmpty ? const Icon(Icons.person) : null,
+                  ),
+                ),
+
+                  const SizedBox(width: 10),
+                  Text(username, style: Theme.of(context).textTheme.titleMedium),
+                ],
+              ),
+            );
+          },
+        ),
+
+            const SizedBox(height: 10),
             Text(
               widget.product.name ,
               style: Theme.of(context).textTheme.titleLarge,
@@ -291,15 +337,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 label: const Text("Add to cart")
             ),
       
-            SizedBox(
+
+
+
+
+            const SizedBox(
               height: 5,
             ),
            Container(
-  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
   decoration: BoxDecoration(
-    color: Color.fromRGBO(254, 247, 255, 255), // نفس لون الحاوية الذي كان في الكود السابق
+    color: const Color.fromRGBO(254, 247, 255, 255), // نفس لون الحاوية الذي كان في الكود السابق
     borderRadius: BorderRadius.circular(15),
-    boxShadow: [
+    boxShadow: const [
       BoxShadow(
         color: Colors.black12,
         blurRadius: 5,
@@ -311,15 +361,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     children: [
       // أيقونة المستخدم (أول حرف من الاسم)
       CircleAvatar(
+        backgroundColor: Colors.grey,
         child: Text(
            FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
         ? FirebaseAuth.instance.currentUser?.displayName?.substring(0, 1).toUpperCase() ?? "U"
         : "U",
           style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.grey, // يمكنك تغيير لون الخلفية هنا
+        ), // يمكنك تغيير لون الخلفية هنا
       ),
-      SizedBox(width: 10),
+      const SizedBox(width: 10),
 
       // حقل الإدخال
       Expanded(
@@ -327,7 +377,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           focusNode: _focusNode,
           autofocus: false,
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: "اكتب تعليقًا...",
             border: InputBorder.none,
           ),
@@ -336,7 +386,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
       // زر الإرسال
       IconButton(
-        icon: Icon(Icons.send, color: Colors.green),
+        icon: const Icon(Icons.send, color: Colors.green),
         onPressed: () {
           if(controller.text.isEmpty){
             user.showErrorDialog(context, "You can't add an empty comment");
@@ -357,7 +407,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
              
              
              
-             SizedBox(
+             const SizedBox(
               height: 20,
             ),
       
@@ -414,14 +464,24 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? "guest"; // المعرف الحالي للمستخدم
 
     return Card(
-  margin: EdgeInsets.only(bottom: 10),
+  margin: const EdgeInsets.only(bottom: 10),
   child: ListTile(
-    leading: CircleAvatar(child: Text(username[0].toUpperCase())),
+    leading: GestureDetector(
+      onTap: () {
+      // ✅ عند النقر، انتقل إلى صفحة الملف الشخصي
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserProfilePage(userId: userId),
+        ),
+      );
+    },
+      child: CircleAvatar(child: Text(username[0].toUpperCase()))),
     title: Text(username),
     subtitle: Text(comment['text']),
     trailing: userId == currentUserId 
         ? IconButton(
-            icon: Icon(Icons.delete, color: Colors.grey),
+            icon: const Icon(Icons.delete, color: Colors.grey),
             onPressed: () {
              user.showDeleteConfirmationDialog(context, widget.product.id, currentUserId, comment['text']);
             },

@@ -542,21 +542,21 @@ Future<void> deleteComment(String productId, String userId, String text) async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("تأكيد الحذف"),
-          content: Text("هل أنت متأكد أنك تريد حذف هذا التعليق؟"),
+          title: const Text("تأكيد الحذف"),
+          content: const Text("هل أنت متأكد أنك تريد حذف هذا التعليق؟"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // إغلاق مربع الحوار بدون حذف
               },
-              child: Text("إلغاء", style: TextStyle(color: Colors.grey)),
+              child: const Text("إلغاء", style: TextStyle(color: Colors.grey)),
             ),
             TextButton(
               onPressed: () {
                 deleteComment(productId, userId, text); // تنفيذ الحذف
                 Navigator.of(context).pop(); // إغلاق مربع الحوار
               },
-              child: Text("حذف", style: TextStyle(color: Colors.red)),
+              child: const Text("حذف", style: TextStyle(color: Colors.red)),
             ),
           ],
         );

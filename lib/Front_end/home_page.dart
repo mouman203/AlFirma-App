@@ -1,7 +1,7 @@
 import 'package:agriplant/Front_end/Sidebar.dart';
 import 'package:agriplant/Front_end/addproduct.dart';
 import 'package:agriplant/Front_end/explore_page.dart';
-import 'package:agriplant/Front_end/messeges.dart';
+import 'package:agriplant/Front_end/Meseges/messeges.dart';
 import 'package:agriplant/Front_end/profile_page.dart';
 import 'package:agriplant/Front_end/services_page.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
     const ExplorePage(),
     const ServicesPage(),
         const Addproduct(),
-    const Messeges(),
+    const MessagesPage(),
     const ProfilePage(),
   ];
   int currentPageIndex = 0;
