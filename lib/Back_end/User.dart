@@ -12,7 +12,7 @@ class Users {
  String? id;
   String? firstName;
   String? lastName;
-  String? photoProfile;
+  String? profile_pic;
   String? email;
   String? password;
   String? phone;
@@ -29,7 +29,7 @@ class Users {
      this.id,
      this.firstName,
      this.lastName,
-     this.photoProfile,
+     this.profile_pic,
      this.email,
      this.password,
      this.phone,
@@ -403,6 +403,7 @@ Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
 
       // حفظ أو تحديث بيانات المستخدم في Firestore
       await userRef.set({
+        "profile_pic":firebaseUser.photoURL,
         "email": firebaseUser.email,
         "verify": true,
         "first_name": firstName,

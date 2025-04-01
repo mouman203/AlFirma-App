@@ -21,6 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int followersCount = 0;
   int followingCount = 0;
   String username = "Loading...";
+ String ?profile_pic ;
 
   @override
   void initState() {
@@ -42,11 +43,10 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     }
   }
-
+      
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       body: ListView(
         children: [
@@ -55,9 +55,9 @@ class _ProfilePageState extends State<ProfilePage> {
             child: CircleAvatar(
               radius: 93,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 90,
-                backgroundImage: AssetImage("assets/Profil.jpg"),
+                backgroundImage: NetworkImage(profile_pic ?? "assets/anonyme.png"),
               ),
             ),
           ),

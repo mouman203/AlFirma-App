@@ -503,7 +503,7 @@ void _showSuccessDialog(BuildContext context) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ajouter un Produit Agricole 🌿"),
+        title: const Text("Produit Agricole 🌿"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context), // Back button functionality
