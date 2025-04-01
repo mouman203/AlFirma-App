@@ -20,6 +20,22 @@ class Sidebar extends StatelessWidget {
         child: ListView(
           children: [
             ListTile(
+            leading: Icon(IconlyBold.addUser,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: Text(
+              'Become',
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BecomePage()),
+              );
+            },
+          ),
+            ListTile(
               leading: Icon(IconlyBold.bookmark, 
                   color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
               title: Text(

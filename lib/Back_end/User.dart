@@ -288,6 +288,7 @@ Future<void> signUp({
           'phone': phone,
           'email': email,
           'password': password,
+          'userType':'Client',
           'createdAt': FieldValue.serverTimestamp(),
           'Verify': verify,
         });

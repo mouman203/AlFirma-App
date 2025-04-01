@@ -1,3 +1,4 @@
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Client.dart';
 import 'package:agriplant/Front_end/Sidebar.dart';
 import 'package:agriplant/Front_end/addproduct.dart';
 import 'package:agriplant/Front_end/explore_page.dart';
@@ -9,6 +10,14 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Agriculteur.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Commercant.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Eleveur.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Entreprise.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Expert.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Reparateur.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Transporteur.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Veterinaire.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   final pages = [
     const ExplorePage(),
     const ServicesPage(),
-        const Addproduct(),
+    const AddProductClient(),
     const MessagesPage(),
     const ProfilePage(),
   ];
@@ -55,8 +64,10 @@ class _HomePageState extends State<HomePage> {
       return null;
     }
 
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(user.uid)
+        .get();
 
     return userDoc.exists ? userDoc['first_name'] : null;
   }
@@ -76,14 +87,97 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _refreshPage() async {
-  Navigator.pushReplacement(
-    context,
-    PageRouteBuilder(
-      pageBuilder: (_, __, ___) => const HomePage(),
-      transitionDuration: Duration.zero, // بدون تأثيرات انتقال
-    ),
-  );
-}
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const HomePage(),
+        transitionDuration: Duration.zero, // بدون تأثيرات انتقال
+      ),
+    );
+  }
+
+  Future<String?> getUserTypeFromFirestore() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print("⚠️ No user is logged in!");
+      return null;
+    }
+
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(user.uid)
+        .get();
+
+    return userDoc.exists ? userDoc['userType'] : null; // Fetch 'userType'
+  }
+
+  void navigateToUserPage(BuildContext context) async {
+    String? selectedType = await getUserTypeFromFirestore();
+
+    if (selectedType == null) {
+      print("🚨 User type not found!");
+      return;
+    }
+
+    Widget page;
+    switch (selectedType) {
+      case 'Agriculteur':
+        page = AddProductAgriculteur();
+        print("im $selectedType");
+        break;
+      case 'Éleveur':
+        page = AddProductEleveur();
+        print("im $selectedType");
+        break;
+      case 'Expert Agri':
+        page = AddProductExpert();
+        print("im $selectedType");
+        break;
+      case 'Vétérinaire':
+        page = AddProductVeterinaire();
+        print("im $selectedType");
+        break;
+      case 'Entreprise':
+        page = AddProductEntreprise();
+        print("im $selectedType");
+        break;
+      case 'Commerçant':
+        page = AddProductCommercant();
+        print("im $selectedType");
+        break;
+      case 'Transporteur':
+        page = AddProductTransporteur();
+        print("im $selectedType");
+        break;
+      case 'Reparateur':
+        page = AddProductReparateur();
+        print("im $selectedType");
+        break;
+      default:
+        print("🚨 Unknown userType: $selectedType");
+        return;
+    }
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
+
+  void showMessagePopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("⚠️ Access Restricted"),
+          content: Text("Clients cannot add products."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +207,9 @@ class _HomePageState extends State<HomePage> {
                     style: Theme.of(context).textTheme.titleMedium,
                   )
                 : Text(
-                    userName != null ? "Hi $userName 👋🏼" : "⚠️ No name available",
+                    userName != null
+                        ? "Hi $userName 👋🏼"
+                        : "⚠️ No name available",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
             Text("Enjoy our services",
@@ -138,10 +234,22 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: colorScheme.primary,
         unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
         currentIndex: currentPageIndex,
-        onTap: (index) {
-          setState(() {
-            currentPageIndex = index;
-          });
+        onTap: (index) async {
+          if (index == 2) {
+            // If "Add" icon is clicked
+            String? userType = await getUserTypeFromFirestore();
+
+            if (userType == "Client") {
+              showMessagePopup(); // Show popup if the user is a client
+            } else {
+              navigateToUserPage(context);
+            }
+          } else {
+            setState(() {
+              currentPageIndex = index;
+            });
+          }
+
           _saveLastSelectedPage(index);
         },
         items: const [
@@ -156,9 +264,9 @@ class _HomePageState extends State<HomePage> {
             activeIcon: Icon(IconlyBold.work),
           ),
           BottomNavigationBarItem(
-            icon: Icon(IconlyLight.addUser),
+            icon: Icon(IconlyLight.plus),
             label: "Add",
-            activeIcon: Icon(IconlyBold.buy),
+            activeIcon: Icon(IconlyBold.plus),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.message),

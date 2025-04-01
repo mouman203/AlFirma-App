@@ -1,4 +1,5 @@
 import 'package:agriplant/Front_end/Saved.dart';
+import 'package:agriplant/Front_end/become_page.dart';
 import 'package:agriplant/Front_end/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +31,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _loadUserData() async {
     String userId = _auth.currentUser!.uid;
 
-    DocumentSnapshot userDoc = await _firestore.collection("Users").doc(userId).get();
+    DocumentSnapshot userDoc =
+        await _firestore.collection("Users").doc(userId).get();
 
     if (userDoc.exists) {
       setState(() {
@@ -72,14 +74,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Column(
                       children: [
-                        Text("$followersCount", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text("$followersCount",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                         const Text("Followers"),
                       ],
                     ),
                     const SizedBox(width: 20),
                     Column(
                       children: [
-                        Text("$followingCount", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text("$followingCount",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                         const Text("Following"),
                       ],
                     ),
@@ -90,32 +96,69 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 40),
           ListTile(
-            leading: Icon(IconlyBold.bookmark, color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
-            title: Text('Saved', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+            leading: Icon(IconlyBold.addUser,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: Text(
+              'Become',
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+            ),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const Saved()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BecomePage()),
+              );
             },
           ),
           ListTile(
-            leading: Icon(Icons.settings_sharp, color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
-            title: Text('Settings', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+            leading: Icon(IconlyBold.bookmark,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: Text('Saved',
+                style:
+                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Saved()));
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout_sharp, color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
-            title: Text('Log out', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+            leading: Icon(Icons.settings_sharp,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: Text('Settings',
+                style:
+                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePage()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.logout_sharp,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: Text('Log out',
+                style:
+                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
             onTap: () async {
               GoogleSignIn googleSignIn = GoogleSignIn();
               googleSignIn.disconnect();
               await FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushNamedAndRemoveUntil("login_page", (route) => false);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil("login_page", (route) => false);
             },
           ),
           ListTile(
             title: const Text("About Us"),
-            leading: Icon(Icons.info_outline_rounded, color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+            leading: Icon(Icons.info_outline_rounded,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             onTap: () {},
           ),
         ],

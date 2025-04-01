@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Addproduct extends StatefulWidget {
+//hadi mat5altouch fiha yarhem waldiko;)
+class Addproduct extends StatelessWidget {
   const Addproduct({super.key});
 
   @override
-  State<Addproduct> createState() => _AddproductState();
-}
-
-class _AddproductState extends State<Addproduct> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return AlertDialog(
+      content: Text("You can't add a product for now."),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text("OK"),
+        ),
+      ],
+    );
   }
 }

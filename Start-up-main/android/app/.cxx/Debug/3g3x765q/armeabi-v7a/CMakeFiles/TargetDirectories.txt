@@ -1,2 +1,0 @@
-C:/Users/ELITE COMPUTER/Desktop/Start-up/android/app/.cxx/Debug/3g3x765q/armeabi-v7a/CMakeFiles/edit_cache.dir
-C:/Users/ELITE COMPUTER/Desktop/Start-up/android/app/.cxx/Debug/3g3x765q/armeabi-v7a/CMakeFiles/rebuild_cache.dir
