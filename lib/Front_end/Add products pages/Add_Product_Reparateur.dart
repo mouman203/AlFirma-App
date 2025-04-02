@@ -1,4 +1,3 @@
-import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/Back_end/ProductRep_Trans.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +47,7 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
         categorie: selectedCategorie,
         prix: prixController.text.isNotEmpty
             ? int.tryParse(prixController.text)
-            : 0,
+            : null,
         wilaya: selectedWilaya,
         daira: selectedDaira,
         description: descriptionController.text,
@@ -422,159 +421,178 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: Container(
-                width: double.infinity,
-                height: 180,
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade700),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  width: double.infinity,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.shade700),
+                  ),
+                  child: _image == null
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.camera_alt,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Appuyez pour ajouter une photo",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            _image!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
                 ),
-                child: _image == null
-                    ? const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.camera_alt,
-                              size: 50,
-                              color: Colors.grey,
+              ),
+              const SizedBox(height: 15),
+          
+              //category
+              DropdownButtonFormField<String>(
+                  decoration: _dropdownDecoration("اختر نوع الاصلاح"),
+                  value: selectedCategorie,
+                  items: categories
+                      .map((category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(
+                              category,
                             ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Appuyez pour ajouter une photo",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCategorie = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a categorie';
+                    }
+                    return null;
+                  }),
+              const SizedBox(height: 15),
+          
+              //prix
+          
+              _buildTextField(
+                controller: prixController,
+                hintText: "السعر",
+                icon: Icons.attach_money,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  return null;
+                },
+              ),
+              const SizedBox(height: 15),
+          
+              //wilaya selection
+              DropdownButtonFormField<String>(
+                  value: selectedWilaya,
+                  decoration: _dropdownDecoration("Wilaya"),
+                  items: wilayas.keys
+                      .map(
+                        (wilaya) => DropdownMenuItem(
+                          value: wilaya,
+                          child: Text(wilaya),
                         ),
                       )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          _image!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedWilaya = value;
+                      selectedDaira = null;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a wilaya';
+                    }
+                    return null;
+                  }),
+              const SizedBox(height: 15),
+          
+              if (selectedWilaya != null)
+                DropdownButtonFormField<String>(
+                  value: selectedDaira,
+                  decoration: _dropdownDecoration("Daïra"),
+                  items: wilayas[selectedWilaya]!
+                      .map(
+                        (daira) => DropdownMenuItem(
+                          value: daira,
+                          child: Text(daira),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDaira = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a daira';
+                    }
+                    return null;
+                  },
+                ),
+              const SizedBox(height: 15),
+              _buildTextField(
+                controller: descriptionController,
+                hintText: "Description",
+                icon: Icons.description,
+                maxLines: 4,
+                validator: (value) {
+                  return null;
+                },
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: double.infinity, // Make the button full width
+                height: 50, // Match the height of text fields
+                child: _isLoading
+                    ? Center(child: CircularProgressIndicator()) // Show progress
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          try {
+                            _submitForm();
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Error: $e")),
+                            );
+                          }
+                        },
+                        child: const Text(
+                          "Share",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
                       ),
               ),
-            ),
-            const SizedBox(height: 15),
-
-            //category
-            DropdownButtonFormField<String>(
-              decoration: _dropdownDecoration("اختر نوع النقل"),
-              value: selectedCategorie,
-              items: categories
-                  .map((category) => DropdownMenuItem(
-                        value: category,
-                        child: Text(
-                          category,
-                        ),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCategorie = value;
-                });
-              },
-            ),
-            const SizedBox(height: 15),
-
-            //prix
-
-            _buildTextField(
-              controller: prixController,
-              hintText: "السعر",
-              icon: Icons.attach_money,
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                return null;
-              },
-            ),
-            const SizedBox(height: 15),
-
-            //wilaya selection
-            DropdownButtonFormField<String>(
-              value: selectedWilaya,
-              decoration: _dropdownDecoration("Wilaya"),
-              items: wilayas.keys
-                  .map(
-                    (wilaya) => DropdownMenuItem(
-                      value: wilaya,
-                      child: Text(wilaya),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedWilaya = value;
-                  selectedDaira = null;
-                });
-              },
-            ),
-            const SizedBox(height: 15),
-
-            if (selectedWilaya != null)
-              DropdownButtonFormField<String>(
-                value: selectedDaira,
-                decoration: _dropdownDecoration("Daïra"),
-                items: wilayas[selectedWilaya]!
-                    .map(
-                      (daira) => DropdownMenuItem(
-                        value: daira,
-                        child: Text(daira),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedDaira = value;
-                  });
-                },
-              ),
-            const SizedBox(height: 15),
-            _buildTextField(
-              controller: descriptionController,
-              hintText: "Description",
-              icon: Icons.description,
-              maxLines: 4,
-              validator: (value) {
-                return null;
-              },
-            ),
-            const SizedBox(height: 15),
-            SizedBox(
-              width: double.infinity, // Make the button full width
-              height: 50, // Match the height of text fields
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade700,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  try {
-                    _submitForm();
-                  } catch (e) {
-                    print("error $e");
-                  }
-
-                  print(
-                    "Produit ajouté :$selectedCategorie >, Wilaya: $selectedWilaya, Daïra: $selectedDaira",
-                  );
-                },
-                child: const Text(
-                  "Share",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

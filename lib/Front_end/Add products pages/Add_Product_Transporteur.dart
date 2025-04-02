@@ -402,7 +402,7 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
       },
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
