@@ -37,13 +37,13 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
         produit: selectedProduit,
         quantite: quantiteController.text.isNotEmpty
             ? double.tryParse(quantiteController.text)
-            : null,
+            : 0,
         surface: surfaceController.text.isNotEmpty
         ? double.tryParse(surfaceController.text)
-        : null,
+        : 0,
         prix: prixController.text.isNotEmpty
             ? int.tryParse(prixController.text)
-            : null,
+            : 0,
         wilaya: selectedWilaya,
         daira: selectedDaira,
         description: descriptionController.text,
@@ -56,12 +56,11 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
       _showSuccessDialog(context);
 
       // Clear the form
-      _formKey.currentState!.reset();
-      imageController.clear();
-      surfaceController.clear();
-      prixController.clear();
-      descriptionController.clear();
-
+      if (_formKey.currentState != null) {
+        _formKey.currentState!.reset();
+      } else {
+        print("Form state is null, cannot reset.");
+      }
       setState(() {
         _isLoading = false;
       });

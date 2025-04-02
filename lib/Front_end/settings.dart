@@ -22,53 +22,64 @@ class _SettingsPageState extends State<SettingsPage> {
     final languageProvider = Provider.of<LanguageProvider>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
-        backgroundColor: isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56) // Dark green in dark mode
-            : const Color.fromARGB(255, 42, 103, 34),
-      ),
+          title: const Text('Settings'), backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           // Edit Profile
           ListTile(
             leading: Icon(Icons.person,
-                color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             title: const Text('Edit Profile'),
             trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Edit_profile_page()),
+                MaterialPageRoute(
+                    builder: (context) => const Edit_profile_page()),
               );
             },
           ),
-          const Divider(),
 
           // Dark Mode Toggle
           ListTile(
-            leading: Icon(themeProvider.themeMode == ThemeMode.dark ? Icons.sunny : Icons.dark_mode,
-            color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34),),
-            title: Text(themeProvider.themeMode == ThemeMode.dark ? 'Light Mode' : 'Dark Mode'),
+            leading: Icon(
+              themeProvider.themeMode == ThemeMode.dark
+                  ? Icons.sunny
+                  : Icons.dark_mode,
+              color: isDarkMode
+                  ? Colors.white
+                  : const Color.fromARGB(255, 42, 103, 34),
+            ),
+            title: Text(themeProvider.themeMode == ThemeMode.dark
+                ? 'Light Mode'
+                : 'Dark Mode'),
             trailing: Switch(
-           inactiveThumbColor: const Color.fromARGB(255, 42, 103, 34),
-           activeColor: const Color.fromARGB(255, 133, 159, 133),
-           value: themeProvider.themeMode == ThemeMode.dark,
-           onChanged: (value) {
-              themeProvider.toggleTheme(value);
-                },
-               ),
-             ),
-
-          const Divider(),
+              inactiveThumbColor: const Color.fromARGB(255, 42, 103, 34),
+              activeColor: const Color.fromARGB(255, 133, 159, 133),
+              value: themeProvider.themeMode == ThemeMode.dark,
+              onChanged: (value) {
+                themeProvider.toggleTheme(value);
+              },
+            ),
+          ),
 
           // Language Selection
           ListTile(
             leading: Icon(Icons.language,
-                color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             title: const Text('Language'),
             trailing: DropdownButton<Locale>(
               value: languageProvider.locale,
@@ -97,16 +108,21 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          const Divider(),
 
           // Notifications Toggle
           ListTile(
             leading: Icon(Icons.notifications_active,
-                color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             title: const Text('Enable Notifications'),
             trailing: Switch(
-              inactiveThumbColor: isDarkMode ? const Color.fromARGB(255, 133, 159, 133) : const Color.fromARGB(255, 42, 103, 34),
-              activeColor: isDarkMode ? const Color.fromARGB(255, 133, 159, 133) : const Color.fromARGB(255, 42, 103, 34),
+              inactiveThumbColor: isDarkMode
+                  ? const Color.fromARGB(255, 133, 159, 133)
+                  : const Color.fromARGB(255, 42, 103, 34),
+              activeColor: isDarkMode
+                  ? const Color.fromARGB(255, 133, 159, 133)
+                  : const Color.fromARGB(255, 42, 103, 34),
               value: areNotificationsEnabled,
               onChanged: (value) {
                 setState(() {
@@ -115,24 +131,29 @@ class _SettingsPageState extends State<SettingsPage> {
 
                 // Open notification settings if turned on
                 if (value) {
-                  AppSettings.openAppSettings(type: AppSettingsType.notification);
+                  AppSettings.openAppSettings(
+                      type: AppSettingsType.notification);
                 }
               },
             ),
           ),
-          const Divider(),
 
           // Contact Us
           ListTile(
             leading: Icon(Icons.contact_support,
-                color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             title: const Text('Contact Us'),
             trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Contact_us_page()),
+                MaterialPageRoute(
+                    builder: (context) => const Contact_us_page()),
               );
             },
           ),

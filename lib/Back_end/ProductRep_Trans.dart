@@ -1,26 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Productagri {
+class ProductRep_Trans {
   String? id;
-  String? image;
+  //String? image;
   String? type;
   String? categorie;
-  String? produit;
-  double? quantite; //les lfruits...
-  double? surface; //les terrains
   int? prix;
   String? wilaya;
   String? daira;
   String? description;
 
-  Productagri(
+  ProductRep_Trans(
       {this.id,
-      this.image,
+      //this.image,
       this.type,
       this.categorie,
-      this.produit,
-      this.quantite,
-      this.surface,
       this.prix,
       this.wilaya,
       this.daira,
@@ -30,12 +24,9 @@ class Productagri {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "image": image,
-      "type": type,
+      //"image": image,
+      "type":type,
       "categorie": categorie,
-      "produit": produit,
-      "quantite": quantite,
-      "surface": surface,
       "prix": prix,
       "wilaya": wilaya,
       "daira": daira,
@@ -44,15 +35,12 @@ class Productagri {
   }
 
   // Create an object from Firestore document
-  factory Productagri.fromJson(Map<String, dynamic> json, String id) {
-    return Productagri(
+  factory ProductRep_Trans.fromJson(Map<String, dynamic> json, String id) {
+    return ProductRep_Trans(
       id: json['id'],
-     image: json['image'],
-      type: json['type'],
+      //image: json['image'],
+      type:json['type'],
       categorie: json['categorie'],
-      produit: json['produit'],
-      quantite: (json['quantite'] as num?)?.toDouble(),
-      surface: (json['surface'] as num?)?.toDouble(),
       prix: json['prix'] as int?,
       wilaya: json['wilaya'],
       daira: json['daira'],
@@ -60,12 +48,13 @@ class Productagri {
     );
   }
 
-/// 1**Add a new product to Firestore**
-  Future<void> addProduct(Productagri product) async {
+  /// 1**Add a new product to Firestore**
+  Future<void> addProduct(ProductRep_Trans product) async {
     try {
       final docRef =
-          FirebaseFirestore.instance.collection('Produit_Agricole').doc();
+          FirebaseFirestore.instance.collection('Produit_Rep_Trans').doc();
       product.id = docRef.id; // Auto-generate Firestore document ID
+      
       await docRef.set(product.toJson());
       print("Product added successfully!");
     } catch (e) {
@@ -81,7 +70,7 @@ class Productagri {
         return;
       }
       await FirebaseFirestore.instance
-          .collection('Produit_Agricole')
+          .collection('Produit_Rep_Trans')
           .doc(id)
           .update(toJson());
     } catch (e) {
@@ -97,7 +86,7 @@ class Productagri {
         return;
       }
       await FirebaseFirestore.instance
-          .collection('Produit_Agricole')
+          .collection('Produit_Rep_Trans')
           .doc(id)
           .delete();
     } catch (e) {
@@ -106,29 +95,29 @@ class Productagri {
   }
 
   /// 4**Fetch a product by ID**
-  static Future<Productagri?> getById(String productId) async {
-    try{final doc = await FirebaseFirestore.instance
-        .collection('Produit_Agricole')
-        .doc(productId)
-        .get();
-    if (doc.exists) {
-      return Productagri.fromJson(doc.data()!, doc.id);
-    }
-    return null;}
-    catch (e) {
+  static Future<ProductRep_Trans?> getById(String productId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('Produit_Rep_Trans')
+          .doc(productId)
+          .get();
+      if (doc.exists) {
+        return ProductRep_Trans.fromJson(doc.data()!, doc.id);
+      }
+      return null;
+    } catch (e) {
       print("there is an error in fetching a product $e");
     }
-
   }
 
   /// 5**Fetch all products in real-time**
-  static Stream<List<Productagri>> getAllProducts() {
+  static Stream<List<ProductRep_Trans>> getAllProducts() {
     return FirebaseFirestore.instance
-        .collection('Produit_Agricole')
+        .collection('Produit_Rep_Trans')
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => Productagri.fromJson(doc.data(), doc.id))
+          .map((doc) => ProductRep_Trans.fromJson(doc.data(), doc.id))
           .toList();
     });
   }

@@ -1,4 +1,5 @@
 import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/Back_end/ProductRep_Trans.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,18 +24,31 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
 
   bool _isLoading = false; // To show a loading indicator
 
+  void _resetForm() {
+    _formKey.currentState?.reset();
+    imageController.clear();
+    prixController.clear();
+    descriptionController.clear();
+    setState(() {
+      selectedCategorie = null;
+      selectedWilaya = null;
+      selectedDaira = null; // Reset dropdown value
+    });
+  }
+
   Future<void> _submitForm() async {
-    if (true) {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
       // Create a Product object
-      ProductElev newProduct = ProductElev(
+      ProductRep_Trans newProduct = ProductRep_Trans(
         //image: imageController.text,
+        type: "Reparation",
         categorie: selectedCategorie,
         prix: prixController.text.isNotEmpty
             ? int.tryParse(prixController.text)
-            : null,
+            : 0,
         wilaya: selectedWilaya,
         daira: selectedDaira,
         description: descriptionController.text,
@@ -47,10 +61,7 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
       _showSuccessDialog(context);
 
       // Clear the form
-      _formKey.currentState!.reset();
-      imageController.clear();
-      prixController.clear();
-      descriptionController.clear();
+      _resetForm();
 
       setState(() {
         _isLoading = false;

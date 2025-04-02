@@ -52,38 +52,76 @@ class ProductElev {
     );
   }
 
-/// 1**Add a new product to Firestore**
+ /// 1**Add a new product to Firestore**
   Future<void> addProduct(ProductElev product) async {
-    final docRef = FirebaseFirestore.instance.collection('Produit Elevage').doc();
-    product.id = docRef.id; // Auto-generate Firestore document ID
-    await docRef.set(product.toJson());
+    try {
+      final docRef =
+          FirebaseFirestore.instance.collection('Produit_Elevage').doc();
+      product.id = docRef.id; // Auto-generate Firestore document ID
+      await docRef.set(product.toJson());
+      print("Product added successfully!");
+    } catch (e) {
+      print("Error adding product: $e");
+    }
   }
 
   /// 2**Update an existing product**
   Future<void> updateInFirestore() async {
-    if (id == null) return;
-    await FirebaseFirestore.instance.collection('Produit Elevage').doc(id).update(toJson());
+    try {
+      if (id == null) {
+        print("id $id is null");
+        return;
+      }
+      await FirebaseFirestore.instance
+          .collection('Produit_Elevage')
+          .doc(id)
+          .update(toJson());
+    } catch (e) {
+      print("there is an error in updating an existing product $e");
+    }
   }
 
   /// 3**Delete a product from Firestore**
   Future<void> deleteFromFirestore() async {
-    if (id == null) return;
-    await FirebaseFirestore.instance.collection('Produit Elevage').doc(id).delete();
+    try {
+      if (id == null) {
+        print("id $id is null");
+        return;
+      }
+      await FirebaseFirestore.instance
+          .collection('Produit_Elevage')
+          .doc(id)
+          .delete();
+    } catch (e) {
+      print("there is an error in deleting a product $e");
+    }
   }
 
   /// 4**Fetch a product by ID**
   static Future<ProductElev?> getById(String productId) async {
-    final doc = await FirebaseFirestore.instance.collection('Produit Elevage').doc(productId).get();
+    try{final doc = await FirebaseFirestore.instance
+        .collection('Produit_Elevage')
+        .doc(productId)
+        .get();
     if (doc.exists) {
       return ProductElev.fromJson(doc.data()!, doc.id);
     }
-    return null;
+    return null;}
+    catch (e) {
+      print("there is an error in fetching a product $e");
+    }
+
   }
 
   /// 5**Fetch all products in real-time**
   static Stream<List<ProductElev>> getAllProducts() {
-    return FirebaseFirestore.instance.collection('Produit Elevage').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => ProductElev.fromJson(doc.data(), doc.id)).toList();
+    return FirebaseFirestore.instance
+        .collection('Produit_Elevage')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => ProductElev.fromJson(doc.data(), doc.id))
+          .toList();
     });
   }
 }
