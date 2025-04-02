@@ -1,6 +1,5 @@
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Client.dart';
 import 'package:agriplant/Front_end/Sidebar.dart';
-import 'package:agriplant/Front_end/addproduct.dart';
 import 'package:agriplant/Front_end/explore_page.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
 import 'package:agriplant/Front_end/profile_page.dart';

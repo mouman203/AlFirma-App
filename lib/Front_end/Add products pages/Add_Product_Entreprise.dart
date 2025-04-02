@@ -13,7 +13,7 @@ class _AddProductEntrepriseState extends State<AddProductEntreprise> {
     return Scaffold(
       appBar: AppBar(title: Text('Je suis une entreprise')),
       body: Center(
-        child: Text('Ajouter un produit'),
+        child: Text('yek nrmlm l entreprise t demander brk '),
       ),
     );
   }

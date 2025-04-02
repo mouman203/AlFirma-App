@@ -83,7 +83,7 @@ class MainApp extends StatelessWidget {
     'home_page': (context) => const HomePage(),
     'sign_up_page': (context) => const SignUpPage(),
     'login_page': (context) => const LoginPage(),
-    'settings_page': (context) =>  const Settings(),
+    'settings_page': (context) =>  const SettingsPage(),
   },
     );
 

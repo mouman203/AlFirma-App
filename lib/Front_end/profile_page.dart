@@ -1,6 +1,6 @@
 import 'package:agriplant/Front_end/Saved.dart';
 import 'package:agriplant/Front_end/become_page.dart';
-import 'package:agriplant/Front_end/home_page.dart';
+import 'package:agriplant/Front_end/settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -134,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const HomePage()));
+                  MaterialPageRoute(builder: (context) => const SettingsPage()));
             },
           ),
           ListTile(

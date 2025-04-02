@@ -6,14 +6,14 @@ import 'package:agriplant/Front_end/Contact_us_page.dart';
 import 'package:app_settings/app_settings.dart';
 import 'Edit_profile_page.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
 
   @override
-  _SettingsState createState() => _SettingsState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsPageState extends State<SettingsPage> {
   bool areNotificationsEnabled = true; // Assume notifications are enabled
 
   @override

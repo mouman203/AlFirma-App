@@ -58,7 +58,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
        await Future.delayed(const Duration(seconds: 2));
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Settings()),
+        MaterialPageRoute(builder: (context) => const SettingsPage()),
       );
     } else {
       print("❌ Error: Failed to send email - ${response.body}");

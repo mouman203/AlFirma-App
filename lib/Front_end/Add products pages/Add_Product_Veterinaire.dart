@@ -13,7 +13,7 @@ class _AddProductVeterinaireState extends State<AddProductVeterinaire> {
     return Scaffold(
       appBar: AppBar(title: Text('Je suis un veterinaire')),
       body: Center(
-        child: Text('Ajouter un produit'),
+        child: Text('mm hada .. hada byn wsh ydir .. tsama y demandiwah nass direct'),
       ),
     );
   }

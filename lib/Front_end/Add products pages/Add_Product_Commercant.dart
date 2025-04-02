@@ -13,7 +13,7 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
     return Scaffold(
       appBar: AppBar(title: Text('Je suis un commercant')),
       body: Center(
-        child: Text('Ajouter un produit'),
+        child: Text('mm hada yek y demander brk'),
       ),
     );
   }
