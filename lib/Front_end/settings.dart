@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const Edit_profile_page()),
+                    builder: (context) => const EditProfilePage()),
               );
             },
           ),

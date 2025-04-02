@@ -1,4 +1,5 @@
 import 'package:agriplant/Front_end/Saved.dart';
+import 'package:agriplant/Front_end/Security_page.dart';
 import 'package:agriplant/Front_end/become_page.dart';
 import 'package:agriplant/Front_end/settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -135,6 +136,22 @@ class _ProfilePageState extends State<ProfilePage> {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const SettingsPage()));
+            },
+          ),
+          ListTile(
+            leading: Icon(IconlyBold.hide,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: Text(
+              'Security',
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SecurityPage()),
+              );
             },
           ),
           ListTile(

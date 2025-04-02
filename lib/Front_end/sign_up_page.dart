@@ -83,24 +83,33 @@ class _SignUpPageState extends State<SignUpPage> {
     "Relizane"
   ];
 
- 
-
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
+      appBar: AppBar(
+          title: const Text('Sign Up'),
+          backgroundColor:
+              isDarkMode ? colorScheme.surface : colorScheme.surface,
+           leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pushNamed(context, 'login_page'), // Back button functionality
+        ),),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Text("SIGN UP",
+              Text("WELCOME",
                   style: GoogleFonts.roboto(
                       fontSize: 40, fontWeight: FontWeight.bold)),
               Text("Join our platform and get started",
                   style: GoogleFonts.roboto(
                     fontSize: 18,
                   )),
-              const SizedBox(height: 20),
+              const SizedBox(height: 70),
 
               // firstName field
               _buildTextField(
@@ -139,37 +148,47 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 20),
 
               // Wilaya dropdown
-              Padding( 
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
-                    color:  isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : Colors.green.shade50, // Light green in light mode
+                    color: isDarkMode
+                        ? const Color.fromARGB(
+                            255, 55, 72, 56) // Dark green in dark mode
+                        : Colors.green.shade50, // Light green in light mode
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: DropdownButtonFormField<String>(
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                     ),
-                    hint: Text("Select your Wilaya",style: TextStyle(color: isDarkMode
-            ? Colors.white 
-            : const Color.fromARGB(255, 42, 103, 34),)),
-                    
-                     dropdownColor:  isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : Colors.green.shade50, // Light green in light mode,
+                    hint: Text("Select your Wilaya",
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color.fromARGB(255, 42, 103, 34),
+                        )),
+
+                    dropdownColor: isDarkMode
+                        ? const Color.fromARGB(
+                            255, 55, 72, 56) // Dark green in dark mode
+                        : Colors.green.shade50, // Light green in light mode,
                     value: _selectedWilaya,
-                    icon: Icon(Icons.arrow_drop_down, // Default dropdown arrow icon
-                   color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                    icon: Icon(
+                        Icons.arrow_drop_down, // Default dropdown arrow icon
+                        color: isDarkMode
+                            ? Colors.white
+                            : const Color.fromARGB(255, 42, 103, 34)),
                     items: _wilayas
                         .map((wilaya) => DropdownMenuItem(
                               value: wilaya,
-                              child: Text(wilaya,style: TextStyle(color: isDarkMode
-            ? Colors.white 
-            : const Color.fromARGB(255, 42, 103, 34))),
-
+                              child: Text(wilaya,
+                                  style: TextStyle(
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : const Color.fromARGB(
+                                              255, 42, 103, 34))),
                             ))
                         .toList(),
                     onChanged: (value) {
@@ -208,7 +227,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   });
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 70),
 
               // زر التسجيل
               Padding(
@@ -218,57 +237,65 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-              if (_firstNameController.text.isEmpty ||
-                  _lastNameController.text.isEmpty ||
-                  _emailController.text.isEmpty ||
-                  _phoneController.text.isEmpty ||
-                  _passwordController.text.isEmpty ||
-                  _confirmPasswordController.text.isEmpty) {
-                if (_firstNameController.text.isEmpty) {
-                  firstNameError = "يرجى إدخال الاسم";
-                }
-                if (_lastNameController.text.isEmpty) {
-                  lastNameError = "يرجى إدخال اللقب";
-                }
-                if (_emailController.text.isEmpty) {
-                  emailError = "يرجى إدخال البريد الإلكتروني";
-                }
-                if (_phoneController.text.isEmpty) {
-                  phoneError = "يرجى إدخال رقم الهاتف";
-                }
-                if (_passwordController.text.isEmpty) {
-                  passwordError = "يرجى إدخال كلمة المرور";
-                }
-                if (_confirmPasswordController.text.isEmpty) {
-                  confirmPasswordError = "يرجى تأكيد كلمة المرور";
-                }
-                return;
-              } else if (!user.isEmailValid(_emailController.text)) {
-                emailError = "البريد الإلكتروني غير صالح";
-              } else if (!user.isPasswordValid(_passwordController.text)) {
-                passwordError = "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل";
-              } else if (_passwordController.text != _confirmPasswordController.text) {
-                confirmPasswordError = "كلمة المرور غير متطابقة";
-              } else if (!user.isPhoneValid(_phoneController.text)) {
-                phoneError = "رقم الهاتف غير صالح";
-              } else {
-                      user.signUp(
-                        context: context,
-                        email: _emailController.text,
-                        password: _passwordController.text,
-                        confirmationpassword : _confirmPasswordController.text,
-                        phone: _phoneController.text,
-                        wilaya: _selectedWilaya ?? '',
-                        destPage: const HomePage(), // Assuming HomePage is a Widget
-                        first_name: _firstNameController.text,
-                        last_name: _lastNameController.text,
-                        verify: false,
-                      );
-                    }});},
+                        if (_firstNameController.text.isEmpty ||
+                            _lastNameController.text.isEmpty ||
+                            _emailController.text.isEmpty ||
+                            _phoneController.text.isEmpty ||
+                            _passwordController.text.isEmpty ||
+                            _confirmPasswordController.text.isEmpty) {
+                          if (_firstNameController.text.isEmpty) {
+                            firstNameError = "يرجى إدخال الاسم";
+                          }
+                          if (_lastNameController.text.isEmpty) {
+                            lastNameError = "يرجى إدخال اللقب";
+                          }
+                          if (_emailController.text.isEmpty) {
+                            emailError = "يرجى إدخال البريد الإلكتروني";
+                          }
+                          if (_phoneController.text.isEmpty) {
+                            phoneError = "يرجى إدخال رقم الهاتف";
+                          }
+                          if (_passwordController.text.isEmpty) {
+                            passwordError = "يرجى إدخال كلمة المرور";
+                          }
+                          if (_confirmPasswordController.text.isEmpty) {
+                            confirmPasswordError = "يرجى تأكيد كلمة المرور";
+                          }
+                          return;
+                        } else if (!user.isEmailValid(_emailController.text)) {
+                          emailError = "البريد الإلكتروني غير صالح";
+                        } else if (!user
+                            .isPasswordValid(_passwordController.text)) {
+                          passwordError =
+                              "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل";
+                        } else if (_passwordController.text !=
+                            _confirmPasswordController.text) {
+                          confirmPasswordError = "كلمة المرور غير متطابقة";
+                        } else if (!user.isPhoneValid(_phoneController.text)) {
+                          phoneError = "رقم الهاتف غير صالح";
+                        } else {
+                          user.signUp(
+                            context: context,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            confirmationpassword:
+                                _confirmPasswordController.text,
+                            phone: _phoneController.text,
+                            wilaya: _selectedWilaya ?? '',
+                            destPage:
+                                const HomePage(), // Assuming HomePage is a Widget
+                            first_name: _firstNameController.text,
+                            last_name: _lastNameController.text,
+                            verify: false,
+                          );
+                        }
+                      });
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : const Color.fromARGB(255, 44, 107, 36),
+                          ? const Color.fromARGB(
+                              255, 55, 72, 56) // Dark green in dark mode
+                          : const Color.fromARGB(255, 44, 107, 36),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -280,17 +307,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  // Navigate back to SignInPage
-                  Navigator.pushNamed(context, 'login_page');
-                },
-                child: Text('Back to Sign In',
-                    style: TextStyle(color: isDarkMode
-            ? Colors.white 
-            : const Color.fromARGB(255, 42, 103, 34), fontSize: 17)),
-              ),
+             
             ],
           ),
         ),
@@ -305,21 +322,24 @@ class _SignUpPageState extends State<SignUpPage> {
     required String hintText,
     String? errorText,
   }) {
-     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Container(
         decoration: BoxDecoration(
-          color:  isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : Colors.green.shade50, // Light green in light mode
+          color: isDarkMode
+              ? const Color.fromARGB(255, 55, 72, 56) // Dark green in dark mode
+              : Colors.green.shade50, // Light green in light mode
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(icon,color: isDarkMode ? Colors.white :const Color.fromARGB(255, 42, 103, 34)),
+              Icon(icon,
+                  color: isDarkMode
+                      ? Colors.white
+                      : const Color.fromARGB(255, 42, 103, 34)),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
@@ -327,9 +347,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
-                    hintStyle: TextStyle(color: isDarkMode
-                              ? Colors.white 
-                              : const Color.fromARGB(255, 42, 103, 34),),
+                    hintStyle: TextStyle(
+                      color: isDarkMode
+                          ? Colors.white
+                          : const Color.fromARGB(255, 42, 103, 34),
+                    ),
                     errorText: errorText,
                   ),
                 ),
@@ -348,21 +370,24 @@ class _SignUpPageState extends State<SignUpPage> {
     String? errorText,
     required VoidCallback toggleObscure,
   }) {
-     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Container(
         decoration: BoxDecoration(
           color: isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : Colors.green.shade50, // Light green in light mode,
+              ? const Color.fromARGB(255, 55, 72, 56) // Dark green in dark mode
+              : Colors.green.shade50, // Light green in light mode,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(Icons.lock,color: isDarkMode ? Colors.white :const Color.fromARGB(255, 42, 103, 34)),
+              Icon(Icons.lock,
+                  color: isDarkMode
+                      ? Colors.white
+                      : const Color.fromARGB(255, 42, 103, 34)),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
@@ -374,9 +399,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     errorText: errorText,
                     suffixIcon: IconButton(
                       icon: Icon(
-                        obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: isDarkMode ? Colors.white :const Color.fromARGB(255, 42, 103, 34)
-                      ),
+                          obscureText ? Icons.visibility_off : Icons.visibility,
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color.fromARGB(255, 42, 103, 34)),
                       onPressed: toggleObscure,
                     ),
                   ),
