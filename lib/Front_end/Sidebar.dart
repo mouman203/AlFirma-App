@@ -1,3 +1,4 @@
+import 'package:agriplant/Front_end/Security_page.dart';
 import 'package:agriplant/Front_end/become_page.dart';
 import 'package:agriplant/Front_end/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,6 +65,22 @@ class Sidebar extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+            leading: Icon(IconlyBold.shieldFail,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: Text(
+              'Security',
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SecurityPage()),
+              );
+            },
+          ),
             ListTile(
               leading: Icon(Icons.logout_sharp, 
                   color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),

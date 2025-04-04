@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SecurityPage extends StatefulWidget {
@@ -8,64 +10,90 @@ class SecurityPage extends StatefulWidget {
 }
 
 class _SecurityPageState extends State<SecurityPage> {
+  String? email;
+  String? phone;
 
-  //show email options
+  // Show dialog to update email and phone num
+  void Email_PhoneUpdateDialog(String val, context) {
+    TextEditingController _emailController = TextEditingController();
 
-void _showEmailOptions() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text("Email Options"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.edit, color:Color.fromARGB(255, 42, 103, 34)),
-                title: Text("Change Email"),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
-                title: Text("Delete Email"),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: val == "Email"
+              ? Text("Update Email")
+              : Text("Update Phone Number"),
+          content: TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText:
+                  val == "Email" ? "Enter new email" : "Enter new Phone num",
+              border: OutlineInputBorder(),
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Close dialog
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                
+                Navigator.pop(context);
+              },
+              child: Text("Submit"),
+            ),
+          ],
         );
       },
     );
   }
 
- //show change phone number
-
-void _showPhoneNumOptions() {
+//show email and phone num options
+  void Email_PhoneOptions(String val) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text("Phone Number Options"),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: val == "Email"
+              ? Text("Email Options")
+              : Text("Phone Number Options"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.edit, color:Color.fromARGB(255, 42, 103, 34)),
-                title: Text("Change Phone Num"),
+                leading:
+                    Icon(Icons.edit, color: Color.fromARGB(255, 42, 103, 34)),
+                title: val == "Email"
+                    ? Text("Change Email")
+                    : Text("Change Phone Number"),
                 onTap: () {
                   Navigator.pop(context);
+                  val == "Email"
+                      ? Email_PhoneUpdateDialog("Email", context)
+                      : Email_PhoneUpdateDialog("Phone", context);
+                  print("hello");
                 },
               ),
               ListTile(
                 leading: Icon(Icons.delete, color: Colors.red),
-                title: Text("Delete Phone Num"),
-                onTap: () {
+                title: val == "Email"
+                    ? Text("Delete Email")
+                    : Text("Delete Phone Number"),
+                 onTap: () {
                   Navigator.pop(context);
+                  val == "Email"
+                      ? _showDeletingAccMsg("Email")
+                      : _showDeletingAccMsg("Phone Number");
+                  print("hello");
                 },
               ),
             ],
@@ -76,12 +104,13 @@ void _showPhoneNumOptions() {
   }
 
   //show changing password
- void _showChangePasswordDialog() {
+  void _showChangePasswordDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Text("Change Password"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -105,7 +134,7 @@ void _showPhoneNumOptions() {
                   ),
                 ),
               ),
-               SizedBox(height: 10), // Add space between the text fields
+              SizedBox(height: 10), // Add space between the text fields
               TextField(
                 obscureText: true,
                 decoration: InputDecoration(
@@ -123,7 +152,7 @@ void _showPhoneNumOptions() {
               child: Text("Cancel"),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () { Navigator.pop(context);},
               child: Text("Submit"),
             ),
           ],
@@ -132,42 +161,71 @@ void _showPhoneNumOptions() {
     );
   }
 
-  void _showDeletingAccMsg() {
+  //show deleting Account msg
+  void _showDeletingAccMsg(String val) {
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(
-          'Attention ⚠️',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.red, // Optional: You can change the text color
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to delete this account?',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black, // Optional: You can change the text color
-          ),
-        ),
-           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text("Submit"),
-            ),
-          ],
-        );
-      },
-    );
+        context: context,
+        builder: (context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                title: Text(
+                  'Attention ⚠️',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color:
+                        Colors.red, // Optional: You can change the text color
+                  ),
+                ),
+                content: val == "Account" ? Text(
+                  'Are you sure you want to delete this account?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color:
+                        Colors.black, // Optional: You can change the text color
+                  ),
+                ):Text(
+                  'Are you sure you want to delete the $val ?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color:
+                        Colors.black, // Optional: You can change the text color
+                  ),
+                ),actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () { Navigator.pop(context);},
+                    child: Text("Submit"),
+                  ),
+                ],
+              );
+          
+        });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection("Users").doc(userId).get();
+
+    if (userDoc.exists) {
+      setState(() {
+        email = userDoc["email"];
+        phone = userDoc["phone"];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,46 +235,78 @@ void _showPhoneNumOptions() {
       ),
       body: ListView(
         children: [
-          //authentication card
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Text(
-              "Contact Information",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green.shade900),
-            ),
-          ),
-
           Card(
             margin: const EdgeInsets.all(8.0),
-            child: Column(
-              children:  [
-                ListTile(
-                  leading: Icon(Icons.email, color: Color.fromARGB(255, 42, 103, 34)),
-                  title: Text("Email"),
-                  subtitle: Text("example@email.com"),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                  onTap: _showEmailOptions,
-                ),
-                ListTile(
-                  leading: Icon(Icons.phone, color: const Color.fromARGB(255, 42, 103, 34)),
-                  title: Text("Phone"),
-                  subtitle: Text("+213 123 456 789"),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                  onTap: _showPhoneNumOptions,
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  // Profile Image on the Left
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      "assets/Security.png",
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+
+                  // Text and Security Level Card on the Right
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        ListTile(
+                          title: Text(
+                              "Enable multiple autherntification methods to enhace your account security"),
+                        ),
+
+                        // Small Card for Security Level
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Card(
+                            color: Colors
+                                .orange.shade100, // Change color based on level
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 15),
+                              child: Text(
+                                "Medium Security", // Change dynamically
+                                style: TextStyle(
+                                  color: Colors.orange.shade900,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
-          SizedBox(height: 20,),
-
-
-          //security card
-Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          SizedBox(
+            height: 30,
+          ),
+          //authentication card
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Text(
-              "Security Card",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green.shade900),
+              "Contact Information",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade900),
             ),
           ),
 
@@ -225,39 +315,86 @@ Padding(
             child: Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.lock, color: const Color.fromARGB(255, 42, 103, 34)),
-                  title: Text("Change Password"),
+                  leading: Icon(Icons.email,
+                      color: Color.fromARGB(255, 42, 103, 34)),
+                  title: Text("email"),
+                  subtitle: Text("$email"),
                   trailing: Icon(Icons.arrow_forward_ios),
-                   onTap: _showChangePasswordDialog,
+                  onTap: () => Email_PhoneOptions("Email"),
+                ),
+                ListTile(
+                  leading: Icon(Icons.phone,
+                      color: const Color.fromARGB(255, 42, 103, 34)),
+                  title: Text("Phone"),
+                  subtitle: Text("$phone"),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => Email_PhoneOptions("Phone"),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20,),
 
-          //account management card
-Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          SizedBox(
+            height: 30,
+          ),
+
+          //security card
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Text(
-              "Account Management",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green.shade900),
+              "Security Card",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade900),
             ),
           ),
 
           Card(
             margin: const EdgeInsets.all(8.0),
             child: Column(
-              children:  [
+              children: [
                 ListTile(
-                  leading: Icon(Icons.delete, color: Colors.red),
-                  title: Text("Delete Account'"),
+                  leading: Icon(Icons.lock,
+                      color: const Color.fromARGB(255, 42, 103, 34)),
+                  title: Text("Change Password"),
                   trailing: Icon(Icons.arrow_forward_ios),
-                  onTap: _showDeletingAccMsg,
+                  onTap: _showChangePasswordDialog,
                 ),
               ],
             ),
           ),
-          
+          SizedBox(
+            height: 30,
+          ),
+
+          //account management card
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Text(
+              "Account Management",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade900),
+            ),
+          ),
+
+          Card(
+            margin: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.delete, color: Colors.red),
+                  title: Text("Delete Account"),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap:()=>_showDeletingAccMsg("Account"),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

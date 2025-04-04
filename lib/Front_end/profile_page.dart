@@ -139,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: Icon(IconlyBold.hide,
+            leading: Icon(IconlyBold.shieldFail,
                 color: isDarkMode
                     ? Colors.white
                     : const Color.fromARGB(255, 42, 103, 34)),
