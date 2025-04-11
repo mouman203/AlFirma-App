@@ -1,89 +1,130 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'Product.dart';
 
-class Productagri {
-  String? id;
-  String? image;
+class Productagri extends Product{
   String? type;
-  String? categorie;
+  String? category;
+  String? unite;
   String? produit;
   double? quantite; //les lfruits...
   double? surface; //les terrains
-  int? prix;
   String? wilaya;
   String? daira;
-  String? description;
 
-  Productagri(
-      {this.id,
-      this.image,
-      this.type,
-      this.categorie,
-      this.produit,
-      this.quantite,
-      this.surface,
-      this.prix,
-      this.wilaya,
-      this.daira,
-      this.description});
+  Productagri({
+    required String id,
+    required String name,
+    required String typeProduct,
+    required double price,
+    required String description,
+    required int rate,
+    required String ownerId,
+    required List<Map<String, dynamic>> comments,
+    required List<String> photos,
+    required List<String> liked,
+    required List<String> disliked,
+    this.type,
+    this.category,
+    this.unite,
+    this.produit,
+    this.quantite,
+    this.surface,
+    this.wilaya,
+    this.daira,
+  }) : super(
+          id: id,
+          name: name,
+          typeProduct:typeProduct,
+          price: price,
+          description: description,
+          rate: rate,
+          ownerId: ownerId,
+          comments: comments,
+          photos: photos,
+          liked: liked,
+          disliked: disliked,
+        );
+      
 
 // Convert object to a Firestore-compatible map
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "image": image,
-      "type": type,
-      "categorie": categorie,
-      "produit": produit,
-      "quantite": quantite,
-      "surface": surface,
-      "prix": prix,
-      "wilaya": wilaya,
-      "daira": daira,
-      "description": description,
-    };
-  }
+Map<String, dynamic> toJson() {
+  final data = {
+    "id": id,
+    "name": name,
+    "typeProduct": typeProduct,
+    "price": price,
+    "description": description,
+    "rate": rate,
+    "ownerId": ownerId,
+    "comments": comments,
+    "unite": unite,
+    "photos": photos,
+    "liked": liked,
+    "disliked": disliked,
+    "type": type,
+    "category": category,
+    "produit": produit,
+    "quantite": quantite,
+    "surface": surface,
+    "wilaya": wilaya,
+    "daira": daira,
+  };
+  return data;
+}
 
   // Create an object from Firestore document
-  factory Productagri.fromJson(Map<String, dynamic> json, String id) {
-    return Productagri(
-      id: json['id'],
-     image: json['image'],
-      type: json['type'],
-      categorie: json['categorie'],
-      produit: json['produit'],
-      quantite: (json['quantite'] as num?)?.toDouble(),
-      surface: (json['surface'] as num?)?.toDouble(),
-      prix: json['prix'] as int?,
-      wilaya: json['wilaya'],
-      daira: json['daira'],
-      description: json['description'],
-    );
-  }
+ factory Productagri.fromJson(Map<String, dynamic> json, String id) {
+  return Productagri(
+    id: id,
+    name: json['name'],
+    typeProduct: json['typeProduct']?? "AgricolProduct",
+    price: (json['price'] as num).toDouble(),
+    description: json['description'],
+    rate: json['rate'] ?? 0,
+    ownerId: json['ownerId'] ?? '',
+    comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
+    unite: json['unite'] ?? '',
+    photos: List<String>.from(json['photos'] ?? []),
+    liked: List<String>.from(json['liked'] ?? []),
+    disliked: List<String>.from(json['disliked'] ?? []),
+    type: json['type'],
+    category: json['category'],
+    produit: json['produit'],
+    quantite: (json['quantite'] as num?)?.toDouble(),
+    surface: (json['surface'] as num?)?.toDouble(),
+    wilaya: json['wilaya'],
+    daira: json['daira'],
+  );
+}
+
 
 /// 1**Add a new product to Firestore**
   Future<void> addProduct(Productagri product) async {
-    try {
-      final docRef =
-          FirebaseFirestore.instance.collection('Produit_Agricole').doc();
-      product.id = docRef.id; // Auto-generate Firestore document ID
-      await docRef.set(product.toJson());
-      print("Product added successfully!");
-    } catch (e) {
-      print("Error adding product: $e");
-    }
+  try {
+    final docRef =
+          FirebaseFirestore.instance
+    .collection('Products') // Collection رئيسي
+    .doc('Agricol_products') // Document داخلي
+    .collection('Agricol_products') // Collection فرعي
+    .doc(); // توليد وثيقة جديدة أو تحديد وثيقة
+    product.id = docRef.id;
+    await docRef.set(product.toJson());
+    print("✅ Product added successfully!");
+  } catch (e) {
+    print("❌ Error adding product: $e");
   }
+}
 
   /// 2**Update an existing product**
   Future<void> updateInFirestore() async {
     try {
-      if (id == null) {
-        print("id $id is null");
-        return;
-      }
       await FirebaseFirestore.instance
-          .collection('Produit_Agricole')
-          .doc(id)
-          .update(toJson());
+  .collection('Products') // Collection رئيسي
+  .doc('Agricol_products') // Document وسيط
+  .collection('Agricol_products') // Collection فرعي
+  .doc(id) // الوثيقة اللي تحب تحدثها
+  .update(toJson());
+
     } catch (e) {
       print("there is an error in updating an existing product $e");
     }
@@ -92,39 +133,26 @@ class Productagri {
   /// 3**Delete a product from Firestore**
   Future<void> deleteFromFirestore() async {
     try {
-      if (id == null) {
-        print("id $id is null");
-        return;
-      }
       await FirebaseFirestore.instance
-          .collection('Produit_Agricole')
-          .doc(id)
-          .delete();
+      .collection('Products')
+      .doc('Agricol_products')
+      .collection('Agricol_products')
+      .doc(id)
+      .delete();
+
     } catch (e) {
       print("there is an error in deleting a product $e");
     }
   }
 
   /// 4**Fetch a product by ID**
-  static Future<Productagri?> getById(String productId) async {
-    try{final doc = await FirebaseFirestore.instance
-        .collection('Produit_Agricole')
-        .doc(productId)
-        .get();
-    if (doc.exists) {
-      return Productagri.fromJson(doc.data()!, doc.id);
-    }
-    return null;}
-    catch (e) {
-      print("there is an error in fetching a product $e");
-    }
-
-  }
 
   /// 5**Fetch all products in real-time**
   static Stream<List<Productagri>> getAllProducts() {
     return FirebaseFirestore.instance
-        .collection('Produit_Agricole')
+        .collection('Products')
+        .doc('Agricol_products')
+        .collection('Agricol_products')
         .snapshots()
         .map((snapshot) {
       return snapshot.docs

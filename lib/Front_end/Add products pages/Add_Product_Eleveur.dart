@@ -1,4 +1,6 @@
 import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,7 +22,6 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
   final TextEditingController quantiteController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  File? _image;
 
   bool _isLoading = false; // To show a loading indicator
 
@@ -45,20 +46,27 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
       });
       // Create a Product object
       ProductElev newProduct = ProductElev(
-        //image: imageController.text,
-        categorie: selectedCategorie,
-        produit: selectedProduit,
-        quantite: quantiteController.text.isNotEmpty
-            ? double.tryParse(quantiteController.text)
-            : null,
-        prix: prixController.text.isNotEmpty
-            ? int.tryParse(prixController.text)
-            : null,
-        wilaya: selectedWilaya,
-        daira: selectedDaira,
-        description: descriptionController.text,
-      );
-
+  id: UniqueKey().toString(), // أو استخدم UUID
+  name: selectedProduit ?? '', // أو أي اسم تختاره
+  typeProduct: "EleveurProduct", // أو أي اسم تختاره
+  price: prixController.text.isNotEmpty
+      ? double.tryParse(prixController.text) ?? 0.0
+      : 0.0,
+  description: descriptionController.text,
+  rate: 0,
+  ownerId: FirebaseAuth.instance.currentUser?.uid,
+  comments: [],
+  photos: uploadedPhotos, // قائمة روابط الصور من Firebase Storage
+  liked: [],
+  disliked: [],
+  category: selectedCategorie,
+  produit: selectedProduit,
+  quantite: quantiteController.text.isNotEmpty
+      ? double.tryParse(quantiteController.text)
+      : null,
+  wilaya: selectedWilaya,
+  daira: selectedDaira,
+);
       // Add to Firestore
       await newProduct.addProduct(newProduct);
 
@@ -417,17 +425,33 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
 
   String? selectedWilaya;
   String? selectedDaira;
+  List<XFile> _selectedImages = [];
+  List<String> uploadedPhotos = [];
 
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+
+Future<void> _pickImages() async {
+  final List<XFile>? images = await ImagePicker().pickMultiImage();
+
+  if (images != null && images.isNotEmpty) {
+    setState(() {
+      _selectedImages = images;
+    });
+
+    // رفع الصور إلى Firebase Storage
+    for (var image in _selectedImages) {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final storageRef = FirebaseStorage.instance.ref().child('product_images/$fileName');
+
+      try {
+        await storageRef.putFile(File(image.path));
+        String downloadUrl = await storageRef.getDownloadURL();
+        uploadedPhotos.add(downloadUrl);
+      } catch (e) {
+        print("❌ Error uploading image: $e");
+      }
     }
   }
+}
 
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -464,43 +488,44 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  width: double.infinity,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green.shade700),
-                  ),
-                  child: _image == null
-                      ? const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.camera_alt,
-                                size: 50,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Appuyez pour ajouter une photo",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            _image!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
+  onTap: _pickImages,
+  child: Container(
+    height: 180,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.green),
+      color: Colors.green.shade50,
+    ),
+    child: _selectedImages.isEmpty
+        ? const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.photo_library, size: 50, color: Colors.grey),
+                SizedBox(height: 8),
+                Text("Tap to select images", style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          )
+        : ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _selectedImages.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.file(
+                  File(_selectedImages[index].path),
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
                 ),
-              ),
+              );
+            },
+          ),
+  ),
+),
+
               const SizedBox(height: 15),
 
               //category

@@ -455,7 +455,10 @@ class Users {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
 
     DocumentReference productRef =
-        FirebaseFirestore.instance.collection('Products').doc(product.id);
+        FirebaseFirestore.instance.collection('Products')
+        .doc("Agricol_products")
+        .collection("Agricol_products")
+        .doc(product.id);
 
     try {
       // جلب البيانات المحدثة قبل التعديل
@@ -491,7 +494,8 @@ class Users {
   void dislikeProduct(Product product) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
     DocumentReference productRef =
-        FirebaseFirestore.instance.collection('Products').doc(product.id);
+        FirebaseFirestore.instance.collection('Products').doc("Agricol_products")
+        .collection("Agricol_products").doc(product.id);
 
     try {
       // جلب البيانات المحدثة من Firestore
@@ -524,48 +528,72 @@ class Users {
   }
 
   Future<void> addComment(
-      String productId, String userId, String commentText) async {
-    try {
-      DocumentReference productRef =
-          FirebaseFirestore.instance.collection('Products').doc(productId);
+  String productId,
+  String userId,
+  String commentText,
+  String typeProduct, // تمرير نوع المنتج: "AgricolProduct" أو "EleveurProduct"
+) async {
+  try {
+    // تحديد المسار بناءً على نوع المنتج
+    String docPath = typeProduct == "AgricolProduct"
+        ? "Agricol_products"
+        : "Eleveur_products";
 
-      Map<String, String> newComment = {"userId": userId, "text": commentText};
+    DocumentReference productRef = FirebaseFirestore.instance
+        .collection('Products')
+        .doc(docPath)
+        .collection(docPath)
+        .doc(productId);
 
-      // 🔥 إضافة التعليق مباشرةً دون الحاجة لجلب البيانات أولًا
-      await productRef.update({
-        "comments": FieldValue.arrayUnion([newComment])
-      });
+    Map<String, String> newComment = {
+      "userId": userId,
+      "text": commentText,
+    };
 
-      print("✅ تم إضافة التعليق بنجاح!");
-    } catch (e) {
-      print("⚠️ خطأ أثناء إضافة التعليق: $e");
-    }
+    await productRef.update({
+      "comments": FieldValue.arrayUnion([newComment])
+    });
+
+    print("✅ تم إضافة التعليق بنجاح!");
+  } catch (e) {
+    print("⚠️ خطأ أثناء إضافة التعليق: $e");
   }
+}
+
 
   Future<void> deleteComment(
-      String productId, String userId, String text) async {
-    try {
-      // الوصول إلى مستند المنتج
-      var productDoc =
-          FirebaseFirestore.instance.collection('Products').doc(productId);
+  String productId,
+  String userId,
+  String text,
+  String typeProduct, // تمرير نوع المنتج
+) async {
+  try {
+    // تحديد المسار بناءً على نوع المنتج
+    String docPath = typeProduct == "AgricolProduct"
+        ? "Agricol_products"
+        : "Eleveur_products";
 
-      // تحديث الحقل "comments" بإزالة التعليق الذي يحتوي على userId و text
-      await productDoc.update({
-        'comments': FieldValue.arrayRemove([
-          {'userId': userId, 'text': text}
-        ]),
-      });
+    DocumentReference productRef = FirebaseFirestore.instance
+        .collection('Products')
+        .doc(docPath)
+        .collection(docPath)
+        .doc(productId);
 
-      // إذا تم الحذف بنجاح
-      print("Comment deleted successfully.");
-    } catch (e) {
-      // إذا حدث خطأ
-      print("Error deleting comment: $e");
-    }
+    await productRef.update({
+      'comments': FieldValue.arrayRemove([
+        {'userId': userId, 'text': text}
+      ]),
+    });
+
+    print("✅ تم حذف التعليق بنجاح.");
+  } catch (e) {
+    print("⚠️ خطأ أثناء حذف التعليق: $e");
   }
+}
+
 
   void showDeleteConfirmationDialog(
-      BuildContext context, String productId, String userId, String text) {
+      BuildContext context, String productId, String userId, String text ,String typeProduct) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -581,7 +609,7 @@ class Users {
             ),
             TextButton(
               onPressed: () {
-                deleteComment(productId, userId, text); // تنفيذ الحذف
+                deleteComment(productId, userId, text,typeProduct); // تنفيذ الحذف
                 Navigator.of(context).pop(); // إغلاق مربع الحوار
               },
               child: const Text("حذف", style: TextStyle(color: Colors.red)),

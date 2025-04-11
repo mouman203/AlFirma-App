@@ -95,20 +95,7 @@ class ProductRep_Trans {
   }
 
   /// 4**Fetch a product by ID**
-  static Future<ProductRep_Trans?> getById(String productId) async {
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('Produit_Rep_Trans')
-          .doc(productId)
-          .get();
-      if (doc.exists) {
-        return ProductRep_Trans.fromJson(doc.data()!, doc.id);
-      }
-      return null;
-    } catch (e) {
-      print("there is an error in fetching a product $e");
-    }
-  }
+
 
   /// 5**Fetch all products in real-time**
   static Stream<List<ProductRep_Trans>> getAllProducts() {

@@ -1,4 +1,5 @@
 import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Product%20detaille/product_details_page.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class ProductCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(product.photos[0]),
+                    image: NetworkImage(product.photos[0]),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -75,24 +76,34 @@ class ProductCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                  text: "\$${product.price}",
-                                  style: Theme.of(context).textTheme.bodyLarge),
-                              TextSpan(
-                                  text: "/${product.unite}",
-                                  style: Theme.of(context).textTheme.bodySmall),
-                            ],
-                          ),
-                        ),
+                       RichText(
+  text: TextSpan(
+    children: [
+      TextSpan(
+        text: "\$${product.price}",
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      if (product is Productagri)
+        TextSpan(
+          text: "/${(product as Productagri).unite}",
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+    ],
+  ),
+),
+
                       ],
                     ),
                   ),
                   StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection('Products')
+                  .collection('Products') // Collection name
+                  .doc(product.typeProduct == "AgricolProduct"
+                  ? "Agricol_products"
+                  : "Eleveur_products")
+                  .collection(product.typeProduct == "AgricolProduct"
+                  ? "Agricol_products"
+                  : "Eleveur_products")
                   .doc(product.id)
                   .snapshots(),
               builder: (context, snapshot) {

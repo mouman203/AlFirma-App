@@ -1,4 +1,6 @@
 import 'package:agriplant/Back_end/ProductAgri.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -19,7 +21,6 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
   final TextEditingController surfaceController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  File? _image;
 
   bool _isLoading = false; // To show a loading indicator
 
@@ -39,45 +40,101 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
     });
   }
 
+ // هذا المتغير سيحمل رابط الصورة بعد الرفع
+
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-      // Create a Product object
-      Productagri newProduct = Productagri(
-        image: imageController.text,
-        type: selectedPrimaryCategory,
-        categorie: selectedCategorie,
-        produit: selectedProduit,
-        quantite: quantiteController.text.isNotEmpty
-            ? double.tryParse(quantiteController.text)
-            : null,
-        surface: surfaceController.text.isNotEmpty
-            ? double.tryParse(surfaceController.text)
-            : null,
-        prix: prixController.text.isNotEmpty
-            ? int.tryParse(prixController.text)
-            : null,
-        wilaya: selectedWilaya,
-        daira: selectedDaira,
-        description: descriptionController.text,
+  if (_formKey.currentState!.validate()) {
+    if (uploadedPhotos == []) {
+      // منع الإرسال بدون صورة
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("📸 الرجاء تحميل صورة المنتج أولًا")),
       );
+      return;
+    }
 
-      // Add to Firestore
-      await newProduct.addProduct(newProduct);
+    setState(() {
+      _isLoading = true;
+    });
 
-      // Show success message
-      _showSuccessDialog(context);
+    Productagri newProduct = Productagri(
+      id: "", // سيتم تعيينه تلقائيًا في Firestore
+      name: selectedProduit ?? '',
+      typeProduct: "AgricolProduct",
+      price: prixController.text.isNotEmpty ? double.tryParse(prixController.text)! : 0.0,
+      description: descriptionController.text,
+      rate: 0,
+      ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
+      comments: [],
+      unite: selectedUnite ?? '',
+      photos: uploadedPhotos, // ✅ استخدام رابط الصورة هنا
+      liked: [],
+      disliked: [],
+      type: selectedPrimaryCategory,
+      category: selectedCategorie,
+      produit: selectedProduit,
+      quantite: quantiteController.text.isNotEmpty
+          ? double.tryParse(quantiteController.text)
+          : null,
+      surface: surfaceController.text.isNotEmpty
+          ? double.tryParse(surfaceController.text)
+          : null,
+      wilaya: selectedWilaya,
+      daira: selectedDaira,
+    );
 
-      // Clear the form
-      _resetForm();
+    await newProduct.addProduct(newProduct);
+    _showSuccessDialog(context);
+    _resetForm();
 
-      setState(() {
-        _isLoading = false;
-      });
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+
+Future<String?> uploadImageToFirebase(File imageFile) async {
+  try {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference ref = FirebaseStorage.instance.ref().child('product_images/$fileName');
+
+    UploadTask uploadTask = ref.putFile(imageFile);
+    TaskSnapshot snapshot = await uploadTask;
+
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  } catch (e) {
+    print('❌ فشل في رفع الصورة: $e');
+    return null;
+  }
+}
+List<XFile> _selectedImages = [];
+  List<String> uploadedPhotos = [];
+Future<void> _pickImages() async {
+  final List<XFile>? images = await ImagePicker().pickMultiImage();
+
+  if (images != null && images.isNotEmpty) {
+    setState(() {
+      _selectedImages = images;
+    });
+
+    // رفع الصور إلى Firebase Storage
+    for (var image in _selectedImages) {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final storageRef = FirebaseStorage.instance.ref().child('product_images/$fileName');
+
+      try {
+        await storageRef.putFile(File(image.path));
+        String downloadUrl = await storageRef.getDownloadURL();
+        uploadedPhotos.add(downloadUrl);
+      } catch (e) {
+        print("❌ Error uploading image: $e");
+      }
     }
   }
+}
+
+
 
   final List<String> primaryCategories = ["منتوجات فلاحية", "معدات", "أراضي"];
   String? selectedPrimaryCategory;
@@ -480,17 +537,16 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
 
   String? selectedWilaya;
   String? selectedDaira;
+  //unite by category
 
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
+  Map<String, List<String>> unitsByCategory = {
+  "منتوجات فلاحية": ["كلغ", "طن", "لتر", "صندوق"],
+  "أراضي": ["م²", "هكتار"],
+  "معدات": ["قطعة", "مجموعة"]
+};
+
+  String? selectedUnite;
+
 
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -527,43 +583,43 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  width: double.infinity,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green.shade700),
-                  ),
-                  child: _image == null
-                      ? const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.camera_alt,
-                                size: 50,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Appuyez pour ajouter une photo",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            _image!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
+  onTap: _pickImages,
+  child: Container(
+    height: 180,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.green),
+      color: Colors.green.shade50,
+    ),
+    child: _selectedImages.isEmpty
+        ? const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.photo_library, size: 50, color: Colors.grey),
+                SizedBox(height: 8),
+                Text("Tap to select images", style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          )
+        : ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _selectedImages.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.file(
+                  File(_selectedImages[index].path),
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
                 ),
-              ),
+              );
+            },
+          ),
+  ),
+),
               const SizedBox(height: 15),
 
               DropdownButtonFormField<String>(
@@ -735,6 +791,29 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                       }
                       return null;
                     }),
+              if (selectedPrimaryCategory != null &&
+                      unitsByCategory.containsKey(selectedPrimaryCategory!))
+                    DropdownButtonFormField<String>(
+                      value: selectedUnite,
+                      decoration: _dropdownDecoration("الوحدة"),
+                      items: unitsByCategory[selectedPrimaryCategory]!
+                          .map((unit) => DropdownMenuItem(
+                                value: unit,
+                                child: Text(unit),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedUnite = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'يرجى اختيار الوحدة';
+                        }
+                        return null;
+                      },
+                    ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: descriptionController,

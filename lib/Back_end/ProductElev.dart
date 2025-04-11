@@ -1,54 +1,82 @@
+import 'package:agriplant/Back_end/Product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ProductElev {
-  String? id;
-  //String? image;
-  String? categorie;
+class ProductElev extends Product {
+  String? category;
   String? produit;
   double? quantite;
-  int? prix;
   String? wilaya;
   String? daira;
-  String? description;
 
-  ProductElev(
-      {this.id,
-      //this.image,
-      this.categorie,
-      this.produit,
-      this.quantite,
-      this.prix,
-      this.wilaya,
-      this.daira,
-      this.description});
+  ProductElev({
+    required String id,
+    required String name,
+    required String typeProduct,
+    required double price,
+    required String description,
+    required int rate,
+    required String? ownerId,
+    required List<Map<String, dynamic>> comments,
+    required List<String> photos,
+    required List<String> liked,
+    required List<String> disliked,
+    this.category,
+    this.produit,
+    this.quantite,
+    this.wilaya,
+    this.daira,
+  }) : super(
+          id: id,
+          name: name,
+          typeProduct: typeProduct,
+          price: price,
+          description: description,
+          rate: rate,
+          ownerId: ownerId,
+          comments: comments,
+          photos: photos,
+          liked: liked,
+          disliked: disliked,
+        );
 
-// Convert object to a Firestore-compatible map
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      //"image": image,
-      "categorie": categorie,
+      "name": name,
+      "price": price,
+      "description": description,
+      "rate": rate,
+      "ownerId": ownerId,
+      "comments": comments,
+      "photos": photos,
+      "liked": liked,
+      "disliked": disliked,
+      "category": category,
       "produit": produit,
       "quantite": quantite,
-      "prix": prix,
       "wilaya": wilaya,
       "daira": daira,
-      "description": description,
     };
   }
 
-  // Create an object from Firestore document
   factory ProductElev.fromJson(Map<String, dynamic> json, String id) {
     return ProductElev(
-      id: json['id'],
-     //image: json['image'],
-      categorie: json['categorie'],
+      id: id,
+      name: json['name'] ?? '',
+      typeProduct: json['typeProduct'] ?? 'EleveurProduct',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      description: json['description'] ?? '',
+      rate: json['rate'] ?? 0,
+      ownerId: json['ownerId'],
+      comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
+      photos: List<String>.from(json['photos'] ?? []),
+      liked: List<String>.from(json['liked'] ?? []),
+      disliked: List<String>.from(json['disliked'] ?? []),
+      category: json['categorie'],
       produit: json['produit'],
       quantite: (json['quantite'] as num?)?.toDouble(),
-      prix: json['prix'] as int?,
       wilaya: json['wilaya'],
       daira: json['daira'],
-      description: json['description'],
     );
   }
 
@@ -56,7 +84,10 @@ class ProductElev {
   Future<void> addProduct(ProductElev product) async {
     try {
       final docRef =
-          FirebaseFirestore.instance.collection('Produit_Elevage').doc();
+          FirebaseFirestore.instance
+          .collection("Products")
+          .doc("Eleveur_products")
+          .collection('Eleveur_products').doc();
       product.id = docRef.id; // Auto-generate Firestore document ID
       await docRef.set(product.toJson());
       print("Product added successfully!");
@@ -68,10 +99,7 @@ class ProductElev {
   /// 2**Update an existing product**
   Future<void> updateInFirestore() async {
     try {
-      if (id == null) {
-        print("id $id is null");
-        return;
-      }
+     
       await FirebaseFirestore.instance
           .collection('Produit_Elevage')
           .doc(id)
@@ -84,10 +112,7 @@ class ProductElev {
   /// 3**Delete a product from Firestore**
   Future<void> deleteFromFirestore() async {
     try {
-      if (id == null) {
-        print("id $id is null");
-        return;
-      }
+     
       await FirebaseFirestore.instance
           .collection('Produit_Elevage')
           .doc(id)
@@ -98,20 +123,7 @@ class ProductElev {
   }
 
   /// 4**Fetch a product by ID**
-  static Future<ProductElev?> getById(String productId) async {
-    try{final doc = await FirebaseFirestore.instance
-        .collection('Produit_Elevage')
-        .doc(productId)
-        .get();
-    if (doc.exists) {
-      return ProductElev.fromJson(doc.data()!, doc.id);
-    }
-    return null;}
-    catch (e) {
-      print("there is an error in fetching a product $e");
-    }
-
-  }
+  
 
   /// 5**Fetch all products in real-time**
   static Stream<List<ProductElev>> getAllProducts() {

@@ -1,4 +1,6 @@
 import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/ProductAgri.dart';
+import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/front_end/filter_bottom_sheet.dart';
 import 'package:agriplant/widgets_UI/product_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +15,7 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-    List<Product> products = [];
+    List<Product> productIdList = [];
     List<String> filteredNames = []; // أسماء المنتجات المصفاة حسب البحث
     List<String> productNames = []; // جميع أسماء المنتجات
     final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
@@ -23,7 +25,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   void initState() {
     super.initState();
-    fetchProducts(); 
+    fetchAllProducts(); 
     fetchProductNames();
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
@@ -42,60 +44,118 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   // يستخدم هذا الدالة لجلب المنتجات من Firestore
-  Future<void> fetchProducts() async {
-    try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('Products').get();
+Future<void> fetchAllProducts() async {
+  try {
+    List<Product> allProducts = [];
 
-      if (querySnapshot.docs.isEmpty) {
-        print("⚠️ لا توجد منتجات في Firestore!");
-      }
+    // جلب منتجات الزراعة
+    QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+        .collection('Products')
+        .doc('Agricol_products')
+        .collection('Agricol_products')
+        .get();
 
-      List<Product?> fetchedProducts = querySnapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        print("Product Data: $data");
-
-        return Product(
-          id:doc.id,
-          ownerId: data["ownerid"],
-          name: data['name'] ?? '',
-          description: data['description'] ?? '',
-          photos: (data['photos'] is List) 
-              ? List<String>.from(data['photos']) 
-              : ["assets/nophoto.png"], 
-          price: (data['price'] is num)
-              ? data['price'].toDouble()
-              : double.tryParse(data['price'].toString()) ?? 0.0,
-          unite: data['unit'] ?? 'DA',
-          category: data['category'] ?? '',
-          rate: (data['rating'] is num)
-              ? data['rating'].toInt()
-              : int.tryParse(data['rating'].toString()) ?? 0,
-          productId: data['id'] ?? '',
-          comments: (data['comments'] is List)
-            ? List<Map<String, String>>.from(
-                (data['comments'] as List)
-                    .map((comment) => Map<String, String>.from(comment)))
+    List<Productagri> agricolProducts = agricolSnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return Productagri(
+        id: doc.id,
+        ownerId: data["ownerId"],
+        name: data['name'] ?? '',
+        typeProduct:data["typeProduct"]??"AgricolProduct",
+        description: data['description'] ?? '',
+        photos: (data['photos'] is List)
+            ? List<String>.from(data['photos'])
+            : ["assets/nophoto.png"],
+        price: (data['price'] is num)
+            ? data['price'].toDouble()
+            : double.tryParse(data['price'].toString()) ?? 0.0,
+        unite: data['unite'] ?? 'DA',
+        category: data['category'] ?? '',
+        rate: (data['rate'] is num)
+            ? data['rate'].toInt()
+            : int.tryParse(data['rate'].toString()) ?? 0,
+        comments: (data['comments'] is List)
+            ? List<Map<String, dynamic>>.from(data['comments'])
             : [],
-          liked: (data["liked"] is List) ?List<String>.from(data["liked"]): [],
-          disliked: (data["dislike"] is List) ?List<String>.from(data["dislike"]): [],
-    );
-      }).toList();
-      if (mounted) {
-        setState(() {
-              products = fetchedProducts.cast<Product>(); // تحديث المنتجات
-        });
-      }
-      
+        liked: (data["liked"] is List)
+            ? List<String>.from(data["liked"])
+            : [],
+        disliked: (data["disliked"] is List)
+            ? List<String>.from(data["disliked"])
+            : [],
+        type: data['type'],
+        produit: data['produit'],
+        quantite: data['quantite'],
+        surface: data['surface'],
+        wilaya: data['wilaya'],
+        daira: data['daira'],
+      );
+    }).toList();
+
+    allProducts.addAll(agricolProducts);
+
+   // جلب منتجات المربين
+QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
+    .collection('Products')
+    .doc('Eleveur_products')
+    .collection('Eleveur_products')
+    .get();
+
+List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
+  final data = doc.data() as Map<String, dynamic>;
+
+  // إنشاء الكائن ProductElev
+  return ProductElev(
+    id: doc.id,
+    ownerId: data["ownerId"],
+    name: data['name'] ?? '',
+    typeProduct: data['typeProduct'] ?? "EleveurProduct",
+    description: data['description'] ?? '',
+    photos: (data['photos'] is List)
+        ? List<String>.from(data['photos'])
+        : ["assets/nophoto.png"],
+    price: (data['price'] is num)
+        ? data['price'].toDouble()
+        : double.tryParse(data['price'].toString()) ?? 0.0,
+    category: data['category'] ?? '',
+    rate: (data['rate'] is num)
+        ? data['rate'].toInt()
+        : int.tryParse(data['rate'].toString()) ?? 0,
+    comments: (data['comments'] is List)
+        ? List<Map<String, dynamic>>.from(data['comments'])
+        : [],
+    liked: (data["liked"] is List)
+        ? List<String>.from(data["liked"])
+        : [],
+    disliked: (data["disliked"] is List)
+        ? List<String>.from(data["disliked"])
+        : [],
+    produit: data['produit'],
+    quantite: data['quantite'],
+    wilaya: data['wilaya'],
+    daira: data['daira'],
+  );
+}).toList();
 
 
-      debugPrint("✅ تم جلب ${products.length} منتج!");
-      
+    allProducts.addAll(eleveurProducts);
 
-    } catch (e) {
-      print("⚠️ خطأ أثناء جلب المنتجات: $e");
+    // تحديث الحالة
+    if (mounted) {
+      setState(() {
+        productIdList = allProducts; // products لازم تكون معرفها في state
+      });
     }
+
+    print("✅ تم جلب جميع المنتجات بنجاح (${allProducts.length})");
+
+  } catch (e) {
+    print("❌ خطأ أثناء جلب المنتجات: $e");
   }
+}
+
+
+
 
 
   Future<void> fetchProductNames() async {
@@ -138,16 +198,7 @@ class _ExplorePageState extends State<ExplorePage> {
     }
   }
 
-  void applyFilter(String? category, double? minPrice, double? maxPrice) {
-  setState(() {
-    products = products.where((product) {
-      bool matchesCategory = category == null || product.category == category;
-      bool matchesPrice = (minPrice == null || product.price >= minPrice) &&
-                          (maxPrice == null || product.price <= maxPrice);
-      return matchesCategory && matchesPrice;
-    }).toList();
-  });
-}
+  
 
 
   @override
@@ -214,7 +265,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15), // ✅ شكل مستدير للحواف
                                   ),
-                                  content: FilterBottomSheet(onApplyFilter: applyFilter), // ✅ مكون داخلي لعرض الفلاتر
+                                  //content: FilterBottomSheet(onApplyFilter: applyFilter), // ✅ مكون داخلي لعرض الفلاتر
                                 );
                               },
                             );
@@ -331,23 +382,26 @@ class _ExplorePageState extends State<ExplorePage> {
                       ),
                     ],
                   ),
-                  products.isEmpty
+                  productIdList.isEmpty
                       ? const Center(child: CircularProgressIndicator())
-                      : GridView.builder(
-                          itemCount: products.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.87,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 8,
+                      : Expanded(
+                        child: GridView.builder(
+                          
+                            itemCount: productIdList.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.8,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 8,
+                            ),
+                            itemBuilder: (context, index) {
+                              return ProductCard(product: productIdList[index]);
+                            },
                           ),
-                          itemBuilder: (context, index) {
-                            return ProductCard(product: products[index]);
-                          },
-                        ),
+                      ),
                 ],
               ),
             ),

@@ -13,7 +13,6 @@ import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Agriculte
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Commercant.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Eleveur.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Entreprise.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Expert.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Reparateur.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Transporteur.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Veterinaire.dart';
@@ -129,7 +128,7 @@ class _HomePageState extends State<HomePage> {
         print("im $selectedType");
         break;
       case 'Expert Agri':
-        page = AddProductExpert();
+        page = AddProductClient();
         print("im $selectedType");
         break;
       case 'Vétérinaire':

@@ -55,7 +55,7 @@ class _ZoomableImageState extends State<ZoomableImage> {
         maxScale: _maxScale,
         child: Align(
           alignment: Alignment.center,
-          child: Image.asset(widget.imagePath, fit: BoxFit.contain),
+          child: Image.network(widget.imagePath, fit: BoxFit.contain),
         ),
       ),
     );

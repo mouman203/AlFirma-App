@@ -1,4 +1,5 @@
 import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Product%20detaille/fullscreanimage.dart';
 import 'package:agriplant/Front_end/userprofilepage.dart';
@@ -106,7 +107,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(widget.product.photos[index]),
+                image: NetworkImage(widget.product.photos[index]),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(10),
@@ -183,7 +184,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           text: widget.product.price.toString(),
                           style: Theme.of(context).textTheme.titleLarge),
                       TextSpan(
-                          text: widget.product.unite,
+                        //  text: widget.product.unite,
                           style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
@@ -207,6 +208,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
         .collection('Products')
+        .doc("Agricol_products")
+        .collection("Agricol_products")
         .doc(widget.product.id)
         .snapshots(),
         builder: (context, snapshot) {
@@ -227,7 +230,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             children: [
               IconButton(
                 icon: Icon(Icons.thumb_up,
-                    size: 20, color: isLiked ? Colors.blue : Colors.grey),
+                    size: 20, color: isLiked ? Colors.green : Colors.grey),
                 onPressed: () {
                   user.likeProduct(widget.product);
                 },
@@ -279,14 +282,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    "2 ${widget.product.unite}",
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
+  padding: const EdgeInsets.symmetric(horizontal: 12),
+  child: widget.product is Productagri
+      ? Text(
+          "2 ${(widget.product as Productagri).unite}",
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        )
+      : Container(), // لا شيء يتم عرضه إذا لم يكن من النوع Productagri
+),
+
                 SizedBox(
                   height: 30,
                   width: 30,
@@ -395,6 +401,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             widget.product.id,
             FirebaseAuth.instance.currentUser?.uid ?? "guest",
             controller.text,
+            widget.product.typeProduct
           );
           controller.clear();
           }
@@ -419,7 +426,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               //bring  the comments from firestore
             StreamBuilder<DocumentSnapshot>(
   stream: FirebaseFirestore.instance
-      .collection('Products')
+      .collection('Products').doc(widget.product.typeProduct == "AgricolProduct"
+          ? "Agricol_products"
+          : "Eleveur_products")
+      .collection(widget.product.typeProduct == "AgricolProduct"
+          ? "Agricol_products"
+          : "Eleveur_products")
       .doc(widget.product.id)
       .snapshots(),
   builder: (context, snapshot) {
@@ -483,7 +495,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ? IconButton(
             icon: const Icon(Icons.delete, color: Colors.grey),
             onPressed: () {
-             user.showDeleteConfirmationDialog(context, widget.product.id, currentUserId, comment['text']);
+             user.showDeleteConfirmationDialog(context, widget.product.id, currentUserId, comment['text'],widget.product.typeProduct);
             },
           )
         : null,
