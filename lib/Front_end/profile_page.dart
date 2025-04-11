@@ -1,5 +1,5 @@
+import 'package:agriplant/Front_end/Edit_profile_page.dart';
 import 'package:agriplant/Front_end/Saved.dart';
-import 'package:agriplant/Front_end/Security_page.dart';
 import 'package:agriplant/Front_end/become_page.dart';
 import 'package:agriplant/Front_end/settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int followersCount = 0;
   int followingCount = 0;
   String username = "Loading...";
- String ?profile_pic ;
+  String? profilePic;
 
   @override
   void initState() {
@@ -41,10 +41,11 @@ class _ProfilePageState extends State<ProfilePage> {
         followersCount = (userDoc["followers"] as List<dynamic>?)?.length ?? 0;
         followingCount = (userDoc["following"] as List<dynamic>?)?.length ?? 0;
         username = userDoc["first_name"];
+        profilePic = userDoc["photo"] ;
       });
     }
   }
-      
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -58,7 +59,9 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: CircleAvatar(
                 radius: 90,
-                backgroundImage: NetworkImage(profile_pic ?? "assets/anonyme.png"),
+                backgroundImage: profilePic != null
+                    ? NetworkImage(profilePic!)
+                    : const AssetImage("assets/anonyme.png") as ImageProvider,
               ),
             ),
           ),
@@ -96,6 +99,25 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const SizedBox(height: 40),
+          //edit profile
+          ListTile(
+            leading: Icon(Icons.edit,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            title: const Text('Edit Profile'),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const EditProfilePage()),
+              );
+            },
+          ),
           ListTile(
             leading: Icon(IconlyBold.addUser,
                 color: isDarkMode
@@ -103,8 +125,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     : const Color.fromARGB(255, 42, 103, 34)),
             title: Text(
               'Become',
+              
               style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             onTap: () {
               Navigator.push(
                 context,
@@ -120,6 +147,10 @@ class _ProfilePageState extends State<ProfilePage> {
             title: Text('Saved',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+                    trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Saved()));
@@ -133,25 +164,15 @@ class _ProfilePageState extends State<ProfilePage> {
             title: Text('Settings',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()));
-            },
-          ),
-          ListTile(
-            leading: Icon(IconlyBold.shieldFail,
+                    trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
                     : const Color.fromARGB(255, 42, 103, 34)),
-            title: Text(
-              'Security',
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-            ),
             onTap: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SecurityPage()),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsPage()));
             },
           ),
           ListTile(
@@ -162,6 +183,10 @@ class _ProfilePageState extends State<ProfilePage> {
             title: Text('Log out',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+                    trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
             onTap: () async {
               GoogleSignIn googleSignIn = GoogleSignIn();
               googleSignIn.disconnect();
@@ -173,6 +198,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ListTile(
             title: const Text("About Us"),
             leading: Icon(Icons.info_outline_rounded,
+                color: isDarkMode
+                    ? Colors.white
+                    : const Color.fromARGB(255, 42, 103, 34)),
+                    trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
                     : const Color.fromARGB(255, 42, 103, 34)),

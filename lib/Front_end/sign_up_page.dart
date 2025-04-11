@@ -3,6 +3,7 @@ import 'package:agriplant/Front_end/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -91,13 +92,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Sign Up'),
-          backgroundColor:
-              isDarkMode ? colorScheme.surface : colorScheme.surface,
-           leading: IconButton(
+        title: const Text('Sign Up'),
+        backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
+        leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pushNamed(context, 'login_page'), // Back button functionality
-        ),),
+          onPressed: () => Navigator.pushNamed(
+              context, 'login_page'), // Back button functionality
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -109,7 +111,32 @@ class _SignUpPageState extends State<SignUpPage> {
                   style: GoogleFonts.roboto(
                     fontSize: 18,
                   )),
-              const SizedBox(height: 70),
+
+              //profile pic
+
+              /*GestureDetector(
+            onTap: ,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 54, bottom: 16),
+              child: CircleAvatar(
+                radius: 90,
+                backgroundColor: Colors.grey[500],
+                backgroundImage:
+                   _imageFile != null
+      ? FileImage(_imageFile!)
+      : (imagePath != null
+          ? NetworkImage(imagePath!) as ImageProvider<Object>
+          : null),
+              
+                child: _imageFile == null
+                    ? const Icon(Icons.camera_alt,
+                        size: 30, color: Colors.black54)
+                    : null,
+              ),
+            ),
+          ),*/
+
+              const SizedBox(height: 46),
 
               // firstName field
               _buildTextField(
@@ -307,7 +334,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-             
             ],
           ),
         ),

@@ -44,7 +44,6 @@ class _SecurityPageState extends State<SecurityPage> {
             ),
             TextButton(
               onPressed: () {
-                
                 Navigator.pop(context);
               },
               child: Text("Submit"),
@@ -88,7 +87,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 title: val == "Email"
                     ? Text("Delete Email")
                     : Text("Delete Phone Number"),
-                 onTap: () {
+                onTap: () {
                   Navigator.pop(context);
                   val == "Email"
                       ? _showDeletingAccMsg("Email")
@@ -152,7 +151,9 @@ class _SecurityPageState extends State<SecurityPage> {
               child: Text("Cancel"),
             ),
             TextButton(
-              onPressed: () { Navigator.pop(context);},
+              onPressed: () {
+                Navigator.pop(context);
+              },
               child: Text("Submit"),
             ),
           ],
@@ -166,44 +167,47 @@ class _SecurityPageState extends State<SecurityPage> {
     showDialog(
         context: context,
         builder: (context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                title: Text(
-                  'Attention ⚠️',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color:
-                        Colors.red, // Optional: You can change the text color
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text(
+              'Attention ⚠️',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.red, // Optional: You can change the text color
+              ),
+            ),
+            content: val == "Account"
+                ? Text(
+                    'Are you sure you want to delete this account?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors
+                          .black, // Optional: You can change the text color
+                    ),
+                  )
+                : Text(
+                    'Are you sure you want to delete the $val ?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors
+                          .black, // Optional: You can change the text color
+                    ),
                   ),
-                ),
-                content: val == "Account" ? Text(
-                  'Are you sure you want to delete this account?',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color:
-                        Colors.black, // Optional: You can change the text color
-                  ),
-                ):Text(
-                  'Are you sure you want to delete the $val ?',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color:
-                        Colors.black, // Optional: You can change the text color
-                  ),
-                ),actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () { Navigator.pop(context);},
-                    child: Text("Submit"),
-                  ),
-                ],
-              );
-          
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Submit"),
+              ),
+            ],
+          );
         });
   }
 
@@ -390,7 +394,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   leading: Icon(Icons.delete, color: Colors.red),
                   title: Text("Delete Account"),
                   trailing: Icon(Icons.arrow_forward_ios),
-                  onTap:()=>_showDeletingAccMsg("Account"),
+                  onTap: () => _showDeletingAccMsg("Account"),
                 ),
               ],
             ),

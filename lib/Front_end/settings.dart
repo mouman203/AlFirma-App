@@ -1,10 +1,11 @@
+import 'package:agriplant/Front_end/Security_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
 import 'package:agriplant/Front_end/theme_provider.dart';
 import 'package:agriplant/Front_end/language_provider.dart';
 import 'package:agriplant/Front_end/Contact_us_page.dart';
 import 'package:app_settings/app_settings.dart';
-import 'Edit_profile_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -27,17 +28,22 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Settings'), backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface),
+          title: const Text('Settings'),
+          backgroundColor:
+              isDarkMode ? colorScheme.surface : colorScheme.surface),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // Edit Profile
+          // security
           ListTile(
-            leading: Icon(Icons.person,
+            leading: Icon(IconlyBold.shieldFail,
                 color: isDarkMode
                     ? Colors.white
                     : const Color.fromARGB(255, 42, 103, 34)),
-            title: const Text('Edit Profile'),
+            title: Text(
+              'Security',
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+            ),
             trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
@@ -45,8 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const EditProfilePage()),
+                MaterialPageRoute(builder: (context) => const SecurityPage()),
               );
             },
           ),
