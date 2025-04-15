@@ -13,14 +13,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-   await FirebaseAppCheck.instance.activate(
+  await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.debug,
   );
 
@@ -44,53 +43,57 @@ class MainApp extends StatelessWidget {
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return MaterialApp(
-  debugShowCheckedModeBanner: false,
-  themeMode: themeProvider.themeMode,
-  theme: ThemeData.light().copyWith(
-    textTheme: GoogleFonts.nunitoTextTheme(),
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-    appBarTheme: const AppBarTheme(
-      
-      foregroundColor: Colors.black, // Light mode text/icons
-    ),
-  ),
-  darkTheme: ThemeData.dark().copyWith(
-    textTheme: GoogleFonts.nunitoTextTheme().apply(
-      bodyColor: Colors.white, // Ensures text is white in dark mode
-      displayColor: Colors.white,
-    ),
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.green,
-      brightness: Brightness.dark, // Adjusts colors for dark mode
-    ),
-    scaffoldBackgroundColor: const Color.fromARGB(255, 1, 20, 7), // Ensures dark mode background
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color.fromARGB(255, 1, 24, 8), // Dark mode app bar color
-      foregroundColor: Colors.white, // Dark mode text/icons
-    ),
-  ),
-  locale: languageProvider.locale,
-  supportedLocales: const [
-    Locale('en'),
-    Locale('fr'),
-    Locale('ar'), // Arabic
-  ],
-  localizationsDelegates: const [
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-  ],
-  home: (FirebaseAuth.instance.currentUser != null &&
-          FirebaseAuth.instance.currentUser!.emailVerified)
-      ? const HomePage()
-      : const LoginPage(),
-  routes: {
-    'home_page': (context) => const HomePage(),
-    'sign_up_page': (context) => const SignUpPage(),
-    'login_page': (context) => const LoginPage(),
-    'settings_page': (context) =>  const SettingsPage(),
-  },
+      debugShowCheckedModeBanner: false,
+      themeMode: themeProvider.themeMode,
+      theme: ThemeData.light().copyWith(
+        textTheme: GoogleFonts.nunitoTextTheme(),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 53, 120, 88)),
+        brightness: Brightness.light,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 3,
+        ),
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        textTheme: GoogleFonts.nunitoTextTheme().apply(
+          bodyColor: Colors.white, // Ensures text is white in dark mode
+          displayColor: Colors.white,
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.greenAccent,
+          brightness: Brightness.dark, // Adjusts colors for dark mode
+        ),
+        scaffoldBackgroundColor: const Color.fromARGB(
+            255, 16, 24, 20), // Ensures dark mode background
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 16, 24, 20),
+          foregroundColor: Colors.white, // Dark mode text/icons
+          elevation: 5,
+        ),
+      ),
+      locale: languageProvider.locale,
+      supportedLocales: const [
+        Locale('en'),
+        Locale('fr'),
+        Locale('ar'), // Arabic
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: (FirebaseAuth.instance.currentUser != null &&
+              FirebaseAuth.instance.currentUser!.emailVerified)
+          ? const HomePage()
+          : const LoginPage(),
+      routes: {
+        'home_page': (context) => const HomePage(),
+        'sign_up_page': (context) => const SignUpPage(),
+        'login_page': (context) => const LoginPage(),
+        'settings_page': (context) => const SettingsPage(),
+      },
     );
-
   }
 }

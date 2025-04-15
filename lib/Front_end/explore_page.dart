@@ -15,19 +15,18 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-    List<Product> productIdList = [];
-    List<String> filteredNames = []; // أسماء المنتجات المصفاة حسب البحث
-    List<String> productNames = []; // جميع أسماء المنتجات
-    final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
-    final TextEditingController _controller = TextEditingController();
-    
-      get applyFilter => null;
+  List<Product> productIdList = [];
+  List<String> filteredNames = []; // أسماء المنتجات المصفاة حسب البحث
+  List<String> productNames = []; // جميع أسماء المنتجات
+  final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
+  final TextEditingController _controller = TextEditingController();
 
+  get applyFilter => null;
 
   @override
   void initState() {
     super.initState();
-    fetchAllProducts(); 
+    fetchAllProducts();
     fetchProductNames();
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
@@ -36,129 +35,122 @@ class _ExplorePageState extends State<ExplorePage> {
         });
       }
     });
-
   }
+
   @override
   void dispose() {
-    _focusNode.dispose(); // تدمير الـ FocusNode عند انتهاء الصفحة لتجنب استهلاك الذاكرة
+    _focusNode
+        .dispose(); // تدمير الـ FocusNode عند انتهاء الصفحة لتجنب استهلاك الذاكرة
     _controller.dispose();
     super.dispose();
   }
 
   // يستخدم هذا الدالة لجلب المنتجات من Firestore
-Future<void> fetchAllProducts() async {
-  try {
-    List<Product> allProducts = [];
+  Future<void> fetchAllProducts() async {
+    try {
+      List<Product> allProducts = [];
 
-    // جلب منتجات الزراعة
-    QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .get();
+      // جلب منتجات الزراعة
+      QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc('Agricol_products')
+          .collection('Agricol_products')
+          .get();
 
-    List<Productagri> agricolProducts = agricolSnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return Productagri(
-        id: doc.id,
-        ownerId: data["ownerId"],
-        name: data['name'] ?? '',
-        typeProduct:data["typeProduct"]??"AgricolProduct",
-        description: data['description'] ?? '',
-        photos: (data['photos'] is List)
-            ? List<String>.from(data['photos'])
-            : ["assets/nophoto.png"],
-        price: (data['price'] is num)
-            ? data['price'].toDouble()
-            : double.tryParse(data['price'].toString()) ?? 0.0,
-        unite: data['unite'] ?? 'DA',
-        category: data['category'] ?? '',
-        rate: (data['rate'] is num)
-            ? data['rate'].toInt()
-            : int.tryParse(data['rate'].toString()) ?? 0,
-        comments: (data['comments'] is List)
-            ? List<Map<String, dynamic>>.from(data['comments'])
-            : [],
-        liked: (data["liked"] is List)
-            ? List<String>.from(data["liked"])
-            : [],
-        disliked: (data["disliked"] is List)
-            ? List<String>.from(data["disliked"])
-            : [],
-        type: data['type'],
-        produit: data['produit'],
-        quantite: data['quantite'],
-        surface: data['surface'],
-        wilaya: data['wilaya'],
-        daira: data['daira'],
-      );
-    }).toList();
+      List<Productagri> agricolProducts = agricolSnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Productagri(
+          id: doc.id,
+          ownerId: data["ownerId"],
+          name: data['name'] ?? '',
+          typeProduct: data["typeProduct"] ?? "AgricolProduct",
+          description: data['description'] ?? '',
+          photos: (data['photos'] is List)
+              ? List<String>.from(data['photos'])
+              : ["assets/nophoto.png"],
+          price: (data['price'] is num)
+              ? data['price'].toDouble()
+              : double.tryParse(data['price'].toString()) ?? 0.0,
+          unite: data['unite'] ?? 'DA',
+          category: data['category'] ?? '',
+          rate: (data['rate'] is num)
+              ? data['rate'].toInt()
+              : int.tryParse(data['rate'].toString()) ?? 0,
+          comments: (data['comments'] is List)
+              ? List<Map<String, dynamic>>.from(data['comments'])
+              : [],
+          liked:
+              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
+          disliked: (data["disliked"] is List)
+              ? List<String>.from(data["disliked"])
+              : [],
+          type: data['type'],
+          produit: data['produit'],
+          quantite: data['quantite'],
+          surface: data['surface'],
+          wilaya: data['wilaya'],
+          daira: data['daira'],
+        );
+      }).toList();
 
-    allProducts.addAll(agricolProducts);
+      allProducts.addAll(agricolProducts);
 
-   // جلب منتجات المربين
-QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
-    .collection('Products')
-    .doc('Eleveur_products')
-    .collection('Eleveur_products')
-    .get();
+      // جلب منتجات المربين
+      QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc('Eleveur_products')
+          .collection('Eleveur_products')
+          .get();
 
-List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
-  final data = doc.data() as Map<String, dynamic>;
+      List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
 
-  // إنشاء الكائن ProductElev
-  return ProductElev(
-    id: doc.id,
-    ownerId: data["ownerId"],
-    name: data['name'] ?? '',
-    typeProduct: data['typeProduct'] ?? "EleveurProduct",
-    description: data['description'] ?? '',
-    photos: (data['photos'] is List)
-        ? List<String>.from(data['photos'])
-        : ["assets/nophoto.png"],
-    price: (data['price'] is num)
-        ? data['price'].toDouble()
-        : double.tryParse(data['price'].toString()) ?? 0.0,
-    category: data['category'] ?? '',
-    rate: (data['rate'] is num)
-        ? data['rate'].toInt()
-        : int.tryParse(data['rate'].toString()) ?? 0,
-    comments: (data['comments'] is List)
-        ? List<Map<String, dynamic>>.from(data['comments'])
-        : [],
-    liked: (data["liked"] is List)
-        ? List<String>.from(data["liked"])
-        : [],
-    disliked: (data["disliked"] is List)
-        ? List<String>.from(data["disliked"])
-        : [],
-    produit: data['produit'],
-    quantite: data['quantite'],
-    wilaya: data['wilaya'],
-    daira: data['daira'],
-  );
-}).toList();
+        // إنشاء الكائن ProductElev
+        return ProductElev(
+          id: doc.id,
+          ownerId: data["ownerId"],
+          name: data['name'] ?? '',
+          typeProduct: data['typeProduct'] ?? "EleveurProduct",
+          description: data['description'] ?? '',
+          photos: (data['photos'] is List)
+              ? List<String>.from(data['photos'])
+              : ["assets/nophoto.png"],
+          price: (data['price'] is num)
+              ? data['price'].toDouble()
+              : double.tryParse(data['price'].toString()) ?? 0.0,
+          category: data['category'] ?? '',
+          rate: (data['rate'] is num)
+              ? data['rate'].toInt()
+              : int.tryParse(data['rate'].toString()) ?? 0,
+          comments: (data['comments'] is List)
+              ? List<Map<String, dynamic>>.from(data['comments'])
+              : [],
+          liked:
+              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
+          disliked: (data["disliked"] is List)
+              ? List<String>.from(data["disliked"])
+              : [],
+          produit: data['produit'],
+          quantite: data['quantite'],
+          wilaya: data['wilaya'],
+          daira: data['daira'],
+        );
+      }).toList();
 
+      allProducts.addAll(eleveurProducts);
 
-    allProducts.addAll(eleveurProducts);
+      // تحديث الحالة
+      if (mounted) {
+        setState(() {
+          productIdList = allProducts; // products لازم تكون معرفها في state
+        });
+      }
 
-    // تحديث الحالة
-    if (mounted) {
-      setState(() {
-        productIdList = allProducts; // products لازم تكون معرفها في state
-      });
+      print("✅ تم جلب جميع المنتجات بنجاح (${allProducts.length})");
+    } catch (e) {
+      print("❌ خطأ أثناء جلب المنتجات: $e");
     }
-
-    print("✅ تم جلب جميع المنتجات بنجاح (${allProducts.length})");
-
-  } catch (e) {
-    print("❌ خطأ أثناء جلب المنتجات: $e");
   }
-}
-
-
-
-
 
   Future<void> fetchProductNames() async {
     try {
@@ -172,11 +164,11 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
       List<String> names = querySnapshot.docs
           .map((doc) => (doc.data() as Map<String, dynamic>)['name'] as String)
           .toList();
-      if(mounted){
-      setState(() {
-        productNames = names;
-        filteredNames = []; // في البداية، لا يتم عرض أي اقتراحات
-      });
+      if (mounted) {
+        setState(() {
+          productNames = names;
+          filteredNames = []; // في البداية، لا يتم عرض أي اقتراحات
+        });
       }
       debugPrint("✅ تم جلب ${productNames.length} اسم منتج!");
     } catch (e) {
@@ -186,48 +178,45 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
 
   // ✅ البحث داخل أي جزء من الاسم وعرض الاقتراحات
   void filterNames(String query) {
-    if(mounted){
-    setState(() {
-      if (query.isEmpty) {
-        filteredNames = []; // إخفاء الاقتراحات عند مسح البحث
-      } else {
-        filteredNames = productNames
-            .where((name) =>
-                name.toLowerCase().contains(query.toLowerCase())) // ✅ البحث في أي جزء من الاسم
-            .toList();
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (query.isEmpty) {
+          filteredNames = []; // إخفاء الاقتراحات عند مسح البحث
+        } else {
+          filteredNames = productNames
+              .where((name) => name
+                  .toLowerCase()
+                  .contains(query.toLowerCase())) // ✅ البحث في أي جزء من الاسم
+              .toList();
+        }
+      });
     }
   }
-
-  
-
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
-          _focusNode.unfocus(); // إلغاء التركيز عند الضغط خارج TextField
-        },
+        _focusNode.unfocus(); // إلغاء التركيز عند الضغط خارج TextField
+      },
       child: Scaffold(
         body: Column(
           children: [
-
             // ✅ البحث والفلتر
             Padding(
-              padding:
-                  const EdgeInsets.only(bottom: 5, left: 10, right: 10, top: 10),
+              padding: const EdgeInsets.only(
+                  bottom: 5, left: 10, right: 10, top: 10),
               child: Row(
                 children: [
-                 Expanded(
+                  Expanded(
                     child: TextField(
                       textInputAction: TextInputAction.search,
-                      onChanged: (value) => filterNames(value), // ✅ تحديث الاقتراحات
+                      onChanged: (value) =>
+                          filterNames(value), // ✅ تحديث الاقتراحات
                       onSubmitted: (value) {
                         print("✅🔍 بحث عن: $value");
                         _controller.clear();
- 
                       },
                       focusNode: _focusNode, // تحديد الـ FocusNode
                       controller: _controller,
@@ -254,26 +243,27 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
                       ),
                     ),
                   ),
-                 
-                 
-                 Padding(
+                  Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: IconButton.filled(
                         onPressed: () {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true, // ✅ للسماح بالحجم الكامل
-                            backgroundColor: Colors.transparent, // ✅ نخلي الخلفية شفافة للتحكم الكامل بالشكل
+                            backgroundColor: Colors
+                                .transparent, // ✅ نخلي الخلفية شفافة للتحكم الكامل بالشكل
                             builder: (context) {
                               return DraggableScrollableSheet(
-                                initialChildSize: 0.85, // ✅ كم تاخذ من الشاشة مبدئيًا (85%)
+                                initialChildSize:
+                                    0.85, // ✅ كم تاخذ من الشاشة مبدئيًا (85%)
                                 maxChildSize: 0.95,
                                 minChildSize: 0.5,
                                 builder: (context, scrollController) {
                                   return Container(
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20)),
                                     ),
                                     padding: const EdgeInsets.all(16),
                                     child: const FilterBottomSheet(),
@@ -282,47 +272,48 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
                               );
                             },
                           );
-
-
-                        }, icon: const Icon(IconlyLight.filter)),
+                        },
+                        icon: const Icon(IconlyLight.filter)),
                   ),
                 ],
               ),
             ),
-            
+
             // ✅ عرض الاقتراحات
-             if (filteredNames.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10, top: 10),
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: filteredNames.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(filteredNames[index]),
-                            onTap: () {
-                              _controller.text = filteredNames[index]; // ✅ اختيار الاسم
-                              setState(() {
-                                filteredNames = []; // إخفاء القائمة بعد الاختيار
-                              });
-                            },
-                          );
-                        },
-                      ),
+            if (filteredNames.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.only(
+                    bottom: 5, left: 10, right: 10, top: 10),
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 5,
+                      spreadRadius: 2,
                     ),
-            
+                  ],
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: filteredNames.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(filteredNames[index]),
+                      onTap: () {
+                        _controller.text =
+                            filteredNames[index]; // ✅ اختيار الاسم
+                        setState(() {
+                          filteredNames = []; // إخفاء القائمة بعد الاختيار
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+
             // ✅ عرض المنتجات
             Expanded(
               child: ListView(
@@ -334,14 +325,19 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
                       height: 170,
                       child: Card(
                         color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 55, 72, 56) // Dark green for dark mode
-                    : Colors.green.shade50, // Light green for light mode
-                elevation: 0.1,
-                shadowColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 55, 72, 56)  // Match shadow to dark green
-                    : Colors.green.shade50,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
+                            ? const Color.fromARGB(
+                                255, 39, 57, 48) // Dark green for dark mode
+                            : Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer, // Light green for light mode
+                        elevation: 0.1,
+                        shadowColor: Theme.of(context).brightness ==
+                                Brightness.dark
+                            ? const Color.fromARGB(
+                                255, 39, 57, 48) // Match shadow to dark green
+                            : Theme.of(context).colorScheme.secondaryContainer,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -354,26 +350,31 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
                                     const Text(
                                       "Free AI Scanner",
                                       style: TextStyle(
-                                  fontSize: 21,
-                                  color: Color.fromARGB(255, 47, 114, 38),
-                                  fontWeight:
-                                      FontWeight.bold // Black in light mode
-                                  ),
+                                          fontSize: 21,
+                                          color:
+                                              Color.fromARGB(255, 47, 114, 38),
+                                          fontWeight: FontWeight
+                                              .bold // Black in light mode
+                                          ),
                                     ),
                                     const Text(
-                              "Get free Look from our AI Plant Disease Detector",
-                              style: TextStyle(fontSize: 14)),
-                              FilledButton(
-                              onPressed: () {},
-                              child: Text("Check it out",
-                                  style: TextStyle(
-                                      color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : const Color.fromARGB(255, 255, 255, 255),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17)),
-                            ),
-                          ],
-                        ),
-                      ),
+                                        "Get free Look from our AI Plant Disease Detector",
+                                        style: TextStyle(fontSize: 14)),
+                                    FilledButton(
+                                      onPressed: () {},
+                                      child: Text("Check it out",
+                                          style: TextStyle(
+                                              color: isDarkMode
+                                                  ? const Color.fromARGB(
+                                                      255, 0, 0, 0)
+                                                  : const Color.fromARGB(
+                                                      255, 255, 255, 255),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17)),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               Image.asset(
                                 'assets/Ai.png',
                               )
@@ -399,8 +400,7 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
                   productIdList.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : Expanded(
-                        child: GridView.builder(
-                          
+                          child: GridView.builder(
                             itemCount: productIdList.length,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -415,11 +415,10 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
                               return ProductCard(product: productIdList[index]);
                             },
                           ),
-                      ),
+                        ),
                 ],
               ),
             ),
-           
           ],
         ),
       ),

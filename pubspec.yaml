@@ -75,4 +75,5 @@ flutter:
   assets:
     - assets/
     - assets/services/
+    - assets/become/
     - shorebird.yaml

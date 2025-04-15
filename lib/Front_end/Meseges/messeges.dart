@@ -18,8 +18,12 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: const Text("Messages")),
+      appBar: AppBar(title: const Text("Messages"),
+      backgroundColor: isDarkMode
+            ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
+            : Theme.of(context).colorScheme.secondaryContainer),// Light 
       body: _buildMessagesList(),
     );
   }

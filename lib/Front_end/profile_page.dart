@@ -1,6 +1,5 @@
 import 'package:agriplant/Front_end/Edit_profile_page.dart';
 import 'package:agriplant/Front_end/Saved.dart';
-import 'package:agriplant/Front_end/become_page.dart';
 import 'package:agriplant/Front_end/settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -56,12 +55,14 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: const EdgeInsets.only(top: 54, bottom: 16),
             child: CircleAvatar(
               radius: 93,
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: isDarkMode
+                    ? const Color(0xFF273930)
+                    : const Color(0xFF256C4C),
               child: CircleAvatar(
                 radius: 90,
                 backgroundImage: profilePic != null
                     ? NetworkImage(profilePic!)
-                    : const AssetImage("assets/anonyme.png") as ImageProvider,
+                    :  isDarkMode ? const AssetImage("assets/anonymeD.png") as ImageProvider :  const AssetImage("assets/anonyme.png") as ImageProvider,
               ),
             ),
           ),
@@ -104,12 +105,12 @@ class _ProfilePageState extends State<ProfilePage> {
             leading: Icon(Icons.edit,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             title: const Text('Edit Profile'),
             trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(
                 context,
@@ -118,39 +119,19 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             },
           ),
-          ListTile(
-            leading: Icon(IconlyBold.addUser,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
-            title: Text(
-              'Become',
-              
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-            ),
-            trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const BecomePage()),
-              );
-            },
-          ),
+          
           ListTile(
             leading: Icon(IconlyBold.bookmark,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             title: Text('Saved',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
                     trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Saved()));
@@ -160,14 +141,14 @@ class _ProfilePageState extends State<ProfilePage> {
             leading: Icon(Icons.settings_sharp,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             title: Text('Settings',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
                     trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(
                   context,
@@ -179,14 +160,14 @@ class _ProfilePageState extends State<ProfilePage> {
             leading: Icon(Icons.logout_sharp,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             title: Text('Log out',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
                     trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             onTap: () async {
               GoogleSignIn googleSignIn = GoogleSignIn();
               googleSignIn.disconnect();
@@ -200,11 +181,11 @@ class _ProfilePageState extends State<ProfilePage> {
             leading: Icon(Icons.info_outline_rounded,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
                     trailing: Icon(Icons.arrow_forward_ios,
                 color: isDarkMode
                     ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                    : const Color(0xFF256C4C)),
             onTap: () {},
           ),
         ],

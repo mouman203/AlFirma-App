@@ -18,8 +18,6 @@ class _LoginPageState extends State<LoginPage> {
   String? emailError;
   String? passwordError;
   bool _obscurePassword = true; // التحكم في إخفاء أو إظهار كلمة المرور
- 
-
 
 // i removed from here
 
@@ -42,14 +40,18 @@ class _LoginPageState extends State<LoginPage> {
               // النص الترحيبي
               Text("SIGN IN",
                   style: GoogleFonts.roboto(
-                      fontSize: 40, fontWeight: FontWeight.bold,color: isDarkMode
-            ?  Colors.white  // white in dark mode
-            :  Colors.black,)),
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode
+                        ? Colors.white // white in dark mode
+                        : Colors.black,
+                  )),
               Text("Welcome to our platform",
                   style: GoogleFonts.roboto(
-                    fontSize: 18,color: isDarkMode
-            ?  Colors.white  // white in dark mode
-            :  Colors.black,
+                    fontSize: 18,
+                    color: isDarkMode
+                        ? Colors.white // white in dark mode
+                        : Colors.black,
                   )),
               const SizedBox(height: 20),
 
@@ -59,32 +61,39 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : Colors.green.shade50, // Light green in light mode
+                        ? const Color.fromARGB(
+                            255, 39, 57, 48) // Dark green in dark mode
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondaryContainer, // Light green in light mode
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                        Icon(Icons.email,color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                        Icon(Icons.email,
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C)),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           child: TextField(
-                            style: TextStyle(color:isDarkMode
-                            ? Colors.white // white in dark mode
-                            : const Color.fromARGB(255, 42, 103, 34),
-                            fontSize: 16
-                            ),
+                            style: TextStyle(
+                                color: isDarkMode
+                                    ? Colors.white // white in dark mode
+                                    : const Color(0xFF256C4C),
+                                fontSize: 16),
                             controller: _emailController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Email",
-                              hintStyle: TextStyle(color:isDarkMode
-                            ? Colors.white // white in dark mode
-                            : const Color.fromARGB(255, 42, 103, 34)),
+                              hintStyle: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white // white in dark mode
+                                      : const Color(0xFF256C4C)),
                               errorText: emailError,
                             ),
                           ),
@@ -102,41 +111,52 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : Colors.green.shade50, // Light green in light mode
+                        ? const Color.fromARGB(
+                            255, 39, 57, 48) // Dark green in dark mode
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondaryContainer, // Light green in light mode
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                       Icon(Icons.password, color: isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34)),
+                        Icon(Icons.password,
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C)),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           child: TextField(
-                            style: TextStyle(color:isDarkMode
-                            ? Colors.white // white in dark mode
-                            : const Color.fromARGB(255, 42, 103, 34),
-                            fontSize: 16
-                            ),
+                            style: TextStyle(
+                                color: isDarkMode
+                                    ? Colors.white // white in dark mode
+                                    : const Color(0xFF256C4C),
+                                fontSize: 16),
                             controller: _passwordController,
                             obscureText:
                                 _obscurePassword, // إخفاء النص المدخل إذا كان true
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Password",
-                              hintStyle: TextStyle(color:isDarkMode
-                            ? Colors.white // white in dark mode
-                            : const Color.fromARGB(255, 42, 103, 34)),
+                              hintStyle: TextStyle(
+                                color: isDarkMode
+                                    ? Colors.white // white in dark mode
+                                    : const Color(0xFF256C4C),
+                              ),
                               errorText: passwordError,
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_off
                                       : Icons.visibility,
-                                  color:  isDarkMode ? Colors.white : const Color.fromARGB(255, 42, 103, 34) // أيقونة العين لتبديل الحالة
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : const Color(
+                                          0xFF256C4C), // أيقونة العين لتبديل الحالة
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -165,14 +185,17 @@ class _LoginPageState extends State<LoginPage> {
                       TextButton(
                         onPressed: () async {
                           // منطق إعادة تعيين كلمة المرور
-                          user.resetPassword(context: context, email: _emailController.text);
+                          user.resetPassword(
+                              context: context, email: _emailController.text);
                         },
                         child: Text(
                           "Forgot Password?",
                           style: GoogleFonts.roboto(
-                              fontSize: 16, color:isDarkMode
-            ? Colors.white 
-            : const Color.fromARGB(255, 42, 103, 34)),
+                            fontSize: 16,
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                          ),
                         ),
                       ),
                     ],
@@ -187,17 +210,17 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                     user.signInWithHandling(
-                      context: context,
-                      email: _emailController.text.trim(),
-                      password: _passwordController.text,
-                      homePage: const HomePage(),
-                    );
+                      user.signInWithHandling(
+                        context: context,
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text,
+                        homePage: const HomePage(),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56)  // Dark green in dark mode
-            : const Color.fromARGB(255, 44, 107, 36), // لون الزر
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C), // لون الزر
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -220,9 +243,11 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 child: Text(
                   "SIGN_UP",
-                  style: GoogleFonts.roboto(color: isDarkMode
-            ? Colors.white // white in dark mode
-            : const Color.fromARGB(255, 42, 103, 34), fontSize: 16),
+                  style: GoogleFonts.roboto(
+                      color: isDarkMode
+                          ? Colors.white // white in dark mode
+                          : const Color(0xFF256C4C),
+                      fontSize: 16),
                 ),
               ),
 
@@ -233,7 +258,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   IconButton(
                     onPressed: () {
-                     user.signInWithGoogle( context,const HomePage());
+                      user.signInWithGoogle(context, const HomePage());
                     },
                     icon: Image.asset(
                       'assets/google.png', // مسار الأيقونة

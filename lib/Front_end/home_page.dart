@@ -16,6 +16,7 @@ import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Entrepris
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Reparateur.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Transporteur.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Veterinaire.dart';
+import 'package:agriplant/Front_end/user_type_handler.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? userName;
+  String? selectedType;
   bool isLoading = true;
 
   @override
@@ -43,6 +45,12 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadLastSelectedPage();
     _fetchUserName();
+    _loadActiveType();
+  }
+
+  Future<void> _loadActiveType() async {
+    selectedType = await getActiveTypeFromFirestore();
+    setState(() {}); // To update UI if necessary
   }
 
   Future<void> _fetchUserName() async {
@@ -70,6 +78,31 @@ class _HomePageState extends State<HomePage> {
     return userDoc.exists ? userDoc['first_name'] : null;
   }
 
+  Future<List<String>> getUserTypesFromFirestore() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return [];
+
+    final docRef = FirebaseFirestore.instance.collection("Users").doc(user.uid);
+    final doc = await docRef.get();
+
+    List<String> types = [];
+
+    if (doc.exists && doc.data()?['userType'] != null) {
+      types = List<String>.from(doc['userType']);
+    }
+
+    // Default fallback to "Client"
+    if (types.isEmpty) {
+      types = ["Client"];
+      await docRef.set({
+        "userType": types,
+        "activeType": "Client",
+      }, SetOptions(merge: true));
+    }
+
+    return types;
+  }
+
   Future<void> _loadLastSelectedPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (mounted) {
@@ -94,23 +127,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<String?> getUserTypeFromFirestore() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      print("⚠️ No user is logged in!");
-      return null;
-    }
+  Future<String?> getActiveTypeFromFirestore() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return null;
 
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('Users')
+    final doc = await FirebaseFirestore.instance
+        .collection("Users")
         .doc(user.uid)
         .get();
 
-    return userDoc.exists ? userDoc['userType'] : null; // Fetch 'userType'
+    if (doc.exists) {
+      final data = doc.data();
+      return data?['activeType'] ?? "Client";
+    }
+
+    return "Client"; // Default fallback
   }
 
   void navigateToUserPage(BuildContext context) async {
-    String? selectedType = await getUserTypeFromFirestore();
+    String? selectedType = await getActiveTypeFromFirestore();
 
     if (selectedType == null) {
       print("🚨 User type not found!");
@@ -206,20 +241,21 @@ class _HomePageState extends State<HomePage> {
                   )
                 : Text(
                     userName != null
-                        ? "Hi $userName 👋🏼"
-                        : "⚠️ No name available",
-                    style: Theme.of(context).textTheme.titleLarge,
+                        ? "Hi ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
+                        : "Welcome 👋🏼 ",
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-            Text("Enjoy our services",
-                style: Theme.of(context).textTheme.bodyMedium)
+            Text("Welcome to our App ",
+                style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         actions: [
+          const BecomeTypeAction(),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton.filledTonal(
               onPressed: () {},
-              icon: const Icon(IconlyBroken.message),
+              icon: const Icon(IconlyBroken.notification),
             ),
           ),
         ],
@@ -229,15 +265,16 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: colorScheme.surface,
+        elevation: 20,
         selectedItemColor: colorScheme.primary,
         unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
         currentIndex: currentPageIndex,
         onTap: (index) async {
           if (index == 2) {
             // If "Add" icon is clicked
-            String? userType = await getUserTypeFromFirestore();
+            String? activeType = (await getActiveTypeFromFirestore());
 
-            if (userType == "Client") {
+            if (activeType == "Client") {
               showMessagePopup(); // Show popup if the user is a client
             } else {
               navigateToUserPage(context);

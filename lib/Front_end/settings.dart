@@ -37,17 +37,13 @@ class _SettingsPageState extends State<SettingsPage> {
           // security
           ListTile(
             leading: Icon(IconlyBold.shieldFail,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: Text(
               'Security',
               style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
             trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(
                 context,
@@ -56,35 +52,38 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
 
+          Divider(
+              color: isDarkMode
+                  ? const Color.fromARGB(255, 16, 24, 20)
+                  : Colors.white),
+
           // Dark Mode Toggle
           ListTile(
             leading: Icon(
-              themeProvider.themeMode == ThemeMode.dark
-                  ? Icons.sunny
-                  : Icons.dark_mode,
-              color: isDarkMode
-                  ? Colors.white
-                  : const Color.fromARGB(255, 42, 103, 34),
-            ),
+                themeProvider.themeMode == ThemeMode.dark
+                    ? Icons.sunny
+                    : Icons.dark_mode,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: Text(themeProvider.themeMode == ThemeMode.dark
                 ? 'Light Mode'
                 : 'Dark Mode'),
             trailing: Switch(
-              inactiveThumbColor: const Color.fromARGB(255, 42, 103, 34),
-              activeColor: const Color.fromARGB(255, 133, 159, 133),
+              inactiveThumbColor: const Color(0xFF256C4C),
+              activeColor: const Color(0xFF90D5AE),
               value: themeProvider.themeMode == ThemeMode.dark,
               onChanged: (value) {
                 themeProvider.toggleTheme(value);
               },
             ),
           ),
-
+          Divider(
+              color: isDarkMode
+                  ? const Color.fromARGB(255, 16, 24, 20)
+                  : Colors.white),
           // Language Selection
           ListTile(
             leading: Icon(Icons.language,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: const Text('Language'),
             trailing: DropdownButton<Locale>(
               value: languageProvider.locale,
@@ -113,21 +112,22 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-
+          Divider(
+              color: isDarkMode
+                  ? const Color.fromARGB(255, 16, 24, 20)
+                  : Colors.white),
           // Notifications Toggle
           ListTile(
             leading: Icon(Icons.notifications_active,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
-            title: const Text('Enable Notifications'),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            title: const Text(' Notifications'),
             trailing: Switch(
               inactiveThumbColor: isDarkMode
-                  ? const Color.fromARGB(255, 133, 159, 133)
-                  : const Color.fromARGB(255, 42, 103, 34),
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
               activeColor: isDarkMode
-                  ? const Color.fromARGB(255, 133, 159, 133)
-                  : const Color.fromARGB(255, 42, 103, 34),
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
               value: areNotificationsEnabled,
               onChanged: (value) {
                 setState(() {
@@ -142,18 +142,17 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
           ),
-
+          Divider(
+              color: isDarkMode
+                  ? const Color.fromARGB(255, 16, 24, 20)
+                  : Colors.white),
           // Contact Us
           ListTile(
             leading: Icon(Icons.contact_support,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: const Text('Contact Us'),
             trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color.fromARGB(255, 42, 103, 34)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(
                 context,

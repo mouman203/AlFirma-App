@@ -1,5 +1,4 @@
 import 'package:agriplant/Front_end/Edit_profile_page.dart';
-import 'package:agriplant/Front_end/become_page.dart';
 import 'package:agriplant/Front_end/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,15 +16,15 @@ class Sidebar extends StatelessWidget {
     return Drawer(
       child: Container(
         color: isDarkMode
-            ? const Color.fromARGB(255, 55, 72, 56) // Dark green in dark mode
-            : Colors.green.shade50, // Light green in light mode
+            ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
+            : Theme.of(context).colorScheme.secondaryContainer, // Light green in light mode
         child: ListView(
           children: [
             ListTile(
               leading: Icon(Icons.edit,
                   color: isDarkMode
                       ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
+                      : const Color(0xFF256C4C)),
               title: const Text('Edit Profile'),
               onTap: () {
                 Navigator.push(
@@ -36,27 +35,10 @@ class Sidebar extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(IconlyBold.addUser,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
-              title: Text(
-                'Become',
-                style:
-                    TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const BecomePage()),
-                );
-              },
-            ),
-            ListTile(
               leading: Icon(IconlyBold.bookmark,
                   color: isDarkMode
                       ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
+                      : const Color(0xFF256C4C)),
               title: Text(
                 'Saved',
                 style:
@@ -73,7 +55,7 @@ class Sidebar extends StatelessWidget {
               leading: Icon(Icons.settings_sharp,
                   color: isDarkMode
                       ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
+                      : const Color(0xFF256C4C)),
               title: Text(
                 'Settings',
                 style:
@@ -90,7 +72,7 @@ class Sidebar extends StatelessWidget {
               leading: Icon(Icons.logout_sharp,
                   color: isDarkMode
                       ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
+                      : const Color(0xFF256C4C)),
               title: Text(
                 'Log out',
                 style:
@@ -109,7 +91,7 @@ class Sidebar extends StatelessWidget {
               leading: Icon(Icons.info_outline_rounded,
                   color: isDarkMode
                       ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
+                      : const Color(0xFF256C4C)),
               onTap: () {},
             ),
           ],

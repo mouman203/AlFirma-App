@@ -3,7 +3,6 @@ import 'package:agriplant/Front_end/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -94,6 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         title: const Text('Sign Up'),
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
+        elevation: 8,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pushNamed(
@@ -182,8 +182,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: BoxDecoration(
                     color: isDarkMode
                         ? const Color.fromARGB(
-                            255, 55, 72, 56) // Dark green in dark mode
-                        : Colors.green.shade50, // Light green in light mode
+                            255, 39, 57, 48) // Dark green in dark mode
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondaryContainer, // Light green in light mode
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: DropdownButtonFormField<String>(
@@ -194,28 +196,30 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: TextStyle(
                           color: isDarkMode
                               ? Colors.white
-                              : const Color.fromARGB(255, 42, 103, 34),
+                              : const Color(0xFF256C4C),
                         )),
 
                     dropdownColor: isDarkMode
                         ? const Color.fromARGB(
                             255, 55, 72, 56) // Dark green in dark mode
-                        : Colors.green.shade50, // Light green in light mode,
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondaryContainer, // Light green in light mode,
                     value: _selectedWilaya,
                     icon: Icon(
-                        Icons.arrow_drop_down, // Default dropdown arrow icon
-                        color: isDarkMode
-                            ? Colors.white
-                            : const Color.fromARGB(255, 42, 103, 34)),
+                      Icons.arrow_drop_down, // Default dropdown arrow icon
+                      color:
+                          isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                    ),
                     items: _wilayas
                         .map((wilaya) => DropdownMenuItem(
                               value: wilaya,
                               child: Text(wilaya,
                                   style: TextStyle(
-                                      color: isDarkMode
-                                          ? Colors.white
-                                          : const Color.fromARGB(
-                                              255, 42, 103, 34))),
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF256C4C),
+                                  )),
                             ))
                         .toList(),
                     onChanged: (value) {
@@ -320,9 +324,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDarkMode
-                          ? const Color.fromARGB(
-                              255, 55, 72, 56) // Dark green in dark mode
-                          : const Color.fromARGB(255, 44, 107, 36),
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -354,18 +357,20 @@ class _SignUpPageState extends State<SignUpPage> {
       child: Container(
         decoration: BoxDecoration(
           color: isDarkMode
-              ? const Color.fromARGB(255, 55, 72, 56) // Dark green in dark mode
-              : Colors.green.shade50, // Light green in light mode
+              ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
+              : Theme.of(context)
+                  .colorScheme
+                  .secondaryContainer, // Light green in light mode
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(icon,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
+              Icon(
+                icon,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
@@ -374,9 +379,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     border: InputBorder.none,
                     hintText: hintText,
                     hintStyle: TextStyle(
-                      color: isDarkMode
-                          ? Colors.white
-                          : const Color.fromARGB(255, 42, 103, 34),
+                      color:
+                          isDarkMode ? Colors.white : const Color(0xFF256C4C),
                     ),
                     errorText: errorText,
                   ),
@@ -402,33 +406,42 @@ class _SignUpPageState extends State<SignUpPage> {
       child: Container(
         decoration: BoxDecoration(
           color: isDarkMode
-              ? const Color.fromARGB(255, 55, 72, 56) // Dark green in dark mode
-              : Colors.green.shade50, // Light green in light mode,
+              ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
+              : Theme.of(context)
+                  .colorScheme
+                  .secondaryContainer, // Light green in light mode,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(Icons.lock,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
+              Icon(
+                Icons.lock,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
+                  style: TextStyle(
+                      color:
+                          isDarkMode ? Colors.white : const Color(0xFF256C4C)),
                   controller: controller,
                   obscureText: obscureText,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
+                    hintStyle: TextStyle(
+                        color: isDarkMode
+                            ? Colors.white
+                            : const Color(0xFF256C4C)),
                     errorText: errorText,
                     suffixIcon: IconButton(
                       icon: Icon(
-                          obscureText ? Icons.visibility_off : Icons.visibility,
-                          color: isDarkMode
-                              ? Colors.white
-                              : const Color.fromARGB(255, 42, 103, 34)),
+                        obscureText ? Icons.visibility_off : Icons.visibility,
+                        color:
+                            isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                      ),
                       onPressed: toggleObscure,
                     ),
                   ),

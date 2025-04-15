@@ -193,7 +193,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ? const CircularProgressIndicator()
                   : CircleAvatar(
                       radius: 90,
-                      backgroundColor: Colors.grey[500],
+                      backgroundColor: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                       backgroundImage: _selectedImageFile != null
                           ? FileImage(_selectedImageFile!) as ImageProvider
                           : (_currentImage != null
@@ -238,11 +238,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   if (validateFields()) {
                     _updateProfile();
                   }
+                  ;
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode
-                      ? const Color.fromARGB(255, 55, 72, 56)
-                      : const Color.fromARGB(255, 44, 107, 36),
+                      ? const Color(0xFF90D5AE)
+                      :const Color(0xFF256C4C),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
