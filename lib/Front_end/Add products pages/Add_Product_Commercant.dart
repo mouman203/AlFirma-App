@@ -11,8 +11,8 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Je suis un commercant')),
-      body: Center(
+      appBar: AppBar(title: const Text('Je suis un commercant')),
+      body: const Center(
         child: Text('mm hada yek y demander brk'),
       ),
     );

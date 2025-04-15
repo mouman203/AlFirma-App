@@ -88,7 +88,7 @@ class ProductElev extends Product {
           .collection("Products")
           .doc("Eleveur_products")
           .collection('Eleveur_products').doc();
-      product.id = docRef.id; // Auto-generate Firestore document ID
+      product.id = docRef.id;
       await docRef.set(product.toJson());
       print("Product added successfully!");
     } catch (e) {

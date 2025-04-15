@@ -111,9 +111,9 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
 List<XFile> _selectedImages = [];
   List<String> uploadedPhotos = [];
 Future<void> _pickImages() async {
-  final List<XFile>? images = await ImagePicker().pickMultiImage();
+  final List<XFile> images = await ImagePicker().pickMultiImage();
 
-  if (images != null && images.isNotEmpty) {
+  if ( images.isNotEmpty) {
     setState(() {
       _selectedImages = images;
     });
@@ -553,12 +553,12 @@ Future<void> _pickImages() async {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Success"),
-          content: Text("Added Successfully! ✅"),
+          title: const Text("Success"),
+          content: const Text("Added Successfully! ✅"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         );
@@ -650,7 +650,9 @@ Future<void> _pickImages() async {
 
               if (selectedPrimaryCategory == "منتوجات فلاحية" ||
                   selectedPrimaryCategory == "معدات")
-                DropdownButtonFormField<String>(
+                  Column(
+                    children: [
+                                  DropdownButtonFormField<String>(
                     value: selectedCategorie,
                     decoration: _dropdownDecoration("Catégorie"),
                     items: (selectedPrimaryCategory == "منتوجات فلاحية"
@@ -676,11 +678,17 @@ Future<void> _pickImages() async {
                       return null;
                     }),
               const SizedBox(height: 15),
+                    ],
+                  ),
+                
+              
 
               if ((selectedPrimaryCategory == "منتوجات فلاحية" ||
                       selectedPrimaryCategory == "معدات") &&
                   selectedCategorie != null)
-                DropdownButtonFormField<String>(
+                  Column(
+                    children: [
+                      DropdownButtonFormField<String>(
                   value: selectedProduit,
                   decoration: _dropdownDecoration("Produit"),
                   items: (selectedPrimaryCategory == "منتوجات فلاحية"
@@ -700,6 +708,9 @@ Future<void> _pickImages() async {
                   },
                 ),
               const SizedBox(height: 15),
+                    ],
+                  ),
+                
 
               if (selectedPrimaryCategory == "منتوجات فلاحية")
                 _buildTextField(
@@ -829,7 +840,7 @@ Future<void> _pickImages() async {
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields
                 child: _isLoading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator()) // Show progress
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(

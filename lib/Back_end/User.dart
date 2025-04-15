@@ -9,36 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Users {
   // les variables
-  String? id;
-  String? firstName;
-  String? lastName;
-  String? email;
-  String? password;
-  String? phone;
-  String? location;
-  String? role;
-  int? rating;
-  List<Product>? preferences;
-  List<Product>? orderHistory;
-  List<Users>? following;
-  List<Users>? followers;
+
 
   // constricteur
-  Users({
-    this.id,
-    this.firstName,
-    this.lastName,
-    this.email,
-    this.password,
-    this.phone,
-    this.location,
-    this.role,
-    this.rating,
-    this.preferences,
-    this.orderHistory,
-    this.following,
-    this.followers,
-  });
+
 
   // التحقق من صحة البريد الإلكتروني
   bool isEmailValid(String email) {
@@ -267,7 +241,9 @@ class Users {
     required Widget destPage,
   }) async {
     if (!checkInfo_signup(context, first_name, last_name, phone, email, verify,
-        password, confirmationpassword)) return;
+        password, confirmationpassword)) {
+      return;
+    }
 
     try {
       print("🔄 Attempting to close dialog...");
@@ -296,6 +272,9 @@ class Users {
           'first_name': first_name,
           'last_name': last_name,
           'phone': phone,
+          'photo': "",
+          'following': [],
+          'followers': [],
           'email': email,
           'password': password,
           'userType': 'Client',
@@ -423,12 +402,15 @@ class Users {
         await userRef.set(
             {
               "email": firebaseUser.email,
-              "verify": true,
+              "Verify": true,
               "first_name": firstName,
               "last_name": lastName,
               "phone": firebaseUser.phoneNumber ?? "",
-              "password":
-                  "", // يجب أن يضبط المستخدم كلمة المرور يدويًا إذا لزم الأمر
+              "password":"signed with google",
+              "photo":"",
+              "userType":"Client",
+              "following":[],
+              "followers":[],
               "created_at": FieldValue.serverTimestamp(),
             },
             SetOptions(
@@ -453,11 +435,13 @@ class Users {
 
   void likeProduct(Product product) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-
+    final collectionName = product.typeProduct == "AgricolProduct"
+    ? "Agricol_products"
+    : "Eleveur_products";
     DocumentReference productRef =
         FirebaseFirestore.instance.collection('Products')
-        .doc("Agricol_products")
-        .collection("Agricol_products")
+        .doc(collectionName)
+        .collection(collectionName)
         .doc(product.id);
 
     try {
@@ -493,9 +477,12 @@ class Users {
 
   void dislikeProduct(Product product) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+   final collectionName = product.typeProduct == "AgricolProduct"
+    ? "Agricol_products"
+    : "Eleveur_products";
     DocumentReference productRef =
-        FirebaseFirestore.instance.collection('Products').doc("Agricol_products")
-        .collection("Agricol_products").doc(product.id);
+        FirebaseFirestore.instance.collection('Products').doc(collectionName)
+        .collection(collectionName).doc(product.id);
 
     try {
       // جلب البيانات المحدثة من Firestore

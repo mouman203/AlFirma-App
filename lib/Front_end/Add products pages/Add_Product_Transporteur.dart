@@ -1,5 +1,4 @@
 import 'package:agriplant/Back_end/ProductRep_Trans.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -390,12 +389,12 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Success"),
-          content: Text("Added Successfully! ✅"),
+          title: const Text("Success"),
+          content: const Text("Added Successfully! ✅"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         );
@@ -563,7 +562,7 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields
                 child: _isLoading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator()) // Show progress
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(

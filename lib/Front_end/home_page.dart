@@ -120,35 +120,35 @@ class _HomePageState extends State<HomePage> {
     Widget page;
     switch (selectedType) {
       case 'Agriculteur':
-        page = AddProductAgriculteur();
+        page = const AddProductAgriculteur();
         print("im $selectedType");
         break;
       case 'Éleveur':
-        page = AddProductEleveur();
+        page = const AddProductEleveur();
         print("im $selectedType");
         break;
       case 'Expert Agri':
-        page = AddProductClient();
+        page = const AddProductClient();
         print("im $selectedType");
         break;
       case 'Vétérinaire':
-        page = AddProductVeterinaire();
+        page = const AddProductVeterinaire();
         print("im $selectedType");
         break;
       case 'Entreprise':
-        page = AddProductEntreprise();
+        page = const AddProductEntreprise();
         print("im $selectedType");
         break;
       case 'Commerçant':
-        page = AddProductCommercant();
+        page = const AddProductCommercant();
         print("im $selectedType");
         break;
       case 'Transporteur':
-        page = AddProductTransporteur();
+        page = const AddProductTransporteur();
         print("im $selectedType");
         break;
       case 'Reparateur':
-        page = AddProductReparateur();
+        page = const AddProductReparateur();
         print("im $selectedType");
         break;
       default:
@@ -164,12 +164,12 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("⚠️ Access Restricted"),
-          content: Text("Clients cannot add products."),
+          title: const Text("⚠️ Access Restricted"),
+          content: const Text("Clients cannot add products."),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         );

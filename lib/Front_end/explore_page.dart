@@ -1,7 +1,7 @@
 import 'package:agriplant/Back_end/Product.dart';
 import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/ProductElev.dart';
-import 'package:agriplant/front_end/filter_bottom_sheet.dart';
+import 'package:agriplant/Front_end/Filter/filter_bottom_sheet.dart';
 import 'package:agriplant/widgets_UI/product_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +20,8 @@ class _ExplorePageState extends State<ExplorePage> {
     List<String> productNames = []; // جميع أسماء المنتجات
     final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
     final TextEditingController _controller = TextEditingController();
+    
+      get applyFilter => null;
 
 
   @override
@@ -258,17 +260,29 @@ List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
                     padding: const EdgeInsets.only(left: 12),
                     child: IconButton.filled(
                         onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15), // ✅ شكل مستدير للحواف
-                                  ),
-                                  //content: FilterBottomSheet(onApplyFilter: applyFilter), // ✅ مكون داخلي لعرض الفلاتر
-                                );
-                              },
-                            );
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true, // ✅ للسماح بالحجم الكامل
+                            backgroundColor: Colors.transparent, // ✅ نخلي الخلفية شفافة للتحكم الكامل بالشكل
+                            builder: (context) {
+                              return DraggableScrollableSheet(
+                                initialChildSize: 0.85, // ✅ كم تاخذ من الشاشة مبدئيًا (85%)
+                                maxChildSize: 0.95,
+                                minChildSize: 0.5,
+                                builder: (context, scrollController) {
+                                  return Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                    ),
+                                    padding: const EdgeInsets.all(16),
+                                    child: const FilterBottomSheet(),
+                                  );
+                                },
+                              );
+                            },
+                          );
+
 
                         }, icon: const Icon(IconlyLight.filter)),
                   ),

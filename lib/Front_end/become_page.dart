@@ -47,14 +47,14 @@ class _BecomePageState extends State<BecomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("🎉 Congratulations!"),
+            title: const Text("🎉 Congratulations!"),
             content: Text("Yeeey! You are now $type !"),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                 },
-                child: Text("OK"),
+                child: const Text("OK"),
               ),
             ],
           );
@@ -65,11 +65,11 @@ class _BecomePageState extends State<BecomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green[50], // Light green background
-      appBar: AppBar(title: Text('Choisissez votre type')),
+      appBar: AppBar(title: const Text('Choisissez votre type')),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // 2 columns
             crossAxisSpacing: 20,
             mainAxisSpacing: 20,

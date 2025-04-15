@@ -11,8 +11,8 @@ class _AddProductVeterinaireState extends State<AddProductVeterinaire> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Je suis un veterinaire')),
-      body: Center(
+      appBar: AppBar(title: const Text('Je suis un veterinaire')),
+      body: const Center(
         child: Text('mm hada .. hada byn wsh ydir .. tsama y demandiwah nass direct'),
       ),
     );

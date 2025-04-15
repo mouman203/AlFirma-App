@@ -15,7 +15,7 @@ class _SecurityPageState extends State<SecurityPage> {
 
   // Show dialog to update email and phone num
   void Email_PhoneUpdateDialog(String val, context) {
-    TextEditingController _emailController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
 
     showDialog(
       context: context,
@@ -24,14 +24,14 @@ class _SecurityPageState extends State<SecurityPage> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: val == "Email"
-              ? Text("Update Email")
-              : Text("Update Phone Number"),
+              ? const Text("Update Email")
+              : const Text("Update Phone Number"),
           content: TextField(
-            controller: _emailController,
+            controller: emailController,
             decoration: InputDecoration(
               labelText:
                   val == "Email" ? "Enter new email" : "Enter new Phone num",
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
           actions: [
@@ -40,13 +40,13 @@ class _SecurityPageState extends State<SecurityPage> {
                 // Close dialog
                 Navigator.pop(context);
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Submit"),
+              child: const Text("Submit"),
             ),
           ],
         );
@@ -63,17 +63,17 @@ class _SecurityPageState extends State<SecurityPage> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: val == "Email"
-              ? Text("Email Options")
-              : Text("Phone Number Options"),
+              ? const Text("Email Options")
+              : const Text("Phone Number Options"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading:
-                    Icon(Icons.edit, color: Color.fromARGB(255, 42, 103, 34)),
+                    const Icon(Icons.edit, color: Color.fromARGB(255, 42, 103, 34)),
                 title: val == "Email"
-                    ? Text("Change Email")
-                    : Text("Change Phone Number"),
+                    ? const Text("Change Email")
+                    : const Text("Change Phone Number"),
                 onTap: () {
                   Navigator.pop(context);
                   val == "Email"
@@ -83,10 +83,10 @@ class _SecurityPageState extends State<SecurityPage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
+                leading: const Icon(Icons.delete, color: Colors.red),
                 title: val == "Email"
-                    ? Text("Delete Email")
-                    : Text("Delete Phone Number"),
+                    ? const Text("Delete Email")
+                    : const Text("Delete Phone Number"),
                 onTap: () {
                   Navigator.pop(context);
                   val == "Email"
@@ -110,7 +110,7 @@ class _SecurityPageState extends State<SecurityPage> {
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text("Change Password"),
+          title: const Text("Change Password"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -123,7 +123,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 10), // Add space between the text fields
+              const SizedBox(height: 10), // Add space between the text fields
               TextField(
                 obscureText: true,
                 decoration: InputDecoration(
@@ -133,7 +133,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 10), // Add space between the text fields
+              const SizedBox(height: 10), // Add space between the text fields
               TextField(
                 obscureText: true,
                 decoration: InputDecoration(
@@ -148,13 +148,13 @@ class _SecurityPageState extends State<SecurityPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Submit"),
+              child: const Text("Submit"),
             ),
           ],
         );
@@ -170,7 +170,7 @@ class _SecurityPageState extends State<SecurityPage> {
           return AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Text(
+            title: const Text(
               'Attention ⚠️',
               style: TextStyle(
                 fontSize: 20,
@@ -179,7 +179,7 @@ class _SecurityPageState extends State<SecurityPage> {
               ),
             ),
             content: val == "Account"
-                ? Text(
+                ? const Text(
                     'Are you sure you want to delete this account?',
                     style: TextStyle(
                       fontSize: 16,
@@ -189,7 +189,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   )
                 : Text(
                     'Are you sure you want to delete the $val ?',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors
                           .black, // Optional: You can change the text color
@@ -198,13 +198,13 @@ class _SecurityPageState extends State<SecurityPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("Cancel"),
+                child: const Text("Cancel"),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text("Submit"),
+                child: const Text("Submit"),
               ),
             ],
           );
@@ -263,7 +263,7 @@ class _SecurityPageState extends State<SecurityPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Title
-                        ListTile(
+                        const ListTile(
                           title: Text(
                               "Enable multiple autherntification methods to enhace your account security"),
                         ),
@@ -298,7 +298,7 @@ class _SecurityPageState extends State<SecurityPage> {
             ),
           ),
 
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           //authentication card
@@ -319,26 +319,26 @@ class _SecurityPageState extends State<SecurityPage> {
             child: Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.email,
+                  leading: const Icon(Icons.email,
                       color: Color.fromARGB(255, 42, 103, 34)),
-                  title: Text("email"),
+                  title: const Text("email"),
                   subtitle: Text("$email"),
-                  trailing: Icon(Icons.arrow_forward_ios),
+                  trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () => Email_PhoneOptions("Email"),
                 ),
                 ListTile(
-                  leading: Icon(Icons.phone,
-                      color: const Color.fromARGB(255, 42, 103, 34)),
-                  title: Text("Phone"),
+                  leading: const Icon(Icons.phone,
+                      color: Color.fromARGB(255, 42, 103, 34)),
+                  title: const Text("Phone"),
                   subtitle: Text("$phone"),
-                  trailing: Icon(Icons.arrow_forward_ios),
+                  trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () => Email_PhoneOptions("Phone"),
                 ),
               ],
             ),
           ),
 
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
 
@@ -360,16 +360,16 @@ class _SecurityPageState extends State<SecurityPage> {
             child: Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.lock,
-                      color: const Color.fromARGB(255, 42, 103, 34)),
-                  title: Text("Change Password"),
-                  trailing: Icon(Icons.arrow_forward_ios),
+                  leading: const Icon(Icons.lock,
+                      color: Color.fromARGB(255, 42, 103, 34)),
+                  title: const Text("Change Password"),
+                  trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: _showChangePasswordDialog,
                 ),
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
 
@@ -391,9 +391,9 @@ class _SecurityPageState extends State<SecurityPage> {
             child: Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.delete, color: Colors.red),
-                  title: Text("Delete Account"),
-                  trailing: Icon(Icons.arrow_forward_ios),
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text("Delete Account"),
+                  trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () => _showDeletingAccMsg("Account"),
                 ),
               ],

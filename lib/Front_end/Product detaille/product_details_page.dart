@@ -8,12 +8,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 
 
 class ProductDetailsPage extends StatefulWidget {
 
    final Product product;
    const ProductDetailsPage({super.key, required this.product});
+   
+   
 
 
   @override
@@ -21,6 +25,7 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  late PageController _pageController;
   late TapGestureRecognizer readMoreGestureRecognizer;
    final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
@@ -28,6 +33,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Users user =Users();
   List<Product> products=List.empty();
   final TextEditingController controller = TextEditingController();
+
 
   @override
   void initState() {
@@ -41,12 +47,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToComments();
     });
+    _pageController = PageController();
+
   }
 
   @override
   void dispose() {
     super.dispose();
     readMoreGestureRecognizer.dispose();
+    _pageController.dispose();
   }
 
     // دالة للتمرير إلى قسم التعليقات
@@ -86,37 +95,58 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           padding: const EdgeInsets.all(16),
           children: [
             SizedBox(
-        height: 250, 
-        width: double.infinity, 
-        child: PageView.builder(
-      itemCount: widget.product.photos.length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => FullScreenImageViewer(
-                  photos: widget.product.photos,
-                  initialIndex: index,
+  height: 250,
+  width: double.infinity,
+  child: Stack(
+    alignment: Alignment.bottomCenter, // ✅ المؤشر في وسط الأسفل
+    children: [
+      PageView.builder(
+        controller: _pageController,
+        itemCount: widget.product.photos.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FullScreenImageViewer(
+                    photos: widget.product.photos,
+                    initialIndex: index,
+                  ),
                 ),
+              );
+            },
+            child: Container(
+              // ❌ لا تستخدم margin bottom هنا حتى لا تدفع المؤشر للخارج
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(widget.product.photos[index]),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(10),
               ),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(widget.product.photos[index]),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.circular(10),
+            ),
+          );
+        },
+      ),
+
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12), // ✅ مسافة بسيطة من الأسفل
+          child: SmoothPageIndicator(
+            controller: _pageController,
+            count: widget.product.photos.length,
+            effect: const WormEffect(
+              dotColor: Colors.white70, // ✅ أفضل لون للنقاط فوق الصورة
+              activeDotColor: Colors.green,
+              dotHeight: 8,
+              dotWidth: 8,
             ),
           ),
-        );
-      },
         ),
-      ),
+    ],
+  ),
+),
+
             // ✅ جلب بيانات المستخدم الذي أضاف المنتج
             FutureBuilder<DocumentSnapshot>(
            future:  FirebaseFirestore.instance.collection('Users').doc(widget.product.ownerId!.trim()).get(),
@@ -204,14 +234,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   widget.product.rate.toString(),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
+                
       
                 StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
-        .collection('Products')
-        .doc("Agricol_products")
-        .collection("Agricol_products")
-        .doc(widget.product.id)
-        .snapshots(),
+                  .collection('Products') // Collection name
+                  .doc(widget.product.typeProduct == "AgricolProduct"
+                  ? "Agricol_products"
+                  : "Eleveur_products")
+                  .collection(widget.product.typeProduct == "AgricolProduct"
+                  ? "Agricol_products"
+                  : "Eleveur_products")
+                  .doc(widget.product.id)
+                  .snapshots(),
         builder: (context, snapshot) {
       if (!snapshot.hasData || !snapshot.data!.exists) {
         return const SizedBox();
@@ -351,78 +386,68 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               height: 5,
             ),
            Container(
-  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-  decoration: BoxDecoration(
-    color: const Color.fromRGBO(254, 247, 255, 255), // نفس لون الحاوية الذي كان في الكود السابق
-    borderRadius: BorderRadius.circular(15),
-    boxShadow: const [
-      BoxShadow(
-        color: Colors.black12,
-        blurRadius: 5,
-        spreadRadius: 1,
-      ),
-    ],
-  ),
-  child: Row(
-    children: [
-      // أيقونة المستخدم (أول حرف من الاسم)
-      CircleAvatar(
-        backgroundColor: Colors.grey,
-        child: Text(
-           FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
-        ? FirebaseAuth.instance.currentUser?.displayName?.substring(0, 1).toUpperCase() ?? "U"
-        : "U",
-          style: TextStyle(color: Colors.white),
-        ), // يمكنك تغيير لون الخلفية هنا
-      ),
-      const SizedBox(width: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(254, 247, 255, 255), // نفس لون الحاوية الذي كان في الكود السابق
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 5,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // أيقونة المستخدم (أول حرف من الاسم)
+                    CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      child: Text(
+                        FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
+                      ? FirebaseAuth.instance.currentUser?.displayName?.substring(0, 1).toUpperCase() ?? "U"
+                      : "U",
+                        style: const TextStyle(color: Colors.white),
+                      ), // يمكنك تغيير لون الخلفية هنا
+                    ),
+                    const SizedBox(width: 10),
 
-      // حقل الإدخال
-      Expanded(
-        child: TextField(
-          focusNode: _focusNode,
-          autofocus: false,
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: "اكتب تعليقًا...",
-            border: InputBorder.none,
-          ),
-        ),
-      ),
+                    // حقل الإدخال
+                    Expanded(
+                      child: TextField(
+                        focusNode: _focusNode,
+                        autofocus: false,
+                        controller: controller,
+                        decoration: const InputDecoration(
+                          hintText: "اكتب تعليقًا...",
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
 
-      // زر الإرسال
-      IconButton(
-        icon: const Icon(Icons.send, color: Colors.green),
-        onPressed: () {
-          if(controller.text.isEmpty){
-            user.showErrorDialog(context, "You can't add an empty comment");
-          }else{
-          user.addComment(
-            widget.product.id,
-            FirebaseAuth.instance.currentUser?.uid ?? "guest",
-            controller.text,
-            widget.product.typeProduct
-          );
-          controller.clear();
-          }
-        },
-      ),
-    ],
-  ),
-),
-
-             
-             
-             
+                    // زر الإرسال
+                    IconButton(
+                      icon: const Icon(Icons.send, color: Colors.green),
+                      onPressed: () {
+                        if(controller.text.isEmpty){
+                          user.showErrorDialog(context, "You can't add an empty comment");
+                        }else{
+                        user.addComment(
+                          widget.product.id,
+                          FirebaseAuth.instance.currentUser?.uid ?? "guest",
+                          controller.text,
+                          widget.product.typeProduct
+                        );
+                        controller.clear();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
              const SizedBox(
               height: 20,
             ),
-      
-      
-      
-      
-      
-      
               //bring  the comments from firestore
             StreamBuilder<DocumentSnapshot>(
   stream: FirebaseFirestore.instance

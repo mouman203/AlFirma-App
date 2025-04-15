@@ -98,7 +98,7 @@ String receiver = messageData['receiverId'] ?? "Unknown Receiver";
       ? NetworkImage(userData['photo'])
       : null,
   child: userData['photo'] == null 
-      ? Text(username[0].toUpperCase(), style: TextStyle(fontSize: 20))
+      ? Text(username[0].toUpperCase(), style: const TextStyle(fontSize: 20))
       : null,
 ),
 

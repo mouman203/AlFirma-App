@@ -16,8 +16,8 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   String userId = FirebaseAuth.instance.currentUser!.uid;
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
 
   String? firstNameError;
   String? lastNameError;
@@ -84,7 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text("Error"),
+          title: const Text("Error"),
           content: Text(e.toString()),
         ),
       );
@@ -190,7 +190,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Padding(
               padding: const EdgeInsets.only(top: 54, bottom: 16),
               child: isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : CircleAvatar(
                       radius: 90,
                       backgroundColor: Colors.grey[500],
@@ -238,7 +238,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   if (validateFields()) {
                     _updateProfile();
                   }
-                  ;
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode
