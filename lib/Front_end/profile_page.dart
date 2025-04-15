@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 radius: 90,
                 backgroundImage: profilePic != null
                     ? NetworkImage(profilePic!)
-                    :  isDarkMode ? const AssetImage("assets/anonymeD.png") as ImageProvider :  const AssetImage("assets/anonyme.png") as ImageProvider,
+                    :  isDarkMode ? const AssetImage("assets/anonymeD.png")  :  const AssetImage("assets/anonyme.png") as ImageProvider,
               ),
             ),
           ),

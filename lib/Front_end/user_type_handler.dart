@@ -149,18 +149,16 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
   Future<void> _initializeUserData() async {
     final result = await fetchUserTypesAndActive();
 
-    setState(() {
-      selectedTypes = result['userType'];
-      activeType = result['activeType'];
+     setState(() {
+    selectedTypes = result['userType'];
+    activeType = result['activeType'];
 
-      // If no active type is stored but user has types, default to first
-      if (activeType == null && selectedTypes.isNotEmpty) {
-        activeType = selectedTypes.first;
-      }
-
-      // If still no active type (user has nothing), default to 'Client'
-      activeType ??= 'Client';
-    });
+    // Ensure the activeType is at the top of the selectedTypes list
+    if (selectedTypes.contains(activeType)) {
+      selectedTypes.remove(activeType);  // Remove it from its current position
+      selectedTypes.insert(0, activeType!);  // Insert it at the top (first position)
+    }
+  });
 
     await saveUserData(selectedTypes, activeType!);
   }
@@ -271,10 +269,10 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                       final type = entry.value;
 
                       final emojiMap = {
-                        'Agriculteur': '🧑🏻‍🌾',
+                        'Agriculteur': '👨🏽‍🌾',
                         'Éleveur': '🐮',
-                        'Expert Agri': '🕵️‍♂️',
-                        'Vétérinaire': '👨🏼‍⚕️',
+                        'Expert Agri': '🕵🏼',
+                        'Vétérinaire': '💉',
                         'Entreprise': '🏢',
                         'Transporteur': '🛻',
                         'Réparateur': '👨🏻‍🔧',
@@ -301,13 +299,13 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                   ? const Color.fromARGB(255, 53, 118, 55)
                                   : isDarkMode
                                       ? Colors.white
-                                      : Colors.black,
+                                      : const Color.fromARGB(255, 59, 58, 58),
                               border:
                                   Border.all(color: Colors.white, width: 0.8),
                             ),
                             alignment: Alignment.center,
                             child: Text(emoji,
-                                style: TextStyle(
+                                style:  const TextStyle(
                                   fontSize: 25,
                                 )),
                           ),

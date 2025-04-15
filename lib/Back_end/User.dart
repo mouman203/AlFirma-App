@@ -358,82 +358,86 @@ class Users {
 //sign in with google
 
   Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
-    try {
-      showLoadingDialog(context); // عرض مؤشر الانتظار
+  try {
+    showLoadingDialog(context); // عرض مؤشر الانتظار
 
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
-      await googleSignIn.signOut();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
+    await googleSignIn.signOut();
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      if (googleUser == null) {
-        Navigator.pop(context); // إغلاق مؤشر التحميل
-        print("❌ تم إلغاء تسجيل الدخول");
-        return;
-      }
+    if (googleUser == null) {
+      Navigator.pop(context); // إغلاق مؤشر التحميل
+      print("❌ تم إلغاء تسجيل الدخول");
+      return;
+    }
 
-      print("✅ تسجيل الدخول ناجح: ${googleUser.email}");
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+    print("✅ تسجيل الدخول ناجح: ${googleUser.email}");
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
-      // تسجيل الدخول إلى Firebase
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(googleCredential);
-      User? firebaseUser = userCredential.user;
+    // تسجيل الدخول إلى Firebase
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(googleCredential);
+    User? firebaseUser = userCredential.user;
 
-      if (firebaseUser != null) {
+    if (firebaseUser != null) {
+      // مرجع إلى Firestore
+      final userRef = FirebaseFirestore.instance
+          .collection("Users")
+          .doc(firebaseUser.uid);
+
+      // التحقق مما إذا كان المستخدم موجود مسبقًا
+      final doc = await userRef.get();
+
+      if (!doc.exists) {
         // تقسيم الاسم إلى اسم أول واسم أخير
         List<String> nameParts = googleUser.displayName?.split(" ") ?? ["", ""];
         String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
-        String lastName =
-            nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+        String lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
 
-        // مرجع إلى Firestore
-        final userRef = FirebaseFirestore.instance
-            .collection("Users")
-            .doc(firebaseUser.uid);
+        // حفظ بيانات المستخدم الجديدة فقط إذا لم تكن موجودة
+        await userRef.set({
+          "email": firebaseUser.email,
+          "Verify": true,
+          "first_name": firstName,
+          "last_name": lastName,
+          "phone": firebaseUser.phoneNumber ?? "",
+          "password": "signed with google",
+          "photo": "",
+          "userType": [],
+          'activeType': 'Client',
+          "following": [],
+          "followers": [],
+          "created_at": FieldValue.serverTimestamp(),
+        });
 
-        // حفظ أو تحديث بيانات المستخدم في Firestore
-        await userRef.set(
-            {
-              "email": firebaseUser.email,
-              "Verify": true,
-              "first_name": firstName,
-              "last_name": lastName,
-              "phone": firebaseUser.phoneNumber ?? "",
-              "password":"signed with google",
-              "photo":"",
-              "userType":[],
-              'activeType':'Client',
-              "following":[],
-              "followers":[],
-              "created_at": FieldValue.serverTimestamp(),
-            },
-            SetOptions(
-                merge: true)); // ✅ دمج البيانات بدلاً من استبدالها بالكامل
+      } else {
+        print(" المستخدم موجود مسبقًا ");
       }
-
-      Navigator.pop(context); // إغلاق مؤشر التحميل
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('lastPageIndex', 0);
-      // الانتقال إلى الصفحة الرئيسية
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => homePage),
-      );
-    } catch (e) {
-      Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
-      print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
-      showErrorDialog(context, "⚠️ حدث خطأ أثناء تسجيل الدخول بواسطة Google.");
     }
+
+    Navigator.pop(context); // إغلاق مؤشر التحميل
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('lastPageIndex', 0);
+
+    // الانتقال إلى الصفحة الرئيسية
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => homePage),
+    );
+  } catch (e) {
+    Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
+    print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
+    showErrorDialog(context, "⚠️ حدث خطأ أثناء تسجيل الدخول بواسطة Google.");
   }
+}
 
   void likeProduct(Product product) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
