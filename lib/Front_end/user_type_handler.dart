@@ -96,7 +96,7 @@ Future<Map<String, dynamic>> fetchUserTypesAndActive() async {
   print("activeType: $type");
 
   // ✅ Assign default if activeType is null
-  if (type == null || type.isEmpty) {
+  if (type!.isEmpty) {
     type = 'Client';
     await docRef.update({'activeType': type});
     print("⚠️ activeType was null, defaulted to 'Client'");

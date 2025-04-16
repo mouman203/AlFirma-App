@@ -57,7 +57,7 @@ class _ExplorePageState extends State<ExplorePage> {
           .collection('Agricol_products')
           .get();
 
-      List<Productagri> agricolProducts = agricolSnapshot.docs.map((doc) {
+      List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         return Productagri(
           id: doc.id,
@@ -102,7 +102,7 @@ class _ExplorePageState extends State<ExplorePage> {
           .collection('Eleveur_products')
           .get();
 
-      List<ProductElev> eleveurProducts = eleveurSnapshot.docs.map((doc) {
+      List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
 
         // إنشاء الكائن ProductElev

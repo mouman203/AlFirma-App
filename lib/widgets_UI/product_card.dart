@@ -77,20 +77,20 @@ class ProductCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                        RichText(
-  text: TextSpan(
-    children: [
-      TextSpan(
-        text: "\$${product.price}",
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-      if (product is Productagri)
-        TextSpan(
-          text: "/${(product as Productagri).unite}",
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-    ],
-  ),
-),
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "\$${product.price}",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              if (product is Productagri)
+                                TextSpan(
+                                  text: "/${(product as Productagri).unite}",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                            ],
+                          ),
+                       ),
 
                       ],
                     ),

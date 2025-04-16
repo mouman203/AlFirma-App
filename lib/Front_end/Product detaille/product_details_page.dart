@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/Product.dart';
 import 'package:agriplant/Back_end/ProductAgri.dart';
+import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Product%20detaille/fullscreanimage.dart';
 import 'package:agriplant/Front_end/userprofilepage.dart';
@@ -25,6 +26,9 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  String? category;
+  String? produit;
+ 
   late PageController _pageController;
   late TapGestureRecognizer readMoreGestureRecognizer;
    final ScrollController _scrollController = ScrollController();
@@ -48,6 +52,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       _scrollToComments();
     });
     _pageController = PageController();
+     final product = widget.product;
+     if (product is Productagri) {
+      category = product.category;
+      produit=product.produit;
+    } else if (product is ProductElev) {
+      category = product.category;
+      produit=product.produit;
+    }
 
   }
 
@@ -185,7 +197,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
 
                   const SizedBox(width: 10),
-                  Text(username, style: Theme.of(context).textTheme.titleMedium),
+                  Text(username, style: Theme.of(context).textTheme.titleLarge),
                 ],
               ),
             );
@@ -193,153 +205,123 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ),
 
             const SizedBox(height: 10),
-            Text(
-              widget.product.name ,
-              style: Theme.of(context).textTheme.titleLarge,
+            Row(
+              children: [
+                Text(
+                  widget.product.name ,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const Spacer(),
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < widget.product.rate ? Icons.star : Icons.star_border,
+                      color: Colors.green,
+                      size: 25,
+                    );
+                  }),
+                ),
+
+              ],
             ),
             const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Available in stock",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                ),
                 RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
-                          text: widget.product.price.toString(),
+                          text:"\$${widget.product.price}",
                           style: Theme.of(context).textTheme.titleLarge),
-                      TextSpan(
-                        //  text: widget.product.unite,
-                          style: Theme.of(context).textTheme.bodySmall),
+                      
                     ],
                   ),
                 )
               ],
             ),
             const SizedBox(height: 10),
-            Row(
-              children: [
-                Icon(
-                  Icons.star,
-                  size: 16,
-                  color: Colors.yellow.shade800,
-                ),
-      
-                Text(
-                  widget.product.rate.toString(),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                
-      
-                StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-                  .collection('Products') // Collection name
-                  .doc(widget.product.typeProduct == "AgricolProduct"
-                  ? "Agricol_products"
-                  : "Eleveur_products")
-                  .collection(widget.product.typeProduct == "AgricolProduct"
-                  ? "Agricol_products"
-                  : "Eleveur_products")
-                  .doc(widget.product.id)
-                  .snapshots(),
-        builder: (context, snapshot) {
-      if (!snapshot.hasData || !snapshot.data!.exists) {
-        return const SizedBox();
-      }
-      
-      List<dynamic> liked = snapshot.data!['liked'] ?? [];
-      List<dynamic> disliked = snapshot.data!['disliked'] ?? [];
-      String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-      bool isLiked = liked.contains(userId);
-      bool isDisliked = disliked.contains(userId);
-      
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.thumb_up,
-                    size: 20, color: isLiked ? Colors.green : Colors.grey),
-                onPressed: () {
-                  user.likeProduct(widget.product);
-                },
-              ),
-              Text(
-                "${liked.length}",
-                style: const TextStyle(fontSize: 14, color: Colors.black),
-              ),
-            ],
-          ),
-          const SizedBox(width: 5),
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.thumb_down,
-                    size: 20, color: isDisliked ? Colors.red : Colors.grey),
-                onPressed: () {
-                  user.dislikeProduct(widget.product);
-                },
-              ),
-              Text(
-                "${disliked.length}",
-                style: const TextStyle(fontSize: 14, color: Colors.black),
-              ),
-            ],
-          ),
-          const SizedBox(width: 5),
-          IconButton(
-            icon: const Icon(Icons.comment, size: 20, color: Colors.grey),
-            onPressed: () {
-              print("Comment Clicked!");
-            },
-          ),
-        ],
-      );
-        },
-      ),
-      
-                
-                const Spacer(),
-                SizedBox(
-                  height: 30,
-                  width: 30,
-                  child: IconButton.filledTonal(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    iconSize: 18,
-                    icon: const Icon(Icons.remove),
-                  ),
-                ),
-                Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 12),
-  child: widget.product is Productagri
-      ? Text(
-          "2 ${(widget.product as Productagri).unite}",
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        )
-      : Container(), // لا شيء يتم عرضه إذا لم يكن من النوع Productagri
-),
 
-                SizedBox(
-                  height: 30,
-                  width: 30,
-                  child: IconButton.filledTonal(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    iconSize: 18,
-                    icon: const Icon(Icons.add),
+            Text("${widget.product.typeProduct }"),
+            
+            const SizedBox(height: 10),
+            const SizedBox(height: 10),
+
+            Text("${category}"),
+
+            const SizedBox(height: 10),
+            const SizedBox(height: 10),
+
+            Text("${produit}"),
+
+            const SizedBox(height: 10),
+            StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+              .collection('Products') // Collection name
+              .doc(widget.product.typeProduct == "AgricolProduct"
+              ? "Agricol_products"
+              : "Eleveur_products")
+              .collection(widget.product.typeProduct == "AgricolProduct"
+              ? "Agricol_products"
+              : "Eleveur_products")
+              .doc(widget.product.id)
+              .snapshots(),
+                    builder: (context, snapshot) {
+                  if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return const SizedBox();
+                  }
+                  
+                  List<dynamic> liked = snapshot.data!['liked'] ?? [];
+                  List<dynamic> disliked = snapshot.data!['disliked'] ?? [];
+                  String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+                  bool isLiked = liked.contains(userId);
+                  bool isDisliked = disliked.contains(userId);
+                  
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.thumb_up,
+                                size: 20, color: isLiked ? Colors.green : Colors.grey),
+                            onPressed: () {
+                              user.likeProduct(widget.product);
+                            },
+                          ),
+                          Text(
+                            "${liked.length}",
+                            style: const TextStyle(fontSize: 14, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 5),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.thumb_down,
+                                size: 20, color: isDisliked ? Colors.red : Colors.grey),
+                            onPressed: () {
+                              user.dislikeProduct(widget.product);
+                            },
+                          ),
+                          Text(
+                          "${disliked.length}",
+                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 5),
+                      IconButton(
+                        icon: const Icon(Icons.comment, size: 20, color: Colors.grey),
+                        onPressed: () {
+                          print("Comment Clicked!");
+                        },
+                      ),
+                    ],
+                  );
+                    },
                   ),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
             Text("Description",
                 style: Theme.of(context)
@@ -373,9 +355,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             
             const SizedBox(height: 20),
             FilledButton.icon(
-                onPressed: () {},
-                icon: const Icon(IconlyLight.bag2),
-                label: const Text("Add to cart")
+                onPressed: () {
+
+                },
+                icon: const Icon(IconlyLight.message),
+                label: const Text("Contact")
             ),
       
 
@@ -385,6 +369,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             const SizedBox(
               height: 5,
             ),
+
            Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
@@ -445,11 +430,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ],
                 ),
               ),
-             const SizedBox(
+           
+           const SizedBox(
               height: 20,
             ),
-              //bring  the comments from firestore
-            StreamBuilder<DocumentSnapshot>(
+            
+           //bring  the comments from firestore
+          StreamBuilder<DocumentSnapshot>(
   stream: FirebaseFirestore.instance
       .collection('Products').doc(widget.product.typeProduct == "AgricolProduct"
           ? "Agricol_products"
