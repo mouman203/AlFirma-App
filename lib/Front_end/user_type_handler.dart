@@ -430,7 +430,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                     child: Container(
                       width: 35,
                       height: 35,
-                      alignment: Alignment.centerRight,
+                      alignment: Alignment.center,
                       child: Icon(
                         Icons.group_add,
                         size: 24,

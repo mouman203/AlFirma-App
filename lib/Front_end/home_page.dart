@@ -48,12 +48,12 @@ class _HomePageState extends State<HomePage> {
     _loadSelectedType();
   }
 
- Future<void> _loadSelectedType() async {
-  final type = await getActiveTypeFromFirestore();
-  setState(() {
-    selectedType = type;
-  });
-}
+  Future<void> _loadSelectedType() async {
+    final type = await getActiveTypeFromFirestore();
+    setState(() {
+      selectedType = type;
+    });
+  }
 
   Future<void> _fetchUserName() async {
     String? name = await getUserNameFromFirestore();
@@ -286,7 +286,6 @@ class _HomePageState extends State<HomePage> {
               currentPageIndex = index;
             });
           }
-
           _saveLastSelectedPage(index);
         },
         items: const [
