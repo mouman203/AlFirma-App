@@ -282,33 +282,24 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
                       return Positioned(
                         right: index * 12.0 - 28.0,
-                        child: GestureDetector(
-                          onTap: () async {
-                            await setActiveType(type);
-                            setState(() {
-                              activeType = type;
-                            });
-                            await saveUserData(selectedTypes, type);
-                          },
-                          child: Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: type == activeType
-                                  ? const Color.fromARGB(255, 53, 118, 55)
-                                  : isDarkMode
-                                      ? Colors.white
-                                      : const Color.fromARGB(255, 59, 58, 58),
-                              border:
-                                  Border.all(color: Colors.white, width: 0.8),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(emoji,
-                                style:  const TextStyle(
-                                  fontSize: 25,
-                                )),
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: type == activeType
+                                ? const Color.fromARGB(255, 53, 118, 55)
+                                : isDarkMode
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 59, 58, 58),
+                            border:
+                                Border.all(color: Colors.white, width: 0.8),
                           ),
+                          alignment: Alignment.center,
+                          child: Text(emoji,
+                              style:  const TextStyle(
+                                fontSize: 25,
+                              )),
                         ),
                       );
                     }).toList(),
@@ -318,7 +309,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                     offset: const Offset(15.0, 2),
                     child: IconButton(
                       icon: Icon(Icons.arrow_drop_down_outlined,
-                          color: Theme.of(context).colorScheme.primaryFixedDim,
+                          color: Theme.of(context).colorScheme.primary,
                           size: 35),
                       tooltip: 'Switch Active Profile',
                       onPressed: () async {
@@ -397,6 +388,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
                                         await saveUserData(
                                             selectedTypes, activeType!);
+                                            
 
                                         setState(() {});
                                         Navigator.pop(context);
@@ -442,7 +434,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                       child: Icon(
                         Icons.group_add,
                         size: 24,
-                        color: Theme.of(context).colorScheme.primaryFixedDim,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   )

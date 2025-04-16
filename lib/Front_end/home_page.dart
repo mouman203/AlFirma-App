@@ -45,13 +45,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadLastSelectedPage();
     _fetchUserName();
-    _loadActiveType();
+    _loadSelectedType();
   }
 
-  Future<void> _loadActiveType() async {
-    selectedType = await getActiveTypeFromFirestore();
-    setState(() {}); // To update UI if necessary
-  }
+ Future<void> _loadSelectedType() async {
+  final type = await getActiveTypeFromFirestore();
+  setState(() {
+    selectedType = type;
+  });
+}
 
   Future<void> _fetchUserName() async {
     String? name = await getUserNameFromFirestore();
@@ -245,7 +247,7 @@ class _HomePageState extends State<HomePage> {
                         : "Welcome 👋🏼 ",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-            Text("Welcome to our App ",
+            Text("The ${selectedType} ",
                 style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
