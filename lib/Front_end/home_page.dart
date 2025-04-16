@@ -3,7 +3,7 @@ import 'package:agriplant/Front_end/Sidebar.dart';
 import 'package:agriplant/Front_end/explore_page.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
 import 'package:agriplant/Front_end/profile_page.dart';
-import 'package:agriplant/Front_end/services_page.dart';
+import 'package:agriplant/Front_end/Services/services_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
