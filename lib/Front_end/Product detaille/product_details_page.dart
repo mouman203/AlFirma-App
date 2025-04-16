@@ -2,6 +2,7 @@ import 'package:agriplant/Back_end/Product.dart';
 import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/Back_end/User.dart';
+import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Front_end/Product%20detaille/fullscreanimage.dart';
 import 'package:agriplant/Front_end/userprofilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -356,7 +357,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             const SizedBox(height: 20),
             FilledButton.icon(
                 onPressed: () {
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                          builder: (context) => ChatPage(receiverId: widget.product.ownerId!),
+                        ),
+                    );
                 },
                 icon: const Icon(IconlyLight.message),
                 label: const Text("Contact")
