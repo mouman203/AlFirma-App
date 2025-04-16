@@ -78,7 +78,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'location': imagePath,
         'photo': imageUrl,
       });
-
     } catch (e) {
       print("Upload error: $e");
       showDialog(
@@ -88,7 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           content: Text(e.toString()),
         ),
       );
-    } 
+    }
   }
 
 /*
@@ -182,6 +181,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         title: const Text('Edit Profile'),
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
+        elevation: 5,
       ),
       body: ListView(
         children: [
@@ -193,7 +193,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ? const CircularProgressIndicator()
                   : CircleAvatar(
                       radius: 90,
-                      backgroundColor: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                      backgroundColor:
+                          isDarkMode ? Colors.white : const Color(0xFF256C4C),
                       backgroundImage: _selectedImageFile != null
                           ? FileImage(_selectedImageFile!) as ImageProvider
                           : (_currentImage != null
@@ -243,7 +244,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode
                       ? const Color(0xFF90D5AE)
-                      :const Color(0xFF256C4C),
+                      : const Color(0xFF256C4C),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

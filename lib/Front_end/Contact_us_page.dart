@@ -100,9 +100,10 @@ class _ContactUsPageState extends State<Contact_us_page> {
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text("Report Your Problem"),
-          backgroundColor:
-              isDarkMode ? colorScheme.surface : colorScheme.surface),
+        title: const Text("Report Your Problem"),
+        backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
+        elevation: 20,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(
@@ -112,9 +113,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
             TextField(
               style: TextStyle(
                   fontSize: 19,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.italic),
               controller: _emailController,
@@ -122,29 +121,21 @@ class _ContactUsPageState extends State<Contact_us_page> {
               decoration: InputDecoration(
                 labelText: "Your Email",
                 labelStyle: TextStyle(
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                     width: 2.0,
                   ),
                 ),
@@ -154,9 +145,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
             TextField(
               style: TextStyle(
                   fontSize: 19,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.italic),
               controller: _nameController,
@@ -164,29 +153,21 @@ class _ContactUsPageState extends State<Contact_us_page> {
               decoration: InputDecoration(
                 labelText: "Your Name",
                 labelStyle: TextStyle(
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                     width: 2.0,
                   ),
                 ),
@@ -196,37 +177,27 @@ class _ContactUsPageState extends State<Contact_us_page> {
             TextField(
               style: TextStyle(
                 fontSize: 18,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
               ),
               controller: _subjectController,
               decoration: InputDecoration(
                 labelText: "Subject",
                 labelStyle: TextStyle(
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                     width: 2.0,
                   ),
                 ),
@@ -236,38 +207,28 @@ class _ContactUsPageState extends State<Contact_us_page> {
             TextField(
               style: TextStyle(
                 fontSize: 18,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
               ),
               controller: _reportController,
               maxLines: 10,
               decoration: InputDecoration(
                 labelText: "Describe your problem",
                 labelStyle: TextStyle(
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: isDarkMode
-                        ? Colors.white
-                        : const Color(0xFF256C4C),
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                     width: 2.0,
                   ),
                 ),
@@ -284,7 +245,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode
                       ? const Color(0xFF90D5AE)
-                      :const Color(0xFF256C4C),
+                      : const Color(0xFF256C4C),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 child: Text("Send Report",

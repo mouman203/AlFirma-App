@@ -17,14 +17,14 @@ class Sidebar extends StatelessWidget {
       child: Container(
         color: isDarkMode
             ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
-            : Theme.of(context).colorScheme.secondaryContainer, // Light green in light mode
+            : Theme.of(context)
+                .colorScheme
+                .secondaryContainer, // Light green in light mode
         child: ListView(
           children: [
             ListTile(
               leading: Icon(Icons.edit,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C)),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
               title: const Text('Edit Profile'),
               onTap: () {
                 Navigator.push(
@@ -36,9 +36,7 @@ class Sidebar extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(IconlyBold.bookmark,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C)),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
               title: Text(
                 'Saved',
                 style:
@@ -53,9 +51,7 @@ class Sidebar extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.settings_sharp,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C)),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
               title: Text(
                 'Settings',
                 style:
@@ -70,9 +66,7 @@ class Sidebar extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.logout_sharp,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C)),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
               title: Text(
                 'Log out',
                 style:
@@ -89,9 +83,7 @@ class Sidebar extends StatelessWidget {
             ListTile(
               title: const Text("About Us"),
               leading: Icon(Icons.info_outline_rounded,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF256C4C)),
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
               onTap: () {},
             ),
           ],

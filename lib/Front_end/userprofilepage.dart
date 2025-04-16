@@ -30,7 +30,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Future<void> _loadUserData() async {
     String currentUserId = _auth.currentUser!.uid;
-    DocumentSnapshot userDoc = await _firestore.collection("Users").doc(widget.userId).get();
+    DocumentSnapshot userDoc =
+        await _firestore.collection("Users").doc(widget.userId).get();
 
     if (userDoc.exists) {
       List<dynamic> followers = userDoc["followers"] ?? [];
@@ -45,19 +46,29 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Future<void> _toggleFollow() async {
     String currentUserId = _auth.currentUser!.uid;
-    DocumentReference userRef = _firestore.collection("Users").doc(widget.userId);
-    DocumentReference currentUserRef = _firestore.collection("Users").doc(currentUserId);
+    DocumentReference userRef =
+        _firestore.collection("Users").doc(widget.userId);
+    DocumentReference currentUserRef =
+        _firestore.collection("Users").doc(currentUserId);
 
     if (isFollowing) {
-      await userRef.update({"followers": FieldValue.arrayRemove([currentUserId])});
-      await currentUserRef.update({"following": FieldValue.arrayRemove([widget.userId])});
+      await userRef.update({
+        "followers": FieldValue.arrayRemove([currentUserId])
+      });
+      await currentUserRef.update({
+        "following": FieldValue.arrayRemove([widget.userId])
+      });
       setState(() {
         isFollowing = false;
         followersCount--;
       });
     } else {
-      await userRef.update({"followers": FieldValue.arrayUnion([currentUserId])});
-      await currentUserRef.update({"following": FieldValue.arrayUnion([widget.userId])});
+      await userRef.update({
+        "followers": FieldValue.arrayUnion([currentUserId])
+      });
+      await currentUserRef.update({
+        "following": FieldValue.arrayUnion([widget.userId])
+      });
       setState(() {
         isFollowing = true;
         followersCount++;
@@ -67,7 +78,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-   // final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    // final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(title: Text(username)),
@@ -77,8 +88,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
             padding: const EdgeInsets.only(top: 40, bottom: 16),
             child: CircleAvatar(
               radius: 60,
-              backgroundImage: profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
-              child: profilePic.isEmpty ? const Icon(Icons.person, size: 60) : null,
+              backgroundImage:
+                  profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
+              child: profilePic.isEmpty
+                  ? const Icon(Icons.person, size: 60)
+                  : null,
             ),
           ),
           Text(username, style: Theme.of(context).textTheme.headlineSmall),
@@ -88,14 +102,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
             children: [
               Column(
                 children: [
-                  Text("$followersCount", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text("$followersCount",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16)),
                   const Text("Followers"),
                 ],
               ),
               const SizedBox(width: 20),
               Column(
                 children: [
-                  Text("$followingCount", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text("$followingCount",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16)),
                   const Text("Following"),
                 ],
               ),

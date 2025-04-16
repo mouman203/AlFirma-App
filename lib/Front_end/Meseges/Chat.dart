@@ -59,6 +59,7 @@ class _ChatPageState extends State<ChatPage> {
       print("❌ Error sending message: $e");
     }
   }
+
   /// 🟢 **الانتقال إلى صفحة الملف الشخصي**
   void _goToProfile() {
     Navigator.push(
@@ -68,11 +69,18 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: theme.brightness == Brightness.dark
+            ? colorScheme.surface
+            : colorScheme.surface,
+        elevation: 5,
         title: GestureDetector(
           onTap: _goToProfile,
           child: Row(
@@ -82,13 +90,15 @@ class _ChatPageState extends State<ChatPage> {
                 backgroundImage: receiverPhotoUrl.isNotEmpty
                     ? NetworkImage(receiverPhotoUrl)
                     : null, // صورة المستخدم
-                backgroundColor: Colors.grey[300], // لون افتراضي إذا لم تكن هناك صورة
+                backgroundColor:
+                    Colors.grey[300], // لون افتراضي إذا لم تكن هناك صورة
                 radius: 18,
                 child: receiverPhotoUrl.isEmpty
                     ? const Icon(Icons.person, color: Colors.white)
                     : null, // أيقونة بديلة عند عدم وجود صورة
               ),
               const SizedBox(width: 10),
+
               /// 🟠 **اسم المستخدم**
               Text(
                 receiverName,
@@ -107,8 +117,7 @@ class _ChatPageState extends State<ChatPage> {
                   .collection("Messages")
                   .where(
                     Filter.or(
-                      Filter.and(
-                          Filter("senderId", isEqualTo: currentUserId),
+                      Filter.and(Filter("senderId", isEqualTo: currentUserId),
                           Filter("receiverId", isEqualTo: widget.receiverId)),
                       Filter.and(
                           Filter("senderId", isEqualTo: widget.receiverId),
@@ -153,7 +162,8 @@ class _ChatPageState extends State<ChatPage> {
                                 backgroundColor: Colors.grey[300],
                                 radius: 16,
                                 child: receiverPhotoUrl.isEmpty
-                                    ? const Icon(Icons.person, color: Colors.white)
+                                    ? const Icon(Icons.person,
+                                        color: Colors.white)
                                     : null,
                               ),
                             ),
@@ -198,7 +208,9 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color:  theme.brightness == Brightness.dark
+            ? colorScheme.secondaryContainer
+            : colorScheme.secondaryContainer,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: TextField(
@@ -214,7 +226,9 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 const SizedBox(width: 8),
                 CircleAvatar(
-                  backgroundColor: Colors.green,
+                  backgroundColor: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C),
                   radius: 25,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),

@@ -30,7 +30,8 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
           title: const Text('Settings'),
           backgroundColor:
-              isDarkMode ? colorScheme.surface : colorScheme.surface),
+              isDarkMode ? colorScheme.surface : colorScheme.surface,
+          elevation: 5),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [

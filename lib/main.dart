@@ -53,7 +53,6 @@ class MainApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
-          elevation: 3,
         ),
       ),
       darkTheme: ThemeData.dark().copyWith(

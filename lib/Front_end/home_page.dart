@@ -227,6 +227,7 @@ class _HomePageState extends State<HomePage> {
             ? colorScheme.surface
             : colorScheme.surface,
         centerTitle: false,
+        elevation: 3,
         leading: IconButton.filledTonal(
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();

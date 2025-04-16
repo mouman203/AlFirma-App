@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
         followersCount = (userDoc["followers"] as List<dynamic>?)?.length ?? 0;
         followingCount = (userDoc["following"] as List<dynamic>?)?.length ?? 0;
         username = userDoc["first_name"];
-        profilePic = userDoc["photo"] ;
+        profilePic = userDoc["photo"];
       });
     }
   }
@@ -56,13 +56,16 @@ class _ProfilePageState extends State<ProfilePage> {
             child: CircleAvatar(
               radius: 93,
               backgroundColor: isDarkMode
-                    ? const Color(0xFF273930)
-                    : const Color(0xFF256C4C),
+                  ? const Color(0xFF273930)
+                  : const Color(0xFF256C4C),
               child: CircleAvatar(
                 radius: 90,
                 backgroundImage: profilePic != null
                     ? NetworkImage(profilePic!)
-                    :  isDarkMode ? const AssetImage("assets/anonymeD.png")  :  const AssetImage("assets/anonyme.png") as ImageProvider,
+                    : isDarkMode
+                        ? const AssetImage("assets/anonymeD.png")
+                        : const AssetImage("assets/anonyme.png")
+                            as ImageProvider,
               ),
             ),
           ),
@@ -103,14 +106,10 @@ class _ProfilePageState extends State<ProfilePage> {
           //edit profile
           ListTile(
             leading: Icon(Icons.edit,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: const Text('Edit Profile'),
             trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(
                 context,
@@ -119,19 +118,15 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             },
           ),
-          
+
           ListTile(
             leading: Icon(IconlyBold.bookmark,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: Text('Saved',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-                    trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Saved()));
@@ -139,16 +134,12 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           ListTile(
             leading: Icon(Icons.settings_sharp,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: Text('Settings',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-                    trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(
                   context,
@@ -158,16 +149,12 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           ListTile(
             leading: Icon(Icons.logout_sharp,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             title: Text('Log out',
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-                    trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () async {
               GoogleSignIn googleSignIn = GoogleSignIn();
               googleSignIn.disconnect();
@@ -179,13 +166,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ListTile(
             title: const Text("About Us"),
             leading: Icon(Icons.info_outline_rounded,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
-                    trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode
-                    ? Colors.white
-                    : const Color(0xFF256C4C)),
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () {},
           ),
         ],

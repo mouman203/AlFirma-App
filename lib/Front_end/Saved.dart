@@ -13,6 +13,8 @@ class Saved extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Saved'),
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
+        elevation: 5,
+        
       ),
     );
   }

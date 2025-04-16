@@ -149,16 +149,17 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
   Future<void> _initializeUserData() async {
     final result = await fetchUserTypesAndActive();
 
-     setState(() {
-    selectedTypes = result['userType'];
-    activeType = result['activeType'];
+    setState(() {
+      selectedTypes = result['userType'];
+      activeType = result['activeType'];
 
-    // Ensure the activeType is at the top of the selectedTypes list
-    if (selectedTypes.contains(activeType)) {
-      selectedTypes.remove(activeType);  // Remove it from its current position
-      selectedTypes.insert(0, activeType!);  // Insert it at the top (first position)
-    }
-  });
+      // Ensure the activeType is at the top of the selectedTypes list
+      if (selectedTypes.contains(activeType)) {
+        selectedTypes.remove(activeType); // Remove it from its current position
+        selectedTypes.insert(
+            0, activeType!); // Insert it at the top (first position)
+      }
+    });
 
     await saveUserData(selectedTypes, activeType!);
   }
@@ -292,12 +293,11 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                 : isDarkMode
                                     ? Colors.white
                                     : const Color.fromARGB(255, 59, 58, 58),
-                            border:
-                                Border.all(color: Colors.white, width: 0.8),
+                            border: Border.all(color: Colors.white, width: 0.8),
                           ),
                           alignment: Alignment.center,
                           child: Text(emoji,
-                              style:  const TextStyle(
+                              style: const TextStyle(
                                 fontSize: 25,
                               )),
                         ),
@@ -388,7 +388,6 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
                                         await saveUserData(
                                             selectedTypes, activeType!);
-                                            
 
                                         setState(() {});
                                         Navigator.pop(context);
