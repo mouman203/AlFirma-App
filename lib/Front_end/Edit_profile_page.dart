@@ -252,7 +252,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 child: Text("Submit",
                     style:
-                        GoogleFonts.roboto(fontSize: 18, color: Colors.white)),
+                        GoogleFonts.roboto(fontSize: 18,color: isDarkMode ? Colors.black : Colors.white)),
               ),
             ),
           ),

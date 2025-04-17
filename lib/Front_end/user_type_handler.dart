@@ -291,7 +291,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                             color: type == activeType
                                 ? const Color.fromARGB(255, 53, 118, 55)
                                 : isDarkMode
-                                    ? Colors.white
+                                    ? const Color.fromARGB(255, 199, 197, 197)
                                     : const Color.fromARGB(255, 59, 58, 58),
                             border: Border.all(color: Colors.white, width: 0.8),
                           ),

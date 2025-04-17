@@ -307,8 +307,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         ),
                         Text(
                           "${liked.length}",
-                          style: const TextStyle(
-                              fontSize: 14, color: Colors.black),
+                          style:  TextStyle(
+                              fontSize: 14, color:isDarkMode ? Colors.white : Colors.black),
                         ),
                       ],
                     ),
@@ -325,8 +325,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         ),
                         Text(
                           "${disliked.length}",
-                          style: const TextStyle(
-                              fontSize: 14, color: Colors.black),
+                          style: TextStyle(
+                              fontSize: 14, color:isDarkMode ? Colors.white : Colors.black),
                         ),
                       ],
                     ),

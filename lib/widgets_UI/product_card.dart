@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
-
 class ProductCard extends StatelessWidget {
   final Product product;
   final Users user = Users();
@@ -16,6 +15,10 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -26,6 +29,8 @@ class ProductCard extends StatelessWidget {
         );
       },
       child: Card(
+        color:
+            isDarkMode ? colorScheme.onSecondary : colorScheme.secondaryFixed,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -33,185 +38,198 @@ class ProductCard extends StatelessWidget {
         ),
         elevation: 0.1,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: Container(
-                alignment: Alignment.topRight,
-                width: double.maxFinite,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(product.photos[0]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: IconButton.filledTonal(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    iconSize: 18,
-                    icon: const Icon(IconlyLight.bookmark),
-                  ),
-                ),
-              ),
-            ),
-           
-           
-           
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top:8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                       RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "\$${product.price}",
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              if (product is Productagri)
-                                TextSpan(
-                                  text: "/${(product as Productagri).unite}",
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                            ],
-                          ),
-                       ),
-
-                      ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Container(
+                  alignment: Alignment.topRight,
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(product.photos[0]),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Products') // Collection name
-                  .doc(product.typeProduct == "AgricolProduct"
-                  ? "Agricol_products"
-                  : "Eleveur_products")
-                  .collection(product.typeProduct == "AgricolProduct"
-                  ? "Agricol_products"
-                  : "Eleveur_products")
-                  .doc(product.id)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return const SizedBox();
-                }
-                            
-                List<dynamic> liked = snapshot.data!['liked'] ?? [];
-                List<dynamic> disliked = snapshot.data!['disliked'] ?? [];
-                List<dynamic> comments = snapshot.data!['comments'] ?? [];
-                String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-                bool isLiked = liked.contains(userId);
-                bool isDisliked = disliked.contains(userId);
-                return Padding(
-                  padding: const EdgeInsets.only(top:8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(width: 5,),
-                          GestureDetector(
-                            onTap: () {
-                              user.likeProduct(product);
-                            },
-                            child: Icon(Icons.thumb_up,
-                                size: 20, color: isLiked ? Colors.green : Colors.grey),
-                          ),
-                          const SizedBox(width: 5), // يمكنك إزالة هذه السطر إذا كنت تريد تلاصق كامل
-                          Text(
-                            "${liked.length}",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 20,),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              user.dislikeProduct(product);
-                            },
-                            child: Icon(Icons.thumb_down,
-                                size: 20, color: isDisliked ? Colors.red : Colors.grey),
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            "${disliked.length}",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 20,),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductDetailsPage(
-                                    product: product,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: const Icon(Icons.comment, size: 20, color: Colors.grey),
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            "${comments.length}",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: IconButton.filledTonal(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {},
+                      iconSize: 18,
+                      icon: const Icon(IconlyLight.bookmark),
+                    ),
                   ),
-                );
-                            
-                            
-              },
-                            )
-                ],
+                ),
               ),
-              
-              
-              
-                
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "\دج${product.price}",
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                if (product is Productagri)
+                                  TextSpan(
+                                    text: "/${(product as Productagri).unite}",
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Products') // Collection name
+                          .doc(product.typeProduct == "AgricolProduct"
+                              ? "Agricol_products"
+                              : "Eleveur_products")
+                          .collection(product.typeProduct == "AgricolProduct"
+                              ? "Agricol_products"
+                              : "Eleveur_products")
+                          .doc(product.id)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData || !snapshot.data!.exists) {
+                          return const SizedBox();
+                        }
+
+                        List<dynamic> liked = snapshot.data!['liked'] ?? [];
+                        List<dynamic> disliked =
+                            snapshot.data!['disliked'] ?? [];
+                        List<dynamic> comments =
+                            snapshot.data!['comments'] ?? [];
+                        String userId =
+                            FirebaseAuth.instance.currentUser?.uid ?? "guest";
+                        bool isLiked = liked.contains(userId);
+                        bool isDisliked = disliked.contains(userId);
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      user.likeProduct(product);
+                                    },
+                                    child: Icon(Icons.thumb_up,
+                                        size: 20,
+                                        color: isLiked
+                                            ? Colors.green
+                                            : Colors.grey),
+                                  ),
+                                  const SizedBox(
+                                      width:
+                                          5), // يمكنك إزالة هذه السطر إذا كنت تريد تلاصق كامل
+                                  Text(
+                                    "${liked.length}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      user.dislikeProduct(product);
+                                    },
+                                    child: Icon(Icons.thumb_down,
+                                        size: 20,
+                                        color: isDisliked
+                                            ? Colors.red
+                                            : Colors.grey),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    "${disliked.length}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProductDetailsPage(
+                                            product: product,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Icon(Icons.comment,
+                                        size: 20, color: Colors.grey),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    "${comments.length}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  ],
+                ),
               ),
-         ]),
+            ]),
       ),
     );
   }
