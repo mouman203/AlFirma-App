@@ -197,7 +197,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             "User Data: ${userData.data()}"); // ✅ طباعة بيانات المستخدم للتحقق منها
                     
                         String username = userData['first_name'] ?? "Unknown";
-                        String userProfilePic = userData['photo'] ?? '';
                     
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8, top: 8),
@@ -213,15 +212,41 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     ),
                                   );
                                 },
-                                child: CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: userProfilePic.isNotEmpty
-                                      ? NetworkImage(userProfilePic)
-                                      : null,
-                                  child: userProfilePic.isEmpty
-                                      ? const Icon(Icons.person)
-                                      : null,
-                                ),
+                                child: FutureBuilder<DocumentSnapshot>(
+                                          future: FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                                              .get(),
+                                          builder: (context, snapshot) {
+                                            String? photoURL;
+
+                                            // حالة حساب Google
+                                            if (FirebaseAuth.instance.currentUser?.providerData.any((provider) =>
+                                                    provider.providerId == "google.com") ==
+                                                true) {
+                                              photoURL = FirebaseAuth.instance.currentUser?.photoURL;
+                                            }
+                                            // حالة التسجيل العادي + صورة من Firestore
+                                            else if (snapshot.hasData && snapshot.data!.exists) {
+                                              photoURL = snapshot.data!.get('photo') ?? null;
+                                            }
+
+                                            return CircleAvatar(
+                                              backgroundColor: Colors.grey,
+                                              backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+                                              child: photoURL == null
+                                                  ? Text(
+                                                      FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
+                                                          ? FirebaseAuth.instance.currentUser!.displayName!
+                                                              .substring(0, 1)
+                                                              .toUpperCase()
+                                                          : "U",
+                                                      style: const TextStyle(color: Colors.white),
+                                                    )
+                                                  : null,
+                                            );
+                                          },
+                                        ),
                               ),
                               const SizedBox(width: 10),
                               Text(username,
@@ -482,23 +507,42 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
               child: Row(
                 children: [
-                  // أيقونة المستخدم (أول حرف من الاسم)
-                  CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
-                        ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
-                        : null,
-                    child: FirebaseAuth.instance.currentUser?.photoURL == null
-                        ? Text(
-                            FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
-                                ? FirebaseAuth.instance.currentUser!.displayName!
-                                    .substring(0, 1)
-                                    .toUpperCase()
-                                : "U",
-                            style: const TextStyle(color: Colors.white),
-                          )
-                        : null,
-                  ),
+                 FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('Users')
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .get(),
+                  builder: (context, snapshot) {
+                    String? photoURL;
+
+                    // حالة حساب Google
+                    if (FirebaseAuth.instance.currentUser?.providerData.any((provider) =>
+                            provider.providerId == "google.com") ==
+                        true) {
+                      photoURL = FirebaseAuth.instance.currentUser?.photoURL;
+                    }
+                    // حالة التسجيل العادي + صورة من Firestore
+                    else if (snapshot.hasData && snapshot.data!.exists) {
+                      photoURL = snapshot.data!.get('photo') ?? null;
+                    }
+
+                    return CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+                      child: photoURL == null
+                          ? Text(
+                              FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
+                                  ? FirebaseAuth.instance.currentUser!.displayName!
+                                      .substring(0, 1)
+                                      .toUpperCase()
+                                  : "U",
+                              style: const TextStyle(color: Colors.white),
+                            )
+                          : null,
+                    );
+                  },
+                ),
+
 
                   const SizedBox(width: 10),
 
@@ -539,7 +583,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             const SizedBox( height: 10,),
 
             // ✅ عرض التعليقات من Firestore
-// ✅ عرض التعليقات من Firestore
                 StreamBuilder<DocumentSnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('Products')
@@ -592,7 +635,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             String userId = comment['userId'];
                             String username =
                                 usersMap[userId]?['first_name'] ?? "مستخدم غير معروف";
-                            String userPhoto = usersMap[userId]?['photo'] ?? "";
                             String currentUserId =
                                 FirebaseAuth.instance.currentUser?.uid ?? "guest";
 
@@ -611,15 +653,41 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                       ),
                                     );
                                   },
-                                  child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: userPhoto.isNotEmpty
-                                        ? NetworkImage(userPhoto)
-                                        : null,
-                                    child: userPhoto.isEmpty
-                                        ? const Icon(Icons.person)
-                                        : null,
-                                  ),
+                                  child: FutureBuilder<DocumentSnapshot>(
+                                          future: FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                                              .get(),
+                                          builder: (context, snapshot) {
+                                            String? photoURL;
+
+                                            // حالة حساب Google
+                                            if (FirebaseAuth.instance.currentUser?.providerData.any((provider) =>
+                                                    provider.providerId == "google.com") ==
+                                                true) {
+                                              photoURL = FirebaseAuth.instance.currentUser?.photoURL;
+                                            }
+                                            // حالة التسجيل العادي + صورة من Firestore
+                                            else if (snapshot.hasData && snapshot.data!.exists) {
+                                              photoURL = snapshot.data!.get('photo') ?? null;
+                                            }
+
+                                            return CircleAvatar(
+                                              backgroundColor: Colors.grey,
+                                              backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+                                              child: photoURL == null
+                                                  ? Text(
+                                                      FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
+                                                          ? FirebaseAuth.instance.currentUser!.displayName!
+                                                              .substring(0, 1)
+                                                              .toUpperCase()
+                                                          : "U",
+                                                      style: const TextStyle(color: Colors.white),
+                                                    )
+                                                  : null,
+                                            );
+                                          },
+                                        ),
                                 ),
                                 title: Text(username),
                                 subtitle: Text(comment['text']),

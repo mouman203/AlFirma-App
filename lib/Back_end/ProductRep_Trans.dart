@@ -24,7 +24,6 @@ class ProductRep_Trans {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      //"image": image,
       "type":type,
       "categorie": categorie,
       "prix": prix,
@@ -38,7 +37,6 @@ class ProductRep_Trans {
   factory ProductRep_Trans.fromJson(Map<String, dynamic> json, String id) {
     return ProductRep_Trans(
       id: json['id'],
-      //image: json['image'],
       type:json['type'],
       categorie: json['categorie'],
       prix: json['prix'] as int?,

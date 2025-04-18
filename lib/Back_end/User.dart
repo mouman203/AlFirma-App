@@ -409,7 +409,7 @@ class Users {
           "last_name": lastName,
           "phone": firebaseUser.phoneNumber ?? "",
           "password": "signed with google",
-          "photo": "",
+          "photo": firebaseUser.photoURL ?? "",
           "userType": [],
           'activeType': 'Client',
           "following": [],
