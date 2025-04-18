@@ -58,6 +58,7 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
   photos: uploadedPhotos, // قائمة روابط الصور من Firebase Storage
   liked: [],
   disliked: [],
+  date_of_add: DateTime.now(),
   category: selectedCategorie,
   produit: selectedProduit,
   quantite: quantiteController.text.isNotEmpty

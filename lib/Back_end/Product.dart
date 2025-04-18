@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
 // المتغيرات
   String id;
@@ -11,6 +13,7 @@ class Product {
   List<String> photos;
   List<String> liked;
   List<String> disliked;
+  DateTime date_of_add;
 
   // المُنشئ (Constructor)
   Product({
@@ -25,5 +28,6 @@ class Product {
      required this.photos,
      required this.liked,
      required this.disliked,
+     required this.date_of_add,
   });
 }

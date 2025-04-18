@@ -69,6 +69,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
       photos: uploadedPhotos, // ✅ استخدام رابط الصورة هنا
       liked: [],
       disliked: [],
+      date_of_add: DateTime.now(),
       type: selectedPrimaryCategory,
       category: selectedCategorie,
       produit: selectedProduit,

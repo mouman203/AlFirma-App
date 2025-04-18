@@ -84,6 +84,10 @@ class _ExplorePageState extends State<ExplorePage> {
           disliked: (data["disliked"] is List)
               ? List<String>.from(data["disliked"])
               : [],
+          date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
+              ? (data["date_of_add"] as Timestamp).toDate()
+              : DateTime.now(),
+
           type: data['type'],
           produit: data['produit'],
           quantite: data['quantite'],
@@ -101,10 +105,10 @@ class _ExplorePageState extends State<ExplorePage> {
           .doc('Eleveur_products')
           .collection('Eleveur_products')
           .get();
+          
 
       List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-
         // إنشاء الكائن ProductElev
         return ProductElev(
           id: doc.id,
@@ -130,13 +134,16 @@ class _ExplorePageState extends State<ExplorePage> {
           disliked: (data["disliked"] is List)
               ? List<String>.from(data["disliked"])
               : [],
+          date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
+          ? (data["date_of_add"] as Timestamp).toDate()
+          : DateTime.now(),
           produit: data['produit'],
           quantite: data['quantite'],
           wilaya: data['wilaya'],
           daira: data['daira'],
         );
       }).toList();
-
+      
       allProducts.addAll(eleveurProducts);
 
       // تحديث الحالة

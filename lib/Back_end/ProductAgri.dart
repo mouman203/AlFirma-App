@@ -23,6 +23,7 @@ class Productagri extends Product{
     required List<String> photos,
     required List<String> liked,
     required List<String> disliked,
+    required DateTime date_of_add,
     this.type,
     this.category,
     this.unite,
@@ -43,6 +44,7 @@ class Productagri extends Product{
           photos: photos,
           liked: liked,
           disliked: disliked,
+          date_of_add: date_of_add
         );
       
 
@@ -68,34 +70,11 @@ Map<String, dynamic> toJson() {
     "surface": surface,
     "wilaya": wilaya,
     "daira": daira,
+    "date_of_add":Timestamp.fromDate(date_of_add),
   };
   return data;
 }
 
-  // Create an object from Firestore document
- factory Productagri.fromJson(Map<String, dynamic> json, String id) {
-  return Productagri(
-    id: id,
-    name: json['name'],
-    typeProduct: json['typeProduct']?? "AgricolProduct",
-    price: (json['price'] as num).toDouble(),
-    description: json['description'],
-    rate: json['rate'] ?? 0,
-    ownerId: json['ownerId'] ?? '',
-    comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
-    unite: json['unite'] ?? '',
-    photos: List<String>.from(json['photos'] ?? []),
-    liked: List<String>.from(json['liked'] ?? []),
-    disliked: List<String>.from(json['disliked'] ?? []),
-    type: json['type'],
-    category: json['category'],
-    produit: json['produit'],
-    quantite: (json['quantite'] as num?)?.toDouble(),
-    surface: (json['surface'] as num?)?.toDouble(),
-    wilaya: json['wilaya'],
-    daira: json['daira'],
-  );
-}
 
 
 /// 1**Add a new product to Firestore**
@@ -145,19 +124,4 @@ Map<String, dynamic> toJson() {
     }
   }
 
-  /// 4**Fetch a product by ID**
-
-  /// 5**Fetch all products in real-time**
-  static Stream<List<Productagri>> getAllProducts() {
-    return FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Productagri.fromJson(doc.data(), doc.id))
-          .toList();
-    });
-  }
 }

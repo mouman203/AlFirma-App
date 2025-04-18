@@ -20,6 +20,7 @@ class ProductElev extends Product {
     required List<String> photos,
     required List<String> liked,
     required List<String> disliked,
+    required DateTime date_of_add,
     this.category,
     this.produit,
     this.quantite,
@@ -37,6 +38,7 @@ class ProductElev extends Product {
           photos: photos,
           liked: liked,
           disliked: disliked,
+          date_of_add: date_of_add
         );
 
   Map<String, dynamic> toJson() {
@@ -56,29 +58,11 @@ class ProductElev extends Product {
       "quantite": quantite,
       "wilaya": wilaya,
       "daira": daira,
+      "date_of_add": Timestamp.fromDate(date_of_add),
     };
   }
 
-  factory ProductElev.fromJson(Map<String, dynamic> json, String id) {
-    return ProductElev(
-      id: id,
-      name: json['name'] ?? '',
-      typeProduct: json['typeProduct'] ?? 'EleveurProduct',
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      description: json['description'] ?? '',
-      rate: json['rate'] ?? 0,
-      ownerId: json['ownerId'],
-      comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
-      photos: List<String>.from(json['photos'] ?? []),
-      liked: List<String>.from(json['liked'] ?? []),
-      disliked: List<String>.from(json['disliked'] ?? []),
-      category: json['categorie'],
-      produit: json['produit'],
-      quantite: (json['quantite'] as num?)?.toDouble(),
-      wilaya: json['wilaya'],
-      daira: json['daira'],
-    );
-  }
+
 
  /// 1**Add a new product to Firestore**
   Future<void> addProduct(ProductElev product) async {
@@ -120,20 +104,5 @@ class ProductElev extends Product {
     } catch (e) {
       print("there is an error in deleting a product $e");
     }
-  }
-
-  /// 4**Fetch a product by ID**
-  
-
-  /// 5**Fetch all products in real-time**
-  static Stream<List<ProductElev>> getAllProducts() {
-    return FirebaseFirestore.instance
-        .collection('Produit_Elevage')
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => ProductElev.fromJson(doc.data(), doc.id))
-          .toList();
-    });
   }
 }
