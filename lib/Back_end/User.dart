@@ -1,4 +1,6 @@
 import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/ProductAgri.dart';
+import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/Front_end/LoginPage.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -584,6 +586,117 @@ class Users {
   }
 }
 
+  Future<List<Product>> searchProducts(String query) async {
+  try {
+    List<Product> allProducts = [];
+
+    // جلب منتجات الزراعة
+    QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+        .collection('Products')
+        .doc('Agricol_products')
+        .collection('Agricol_products')
+        .get();
+
+    List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return Productagri(
+        id: doc.id,
+        ownerId: data["ownerId"],
+        name: data['name'] ?? '',
+        typeProduct: data["typeProduct"] ?? "AgricolProduct",
+        description: data['description'] ?? '',
+        photos: (data['photos'] is List)
+            ? List<String>.from(data['photos'])
+            : ["assets/nophoto.png"],
+        price: (data['price'] is num)
+            ? data['price'].toDouble()
+            : double.tryParse(data['price'].toString()) ?? 0.0,
+        unite: data['unite'] ?? 'DA',
+        category: data['category'] ?? '',
+        rate: (data['rate'] is num)
+            ? data['rate'].toInt()
+            : int.tryParse(data['rate'].toString()) ?? 0,
+        comments: (data['comments'] is List)
+            ? List<Map<String, dynamic>>.from(data['comments'])
+            : [],
+        liked:
+            (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
+        disliked: (data["disliked"] is List)
+            ? List<String>.from(data["disliked"])
+            : [],
+        date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
+            ? (data["date_of_add"] as Timestamp).toDate()
+            : DateTime.now(),
+        type: data['type'],
+        produit: data['produit'],
+        quantite: data['quantite'],
+        surface: data['surface'],
+        wilaya: data['wilaya'],
+        daira: data['daira'],
+      );
+    }).toList();
+
+    allProducts.addAll(agricolProducts);
+
+    // جلب منتجات المربين
+    QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
+        .collection('Products')
+        .doc('Eleveur_products')
+        .collection('Eleveur_products')
+        .get();
+
+    List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return ProductElev(
+        id: doc.id,
+        ownerId: data["ownerId"],
+        name: data['name'] ?? '',
+        typeProduct: data['typeProduct'] ?? "EleveurProduct",
+        description: data['description'] ?? '',
+        photos: (data['photos'] is List)
+            ? List<String>.from(data['photos'])
+            : ["assets/nophoto.png"],
+        price: (data['price'] is num)
+            ? data['price'].toDouble()
+            : double.tryParse(data['price'].toString()) ?? 0.0,
+        category: data['category'] ?? '',
+        rate: (data['rate'] is num)
+            ? data['rate'].toInt()
+            : int.tryParse(data['rate'].toString()) ?? 0,
+        comments: (data['comments'] is List)
+            ? List<Map<String, dynamic>>.from(data['comments'])
+            : [],
+        liked:
+            (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
+        disliked: (data["disliked"] is List)
+            ? List<String>.from(data["disliked"])
+            : [],
+        date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
+            ? (data["date_of_add"] as Timestamp).toDate()
+            : DateTime.now(),
+        produit: data['produit'],
+        quantite: data['quantite'],
+        wilaya: data['wilaya'],
+        daira: data['daira'],
+      );
+    }).toList();
+
+    allProducts.addAll(eleveurProducts);
+
+    // تصفية المنتجات بناءً على الاسم
+    List<Product> matchedProducts = allProducts
+        .where((product) => product.name
+            .toLowerCase()
+            .contains(query.toLowerCase()))
+        .toList();
+
+
+  return matchedProducts;
+  } catch (e) {
+    print("❌ حدث خطأ أثناء البحث: $e");
+    return [];
+  }
+}
 
   void showDeleteConfirmationDialog(
       BuildContext context, String productId, String userId, String text ,String typeProduct) {

@@ -16,7 +16,7 @@ dependencies:
   timelines: ^0.1.0
   easy_stepper: ^0.7.3
   awesome_dialog: ^3.2.1
-  shared_preferences: ^2.5.2
+  shared_preferences: ^2.5.3
   rxdart: ^0.27.7
 
 #firebase packages
