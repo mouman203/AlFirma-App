@@ -68,6 +68,28 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.2
+  flutter_launcher_icons: "^0.14.3"
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/ilogo.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#AAFFBF00"
+  adaptive_icon_foreground: "assets/logo.png" 
+  icon_size: 100
+  web:
+    generate: true
+    image_path: "assets/ilogo.png"  
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
+  windows:
+    generate: true
+    image_path: "assets/ilogo.png"  
+    icon_size: 100 
+  macos:
+    generate: true
+    image_path: "assets/ilogo.png"  
 
 flutter:
   uses-material-design: true
