@@ -130,7 +130,10 @@ Future<void> setActiveType(String activeType) async {
 }
 
 class BecomeTypeAction extends StatefulWidget {
-  const BecomeTypeAction({Key? key}) : super(key: key);
+  final VoidCallback onTypeChanged;
+
+  const BecomeTypeAction({Key? key, required this.onTypeChanged})
+      : super(key: key);
 
   @override
   State<BecomeTypeAction> createState() => _BecomeTypeActionState();
@@ -224,8 +227,9 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
           activeType = selectedType;
         }
       });
-      await setActiveType(activeType!); // <-- this line is important
+      await setActiveType(activeType!);
       await saveUserData(selectedTypes, activeType!);
+      widget.onTypeChanged(); // 👈 Add this
       showSuccessPopup(context, selectedType);
     }
   }
@@ -420,6 +424,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                             activeType = newActive;
                           });
                           await saveUserData(selectedTypes, newActive);
+                          widget.onTypeChanged(); // 👈 Add this
                         }
                       },
                     )),

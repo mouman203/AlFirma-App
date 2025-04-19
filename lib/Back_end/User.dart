@@ -1,6 +1,7 @@
 import 'package:agriplant/Back_end/Product.dart';
 import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/Back_end/Service.dart';
 import 'package:agriplant/Front_end/LoginPage.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,9 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Users {
   // les variables
 
-
   // constricteur
-
 
   // التحقق من صحة البريد الإلكتروني
   bool isEmailValid(String email) {
@@ -280,7 +279,7 @@ class Users {
           'email': email,
           'password': password,
           'userType': [],
-          'activeType':'Client',
+          'activeType': 'Client',
           'createdAt': FieldValue.serverTimestamp(),
           'Verify': verify,
         });
@@ -360,94 +359,96 @@ class Users {
 //sign in with google
 
   Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
-  try {
-    showLoadingDialog(context); // عرض مؤشر الانتظار
+    try {
+      showLoadingDialog(context); // عرض مؤشر الانتظار
 
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
-    await googleSignIn.signOut();
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
+      await googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleUser == null) {
-      Navigator.pop(context); // إغلاق مؤشر التحميل
-      print("❌ تم إلغاء تسجيل الدخول");
-      return;
-    }
-
-    print("✅ تسجيل الدخول ناجح: ${googleUser.email}");
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // تسجيل الدخول إلى Firebase
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(googleCredential);
-    User? firebaseUser = userCredential.user;
-
-    if (firebaseUser != null) {
-      // مرجع إلى Firestore
-      final userRef = FirebaseFirestore.instance
-          .collection("Users")
-          .doc(firebaseUser.uid);
-
-      // التحقق مما إذا كان المستخدم موجود مسبقًا
-      final doc = await userRef.get();
-
-      if (!doc.exists) {
-        // تقسيم الاسم إلى اسم أول واسم أخير
-        List<String> nameParts = googleUser.displayName?.split(" ") ?? ["", ""];
-        String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
-        String lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
-
-        // حفظ بيانات المستخدم الجديدة فقط إذا لم تكن موجودة
-        await userRef.set({
-          "email": firebaseUser.email,
-          "Verify": true,
-          "first_name": firstName,
-          "last_name": lastName,
-          "phone": firebaseUser.phoneNumber ?? "",
-          "password": "signed with google",
-          "photo": firebaseUser.photoURL ?? "",
-          "userType": [],
-          'activeType': 'Client',
-          "following": [],
-          "followers": [],
-          "created_at": FieldValue.serverTimestamp(),
-        });
-
-      } else {
-        print(" المستخدم موجود مسبقًا ");
+      if (googleUser == null) {
+        Navigator.pop(context); // إغلاق مؤشر التحميل
+        print("❌ تم إلغاء تسجيل الدخول");
+        return;
       }
+
+      print("✅ تسجيل الدخول ناجح: ${googleUser.email}");
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // تسجيل الدخول إلى Firebase
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      User? firebaseUser = userCredential.user;
+
+      if (firebaseUser != null) {
+        // مرجع إلى Firestore
+        final userRef = FirebaseFirestore.instance
+            .collection("Users")
+            .doc(firebaseUser.uid);
+
+        // التحقق مما إذا كان المستخدم موجود مسبقًا
+        final doc = await userRef.get();
+
+        if (!doc.exists) {
+          // تقسيم الاسم إلى اسم أول واسم أخير
+          List<String> nameParts =
+              googleUser.displayName?.split(" ") ?? ["", ""];
+          String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+          String lastName =
+              nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+
+          // حفظ بيانات المستخدم الجديدة فقط إذا لم تكن موجودة
+          await userRef.set({
+            "email": firebaseUser.email,
+            "Verify": true,
+            "first_name": firstName,
+            "last_name": lastName,
+            "phone": firebaseUser.phoneNumber ?? "",
+            "password": "signed with google",
+            "photo": firebaseUser.photoURL ?? "",
+            "userType": [],
+            'activeType': 'Client',
+            "following": [],
+            "followers": [],
+            "created_at": FieldValue.serverTimestamp(),
+          });
+        } else {
+          print(" المستخدم موجود مسبقًا ");
+        }
+      }
+
+      Navigator.pop(context); // إغلاق مؤشر التحميل
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('lastPageIndex', 0);
+
+      // الانتقال إلى الصفحة الرئيسية
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => homePage),
+      );
+    } catch (e) {
+      Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
+      print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
+      showErrorDialog(context, "⚠️ حدث خطأ أثناء تسجيل الدخول بواسطة Google.");
     }
-
-    Navigator.pop(context); // إغلاق مؤشر التحميل
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('lastPageIndex', 0);
-
-    // الانتقال إلى الصفحة الرئيسية
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => homePage),
-    );
-  } catch (e) {
-    Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
-    print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
-    showErrorDialog(context, "⚠️ حدث خطأ أثناء تسجيل الدخول بواسطة Google.");
   }
-}
 
   void likeProduct(Product product) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
     final collectionName = product.typeProduct == "AgricolProduct"
-    ? "Agricol_products"
-    : "Eleveur_products";
-    DocumentReference productRef =
-        FirebaseFirestore.instance.collection('Products')
+        ? "Agricol_products"
+        : "Eleveur_products";
+    DocumentReference productRef = FirebaseFirestore.instance
+        .collection('Products')
         .doc(collectionName)
         .collection(collectionName)
         .doc(product.id);
@@ -485,12 +486,14 @@ class Users {
 
   void dislikeProduct(Product product) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-   final collectionName = product.typeProduct == "AgricolProduct"
-    ? "Agricol_products"
-    : "Eleveur_products";
-    DocumentReference productRef =
-        FirebaseFirestore.instance.collection('Products').doc(collectionName)
-        .collection(collectionName).doc(product.id);
+    final collectionName = product.typeProduct == "AgricolProduct"
+        ? "Agricol_products"
+        : "Eleveur_products";
+    DocumentReference productRef = FirebaseFirestore.instance
+        .collection('Products')
+        .doc(collectionName)
+        .collection(collectionName)
+        .doc(product.id);
 
     try {
       // جلب البيانات المحدثة من Firestore
@@ -523,183 +526,183 @@ class Users {
   }
 
   Future<void> addComment(
-  String productId,
-  String userId,
-  String commentText,
-  String typeProduct, // تمرير نوع المنتج: "AgricolProduct" أو "EleveurProduct"
-) async {
-  try {
-    // تحديد المسار بناءً على نوع المنتج
-    String docPath = typeProduct == "AgricolProduct"
-        ? "Agricol_products"
-        : "Eleveur_products";
+    String productId,
+    String userId,
+    String commentText,
+    String
+        typeProduct, // تمرير نوع المنتج: "AgricolProduct" أو "EleveurProduct"
+  ) async {
+    try {
+      // تحديد المسار بناءً على نوع المنتج
+      String docPath = typeProduct == "AgricolProduct"
+          ? "Agricol_products"
+          : "Eleveur_products";
 
-    DocumentReference productRef = FirebaseFirestore.instance
-        .collection('Products')
-        .doc(docPath)
-        .collection(docPath)
-        .doc(productId);
+      DocumentReference productRef = FirebaseFirestore.instance
+          .collection('Products')
+          .doc(docPath)
+          .collection(docPath)
+          .doc(productId);
 
-    Map<String, String> newComment = {
-      "userId": userId,
-      "text": commentText,
-    };
+      Map<String, String> newComment = {
+        "userId": userId,
+        "text": commentText,
+      };
 
-    await productRef.update({
-      "comments": FieldValue.arrayUnion([newComment])
-    });
+      await productRef.update({
+        "comments": FieldValue.arrayUnion([newComment])
+      });
 
-    print("✅ تم إضافة التعليق بنجاح!");
-  } catch (e) {
-    print("⚠️ خطأ أثناء إضافة التعليق: $e");
+      print("✅ تم إضافة التعليق بنجاح!");
+    } catch (e) {
+      print("⚠️ خطأ أثناء إضافة التعليق: $e");
+    }
   }
-}
-
 
   Future<void> deleteComment(
-  String productId,
-  String userId,
-  String text,
-  String typeProduct, // تمرير نوع المنتج
-) async {
-  try {
-    // تحديد المسار بناءً على نوع المنتج
-    String docPath = typeProduct == "AgricolProduct"
-        ? "Agricol_products"
-        : "Eleveur_products";
+    String productId,
+    String userId,
+    String text,
+    String typeProduct, // تمرير نوع المنتج
+  ) async {
+    try {
+      // تحديد المسار بناءً على نوع المنتج
+      String docPath = typeProduct == "AgricolProduct"
+          ? "Agricol_products"
+          : "Eleveur_products";
 
-    DocumentReference productRef = FirebaseFirestore.instance
-        .collection('Products')
-        .doc(docPath)
-        .collection(docPath)
-        .doc(productId);
+      DocumentReference productRef = FirebaseFirestore.instance
+          .collection('Products')
+          .doc(docPath)
+          .collection(docPath)
+          .doc(productId);
 
-    await productRef.update({
-      'comments': FieldValue.arrayRemove([
-        {'userId': userId, 'text': text}
-      ]),
-    });
+      await productRef.update({
+        'comments': FieldValue.arrayRemove([
+          {'userId': userId, 'text': text}
+        ]),
+      });
 
-    print("✅ تم حذف التعليق بنجاح.");
-  } catch (e) {
-    print("⚠️ خطأ أثناء حذف التعليق: $e");
+      print("✅ تم حذف التعليق بنجاح.");
+    } catch (e) {
+      print("⚠️ خطأ أثناء حذف التعليق: $e");
+    }
   }
-}
 
   Future<List<Product>> searchProducts(String query) async {
-  try {
-    List<Product> allProducts = [];
+    try {
+      List<Product> allProducts = [];
 
-    // جلب منتجات الزراعة
-    QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .get();
+      // جلب منتجات الزراعة
+      QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc('Agricol_products')
+          .collection('Agricol_products')
+          .get();
 
-    List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return Productagri(
-        id: doc.id,
-        ownerId: data["ownerId"],
-        name: data['name'] ?? '',
-        typeProduct: data["typeProduct"] ?? "AgricolProduct",
-        description: data['description'] ?? '',
-        photos: (data['photos'] is List)
-            ? List<String>.from(data['photos'])
-            : ["assets/nophoto.png"],
-        price: (data['price'] is num)
-            ? data['price'].toDouble()
-            : double.tryParse(data['price'].toString()) ?? 0.0,
-        unite: data['unite'] ?? 'DA',
-        category: data['category'] ?? '',
-        rate: (data['rate'] is num)
-            ? data['rate'].toInt()
-            : int.tryParse(data['rate'].toString()) ?? 0,
-        comments: (data['comments'] is List)
-            ? List<Map<String, dynamic>>.from(data['comments'])
-            : [],
-        liked:
-            (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
-        disliked: (data["disliked"] is List)
-            ? List<String>.from(data["disliked"])
-            : [],
-        date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
-            ? (data["date_of_add"] as Timestamp).toDate()
-            : DateTime.now(),
-        type: data['type'],
-        produit: data['produit'],
-        quantite: data['quantite'],
-        surface: data['surface'],
-        wilaya: data['wilaya'],
-        daira: data['daira'],
-      );
-    }).toList();
+      List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Productagri(
+          id: doc.id,
+          ownerId: data["ownerId"],
+          name: data['name'] ?? '',
+          typeProduct: data["typeProduct"] ?? "AgricolProduct",
+          description: data['description'] ?? '',
+          photos: (data['photos'] is List)
+              ? List<String>.from(data['photos'])
+              : ["assets/nophoto.png"],
+          price: (data['price'] is num)
+              ? data['price'].toDouble()
+              : double.tryParse(data['price'].toString()) ?? 0.0,
+          unite: data['unite'] ?? 'DA',
+          category: data['category'] ?? '',
+          rate: (data['rate'] is num)
+              ? data['rate'].toInt()
+              : int.tryParse(data['rate'].toString()) ?? 0,
+          comments: (data['comments'] is List)
+              ? List<Map<String, dynamic>>.from(data['comments'])
+              : [],
+          liked:
+              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
+          disliked: (data["disliked"] is List)
+              ? List<String>.from(data["disliked"])
+              : [],
+          date_of_add:
+              data["date_of_add"] != null && data["date_of_add"] is Timestamp
+                  ? (data["date_of_add"] as Timestamp).toDate()
+                  : DateTime.now(),
+          type: data['type'],
+          produit: data['produit'],
+          quantite: data['quantite'],
+          surface: data['surface'],
+          wilaya: data['wilaya'],
+          daira: data['daira'],
+        );
+      }).toList();
 
-    allProducts.addAll(agricolProducts);
+      allProducts.addAll(agricolProducts);
 
-    // جلب منتجات المربين
-    QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Eleveur_products')
-        .collection('Eleveur_products')
-        .get();
+      // جلب منتجات المربين
+      QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc('Eleveur_products')
+          .collection('Eleveur_products')
+          .get();
 
-    List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return ProductElev(
-        id: doc.id,
-        ownerId: data["ownerId"],
-        name: data['name'] ?? '',
-        typeProduct: data['typeProduct'] ?? "EleveurProduct",
-        description: data['description'] ?? '',
-        photos: (data['photos'] is List)
-            ? List<String>.from(data['photos'])
-            : ["assets/nophoto.png"],
-        price: (data['price'] is num)
-            ? data['price'].toDouble()
-            : double.tryParse(data['price'].toString()) ?? 0.0,
-        category: data['category'] ?? '',
-        rate: (data['rate'] is num)
-            ? data['rate'].toInt()
-            : int.tryParse(data['rate'].toString()) ?? 0,
-        comments: (data['comments'] is List)
-            ? List<Map<String, dynamic>>.from(data['comments'])
-            : [],
-        liked:
-            (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
-        disliked: (data["disliked"] is List)
-            ? List<String>.from(data["disliked"])
-            : [],
-        date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
-            ? (data["date_of_add"] as Timestamp).toDate()
-            : DateTime.now(),
-        produit: data['produit'],
-        quantite: data['quantite'],
-        wilaya: data['wilaya'],
-        daira: data['daira'],
-      );
-    }).toList();
+      List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return ProductElev(
+          id: doc.id,
+          ownerId: data["ownerId"],
+          name: data['name'] ?? '',
+          typeProduct: data['typeProduct'] ?? "EleveurProduct",
+          description: data['description'] ?? '',
+          photos: (data['photos'] is List)
+              ? List<String>.from(data['photos'])
+              : ["assets/nophoto.png"],
+          price: (data['price'] is num)
+              ? data['price'].toDouble()
+              : double.tryParse(data['price'].toString()) ?? 0.0,
+          category: data['category'] ?? '',
+          rate: (data['rate'] is num)
+              ? data['rate'].toInt()
+              : int.tryParse(data['rate'].toString()) ?? 0,
+          comments: (data['comments'] is List)
+              ? List<Map<String, dynamic>>.from(data['comments'])
+              : [],
+          liked:
+              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
+          disliked: (data["disliked"] is List)
+              ? List<String>.from(data["disliked"])
+              : [],
+          date_of_add:
+              data["date_of_add"] != null && data["date_of_add"] is Timestamp
+                  ? (data["date_of_add"] as Timestamp).toDate()
+                  : DateTime.now(),
+          produit: data['produit'],
+          quantite: data['quantite'],
+          wilaya: data['wilaya'],
+          daira: data['daira'],
+        );
+      }).toList();
 
-    allProducts.addAll(eleveurProducts);
+      allProducts.addAll(eleveurProducts);
 
-    // تصفية المنتجات بناءً على الاسم
-    List<Product> matchedProducts = allProducts
-        .where((product) => product.name
-            .toLowerCase()
-            .contains(query.toLowerCase()))
-        .toList();
+      // تصفية المنتجات بناءً على الاسم
+      List<Product> matchedProducts = allProducts
+          .where((product) =>
+              product.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
 
-
-  return matchedProducts;
-  } catch (e) {
-    print("❌ حدث خطأ أثناء البحث: $e");
-    return [];
+      return matchedProducts;
+    } catch (e) {
+      print("❌ حدث خطأ أثناء البحث: $e");
+      return [];
+    }
   }
-}
 
-  void showDeleteConfirmationDialog(
-      BuildContext context, String productId, String userId, String text ,String typeProduct) {
+  void showDeleteConfirmationDialog(BuildContext context, String productId,
+      String userId, String text, String typeProduct) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -715,7 +718,239 @@ class Users {
             ),
             TextButton(
               onPressed: () {
-                deleteComment(productId, userId, text,typeProduct); // تنفيذ الحذف
+                deleteComment(
+                    productId, userId, text, typeProduct); // تنفيذ الحذف
+                Navigator.of(context).pop(); // إغلاق مربع الحوار
+              },
+              child: const Text("حذف", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void likeService(Service service) async {
+  String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+
+  // تحديد اسم المجموعة بناءً على نوع الخدمة
+  String collectionName;
+  switch (service.typeService) {
+    case "Transportation":
+      collectionName = "Transportation";
+      break;
+    case "Expertise":
+      collectionName = "Expertise";
+      break;
+    case "Repairs":
+      collectionName = "Repairs";
+      break;
+    default:
+      print("❌ نوع الخدمة غير معروف: ${service.typeService}");
+      return;
+  }
+
+  DocumentReference serviceRef = FirebaseFirestore.instance
+      .collection('Services')
+      .doc(collectionName)
+      .collection(collectionName)
+      .doc(service.id);
+
+  try {
+    // جلب البيانات المحدثة قبل التعديل
+    DocumentSnapshot doc = await serviceRef.get();
+
+    if (doc.exists) {
+      List<String> likedUsers = List<String>.from(doc.get("liked") ?? []);
+
+      if (likedUsers.contains(userId)) {
+        // 👎 إزالة الإعجاب إذا كان موجودًا
+        await serviceRef.update({
+          'liked': FieldValue.arrayRemove([userId])
+        });
+        print("👎 تم إزالة الإعجاب من الخدمة ${service.id}");
+      } else {
+        // 👍 إضافة الإعجاب وإزالة من قائمة عدم الإعجاب
+        await serviceRef.update({
+          'liked': FieldValue.arrayUnion([userId]),
+          'disliked': FieldValue.arrayRemove([userId]),
+        });
+        print("👍 تم الإعجاب بالخدمة ${service.id}");
+      }
+    } else {
+      print("❌ لم يتم العثور على الخدمة!");
+    }
+  } catch (e) {
+    print("❌ خطأ أثناء تنفيذ الإعجاب: $e");
+  }
+}
+
+
+ void dislikeService(Service service) async {
+  String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+
+  // تحديد المسار بناءً على نوع الخدمة
+  String collectionName;
+  switch (service.typeService) {
+    case "Transportation":
+      collectionName = "Transportation";
+      break;
+    case "Expertise":
+      collectionName = "Expertise";
+      break;
+    case "Repairs":
+      collectionName = "Repairs";
+      break;
+    default:
+      print("❌ نوع الخدمة غير معروف: ${service.typeService}");
+      return;
+  }
+
+  DocumentReference serviceRef = FirebaseFirestore.instance
+      .collection('Services')
+      .doc(collectionName)
+      .collection(collectionName)
+      .doc(service.id);
+
+  try {
+    // جلب البيانات المحدثة من Firestore
+    DocumentSnapshot doc = await serviceRef.get();
+
+    if (doc.exists) {
+      List<String> dislikedUsers =
+          List<String>.from(doc.get("disliked") ?? []);
+
+      if (dislikedUsers.contains(userId)) {
+        // 👎 إزالة "عدم الإعجاب" إذا كان موجودًا
+        await serviceRef.update({
+          'disliked': FieldValue.arrayRemove([userId])
+        });
+        print("👎 تم إزالة عدم الإعجاب من الخدمة ${service.id}");
+      } else {
+        // 👎 إضافة إلى "عدم الإعجاب" وإزالة من "الإعجاب"
+        await serviceRef.update({
+          'disliked': FieldValue.arrayUnion([userId]),
+          'liked': FieldValue.arrayRemove([userId]),
+        });
+        print("👎 تم عدم الإعجاب بالخدمة ${service.id}");
+      }
+    } else {
+      print("❌ لم يتم العثور على الخدمة!");
+    }
+  } catch (e) {
+    print("❌ خطأ أثناء تنفيذ عدم الإعجاب: $e");
+  }
+}
+
+
+ Future<void> addSComment(
+  String serviceId,
+  String userId,
+  String commentText,
+  String typeService,
+) async {
+  try {
+    // تحديد المسار بناءً على نوع الخدمة
+    String docPath;
+    switch (typeService) {
+      case "Transportation":
+        docPath = "Transportation";
+        break;
+      case "Expertise":
+        docPath = "Expertise";
+        break;
+      case "Repairs":
+        docPath = "Repairs";
+      break;
+      default:
+        throw Exception("❌ نوع الخدمة غير معروف: $typeService");
+    }
+
+    DocumentReference serviceRef = FirebaseFirestore.instance
+        .collection('Services')
+        .doc(docPath)
+        .collection(docPath)
+        .doc(serviceId);
+
+    Map<String, String> newComment = {
+      "userId": userId,
+      "text": commentText,
+    };
+
+    await serviceRef.update({
+      "comments": FieldValue.arrayUnion([newComment])
+    });
+
+    print("✅ تم إضافة التعليق بنجاح!");
+  } catch (e) {
+    print("⚠️ خطأ أثناء إضافة التعليق: $e");
+  }
+}
+
+
+  Future<void> deleteSComment(
+  String serviceId,
+  String userId,
+  String text,
+  String typeService,
+) async {
+  try {
+    // Get the proper Firestore subcollection name based on the service type
+    String docPath;
+    switch (typeService) {
+      case "Transportation":
+        docPath = "Transportation";
+        break;
+      case "Expertise":
+        docPath = "Expertise";
+        break;
+      case "Repairs":
+        docPath = "Repairs";
+        break;
+      default:
+        throw Exception("❌ نوع الخدمة غير معروف: $typeService");
+    }
+
+    // Construct the document reference
+    DocumentReference serviceRef = FirebaseFirestore.instance
+        .collection('Services')
+        .doc(docPath)
+        .collection(docPath)
+        .doc(serviceId);
+
+    // Perform the update to remove the comment
+    await serviceRef.update({
+      'comments': FieldValue.arrayRemove([
+        {'userId': userId, 'text': text}
+      ]),
+    });
+
+    print("✅ تم حذف التعليق بنجاح.");
+  } catch (e) {
+    print("⚠️ خطأ أثناء حذف التعليق: $e");
+  }
+}
+
+
+  void showDeleteConfirmationDialogS(BuildContext context, String serviceId,
+      String userId, String text, String typeService) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("تأكيد الحذف"),
+          content: const Text("هل أنت متأكد أنك تريد حذف هذا التعليق؟"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // إغلاق مربع الحوار بدون حذف
+              },
+              child: const Text("إلغاء", style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () {
+                deleteSComment(
+                    serviceId, userId, text, typeService); // تنفيذ الحذف
                 Navigator.of(context).pop(); // إغلاق مربع الحوار
               },
               child: const Text("حذف", style: TextStyle(color: Colors.red)),

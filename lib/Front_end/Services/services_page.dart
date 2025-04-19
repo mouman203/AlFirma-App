@@ -3,27 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:agriplant/Front_end/Services/consultation_page.dart';
 import 'package:agriplant/Front_end/Services/expertise_page.dart';
 import 'package:agriplant/Front_end/Services/hire_worker_page.dart';
-import 'package:agriplant/Front_end/Services/maintenance_page.dart';
+import 'package:agriplant/Front_end/Services/Repairs_page.dart';
 import 'package:agriplant/Front_end/Services/rent_page.dart';
 import 'package:agriplant/Front_end/Services/transportation_page.dart';
 
 // Service model
-class Service {
+class PService {
   final String name;
   final String image;
-  const Service({required this.name, required this.image});
+  const PService({required this.name, required this.image});
 }
 
 // List of services
-final List<Service> services = [
-  const Service(name: "Rent", image: "assets/services/Rent.png"),
-  const Service(name: "Maintenance", image: "assets/services/Maintenance.png"),
-  const Service(
+final List<PService> services = [
+  const PService(name: "Rent", image: "assets/services/Rent.png"),
+  const PService(name: "Repairs", image: "assets/services/Repairs.png"),
+  const PService(
       name: "Consultation", image: "assets/services/Consultation.png"),
-  const Service(name: "Hire Worker", image: "assets/services/Workers.png"),
-  const Service(
+  const PService(name: "Hire Worker", image: "assets/services/Workers.png"),
+  const PService(
       name: "Transportation", image: "assets/services/Transportation.png"),
-  const Service(name: "Expertise", image: "assets/services/Expertise.png"),
+  const PService(name: "Expertise", image: "assets/services/Expertise.png"),
 ];
 
 class ServicesPage extends StatelessWidget {
@@ -32,7 +32,7 @@ class ServicesPage extends StatelessWidget {
   void navigateToService(BuildContext context, String name) {
     final pageMap = {
       "Rent": const RentPage(),
-      "Maintenance": const MaintenancePage(),
+      "Repairs": const RepairsPage(),
       "Consultation": const ConsultationPage(),
       "Hire Worker": const HireWorkerPage(),
       "Transportation": const TransportationPage(),

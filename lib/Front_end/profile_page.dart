@@ -201,7 +201,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: IconButton(
                       icon: const Icon(Icons.settings, color: Color.fromARGB(255, 14, 10, 10)),
                       onPressed: () {
-                        // التعامل مع أيقونة الإعدادات
+                        Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsPage()));
                       },
                     ),
                   ),
@@ -298,24 +301,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Saved()));
+                  MaterialPageRoute(builder: (context) => Saved()));
             },
           ),
-          ListTile(
-            leading: Icon(Icons.settings_sharp,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            title: Text('Settings',
-                style:
-                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-            trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SettingsPage()));
-            },
-          ),
+        
           ListTile(
             leading: Icon(Icons.logout_sharp,
                 color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
@@ -332,14 +321,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   .pushNamedAndRemoveUntil("login_page", (route) => false);
             },
           ),
-          ListTile(
-            title: const Text("About Us"),
-            leading: Icon(Icons.info_outline_rounded,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            onTap: () {},
-          ),
+        
         ],
       ),
     );

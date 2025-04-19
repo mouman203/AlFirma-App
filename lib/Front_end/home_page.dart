@@ -1,4 +1,5 @@
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Client.dart';
+import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Expert.dart';
 import 'package:agriplant/Front_end/Sidebar.dart';
 import 'package:agriplant/Front_end/explore_page.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
@@ -165,7 +166,7 @@ class _HomePageState extends State<HomePage> {
         print("im $selectedType");
         break;
       case 'Expert Agri':
-        page = const AddProductClient();
+        page = const AddProductExpert();
         print("im $selectedType");
         break;
       case 'Vétérinaire':
@@ -184,7 +185,7 @@ class _HomePageState extends State<HomePage> {
         page = const AddProductTransporteur();
         print("im $selectedType");
         break;
-      case 'Reparateur':
+      case 'Réparateur':
         page = const AddProductReparateur();
         print("im $selectedType");
         break;
@@ -253,7 +254,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          const BecomeTypeAction(),
+           BecomeTypeAction(onTypeChanged: _loadSelectedType),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton.filledTonal(

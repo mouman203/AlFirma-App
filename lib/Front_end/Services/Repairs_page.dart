@@ -1,15 +1,15 @@
-import 'package:agriplant/Back_end/ExpertiseService.dart';
+import 'package:agriplant/Back_end/RepairService.dart';
 import 'package:agriplant/widgets_UI/service_card.dart';
 import 'package:flutter/material.dart';
 
-class ExpertisePage extends StatefulWidget {
-  const ExpertisePage({super.key});
+class RepairsPage extends StatefulWidget {
+  const RepairsPage({super.key});
 
   @override
-  State<ExpertisePage> createState() => _ExpertisePageState();
+  State<RepairsPage> createState() => _RepairsPageState();
 }
 
-class _ExpertisePageState extends State<ExpertisePage> {
+class _RepairsPageState extends State<RepairsPage> {
   String selectedWilaya = 'All';
   String selectedDaira = 'All';
 
@@ -567,7 +567,7 @@ class _ExpertisePageState extends State<ExpertisePage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expertise  Services'),
+        title: const Text('Repair Services'),
         elevation: 5,
       ),
       body: Column(
@@ -670,7 +670,7 @@ class _ExpertisePageState extends State<ExpertisePage> {
                 const SizedBox(
                     width: 12), // Space between the divider and the text
                 Text(
-                  "Featured Expertise",
+                  "Featured Repairs",
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(
@@ -686,8 +686,8 @@ class _ExpertisePageState extends State<ExpertisePage> {
           ),
           const SizedBox(height: 6),
           Expanded(
-            child: FutureBuilder<List<ExpertiseService>>(
-              future: ExpertiseService.getExpertiseServicesOnce(),
+            child: FutureBuilder<List<RepairService>>(
+              future: RepairService.getRepairServicesOnce(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -695,7 +695,7 @@ class _ExpertisePageState extends State<ExpertisePage> {
                   return const Center(child: Text("Error fetching data"));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(
-                      child: Text("No Expertise services found."));
+                      child: Text("No Repair services found."));
                 }
 
                 // Filter the data based on the selected Wilaya and Daira
