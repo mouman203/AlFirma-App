@@ -1,4 +1,8 @@
-import 'package:agriplant/Front_end/Filter/ProductData.dart';
+import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/ProductAgri.dart';
+import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/data/ProductData.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class FilterBottomSheet extends StatefulWidget {
@@ -46,6 +50,80 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   );
 }
 
+  Future<List<Product>> fetchFilteredProducts() async {
+  List<Product> allProducts = [];
+  print("typeProduct: $selectedProductType");
+print("type: $selectedMainCategory");
+print("category: $selectedSubCategory");
+print("produit: $selectedFinalItem");
+print("wilaya: $selectedWilaya");
+print("daira: $selectedDaira");
+
+
+  // بناء استعلام منتجات الفلاحين
+  Query agriQuery = FirebaseFirestore.instance
+      .collection('Products')
+      .doc('Agricol_products')
+      .collection('Agricol_products');
+
+  // بناء استعلام منتجات المربين
+  Query elevQuery = FirebaseFirestore.instance
+      .collection('Products')
+      .doc('Eleveur_products')
+      .collection('Eleveur_products');
+
+  // تطبيق الفلاتر
+  if (selectedProductType != null && selectedProductType!.isNotEmpty  ) {
+    agriQuery = agriQuery.where('typeProduct', isEqualTo: selectedProductType);
+    elevQuery = elevQuery.where('typeProduct', isEqualTo: selectedProductType);
+  }
+
+  if (selectedMainCategory != null && selectedMainCategory!.isNotEmpty) {
+    agriQuery = agriQuery.where('type', isEqualTo: selectedMainCategory);
+    elevQuery = elevQuery.where('category', isEqualTo: selectedMainCategory);
+  }
+
+  if (selectedSubCategory != null && selectedSubCategory!.isNotEmpty) {
+    agriQuery = agriQuery.where('category', isEqualTo: selectedSubCategory);
+    elevQuery = elevQuery.where('category', isEqualTo: selectedSubCategory);
+  }
+
+  if (selectedFinalItem != null && selectedFinalItem!.isNotEmpty) {
+    agriQuery = agriQuery.where('produit', isEqualTo: selectedFinalItem);
+    elevQuery = elevQuery.where('produit', isEqualTo: selectedFinalItem);
+  }
+
+  if (selectedWilaya != null && selectedWilaya!.isNotEmpty) {
+    agriQuery = agriQuery.where('wilaya', isEqualTo: selectedWilaya);
+    elevQuery = elevQuery.where('wilaya', isEqualTo: selectedWilaya);
+  }
+
+  if (selectedDaira != null && selectedDaira!.isNotEmpty) {
+    agriQuery = agriQuery.where('daira', isEqualTo: selectedDaira);
+    elevQuery = elevQuery.where('daira', isEqualTo: selectedDaira);
+  }
+
+  if (minPrice != null) {
+  agriQuery = agriQuery.where('price', isGreaterThanOrEqualTo: minPrice);
+  elevQuery = elevQuery.where('price', isGreaterThanOrEqualTo: minPrice);
+}
+
+if (maxPrice != null) {
+  agriQuery = agriQuery.where('price', isLessThanOrEqualTo: maxPrice);
+  elevQuery = elevQuery.where('price', isLessThanOrEqualTo: maxPrice);
+}
+
+
+  // تنفيذ الاستعلامات
+  QuerySnapshot agriSnapshot = await agriQuery.get();
+  QuerySnapshot elevSnapshot = await elevQuery.get();
+
+  allProducts.addAll(agriSnapshot.docs.map((doc) => Productagri.fromFirestore(doc)));
+  allProducts.addAll(elevSnapshot.docs.map((doc) => ProductElev.fromFirestore(doc)));
+
+  return allProducts;
+}
+
   @override
   Widget build(BuildContext context) {
     List<String> mainCategories = ProductData.getMainCategories(selectedProductType);
@@ -67,7 +145,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               children: [
                 buildDropdown(
                   value: selectedProductType,
-                  items: ["Agricol_Product", "Eleveur_Product"],
+                  items: ["AgricolProduct", "EleveurProduct"],
                   hint: "نوع المنتج",
                   onChanged: (val) {
                     setState(() {
@@ -109,7 +187,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 if (selectedMainCategory == "منتوجات فلاحية" && selectedSubCategory != null)
                   buildDropdown(
                     value: selectedFinalItem,
-                    items: ProductData.equipmentCategories[selectedSubCategory!] ?? [],
+                    items: ProductData.agriSubCategories[selectedSubCategory!] ?? [],
                     hint: "اختر منتوج",
                     onChanged: (val) {
                       setState(() {
@@ -179,13 +257,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             ),
             const SizedBox(height: 10),
             
-            // 📏 Apply Filter Button
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Apply"),
-            ),
+  onPressed: () async {
+    List<Product> allProducts = await fetchFilteredProducts();
+    Navigator.pop(context, allProducts);
+  },
+  child: const Text("Apply"),
+),
+
+
       
             // 🚪 Cancel Button
             TextButton(

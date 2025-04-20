@@ -150,16 +150,16 @@ class ProductData {
   };
 
   static final Map<String, Map<String, List<String>>> productTypeCategories = {
-    "Agricol_Product": agriCategories,
-    "Eleveur_Product": produitsElevages,
+    "AgricolProduct": agriCategories,
+    "EleveurProduct": produitsElevages,
   };
 
   static final Map<String, Map<String, List<String>>> subCategoryDetails = {
-    "Agricol_Product": {
+    "AgricolProduct": {
       ...agriSubCategories,
       ...equipmentCategories,
     },
-    "Eleveur_Product": {
+    "EleveurProduct": {
       ...produitsElevages
     },
   };
@@ -316,9 +316,7 @@ class ProductData {
         ? productTypeCategories[productType]?.keys.toList() ?? []
         : [];
   }
-  static List<String> getWilaya() {
-    return wilayas.keys.toList();
-  }
+  
 
   static List<String> getSubCategories(String? productType, String? category) {
   if (productType != null && category != null) {
@@ -327,14 +325,15 @@ class ProductData {
   return [];
 }
 
- 
-
-static List<String> getFinalItems(String? productType, String? subCategory) {
+  static List<String> getProduct(String? productType, String? subCategory) {
   if (productType != null && subCategory != null) {
     return subCategoryDetails[productType]?[subCategory] ?? [];
   }
   return [];
 }
 
+  static List<String> getWilaya() {
+    return wilayas.keys.toList();
+  }
 
 }

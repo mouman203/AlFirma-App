@@ -51,10 +51,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     final product = widget.product;
     if (product is Productagri) {
       category = product.category;
-      produit = product.produit;
     } else if (product is ProductElev) {
       category = product.category;
-      produit = product.produit;
     }
   }
 
@@ -582,137 +580,115 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
             const SizedBox( height: 10,),
 
-            // ✅ عرض التعليقات من Firestore
-                StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('Products')
-                      .doc(widget.product.typeProduct == "AgricolProduct"
-                          ? "Agricol_products"
-                          : "Eleveur_products")
-                      .collection(widget.product.typeProduct == "AgricolProduct"
-                          ? "Agricol_products"
-                          : "Eleveur_products")
-                      .doc(widget.product.id)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData || !snapshot.data!.exists) {
-                      return const Center(child: Text("لا توجد تعليقات بعد."));
+           // قسم التعليقات
+           StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Products')
+                  .doc(widget.product.typeProduct == "AgricolProduct"
+                      ? "Agricol_products"
+                      : "Eleveur_products")
+                  .collection(widget.product.typeProduct == "AgricolProduct"
+                      ? "Agricol_products"
+                      : "Eleveur_products")
+                  .doc(widget.product.id)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return const Center(child: Text("لا توجد تعليقات بعد."));
+                }
+
+                var data = snapshot.data!.data() as Map<String, dynamic>;
+                List<Map<String, dynamic>> comments = (data['comments'] is List)
+                    ? List<Map<String, dynamic>>.from((data['comments'] as List)
+                        .where((comment) =>
+                            comment is Map<String, dynamic> &&
+                            comment.containsKey("userId") &&
+                            comment.containsKey("text")))
+                    : [];
+
+                if (comments.isEmpty) {
+                  return const Center(child: Text("لا توجد تعليقات بعد."));
+                }
+
+                return FutureBuilder<QuerySnapshot>(
+                  future: FirebaseFirestore.instance.collection('Users').get(),
+                  builder: (context, userSnapshot) {
+                    if (!userSnapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
                     }
 
-                    var data = snapshot.data!.data() as Map<String, dynamic>;
-                    List<Map<String, dynamic>> comments = (data['comments'] is List)
-                        ? List<Map<String, dynamic>>.from((data['comments'] as List)
-                            .where((comment) =>
-                                comment is Map<String, dynamic> &&
-                                comment.containsKey("userId") &&
-                                comment.containsKey("text")))
-                        : [];
-
-                    if (comments.isEmpty) {
-                      return const Center(child: Text("لا توجد تعليقات بعد."));
+                    // ✅ حفظ معلومات المستخدمين في خريطة واحدة
+                    Map<String, Map<String, dynamic>> usersMap = {};
+                    for (var doc in userSnapshot.data!.docs) {
+                      usersMap[doc.id] = doc.data() as Map<String, dynamic>;
                     }
 
-                    return FutureBuilder<QuerySnapshot>(
-                      future: FirebaseFirestore.instance.collection('Users').get(),
-                      builder: (context, userSnapshot) {
-                        if (!userSnapshot.hasData) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
+                    return ListView.builder(
+                      controller: _scrollController,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: comments.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> comment = comments[index];
+                        String userId = comment['userId'];
+                        String username =
+                            usersMap[userId]?['first_name'] ?? "مستخدم غير معروف";
+                        String currentUserId =
+                            FirebaseAuth.instance.currentUser?.uid ?? "guest";
 
-                        // ✅ حفظ معلومات المستخدمين
-                        Map<String, Map<String, dynamic>> usersMap = {};
-                        for (var doc in userSnapshot.data!.docs) {
-                          usersMap[doc.id] = doc.data() as Map<String, dynamic>;
-                        }
+                        String? photoURL = usersMap[userId]?['photo'];
 
-                        return ListView.builder(
-                          controller: _scrollController,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            Map<String, dynamic> comment = comments[index];
-                            String userId = comment['userId'];
-                            String username =
-                                usersMap[userId]?['first_name'] ?? "مستخدم غير معروف";
-                            String currentUserId =
-                                FirebaseAuth.instance.currentUser?.uid ?? "guest";
-
-                            return Card(
-                              color: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                              margin: const EdgeInsets.only(bottom: 10),
-                              child: ListTile(
-                                leading: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => UserProfilePage(userId: userId),
-                                      ),
-                                    );
-                                  },
-                                  child: FutureBuilder<DocumentSnapshot>(
-                                          future: FirebaseFirestore.instance
-                                              .collection('Users')
-                                              .doc(FirebaseAuth.instance.currentUser!.uid)
-                                              .get(),
-                                          builder: (context, snapshot) {
-                                            String? photoURL;
-
-                                            // حالة حساب Google
-                                            if (FirebaseAuth.instance.currentUser?.providerData.any((provider) =>
-                                                    provider.providerId == "google.com") ==
-                                                true) {
-                                              photoURL = FirebaseAuth.instance.currentUser?.photoURL;
-                                            }
-                                            // حالة التسجيل العادي + صورة من Firestore
-                                            else if (snapshot.hasData && snapshot.data!.exists) {
-                                              photoURL = snapshot.data!.get('photo') ?? null;
-                                            }
-
-                                            return CircleAvatar(
-                                              backgroundColor: Colors.grey,
-                                              backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
-                                              child: photoURL == null
-                                                  ? Text(
-                                                      FirebaseAuth.instance.currentUser?.displayName?.isNotEmpty == true
-                                                          ? FirebaseAuth.instance.currentUser!.displayName!
-                                                              .substring(0, 1)
-                                                              .toUpperCase()
-                                                          : "U",
-                                                      style: const TextStyle(color: Colors.white),
-                                                    )
-                                                  : null,
-                                            );
-                                          },
-                                        ),
-                                ),
-                                title: Text(username),
-                                subtitle: Text(comment['text']),
-                                trailing: userId == currentUserId
-                                    ? IconButton(
-                                        icon: const Icon(Icons.delete, color: Colors.grey),
-                                        onPressed: () {
-                                          user.showDeleteConfirmationDialog(
-                                            context,
-                                            widget.product.id,
-                                            currentUserId,
-                                            comment['text'],
-                                            widget.product.typeProduct,
-                                          );
-                                        },
+                        return Card(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: ListTile(
+                            leading: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserProfilePage(userId: userId),
+                                  ),
+                                );
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+                                child: photoURL == null
+                                    ? Text(
+                                        username.isNotEmpty
+                                            ? username.substring(0, 1).toUpperCase()
+                                            : "U",
+                                        style: const TextStyle(color: Colors.white),
                                       )
                                     : null,
                               ),
-                            );
-                          },
+                            ),
+                            title: Text(username),
+                            subtitle: Text(comment['text']),
+                            trailing: userId == currentUserId
+                                ? IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.grey),
+                                    onPressed: () {
+                                      // Assuming `user.showDeleteConfirmationDialog` exists
+                                      user.showDeleteConfirmationDialog(
+                                        context,
+                                        widget.product.id,
+                                        currentUserId,
+                                        comment['text'],
+                                        widget.product.typeProduct,
+                                      );
+                                    },
+                                  )
+                                : null,
+                          ),
                         );
                       },
                     );
                   },
-                ),
+                );
+              },
+            ),
           ]
         )
       )

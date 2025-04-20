@@ -53,118 +53,48 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   // يستخدم هذا الدالة لجلب المنتجات من Firestore
-  Future<void> fetchAllProducts() async {
-    try {
-      List<Product> allProducts = [];
+Future<void> fetchAllProducts() async {
+  try {
+    List<Product> allProducts = [];
 
-      // جلب منتجات الزراعة
-      QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
-          .collection('Products')
-          .doc('Agricol_products')
-          .collection('Agricol_products')
-          .get();
+    // جلب منتجات الزراعة
+    QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+        .collection('Products')
+        .doc('Agricol_products')
+        .collection('Agricol_products')
+        .get();
 
-      List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return Productagri(
-          id: doc.id,
-          ownerId: data["ownerId"],
-          name: data['name'] ?? '',
-          typeProduct: data["typeProduct"] ?? "AgricolProduct",
-          description: data['description'] ?? '',
-          photos: (data['photos'] is List)
-              ? List<String>.from(data['photos'])
-              : ["assets/nophoto.png"],
-          price: (data['price'] is num)
-              ? data['price'].toDouble()
-              : double.tryParse(data['price'].toString()) ?? 0.0,
-          unite: data['unite'] ?? 'DA',
-          category: data['category'] ?? '',
-          rate: (data['rate'] is num)
-              ? data['rate'].toInt()
-              : int.tryParse(data['rate'].toString()) ?? 0,
-          comments: (data['comments'] is List)
-              ? List<Map<String, dynamic>>.from(data['comments'])
-              : [],
-          liked:
-              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
-          disliked: (data["disliked"] is List)
-              ? List<String>.from(data["disliked"])
-              : [],
-          date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
-              ? (data["date_of_add"] as Timestamp).toDate()
-              : DateTime.now(),
+    List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
+      return Productagri.fromFirestore(doc);
+    }).toList();
 
-          type: data['type'],
-          produit: data['produit'],
-          quantite: data['quantite'],
-          surface: data['surface'],
-          wilaya: data['wilaya'],
-          daira: data['daira'],
-        );
-      }).toList();
+    allProducts.addAll(agricolProducts);
 
-      allProducts.addAll(agricolProducts);
+    // جلب منتجات المربين
+    QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
+        .collection('Products')
+        .doc('Eleveur_products')
+        .collection('Eleveur_products')
+        .get();
 
-      // جلب منتجات المربين
-      QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
-          .collection('Products')
-          .doc('Eleveur_products')
-          .collection('Eleveur_products')
-          .get();
-          
+    List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
+      return ProductElev.fromFirestore(doc);
+    }).toList();
 
-      List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        // إنشاء الكائن ProductElev
-        return ProductElev(
-          id: doc.id,
-          ownerId: data["ownerId"],
-          name: data['name'] ?? '',
-          typeProduct: data['typeProduct'] ?? "EleveurProduct",
-          description: data['description'] ?? '',
-          photos: (data['photos'] is List)
-              ? List<String>.from(data['photos'])
-              : ["assets/nophoto.png"],
-          price: (data['price'] is num)
-              ? data['price'].toDouble()
-              : double.tryParse(data['price'].toString()) ?? 0.0,
-          category: data['category'] ?? '',
-          rate: (data['rate'] is num)
-              ? data['rate'].toInt()
-              : int.tryParse(data['rate'].toString()) ?? 0,
-          comments: (data['comments'] is List)
-              ? List<Map<String, dynamic>>.from(data['comments'])
-              : [],
-          liked:
-              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
-          disliked: (data["disliked"] is List)
-              ? List<String>.from(data["disliked"])
-              : [],
-          date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
-          ? (data["date_of_add"] as Timestamp).toDate()
-          : DateTime.now(),
-          produit: data['produit'],
-          quantite: data['quantite'],
-          wilaya: data['wilaya'],
-          daira: data['daira'],
-        );
-      }).toList();
-      
-      allProducts.addAll(eleveurProducts);
+    allProducts.addAll(eleveurProducts);
 
-      // تحديث الحالة
-      if (mounted) {
-        setState(() {
-          productList = allProducts; // products لازم تكون معرفها في state
-        });
-      }
-
-      print("✅ تم جلب جميع المنتجات بنجاح (${allProducts.length})");
-    } catch (e) {
-      print("❌ خطأ أثناء جلب المنتجات: $e");
+    // تحديث حالة الواجهة
+    if (mounted) {
+      setState(() {
+        productList = allProducts;
+      });
     }
+
+    print("✅ تم جلب جميع المنتجات بنجاح (${allProducts.length})");
+  } catch (e) {
+    print("❌ خطأ أثناء جلب المنتجات: $e");
   }
+}
 
   Future<void> fetchProductNames() async {
   try {
@@ -366,38 +296,48 @@ class _ExplorePageState extends State<ExplorePage> {
 
                           // ✅ زر الفلتر
                           Padding(
-                            padding: const EdgeInsets.only(left: 12),
-                            child: IconButton.filled(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (context) {
-                                    return DraggableScrollableSheet(
-                                      initialChildSize: 0.85,
-                                      maxChildSize: 0.95,
-                                      minChildSize: 0.5,
-                                      builder: (context, scrollController) {
-                                        return Container(
-                                          decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                            padding: const EdgeInsets.only(left: 12),
+                                            child: IconButton.filled(
+                                              onPressed: () async {
+                                                // فتح الـ bottom sheet وعند الرجوع نلتقط النتيجة
+                                                final result = await showModalBottomSheet<List<Product>>(
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  backgroundColor: Colors.transparent,
+                                                  builder: (context) {
+                                                    showLoader = false; // تعيين حالة التحميل إلى true عند فتح الـ bottom sheet
+                                                    return DraggableScrollableSheet(
+                                                      initialChildSize: 0.85,
+                                                      maxChildSize: 0.95,
+                                                      minChildSize: 0.5,
+                                                      builder: (context, scrollController) {
+                                                        return Container(
+                                                          decoration: const BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                                          ),
+                                                          padding: const EdgeInsets.all(16),
+                                                          child: const FilterBottomSheet(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                );
+
+                                                // إذا كانت النتيجة ليست null وقائمة المنتجات صالحة
+                                                if (result != null) {
+                                                  setState(() {
+                                                    productList = result;  // تحديث قائمة المنتجات بناءً على الفلاتر
+                                                  });
+                                                }
+                                              },
+                                              icon: const Icon(IconlyLight.filter),
+                                            ),
                                           ),
-                                          padding: const EdgeInsets.all(16),
-                                          child: const FilterBottomSheet(),
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                              icon: const Icon(IconlyLight.filter),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+
+                                        ],
+                                      ),
+                                    ),
 
                     // ✅ عرض نتائج البحث أو سجل البحث
 

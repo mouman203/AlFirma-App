@@ -1,4 +1,5 @@
 import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,10 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
   final TextEditingController quantiteController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  String? selectedCategory;
+  String? selectedproduct;
+  String? selectedWilaya;
+  String? selectedDaira;
 
   bool _isLoading = false; // To show a loading indicator
 
@@ -31,10 +36,10 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
     prixController.clear();
     descriptionController.clear();
     setState(() {
-      selectedCategorie = null;
+      selectedCategory = null;
       selectedWilaya = null;
       selectedDaira = null;
-      selectedProduit = null; // Reset dropdown value
+      selectedproduct = null; // Reset dropdown value
     });
   }
 
@@ -46,7 +51,7 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
       // Create a Product object
       ProductElev newProduct = ProductElev(
   id: UniqueKey().toString(), // أو استخدم UUID
-  name: selectedProduit ?? '', // أو أي اسم تختاره
+  name: selectedproduct ?? '', // أو أي اسم تختاره
   typeProduct: "EleveurProduct", // أو أي اسم تختاره
   price: prixController.text.isNotEmpty
       ? double.tryParse(prixController.text) ?? 0.0
@@ -59,13 +64,12 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
   liked: [],
   disliked: [],
   date_of_add: DateTime.now(),
-  category: selectedCategorie,
-  produit: selectedProduit,
+  category: selectedCategory,
   quantite: quantiteController.text.isNotEmpty
       ? double.tryParse(quantiteController.text)
       : null,
-  wilaya: selectedWilaya,
-  daira: selectedDaira,
+  wilaya: selectedWilaya!,
+  daira: selectedDaira!,
 );
       // Add to Firestore
       await newProduct.addProduct(newProduct);
@@ -83,348 +87,9 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
   }
 
   //produit elevage
-  final Map<String, List<String>> produitsElevages = {
-    "الحيوانات الحية": [
-      "أبقار حلوب",
-      "أبقار للتسمين",
-      "عجول",
-      "أغنام (خراف، نعاج)",
-      "ماعز (جديان، إناث ماعز)",
-      "جمال",
-      "خيول",
-      "دواجن (دجاج، بط، ديك رومي)",
-      "أرانب",
-    ],
-    "منتجات الألبان ومشتقاتها": [
-      "الحليب الطازج (بقري، ماعز، غنم)",
-      "الجبن (بلدي، موزاريلا، شيدر)",
-      "الزبدة الطبيعية",
-      "الياغورت الطبيعي",
-      "القشطة",
-      "اللبن الرائب",
-    ],
-    "المنتجات المشتقة من الحيوانات": [
-      "الصوف الخام",
-      "الجلود الطبيعية (بقر، غنم، ماعز)",
-      "العسل الطبيعي",
-      "شمع النحل",
-      "البيض (بلدي، مزارع)",
-      "السماد الطبيعي العضوي",
-    ],
-    "معدات وأدوات تربية المواشي": [
-      "أقفاص وحظائر متنقلة",
-      "معالف ومشارب أوتوماتيكية",
-      "أجهزة الحلب اليدوية والكهربائية",
-      "أدوات القص والتقليم (للحوافر والصوف)",
-      "مستلزمات تدفئة الحظائر",
-      "أنظمة تهوية وتحكم في الحرارة",
-    ],
-  };
+ 
 
-  String? selectedCategorie;
-  String? selectedProduit;
 
-  final Map<String, List<String>> wilayas = {
-    "01 - Adrar": [
-      "Adrar",
-      "Aoulef",
-      "Reggane",
-      "Timimoun",
-      "Zaouiet Kounta",
-      "Fenoughil",
-      "Tsabit",
-      "Tinerkouk",
-    ],
-    "02 - Chlef": [
-      "Chlef",
-      "Ténès",
-      "Abou El Hassane",
-      "El Karimia",
-      "Ouled Fares",
-      "Oued Fodda",
-      "Sobha",
-      "Beni Haoua",
-      "Taougrit",
-    ],
-    "03 - Laghouat": [
-      "Laghouat",
-      "Aflou",
-      "Brida",
-      "Ksar El Hirane",
-      "Hassi R'Mel",
-      "Aïn Madhi",
-      "Oued Morra",
-      "Tadjemout",
-    ],
-    "04 - Oum El Bouaghi": [
-      "Oum El Bouaghi",
-      "Aïn Beïda",
-      "Aïn M'lila",
-      "F'kirina",
-      "Meskiana",
-      "Souk Naamane",
-      "Aïn Babouche",
-    ],
-    "05 - Batna": [
-      "Batna",
-      "Arris",
-      "Barika",
-      "Merouana",
-      "T'kout",
-      "N'gaous",
-      "El Madher",
-      "Aïn Touta",
-      "Ichmoul",
-    ],
-    "06 - Béjaïa": [
-      "Béjaïa",
-      "Akbou",
-      "Amizour",
-      "Sidi Aïch",
-      "Tazmalt",
-      "Kherrata",
-      "El Kseur",
-      "Souk El Ténine",
-      "Adekar",
-    ],
-    "07 - Biskra": [
-      "Biskra",
-      "Tolga",
-      "Ourlal",
-      "Sidi Okba",
-      "El Kantara",
-      "Oumache",
-      "Lichana",
-      "M'Chouneche",
-      "Foughala",
-    ],
-    "08 - Béchar": [
-      "Béchar",
-      "Kenadsa",
-      "Taghit",
-      "Lahmar",
-      "Abadla",
-      "Beni Abbes",
-      "Igli",
-      "Timoudi",
-      "El Ouata",
-    ],
-    "09 - Blida": [
-      "Blida",
-      "Boufarik",
-      "Bouinan",
-      "El Affroun",
-      "Mouzaïa",
-      "Larbaa",
-      "Oued Djer",
-      "Chebli",
-    ],
-    "10 - Bouira": [
-      "Bouira",
-      "Lakhdaria",
-      "Sour El Ghozlane",
-      "Kadiria",
-      "Haizer",
-      "M'Chedallah",
-      "Aïn Bessem",
-      "El Hachimia",
-    ],
-    "11 - Tamanrasset": [
-      "Tamanrasset",
-      "Abalessa",
-      "In Guezzam",
-      "In Salah",
-      "Tazrouk",
-      "Tinzaouatine",
-    ],
-    "12 - Tébessa": [
-      "Tébessa",
-      "Bir El Ater",
-      "Cheria",
-      "El Ogla",
-      "Negrine",
-      "Ouenza",
-      "El Aouinet",
-    ],
-    "13 - Tlemcen": [
-      "Tlemcen",
-      "Ghazaouet",
-      "Maghnia",
-      "Nedroma",
-      "Remchi",
-      "Sebdou",
-      "Beni Snous",
-      "Bensekrane",
-    ],
-    "14 - Tiaret": [
-      "Tiaret",
-      "Frenda",
-      "Mahdia",
-      "Sougueur",
-      "Medroussa",
-      "Mechraa Safa",
-      "Ksar Chellala",
-    ],
-    "15 - Tizi Ouzou": [
-      "Tizi Ouzou",
-      "Azazga",
-      "Draa El Mizan",
-      "Larbaa Nath Irathen",
-      "Boghni",
-      "Aïn El Hammam",
-      "Tizi Rached",
-    ],
-    "16 - Alger": [
-      "Alger-Centre",
-      "Bab El Oued",
-      "El Harrach",
-      "Bir Mourad Raïs",
-      "Hussein Dey",
-      "Rouiba",
-      "Dar El Beida",
-      "Birtouta",
-    ],
-    "17 - Djelfa": [
-      "Djelfa",
-      "Aïn Oussera",
-      "Hassi Bahbah",
-      "Messaad",
-      "Charef",
-      "El Idrissia",
-      "Zaafrane",
-    ],
-    "18 - Jijel": [
-      "Jijel",
-      "El Milia",
-      "Taher",
-      "Texenna",
-      "Chekfa",
-      "Sidi Maarouf",
-      "El Aouana",
-    ],
-    "19 - Sétif": [
-      "Sétif",
-      "El Eulma",
-      "Aïn Oulmene",
-      "Bougaa",
-      "Beni Ourtilane",
-      "Hammam Guergour",
-      "Babor",
-    ],
-    "20 - Saïda": [
-      "Saïda",
-      "Aïn El Hadjar",
-      "Ouled Brahim",
-      "Sidi Boubekeur",
-      "Youb",
-    ],
-    "21 - Skikda": [
-      "Skikda",
-      "Collo",
-      "El Harrouch",
-      "Azzaba",
-      "Tamalous",
-      "Beni Bechir",
-      "Ramadan Djamel",
-    ],
-    "22 - Sidi Bel Abbès": [
-      "Sidi Bel Abbès",
-      "Tessala",
-      "Ben Badis",
-      "Sfisef",
-      "Mostefa Ben Brahim",
-      "Ras El Ma",
-    ],
-    "23 - Annaba": [
-      "Annaba",
-      "El Bouni",
-      "El Hadjar",
-      "Berrahal",
-      "Chetaïbi",
-      "Seraïdi",
-    ],
-    "24 - Guelma": [
-      "Guelma",
-      "Oued Zenati",
-      "Bouchegouf",
-      "Hammam Debagh",
-      "Héliopolis",
-      "Nechmaya",
-    ],
-    "25 - Constantine": [
-      "Constantine",
-      "Hamma Bouziane",
-      "Zighoud Youcef",
-      "El Khroub",
-      "Aïn Smara",
-    ],
-    "26 - Médéa": [
-      "Médéa",
-      "Berrouaghia",
-      "Ksar El Boukhari",
-      "Tablat",
-      "Béni Slimane",
-      "Oum El Djellil",
-    ],
-    "27 - Mostaganem": [
-      "Mostaganem",
-      "Aïn Nouissy",
-      "Bouguirat",
-      "Kheïr Eddine",
-      "Hassi Mameche",
-    ],
-    "28 - M'Sila": [
-      "M'Sila",
-      "Boussaada",
-      "Magra",
-      "Chellal",
-      "Ouled Derradj",
-      "Aïn El Hadjel",
-    ],
-    "29 - Mascara": ["Mascara", "Sig", "Tighennif", "Oued Taria", "Bouhanifia"],
-    "30 - Ouargla": ["Ouargla", "Touggourt", "El Hadjira", "Hassi Messaoud"],
-    "31 - Oran": [
-      "Oran",
-      "Es Senia",
-      "Arzew",
-      "Aïn El Turk",
-      "Bir El Djir",
-      "Boutlelis",
-    ],
-    "32 - El Bayadh": [
-      "El Bayadh",
-      "Bougtoub",
-      "Rogassa",
-      "Labiodh Sidi Cheikh",
-    ],
-    "33 - Illizi": ["Illizi", "Djanet", "Debdeb"],
-    "34 - Bordj Bou Arreridj": [
-      "Bordj Bou Arreridj",
-      "El Achir",
-      "Medjana",
-      "Ras El Oued",
-    ],
-    "35 - Boumerdès": ["Boumerdès", "Khemis El Khechna", "Dellys", "Naciria"],
-    "36 - Tissemsilt": ["Tissemsilt", "Bordj Bounaama", "Theniet El Had"],
-    "37 - El Oued": ["El Oued", "Robbah", "Mih Ouensa", "Guemar"],
-    "38 - Khenchela": ["Khenchela", "El Hamma", "Kais", "Babar"],
-    "39 - Souk Ahras": ["Souk Ahras", "Sedrata", "Taoura", "Drea"],
-    "40 - Tipaza": ["Tipaza", "Cherchell", "Gouraya", "Hadjout"],
-    "41 - Mila": ["Mila", "Grarem Gouga", "Chelghoum Laïd", "Telerghma"],
-    "42 - Aïn Defla": ["Aïn Defla", "Khemis Miliana", "Miliana", "El Abadia"],
-    "43 - Naâma": ["Naâma", "Mecheria", "Aïn Sefra", "Tiout"],
-    "44 - Aïn Témouchent": [
-      "Aïn Témouchent",
-      "El Malah",
-      "Beni Saf",
-      "Hammam Bouhadjar",
-    ],
-    "45 - Ghardaïa": ["Ghardaïa", "Berriane", "Metlili", "El Menea"],
-    "46 - Relizane": ["Relizane", "Oued Rhiou", "Mazouna", "Zemmoura"],
-  };
-
-  String? selectedWilaya;
-  String? selectedDaira;
   List<XFile> _selectedImages = [];
   List<String> uploadedPhotos = [];
 
@@ -530,9 +195,9 @@ Future<void> _pickImages() async {
 
               //category
               DropdownButtonFormField<String>(
-                  value: selectedCategorie,
-                  decoration: _dropdownDecoration("الاصناف"),
-                  items: produitsElevages.keys
+                  value: selectedCategory,
+                  decoration: _dropdownDecoration("Category"),
+                  items: ProductData.produitsElevages.keys
                       .map(
                         (categorie) => DropdownMenuItem(
                           value: categorie,
@@ -542,8 +207,8 @@ Future<void> _pickImages() async {
                       .toList(),
                   onChanged: (value) {
                     setState(() {
-                      selectedCategorie = value;
-                      selectedProduit = null;
+                      selectedCategory = value;
+                      selectedproduct = null;
                     });
                   },
                   validator: (value) {
@@ -554,11 +219,11 @@ Future<void> _pickImages() async {
                   }),
               const SizedBox(height: 15),
               //Produit
-              if (selectedCategorie != null)
+              if (selectedCategory != null)
                 DropdownButtonFormField<String>(
-                    value: selectedProduit,
+                    value: selectedproduct,
                     decoration: _dropdownDecoration("المنتجات"),
-                    items: produitsElevages[selectedCategorie]!
+                    items: ProductData.produitsElevages[selectedCategory]!
                         .map(
                           (produit) => DropdownMenuItem(
                             value: produit,
@@ -568,7 +233,7 @@ Future<void> _pickImages() async {
                         .toList(),
                     onChanged: (value) {
                       setState(() {
-                        selectedProduit = value;
+                        selectedproduct = value;
                       });
                     },
                     validator: (value) {
@@ -609,7 +274,7 @@ Future<void> _pickImages() async {
               DropdownButtonFormField<String>(
                   value: selectedWilaya,
                   decoration: _dropdownDecoration("Wilaya"),
-                  items: wilayas.keys
+                  items:ProductData.wilayas.keys
                       .map(
                         (wilaya) => DropdownMenuItem(
                           value: wilaya,
@@ -635,7 +300,7 @@ Future<void> _pickImages() async {
                 DropdownButtonFormField<String>(
                     value: selectedDaira,
                     decoration: _dropdownDecoration("Daïra"),
-                    items: wilayas[selectedWilaya]!
+                    items:ProductData.wilayas[selectedWilaya]!
                         .map(
                           (daira) => DropdownMenuItem(
                             value: daira,

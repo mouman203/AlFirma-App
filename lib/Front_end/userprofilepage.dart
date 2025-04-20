@@ -97,83 +97,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
       .where('ownerId', isEqualTo: userId)
       .get();
 
-  final agriProducts = agriSnap.docs.map((doc) {
-    final data = doc.data();
-    return Productagri(
-          id: doc.id,
-          ownerId: data["ownerId"],
-          name: data['name'] ?? '',
-          typeProduct: data["typeProduct"] ?? "AgricolProduct",
-          description: data['description'] ?? '',
-          photos: (data['photos'] is List)
-              ? List<String>.from(data['photos'])
-              : ["assets/nophoto.png"],
-          price: (data['price'] is num)
-              ? data['price'].toDouble()
-              : double.tryParse(data['price'].toString()) ?? 0.0,
-          unite: data['unite'] ?? 'DA',
-          category: data['category'] ?? '',
-          rate: (data['rate'] is num)
-              ? data['rate'].toInt()
-              : int.tryParse(data['rate'].toString()) ?? 0,
-          comments: (data['comments'] is List)
-              ? List<Map<String, dynamic>>.from(data['comments'])
-              : [],
-          liked:
-              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
-          disliked: (data["disliked"] is List)
-              ? List<String>.from(data["disliked"])
-              : [],
-          date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
-              ? (data["date_of_add"] as Timestamp).toDate()
-              : DateTime.now(),
+   List<Product> agricolProducts = agriSnap.docs.map((doc) {
+      return Productagri.fromFirestore(doc);
+    }).toList();
 
-          type: data['type'],
-          produit: data['produit'],
-          quantite: data['quantite'],
-          surface: data['surface'],
-          wilaya: data['wilaya'],
-          daira: data['daira'],
-        );
-      }).toList();
+  List<Product> eleveurProducts = elevSnap.docs.map((doc) {
+      return ProductElev.fromFirestore(doc);
+    }).toList();
 
-  final elevProducts = elevSnap.docs.map((doc) {
-    final data = doc.data();
-    return ProductElev(
-          id: doc.id,
-          ownerId: data["ownerId"],
-          name: data['name'] ?? '',
-          typeProduct: data['typeProduct'] ?? "EleveurProduct",
-          description: data['description'] ?? '',
-          photos: (data['photos'] is List)
-              ? List<String>.from(data['photos'])
-              : ["assets/nophoto.png"],
-          price: (data['price'] is num)
-              ? data['price'].toDouble()
-              : double.tryParse(data['price'].toString()) ?? 0.0,
-          category: data['category'] ?? '',
-          rate: (data['rate'] is num)
-              ? data['rate'].toInt()
-              : int.tryParse(data['rate'].toString()) ?? 0,
-          comments: (data['comments'] is List)
-              ? List<Map<String, dynamic>>.from(data['comments'])
-              : [],
-          liked:
-              (data["liked"] is List) ? List<String>.from(data["liked"]) : [],
-          disliked: (data["disliked"] is List)
-              ? List<String>.from(data["disliked"])
-              : [],
-          date_of_add: data["date_of_add"] != null && data["date_of_add"] is Timestamp
-          ? (data["date_of_add"] as Timestamp).toDate()
-          : DateTime.now(),
-          produit: data['produit'],
-          quantite: data['quantite'],
-          wilaya: data['wilaya'],
-          daira: data['daira'],
-        );
-      }).toList();
-
-  return [...agriProducts, ...elevProducts];
+  return [...agricolProducts, ...eleveurProducts];
 }
 
   @override

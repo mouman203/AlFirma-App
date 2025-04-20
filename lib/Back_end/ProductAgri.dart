@@ -2,14 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Product.dart';
 
 class Productagri extends Product{
-  String? type;
   String? category;
   String? unite;
-  String? produit;
+  String? subcategory;
   double? quantite; //les lfruits...
   double? surface; //les terrains
-  String? wilaya;
-  String? daira;
+
 
   Productagri({
     required String id,
@@ -24,14 +22,14 @@ class Productagri extends Product{
     required List<String> liked,
     required List<String> disliked,
     required DateTime date_of_add,
-    this.type,
+    required String wilaya,
+    required String daira,
     this.category,
     this.unite,
-    this.produit,
+    this.subcategory,
     this.quantite,
     this.surface,
-    this.wilaya,
-    this.daira,
+
   }) : super(
           id: id,
           name: name,
@@ -44,7 +42,9 @@ class Productagri extends Product{
           photos: photos,
           liked: liked,
           disliked: disliked,
-          date_of_add: date_of_add
+          date_of_add: date_of_add,
+          wilaya: wilaya,
+          daira: daira,
         );
       
 
@@ -63,9 +63,8 @@ Map<String, dynamic> toJson() {
     "photos": photos,
     "liked": liked,
     "disliked": disliked,
-    "type": type,
     "category": category,
-    "produit": produit,
+    "subcategory": subcategory,
     "quantite": quantite,
     "surface": surface,
     "wilaya": wilaya,
@@ -75,6 +74,31 @@ Map<String, dynamic> toJson() {
   return data;
 }
 
+factory Productagri.fromFirestore(DocumentSnapshot doc) {
+    final json = doc.data() as Map<String, dynamic>;
+
+    return Productagri(
+      id: json['id'] ?? doc.id,
+      name: json['name'] ?? '',
+      typeProduct: json['typeProduct'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      description: json['description'] ?? '',
+      rate: json['rate'] ?? 0,
+      ownerId: json['ownerId'] ?? '',
+      comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
+      photos: List<String>.from(json['photos'] ?? []),
+      liked: List<String>.from(json['liked'] ?? []),
+      disliked: List<String>.from(json['disliked'] ?? []),
+      date_of_add: (json['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      category: json['category'],
+      unite: json['unite'],
+      subcategory: json['subcategory'],
+      quantite: (json['quantite'] as num?)?.toDouble(),
+      surface: (json['surface'] as num?)?.toDouble(),
+      wilaya: json['wilaya'],
+      daira: json['daira'],
+    );
+  }
 
 
 /// 1**Add a new product to Firestore**

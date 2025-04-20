@@ -13,6 +13,8 @@ class Product {
   List<String> liked;
   List<String> disliked;
   DateTime date_of_add;
+  String wilaya;
+  String daira;
 
   // المُنشئ (Constructor)
   Product({
@@ -28,5 +30,7 @@ class Product {
      required this.liked,
      required this.disliked,
      required this.date_of_add,
+     required this.wilaya,
+     required this.daira,
   });
 }

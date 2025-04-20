@@ -1,4 +1,5 @@
 import 'package:agriplant/Back_end/ProductAgri.dart';
+import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +15,28 @@ class AddProductAgriculteur extends StatefulWidget {
 
 class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   // Controllers for input fields
   final TextEditingController imageController = TextEditingController();
   final TextEditingController quantiteController = TextEditingController();
   final TextEditingController surfaceController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  List<String>? Category;
+  List<String>? subCategory;
+  List<String>? Products;
+
+  String? selectedCategory;
+  String? selectedsubCategory;
+  String? selectedproduct;
+  String? selectedWilaya;
+  String? selectedDaira;
+  void initState(){
+    super.initState();
+   Category = ProductData.getMainCategories("AgricolProduct");
+   subCategory= ProductData.getSubCategories("AgricolProduct", selectedCategory);
+   Products = ProductData.getProduct("AgricolProduct",selectedsubCategory);
+
+  }
 
   bool _isLoading = false; // To show a loading indicator
 
@@ -32,11 +48,11 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
     prixController.clear();
     descriptionController.clear();
     setState(() {
-      selectedCategorie = null;
+      selectedsubCategory = null;
       selectedWilaya = null;
       selectedDaira = null;
-      selectedProduit = null;
-      selectedPrimaryCategory = null; // Reset dropdown value
+      selectedproduct = null;
+      selectedCategory = null; // Reset dropdown value
     });
   }
 
@@ -58,7 +74,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
 
     Productagri newProduct = Productagri(
       id: "", // سيتم تعيينه تلقائيًا في Firestore
-      name: selectedProduit ?? '',
+      name: selectedproduct ?? '',
       typeProduct: "AgricolProduct",
       price: prixController.text.isNotEmpty ? double.tryParse(prixController.text)! : 0.0,
       description: descriptionController.text,
@@ -70,17 +86,16 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
       liked: [],
       disliked: [],
       date_of_add: DateTime.now(),
-      type: selectedPrimaryCategory,
-      category: selectedCategorie,
-      produit: selectedProduit,
+      category: selectedCategory,
+      subcategory: selectedsubCategory,
       quantite: quantiteController.text.isNotEmpty
           ? double.tryParse(quantiteController.text)
           : null,
       surface: surfaceController.text.isNotEmpty
           ? double.tryParse(surfaceController.text)
           : null,
-      wilaya: selectedWilaya,
-      daira: selectedDaira,
+      wilaya: selectedWilaya!,
+      daira: selectedDaira!,
     );
 
     await newProduct.addProduct(newProduct);
@@ -109,9 +124,11 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
     return null;
   }
 }
-List<XFile> _selectedImages = [];
+ 
+  List<XFile> _selectedImages = [];
   List<String> uploadedPhotos = [];
-Future<void> _pickImages() async {
+
+  Future<void> _pickImages() async {
   final List<XFile> images = await ImagePicker().pickMultiImage();
 
   if ( images.isNotEmpty) {
@@ -136,409 +153,6 @@ Future<void> _pickImages() async {
 }
 
 
-
-  final List<String> primaryCategories = ["منتوجات فلاحية", "معدات", "أراضي"];
-  String? selectedPrimaryCategory;
-
-  //produit agricoles
-  final Map<String, List<String>> produitsAgricoles = {
-    "الفواكه": [
-      "تفاح ",
-      "برتقال ",
-      "موز ",
-      "عنب ",
-      "فراولة ",
-      "مانجو ",
-      "كمثرى ",
-      "كرز ",
-      "بطيخ ",
-      "شمام ",
-      "كيوي ",
-      "أناناس ",
-      "رمان ",
-      "تين ",
-      "تمر ",
-    ],
-    "الخضروات ": [
-      "طماطم ",
-      "جزر ",
-      "بطاطا ",
-      "فلفل ",
-      "بصل ",
-      "ثوم ",
-      "خس ",
-      "خيار ",
-      "باذنجان ",
-      "سبانخ",
-      "ملفوف ",
-      "فجل ",
-      "شمندر ",
-      "فاصوليا خضراء ",
-      "كرفس ",
-    ],
-    "الحبوب ": [
-      "قمح ",
-      "شعير ",
-      "ذرة ",
-      "أرز ",
-      "سورغم ",
-      "شوفان ",
-      "جاودار ",
-      "دخن ",
-      "كينوا ",
-    ],
-    "المحاصيل الزيتية ": [
-      "زيتون ",
-      "لوز ",
-      "بندق ",
-      "جوز ",
-      "بذور عباد الشمس ",
-      "بذور السمسم ",
-      "بذور الكتان ",
-      "بذور اللفت ",
-      "فول سوداني ",
-    ],
-    "البقوليات ": [
-      "عدس ",
-      "حمص ",
-      "فاصوليا بيضاء ",
-      "فول ",
-      "بازلاء مجففة ",
-      "فاصوليا حمراء ",
-      "فول الصويا ",
-    ],
-    "النباتات العطرية و الطبية ": [
-      "نعناع ",
-      "ريحان ",
-      "زعتر ",
-      "إكليل الجبل ",
-      "بابونج ",
-      "لافندر ",
-      "مريمية ",
-      "بقدونس ",
-      "كزبرة ",
-    ],
-    "الأعلاف ": [
-      "برسيم ",
-      "تبن ",
-      "نفل ",
-      "سيلاج الذرة ",
-      "سورغم العلفي ",
-    ],
-  };
-
-  final Map<String, List<String>> equipmentCategories = {
-    "الآلات الزراعية ": ["جرار ", "حصادة ", "محراث "],
-    "المعدات الزراعية ": [],
-    "معدات الري ": ["أنابيب الري ", "رشاشات مياه "],
-    "معدات التسميد ": [],
-  };
-
-  String? selectedCategorie;
-  String? selectedProduit;
-
-  final Map<String, List<String>> wilayas = {
-    "01 - Adrar": [
-      "Adrar",
-      "Aoulef",
-      "Reggane",
-      "Timimoun",
-      "Zaouiet Kounta",
-      "Fenoughil",
-      "Tsabit",
-      "Tinerkouk",
-    ],
-    "02 - Chlef": [
-      "Chlef",
-      "Ténès",
-      "Abou El Hassane",
-      "El Karimia",
-      "Ouled Fares",
-      "Oued Fodda",
-      "Sobha",
-      "Beni Haoua",
-      "Taougrit",
-    ],
-    "03 - Laghouat": [
-      "Laghouat",
-      "Aflou",
-      "Brida",
-      "Ksar El Hirane",
-      "Hassi R'Mel",
-      "Aïn Madhi",
-      "Oued Morra",
-      "Tadjemout",
-    ],
-    "04 - Oum El Bouaghi": [
-      "Oum El Bouaghi",
-      "Aïn Beïda",
-      "Aïn M'lila",
-      "F'kirina",
-      "Meskiana",
-      "Souk Naamane",
-      "Aïn Babouche",
-    ],
-    "05 - Batna": [
-      "Batna",
-      "Arris",
-      "Barika",
-      "Merouana",
-      "T'kout",
-      "N'gaous",
-      "El Madher",
-      "Aïn Touta",
-      "Ichmoul",
-    ],
-    "06 - Béjaïa": [
-      "Béjaïa",
-      "Akbou",
-      "Amizour",
-      "Sidi Aïch",
-      "Tazmalt",
-      "Kherrata",
-      "El Kseur",
-      "Souk El Ténine",
-      "Adekar",
-    ],
-    "07 - Biskra": [
-      "Biskra",
-      "Tolga",
-      "Ourlal",
-      "Sidi Okba",
-      "El Kantara",
-      "Oumache",
-      "Lichana",
-      "M'Chouneche",
-      "Foughala",
-    ],
-    "08 - Béchar": [
-      "Béchar",
-      "Kenadsa",
-      "Taghit",
-      "Lahmar",
-      "Abadla",
-      "Beni Abbes",
-      "Igli",
-      "Timoudi",
-      "El Ouata",
-    ],
-    "09 - Blida": [
-      "Blida",
-      "Boufarik",
-      "Bouinan",
-      "El Affroun",
-      "Mouzaïa",
-      "Larbaa",
-      "Oued Djer",
-      "Chebli",
-    ],
-    "10 - Bouira": [
-      "Bouira",
-      "Lakhdaria",
-      "Sour El Ghozlane",
-      "Kadiria",
-      "Haizer",
-      "M'Chedallah",
-      "Aïn Bessem",
-      "El Hachimia",
-    ],
-    "11 - Tamanrasset": [
-      "Tamanrasset",
-      "Abalessa",
-      "In Guezzam",
-      "In Salah",
-      "Tazrouk",
-      "Tinzaouatine",
-    ],
-    "12 - Tébessa": [
-      "Tébessa",
-      "Bir El Ater",
-      "Cheria",
-      "El Ogla",
-      "Negrine",
-      "Ouenza",
-      "El Aouinet",
-    ],
-    "13 - Tlemcen": [
-      "Tlemcen",
-      "Ghazaouet",
-      "Maghnia",
-      "Nedroma",
-      "Remchi",
-      "Sebdou",
-      "Beni Snous",
-      "Bensekrane",
-    ],
-    "14 - Tiaret": [
-      "Tiaret",
-      "Frenda",
-      "Mahdia",
-      "Sougueur",
-      "Medroussa",
-      "Mechraa Safa",
-      "Ksar Chellala",
-    ],
-    "15 - Tizi Ouzou": [
-      "Tizi Ouzou",
-      "Azazga",
-      "Draa El Mizan",
-      "Larbaa Nath Irathen",
-      "Boghni",
-      "Aïn El Hammam",
-      "Tizi Rached",
-    ],
-    "16 - Alger": [
-      "Alger-Centre",
-      "Bab El Oued",
-      "El Harrach",
-      "Bir Mourad Raïs",
-      "Hussein Dey",
-      "Rouiba",
-      "Dar El Beida",
-      "Birtouta",
-    ],
-    "17 - Djelfa": [
-      "Djelfa",
-      "Aïn Oussera",
-      "Hassi Bahbah",
-      "Messaad",
-      "Charef",
-      "El Idrissia",
-      "Zaafrane",
-    ],
-    "18 - Jijel": [
-      "Jijel",
-      "El Milia",
-      "Taher",
-      "Texenna",
-      "Chekfa",
-      "Sidi Maarouf",
-      "El Aouana",
-    ],
-    "19 - Sétif": [
-      "Sétif",
-      "El Eulma",
-      "Aïn Oulmene",
-      "Bougaa",
-      "Beni Ourtilane",
-      "Hammam Guergour",
-      "Babor",
-    ],
-    "20 - Saïda": [
-      "Saïda",
-      "Aïn El Hadjar",
-      "Ouled Brahim",
-      "Sidi Boubekeur",
-      "Youb",
-    ],
-    "21 - Skikda": [
-      "Skikda",
-      "Collo",
-      "El Harrouch",
-      "Azzaba",
-      "Tamalous",
-      "Beni Bechir",
-      "Ramadan Djamel",
-    ],
-    "22 - Sidi Bel Abbès": [
-      "Sidi Bel Abbès",
-      "Tessala",
-      "Ben Badis",
-      "Sfisef",
-      "Mostefa Ben Brahim",
-      "Ras El Ma",
-    ],
-    "23 - Annaba": [
-      "Annaba",
-      "El Bouni",
-      "El Hadjar",
-      "Berrahal",
-      "Chetaïbi",
-      "Seraïdi",
-    ],
-    "24 - Guelma": [
-      "Guelma",
-      "Oued Zenati",
-      "Bouchegouf",
-      "Hammam Debagh",
-      "Héliopolis",
-      "Nechmaya",
-    ],
-    "25 - Constantine": [
-      "Constantine",
-      "Hamma Bouziane",
-      "Zighoud Youcef",
-      "El Khroub",
-      "Aïn Smara",
-    ],
-    "26 - Médéa": [
-      "Médéa",
-      "Berrouaghia",
-      "Ksar El Boukhari",
-      "Tablat",
-      "Béni Slimane",
-      "Oum El Djellil",
-    ],
-    "27 - Mostaganem": [
-      "Mostaganem",
-      "Aïn Nouissy",
-      "Bouguirat",
-      "Kheïr Eddine",
-      "Hassi Mameche",
-    ],
-    "28 - M'Sila": [
-      "M'Sila",
-      "Boussaada",
-      "Magra",
-      "Chellal",
-      "Ouled Derradj",
-      "Aïn El Hadjel",
-    ],
-    "29 - Mascara": ["Mascara", "Sig", "Tighennif", "Oued Taria", "Bouhanifia"],
-    "30 - Ouargla": ["Ouargla", "Touggourt", "El Hadjira", "Hassi Messaoud"],
-    "31 - Oran": [
-      "Oran",
-      "Es Senia",
-      "Arzew",
-      "Aïn El Turk",
-      "Bir El Djir",
-      "Boutlelis",
-    ],
-    "32 - El Bayadh": [
-      "El Bayadh",
-      "Bougtoub",
-      "Rogassa",
-      "Labiodh Sidi Cheikh",
-    ],
-    "33 - Illizi": ["Illizi", "Djanet", "Debdeb"],
-    "34 - Bordj Bou Arreridj": [
-      "Bordj Bou Arreridj",
-      "El Achir",
-      "Medjana",
-      "Ras El Oued",
-    ],
-    "35 - Boumerdès": ["Boumerdès", "Khemis El Khechna", "Dellys", "Naciria"],
-    "36 - Tissemsilt": ["Tissemsilt", "Bordj Bounaama", "Theniet El Had"],
-    "37 - El Oued": ["El Oued", "Robbah", "Mih Ouensa", "Guemar"],
-    "38 - Khenchela": ["Khenchela", "El Hamma", "Kais", "Babar"],
-    "39 - Souk Ahras": ["Souk Ahras", "Sedrata", "Taoura", "Drea"],
-    "40 - Tipaza": ["Tipaza", "Cherchell", "Gouraya", "Hadjout"],
-    "41 - Mila": ["Mila", "Grarem Gouga", "Chelghoum Laïd", "Telerghma"],
-    "42 - Aïn Defla": ["Aïn Defla", "Khemis Miliana", "Miliana", "El Abadia"],
-    "43 - Naâma": ["Naâma", "Mecheria", "Aïn Sefra", "Tiout"],
-    "44 - Aïn Témouchent": [
-      "Aïn Témouchent",
-      "El Malah",
-      "Beni Saf",
-      "Hammam Bouhadjar",
-    ],
-    "45 - Ghardaïa": ["Ghardaïa", "Berriane", "Metlili", "El Menea"],
-    "46 - Relizane": ["Relizane", "Oued Rhiou", "Mazouna", "Zemmoura"],
-  };
-
-  String? selectedWilaya;
-  String? selectedDaira;
-  //unite by category
 
   Map<String, List<String>> unitsByCategory = {
   "منتوجات فلاحية": ["كلغ", "طن", "لتر", "صندوق"],
@@ -584,50 +198,50 @@ Future<void> _pickImages() async {
           child: Column(
             children: [
               GestureDetector(
-  onTap: _pickImages,
-  child: Container(
-    height: 180,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.green),
-      color: Colors.green.shade50,
-    ),
-    child: _selectedImages.isEmpty
-        ? const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.photo_library, size: 50, color: Colors.grey),
-                SizedBox(height: 8),
-                Text("Tap to select images", style: TextStyle(color: Colors.grey)),
-              ],
-            ),
-          )
-        : ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _selectedImages.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.file(
-                  File(_selectedImages[index].path),
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
-          ),
-  ),
-),
+                    onTap: _pickImages,
+                    child: Container(
+                      height: 180,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green),
+                        color: Colors.green.shade50,
+                      ),
+                      child: _selectedImages.isEmpty
+                          ? const Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.photo_library, size: 50, color: Colors.grey),
+                                  SizedBox(height: 8),
+                                  Text("Tap to select images", style: TextStyle(color: Colors.grey)),
+                                ],
+                              ),
+                            )
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _selectedImages.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.file(
+                                    File(_selectedImages[index].path),
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+               ),
               const SizedBox(height: 15),
 
               DropdownButtonFormField<String>(
-                  value: selectedPrimaryCategory,
-                  decoration: _dropdownDecoration("Type de produit"),
-                  items: primaryCategories
-                      .map(
+                  value: selectedCategory,
+                  decoration: _dropdownDecoration("Category"),
+                  items: Category
+                      !.map(
                         (category) => DropdownMenuItem(
                           value: category,
                           child: Text(category),
@@ -636,9 +250,9 @@ Future<void> _pickImages() async {
                       .toList(),
                   onChanged: (value) {
                     setState(() {
-                      selectedPrimaryCategory = value;
-                      selectedCategorie = null;
-                      selectedProduit = null;
+                      selectedCategory = value;
+                      selectedsubCategory = null;
+                      selectedproduct = null;
                     });
                   },
                   validator: (value) {
@@ -649,17 +263,17 @@ Future<void> _pickImages() async {
                   }),
               const SizedBox(height: 15),
 
-              if (selectedPrimaryCategory == "منتوجات فلاحية" ||
-                  selectedPrimaryCategory == "معدات")
+              if (selectedCategory == "منتوجات فلاحية" ||
+                  selectedCategory == "معدات")
                   Column(
                     children: [
                                   DropdownButtonFormField<String>(
-                    value: selectedCategorie,
+                    value: selectedsubCategory,
                     decoration: _dropdownDecoration("Catégorie"),
-                    items: (selectedPrimaryCategory == "منتوجات فلاحية"
-                            ? produitsAgricoles.keys
-                            : equipmentCategories.keys)
-                        .map(
+                    items: (selectedCategory == "منتوجات فلاحية"
+                            ? Category
+                            : ProductData.equipmentCategories.keys)
+                        !.map(
                           (categorie) => DropdownMenuItem(
                             value: categorie,
                             child: Text(categorie),
@@ -668,8 +282,8 @@ Future<void> _pickImages() async {
                         .toList(),
                     onChanged: (value) {
                       setState(() {
-                        selectedCategorie = value;
-                        selectedProduit = null;
+                        selectedsubCategory = value;
+                        selectedproduct = null;
                       });
                     },
                     validator: (value) {
@@ -684,17 +298,17 @@ Future<void> _pickImages() async {
                 
               
 
-              if ((selectedPrimaryCategory == "منتوجات فلاحية" ||
-                      selectedPrimaryCategory == "معدات") &&
-                  selectedCategorie != null)
+              if ((selectedCategory == "منتوجات فلاحية" ||
+                      selectedCategory == "معدات") &&
+                  selectedsubCategory != null)
                   Column(
                     children: [
                       DropdownButtonFormField<String>(
-                  value: selectedProduit,
+                  value: selectedproduct,
                   decoration: _dropdownDecoration("Produit"),
-                  items: (selectedPrimaryCategory == "منتوجات فلاحية"
-                          ? produitsAgricoles[selectedCategorie!]
-                          : equipmentCategories[selectedCategorie!])!
+                  items: (selectedCategory == "منتوجات فلاحية"
+                          ? ProductData.agriCategories[selectedsubCategory!]
+                          : ProductData.equipmentCategories[selectedsubCategory!])!
                       .map(
                         (produit) => DropdownMenuItem(
                           value: produit,
@@ -704,7 +318,7 @@ Future<void> _pickImages() async {
                       .toList(),
                   onChanged: (value) {
                     setState(() {
-                      selectedProduit = value;
+                      selectedproduct = value;
                     });
                   },
                 ),
@@ -713,7 +327,7 @@ Future<void> _pickImages() async {
                   ),
                 
 
-              if (selectedPrimaryCategory == "منتوجات فلاحية")
+              if (selectedCategory == "منتوجات فلاحية")
                 _buildTextField(
                     controller: quantiteController,
                     hintText: "الكمية",
@@ -726,7 +340,7 @@ Future<void> _pickImages() async {
                       return null;
                     }),
 
-              if (selectedPrimaryCategory == "أراضي")
+              if (selectedCategory == "أراضي")
                 _buildTextField(
                     controller: surfaceController,
                     hintText: "المساحة",
@@ -739,8 +353,8 @@ Future<void> _pickImages() async {
                       return null;
                     }),
               const SizedBox(height: 15),
-              if (selectedPrimaryCategory == "منتوجات فلاحية" ||
-                  selectedPrimaryCategory == "أراضي")
+              if (selectedCategory == "منتوجات فلاحية" ||
+                  selectedCategory == "أراضي")
                 _buildTextField(
                     controller: prixController,
                     hintText: "السعر",
@@ -758,7 +372,7 @@ Future<void> _pickImages() async {
               DropdownButtonFormField<String>(
                   value: selectedWilaya,
                   decoration: _dropdownDecoration("Wilaya"),
-                  items: wilayas.keys
+                  items: ProductData.wilayas.keys
                       .map(
                         (wilaya) => DropdownMenuItem(
                           value: wilaya,
@@ -784,7 +398,7 @@ Future<void> _pickImages() async {
                 DropdownButtonFormField<String>(
                     value: selectedDaira,
                     decoration: _dropdownDecoration("Daïra"),
-                    items: wilayas[selectedWilaya]!
+                    items: ProductData.wilayas[selectedWilaya]!
                         .map(
                           (daira) => DropdownMenuItem(
                             value: daira,
@@ -803,12 +417,12 @@ Future<void> _pickImages() async {
                       }
                       return null;
                     }),
-              if (selectedPrimaryCategory != null &&
-                      unitsByCategory.containsKey(selectedPrimaryCategory!))
+              if (selectedCategory != null &&
+                      unitsByCategory.containsKey(selectedCategory!))
                     DropdownButtonFormField<String>(
                       value: selectedUnite,
                       decoration: _dropdownDecoration("الوحدة"),
-                      items: unitsByCategory[selectedPrimaryCategory]!
+                      items: unitsByCategory[selectedCategory]!
                           .map((unit) => DropdownMenuItem(
                                 value: unit,
                                 child: Text(unit),

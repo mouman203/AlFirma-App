@@ -3,10 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductElev extends Product {
   String? category;
-  String? produit;
   double? quantite;
-  String? wilaya;
-  String? daira;
+
 
   ProductElev({
     required String id,
@@ -21,11 +19,11 @@ class ProductElev extends Product {
     required List<String> liked,
     required List<String> disliked,
     required DateTime date_of_add,
+    required String wilaya,
+    required String daira,
     this.category,
-    this.produit,
     this.quantite,
-    this.wilaya,
-    this.daira,
+
   }) : super(
           id: id,
           name: name,
@@ -38,13 +36,16 @@ class ProductElev extends Product {
           photos: photos,
           liked: liked,
           disliked: disliked,
-          date_of_add: date_of_add
+          date_of_add: date_of_add,
+          wilaya: wilaya,
+          daira: daira,
         );
 
   Map<String, dynamic> toJson() {
     return {
       "id": id,
       "name": name,
+      "typeProduct":"EleveurProduct",
       "price": price,
       "description": description,
       "rate": rate,
@@ -54,13 +55,34 @@ class ProductElev extends Product {
       "liked": liked,
       "disliked": disliked,
       "category": category,
-      "produit": produit,
       "quantite": quantite,
       "wilaya": wilaya,
       "daira": daira,
       "date_of_add": Timestamp.fromDate(date_of_add),
     };
   }
+factory ProductElev.fromFirestore(DocumentSnapshot doc) {
+  final json = doc.data() as Map<String, dynamic>;
+
+  return ProductElev(
+    id: json['id'] ?? doc.id,
+    name: json['name'] ?? '',
+    typeProduct: json['typeProduct'] ?? '',
+    price: (json['price'] ?? 0).toDouble(),
+    description: json['description'] ?? '',
+    rate: json['rate'] ?? 0,
+    ownerId: json['ownerId'],
+    comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
+    photos: List<String>.from(json['photos'] ?? []),
+    liked: List<String>.from(json['liked'] ?? []),
+    disliked: List<String>.from(json['disliked'] ?? []),
+    date_of_add: (json['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    category: json['category'],
+    quantite: (json['quantite'] as num?)?.toDouble(),
+    wilaya: json['wilaya'],
+    daira: json['daira'],
+  );
+}
 
 
 
