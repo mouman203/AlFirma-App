@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:url_launcher/url_launcher.dart';
 
 
 class ProductDetailsPage extends StatefulWidget {
@@ -107,72 +108,78 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           ],
         ),
         body: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8),
           children: [
             SizedBox(
-              height: 250,
-              width: double.infinity,
-              child: Stack(
-                alignment: Alignment.bottomCenter, // ✅ المؤشر في وسط الأسفل
-                children: [
-                  PageView.builder(
-                    controller: _pageController,
-                    itemCount: widget.product.photos.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => FullScreenImageViewer(
-                                photos: widget.product.photos,
-                                initialIndex: index,
+                  height: 250,
+                  width: double.infinity,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter, // ✅ المؤشر في وسط الأسفل
+                    children: [
+                      PageView.builder(
+                        controller: _pageController,
+                        itemCount: widget.product.photos.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => FullScreenImageViewer(
+                                    photos: widget.product.photos,
+                                    initialIndex: index,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              // ❌ لا تستخدم margin bottom هنا حتى لا تدفع المؤشر للخارج
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(widget.product.photos[index]),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           );
                         },
-                        child: Container(
-                          // ❌ لا تستخدم margin bottom هنا حتى لا تدفع المؤشر للخارج
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(widget.product.photos[index]),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 12), // ✅ مسافة بسيطة من الأسفل
+                        child: SmoothPageIndicator(
+                          controller: _pageController,
+                          count: widget.product.photos.length,
+                          effect: const WormEffect(
+                            dotColor:
+                                Colors.white70, // ✅ أفضل لون للنقاط فوق الصورة
+                            activeDotColor: Colors.green,
+                            dotHeight: 8,
+                            dotWidth: 8,
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        bottom: 12), // ✅ مسافة بسيطة من الأسفل
-                    child: SmoothPageIndicator(
-                      controller: _pageController,
-                      count: widget.product.photos.length,
-                      effect: const WormEffect(
-                        dotColor:
-                            Colors.white70, // ✅ أفضل لون للنقاط فوق الصورة
-                        activeDotColor: Colors.green,
-                        dotHeight: 8,
-                        dotWidth: 8,
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+            
+            SizedBox(height: 10,),
 
-            // ✅ جلب بيانات المستخدم الذي أضاف المنتج
             Container(
-              margin: const EdgeInsets.only(top: 10,),
               decoration: BoxDecoration(
                 color: Theme.of(context)
                                 .colorScheme
                                 .secondaryContainer,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10)
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  
+              
+              // ✅ جلب بيانات المستخدم الذي أضاف المنتج
+              Row(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
@@ -217,7 +224,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                               .get(),
                                           builder: (context, snapshot) {
                                             String? photoURL;
-
+              
                                             // حالة حساب Google
                                             if (FirebaseAuth.instance.currentUser?.providerData.any((provider) =>
                                                     provider.providerId == "google.com") ==
@@ -228,7 +235,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             else if (snapshot.hasData && snapshot.data!.exists) {
                                               photoURL = snapshot.data!.get('photo') ?? null;
                                             }
-
+              
                                             return CircleAvatar(
                                               backgroundColor: Colors.grey,
                                               backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
@@ -265,18 +272,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ),
                 ],
               ),
-            ),
-
-            const SizedBox(height: 10),
-            // product information
-            Container(
-              decoration:BoxDecoration(
-                color: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
+              
+              const SizedBox(height: 10),
+              // product information
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,23 +299,21 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   "Category : ${category}",
                   style: Theme.of(context).textTheme.titleMedium,
                   ),
-
+                const SizedBox(height: 10),
+                
+                Text(
+                  "Wilaya : ${widget.product.wilaya}",
+                  style: Theme.of(context).textTheme.titleMedium,
+                  ),
+              
                   ],
                 ),
               ),
-            ),
-
-            const SizedBox(height: 10),
-            //description 
-            
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
+              
+              const SizedBox(height: 10),
+              //description 
+              
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,20 +348,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ],
                 ),
               ),
-            ),
-            
-            const SizedBox(height: 10),
-
-           //price and lik&dislike
-           
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
+              
+              const SizedBox(height: 10),
+              
+                         //price and lik&dislike
+                         
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -380,8 +369,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       ],
                     ),
                   ),
-
-    // إضافة التفاعل مع الإعجابات والتعليقات
+              
+                  // إضافة التفاعل مع الإعجابات والتعليقات
                   StreamBuilder<DocumentSnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('Products') // اسم المجموعة
@@ -397,13 +386,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       if (!snapshot.hasData || !snapshot.data!.exists) {
                         return const SizedBox();
                       }
-
+              
                       List<dynamic> liked = snapshot.data!['liked'] ?? [];
                       List<dynamic> disliked = snapshot.data!['disliked'] ?? [];
                       String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
                       bool isLiked = liked.contains(userId);
                       bool isDisliked = disliked.contains(userId);
-
+              
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -427,7 +416,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             ],
                           ),
                           const SizedBox(width: 5),
-
+              
                           // زر عدم الإعجاب
                           Row(
                             children: [
@@ -448,7 +437,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             ],
                           ),
                           const SizedBox(width: 5),
-
+              
                           // زر التعليق
                           IconButton(
                             icon: const Icon(Icons.comment,
@@ -461,31 +450,80 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       );
                     },
                   ),
-  ],
-)
+                ],
+              )
+              
+              ),
+              
+              const SizedBox(height: 10),
+              
+              //contact button :
+              
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FilledButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChatPage(receiverId: widget.product.ownerId!),
+                        ),
+                      );
+                    },
+                    icon: const Icon(IconlyLight.message),
+                    label: const Text("Contact")
+                    ),
 
+                    const SizedBox(width: 50,),
+                    
+                    FilledButton.icon(
+                      onPressed: () async {
+                        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+                            .collection('Users')
+                            .doc(widget.product.ownerId)
+                            .get();
+
+                        String? phoneNumber;
+
+                        if (userDoc.exists) {
+                          phoneNumber = userDoc.get('phone');
+                        }
+
+                        if (phoneNumber != null&&phoneNumber.isNotEmpty) {
+                          final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+
+                          if (await canLaunchUrl(phoneUri)) {
+                            await launchUrl(phoneUri);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('تعذر فتح تطبيق الاتصال')),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('رقم الهاتف غير متوفر')),
+                          );
+                        }
+                      },
+                      icon: const Icon(IconlyLight.call),
+                      label: const Text("Phone"),
+                    ),
+
+
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 10, ),
+                ],
               ),
             ),
-
-            const SizedBox(height: 10),
-
-            //contact button :
-
-            FilledButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ChatPage(receiverId: widget.product.ownerId!),
-                    ),
-                  );
-                },
-                icon: const Icon(IconlyLight.message),
-                label: const Text("Contact")),
-
-            const SizedBox(height: 10, ),
             
+            SizedBox(height: 10,),
             //add a comment :
 
             Container(
@@ -581,114 +619,147 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             const SizedBox( height: 10,),
 
            // قسم التعليقات
-           StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Products')
-                  .doc(widget.product.typeProduct == "AgricolProduct"
-                      ? "Agricol_products"
-                      : "Eleveur_products")
-                  .collection(widget.product.typeProduct == "AgricolProduct"
-                      ? "Agricol_products"
-                      : "Eleveur_products")
-                  .doc(widget.product.id)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return const Center(child: Text("لا توجد تعليقات بعد."));
-                }
-
-                var data = snapshot.data!.data() as Map<String, dynamic>;
-                List<Map<String, dynamic>> comments = (data['comments'] is List)
-                    ? List<Map<String, dynamic>>.from((data['comments'] as List)
-                        .where((comment) =>
-                            comment is Map<String, dynamic> &&
-                            comment.containsKey("userId") &&
-                            comment.containsKey("text")))
-                    : [];
-
-                if (comments.isEmpty) {
-                  return const Center(child: Text("لا توجد تعليقات بعد."));
-                }
-
-                return FutureBuilder<QuerySnapshot>(
-                  future: FirebaseFirestore.instance.collection('Users').get(),
-                  builder: (context, userSnapshot) {
-                    if (!userSnapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    // ✅ حفظ معلومات المستخدمين في خريطة واحدة
-                    Map<String, Map<String, dynamic>> usersMap = {};
-                    for (var doc in userSnapshot.data!.docs) {
-                      usersMap[doc.id] = doc.data() as Map<String, dynamic>;
-                    }
-
-                    return ListView.builder(
-                      controller: _scrollController,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: comments.length,
-                      itemBuilder: (context, index) {
-                        Map<String, dynamic> comment = comments[index];
-                        String userId = comment['userId'];
-                        String username =
-                            usersMap[userId]?['first_name'] ?? "مستخدم غير معروف";
-                        String currentUserId =
-                            FirebaseAuth.instance.currentUser?.uid ?? "guest";
-
-                        String? photoURL = usersMap[userId]?['photo'];
-
-                        return Card(
-                          color: Theme.of(context).colorScheme.secondaryContainer,
-                          margin: const EdgeInsets.only(bottom: 10),
-                          child: ListTile(
-                            leading: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserProfilePage(userId: userId),
-                                  ),
-                                );
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
-                                child: photoURL == null
-                                    ? Text(
-                                        username.isNotEmpty
-                                            ? username.substring(0, 1).toUpperCase()
-                                            : "U",
-                                        style: const TextStyle(color: Colors.white),
-                                      )
-                                    : null,
-                              ),
-                            ),
-                            title: Text(username),
-                            subtitle: Text(comment['text']),
-                            trailing: userId == currentUserId
-                                ? IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.grey),
-                                    onPressed: () {
-                                      // Assuming `user.showDeleteConfirmationDialog` exists
-                                      user.showDeleteConfirmationDialog(
+           Container(
+            decoration: BoxDecoration(
+               color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+             child: Column(
+               children: [
+                  const Text(
+                    "Comments",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    )
+                    ),
+                 StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Products')
+                        .doc(widget.product.typeProduct == "AgricolProduct"
+                            ? "Agricol_products"
+                            : "Eleveur_products")
+                        .collection(widget.product.typeProduct == "AgricolProduct"
+                            ? "Agricol_products"
+                            : "Eleveur_products")
+                        .doc(widget.product.id)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData || !snapshot.data!.exists) {
+                        return const Center(child: Text("لا توجد تعليقات بعد."));
+                      }
+                 
+                      var data = snapshot.data!.data() as Map<String, dynamic>;
+                      List<Map<String, dynamic>> comments = (data['comments'] is List)
+                          ? List<Map<String, dynamic>>.from((data['comments'] as List)
+                              .where((comment) =>
+                                  comment is Map<String, dynamic> &&
+                                  comment.containsKey("userId") &&
+                                  comment.containsKey("text")))
+                          : [];
+                 
+                      if (comments.isEmpty) {
+                        return const Center(child: Text("لا توجد تعليقات بعد."));
+                      }
+                 
+                      return FutureBuilder<QuerySnapshot>(
+                        future: FirebaseFirestore.instance.collection('Users').get(),
+                        builder: (context, userSnapshot) {
+                          if (!userSnapshot.hasData) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                 
+                          // ✅ حفظ معلومات المستخدمين في خريطة واحدة
+                          Map<String, Map<String, dynamic>> usersMap = {};
+                          for (var doc in userSnapshot.data!.docs) {
+                            usersMap[doc.id] = doc.data() as Map<String, dynamic>;
+                          }
+                 
+                          return ListView.builder(
+                            controller: _scrollController,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
+                              Map<String, dynamic> comment = comments[index];
+                              String userId = comment['userId'];
+                              String username =
+                                  usersMap[userId]?['first_name'] ?? "مستخدم غير معروف";
+                              String currentUserId =
+                                  FirebaseAuth.instance.currentUser?.uid ?? "guest";
+                 
+                              String? photoURL = usersMap[userId]?['photo'];
+                 
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                          bottom: BorderSide(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            width: 3,
+                                          ),
+                                        ),
+                                ),
+                                child: ListTile(
+                                  leading: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
                                         context,
-                                        widget.product.id,
-                                        currentUserId,
-                                        comment['text'],
-                                        widget.product.typeProduct,
+                                        MaterialPageRoute(
+                                          builder: (context) => UserProfilePage(userId: userId),
+                                        ),
                                       );
                                     },
-                                  )
-                                : null,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            ),
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.grey,
+                                      backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+                                      child: photoURL == null
+                                          ? Text(
+                                              username.isNotEmpty
+                                                  ? username.substring(0, 1).toUpperCase()
+                                                  : "U",
+                                              style: const TextStyle(color: Colors.white),
+                                            )
+                                          : null,
+                                    ),
+                                  ),
+                                  title: Text(username),
+                                  subtitle: Text(comment['text']),
+                                  trailing: userId == currentUserId
+                                      ? IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.grey),
+                                          onPressed: () {
+                                            // Assuming `user.showDeleteConfirmationDialog` exists
+                                            user.showDeleteConfirmationDialog(
+                                              context,
+                                              widget.product.id,
+                                              currentUserId,
+                                              comment['text'],
+                                              widget.product.typeProduct,
+                                            );
+                                          },
+                                        )
+                                      : null,
+                                  
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+               ],
+             ),
+           ),
           ]
         )
       )

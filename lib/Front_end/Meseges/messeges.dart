@@ -89,7 +89,7 @@ String receiver = messageData['receiverId'] ?? "Unknown Receiver";
         }
         print("userid$userId");
         if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-          return const Text("moumane makach");
+          return const SizedBox(); // أو يمكنك عرض رسالة خطأ
         }
 
         var userData = userSnapshot.data!;
@@ -132,7 +132,7 @@ String receiver = messageData['receiverId'] ?? "Unknown Receiver";
 
       if (!snapshot.hasData || snapshot.data!.isEmpty) {
         print("No messages found!");
-        return const Center(child: Text("No messages yet"));
+        return const SizedBox();
       }
 
       String currentUserId = _auth.currentUser!.uid;

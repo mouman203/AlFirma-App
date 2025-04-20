@@ -428,11 +428,9 @@ Future<void> fetchAllProducts() async {
                             ],
                           ),
                           productList.isEmpty
-                              ? issearch
                                           ? showLoader
                                                     ? const Center(child: CircularProgressIndicator())
                                                     : const Center(child: Text("There is not a product with this name"))
-                                          : const Center(child: Text("There are not products yet"))
                               : Expanded(
                                   child: GridView.builder(
                                     itemCount: productList.length,

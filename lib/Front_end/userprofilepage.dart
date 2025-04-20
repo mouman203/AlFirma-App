@@ -21,6 +21,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String username = "Loading...";
+  String role="";
   String profilePic = "";
   int followersCount = 0;
   int followingCount = 0;
@@ -44,6 +45,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         followersCount = followers.length;
         isFollowing = followers.contains(currentUserId);
         profilePic = userDoc["photo"] ?? "";
+        role = userDoc["activeType"] ?? "Unknown";
       });
     }
   }
@@ -113,113 +115,177 @@ class _UserProfilePageState extends State<UserProfilePage> {
     // final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: Text(username)),
+      appBar: AppBar(title: Text("$username ($role)")),
       body: Column(
         children: [
+          //the profile pic and the name of the user
           Padding(
-            padding: const EdgeInsets.only(top: 40, bottom: 16),
-            child: CircleAvatar(
-              radius: 60,
-              backgroundImage:
-                  profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
-              child: profilePic.isEmpty
-                  ? const Icon(Icons.person, size: 60)
-                  : null,
-            ),
-          ),
-          Text(username, style: Theme.of(context).textTheme.displaySmall),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  Text("$followersCount",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text(
-                    "Followers",
-                    style: Theme.of(context).textTheme.titleMedium
-                    
-                    ),
+            padding: const EdgeInsets.only(left:8.0,right: 8),
+            child: Container(
+             decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primaryContainer,
+                  Theme.of(context).colorScheme.secondaryContainer,
+                  
+                  
                 ],
+                stops: [0.0, 1.0], // 50% الأول للون الأول، والباقي للون الثاني
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              const SizedBox(width: 20),
-              Column(
-                children: [
-                  Text("$followingCount",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text(
-                    "Following",
-                    style: Theme.of(context).textTheme.titleMedium
-                    
-                    ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          //the bottoms of follow and contact 
-          Row(
-            mainAxisAlignment:MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-            onPressed: _toggleFollow,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isFollowing ? Colors.red : Colors.green,
-            ),
-            child: Text(isFollowing ? "Unfollow" : "Follow"),
-          ),
-          const SizedBox(width: 20),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatPage(receiverId: widget.userId),
+                  borderRadius: const BorderRadius.all(Radius.circular(30)),
                 ),
-              );
-            },
-            child: const Icon(Icons.message,size: 25,),
-          ),
-            ],
-          ),
-
-
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FutureBuilder<List<Product>>(
-              future: _fetchUserProducts(widget.userId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-            
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text("لا توجد منتجات لهذا المستخدم.");
-                }
-            
-                final productList = snapshot.data!;
-            
-                return GridView.builder(
-                  itemCount: productList.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.8,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 8,
+              child: Column(
+                children: [
+                  Padding(
+                padding: const EdgeInsets.only(top: 40, bottom: 16),
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundImage:
+                      profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
+                  child: profilePic.isEmpty
+                      ? const Icon(Icons.person, size: 60)
+                      : null,
+                ),
+              ),
+              Text(username, style: Theme.of(context).textTheme.displaySmall),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      Text("$followersCount",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                        "Followers",
+                        style: Theme.of(context).textTheme.titleMedium
+                        
+                        ),
+                    ],
                   ),
-                  itemBuilder: (context, index) {
-                    return ProductCard(product: productList[index]);
+                  const SizedBox(width: 20),
+                  Column(
+                    children: [
+                      Text("$followingCount",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                        "Following",
+                        style: Theme.of(context).textTheme.titleMedium
+                        
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              //the bottoms of follow and contact 
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment:MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                  onPressed: _toggleFollow,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isFollowing ? Colors.red :Color.fromARGB(255, 47, 114, 38),
+                  ),
+                  child: Text(isFollowing ? "Unfollow" : "Follow",style: const TextStyle(color: Colors.black),),
+                ),
+                const SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(receiverId: widget.userId),
+                      ),
+                    );
                   },
-                );
-              },
+                  child: const Icon(Icons.message,size: 25,),
+                ),
+                  ],
+                ),
+              ),
+              
+              
+              
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          
+        
+          //the products of the user
+          Padding(
+            padding: const EdgeInsets.only(left :8.0,right: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.secondaryContainer,
+                  Theme.of(context).colorScheme.primaryContainer,
+                  
+                ],
+                stops: [0.0, 0.4], // 50% الأول للون الأول، والباقي للون الثاني
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+                  borderRadius: const BorderRadius.all(Radius.circular(30),),
+                ),
+              
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Products",
+                      style: TextStyle(fontSize: 20,),
+                    ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FutureBuilder<List<Product>>(
+                    future: _fetchUserProducts(widget.userId),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                  
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return  Text("There are not products for $username yet.",
+                            style: TextStyle(fontSize: 16, color: Colors.grey));
+                      }
+                  
+                      final productList = snapshot.data!;
+                  
+                      return GridView.builder(
+                        itemCount: productList.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.8,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 8,
+                        ),
+                        itemBuilder: (context, index) {
+                          return ProductCard(product: productList[index]);
+                        },
+                      );
+                    },
+                  ),
+                )
+                  ],
+                ),
+              ),
             ),
           )
-
+          
           
         ],
       ),

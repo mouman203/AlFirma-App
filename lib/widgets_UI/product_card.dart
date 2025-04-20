@@ -77,7 +77,7 @@ class ProductCard extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(product.photos[0]),
+                        image: product.photos.isEmpty? AssetImage("assets/nophoto.png") as ImageProvider: NetworkImage(product.photos[0]), // Use a placeholder image if no photos are available
                         fit: BoxFit.cover,
                       ),
                     ),

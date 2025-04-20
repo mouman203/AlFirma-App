@@ -82,7 +82,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
       ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
       comments: [],
       unite: selectedUnite ?? '',
-      photos: uploadedPhotos, // ✅ استخدام رابط الصورة هنا
+      photos: uploadedPhotos , // ✅ استخدام رابط الصورة هنا
       liked: [],
       disliked: [],
       date_of_add: DateTime.now(),
