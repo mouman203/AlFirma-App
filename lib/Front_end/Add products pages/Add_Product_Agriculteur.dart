@@ -60,7 +60,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
 
   Future<void> _submitForm() async {
   if (_formKey.currentState!.validate()) {
-    if (uploadedPhotos == []) {
+    if (uploadedPhotos.isEmpty) {
       // منع الإرسال بدون صورة
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("📸 الرجاء تحميل صورة المنتج أولًا")),
