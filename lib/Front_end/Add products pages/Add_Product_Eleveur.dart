@@ -50,27 +50,27 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
       });
       // Create a Product object
       ProductElev newProduct = ProductElev(
-  id: UniqueKey().toString(), // أو استخدم UUID
-  name: selectedproduct ?? '', // أو أي اسم تختاره
-  typeProduct: "EleveurProduct", // أو أي اسم تختاره
-  price: prixController.text.isNotEmpty
-      ? double.tryParse(prixController.text) ?? 0.0
-      : 0.0,
-  description: descriptionController.text,
-  rate: 0,
-  ownerId: FirebaseAuth.instance.currentUser?.uid,
-  comments: [],
-  photos: uploadedPhotos, // قائمة روابط الصور من Firebase Storage
-  liked: [],
-  disliked: [],
-  date_of_add: DateTime.now(),
-  category: selectedCategory,
-  quantite: quantiteController.text.isNotEmpty
-      ? double.tryParse(quantiteController.text)
-      : null,
-  wilaya: selectedWilaya!,
-  daira: selectedDaira!,
-);
+        id: UniqueKey().toString(), // أو استخدم UUID
+        name: selectedproduct ?? '', // أو أي اسم تختاره
+        typeProduct: "EleveurProduct", // أو أي اسم تختاره
+        price: prixController.text.isNotEmpty
+            ? double.tryParse(prixController.text) ?? 0.0
+            : 0.0,
+        description: descriptionController.text,
+        rate: 0,
+        ownerId: FirebaseAuth.instance.currentUser?.uid,
+        comments: [],
+        photos: uploadedPhotos, // قائمة روابط الصور من Firebase Storage
+        liked: [],
+        disliked: [],
+        date_of_add: DateTime.now(),
+        category: selectedCategory,
+        quantite: quantiteController.text.isNotEmpty
+            ? double.tryParse(quantiteController.text)
+            : null,
+        wilaya: selectedWilaya!,
+        daira: selectedDaira!,
+      );
       // Add to Firestore
       await newProduct.addProduct(newProduct);
 
@@ -87,36 +87,34 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
   }
 
   //produit elevage
- 
-
 
   List<XFile> _selectedImages = [];
   List<String> uploadedPhotos = [];
 
+  Future<void> _pickImages() async {
+    final List<XFile> images = await ImagePicker().pickMultiImage();
 
-Future<void> _pickImages() async {
-  final List<XFile> images = await ImagePicker().pickMultiImage();
+    if (images.isNotEmpty) {
+      setState(() {
+        _selectedImages = images;
+      });
 
-  if ( images.isNotEmpty) {
-    setState(() {
-      _selectedImages = images;
-    });
+      // رفع الصور إلى Firebase Storage
+      for (var image in _selectedImages) {
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        final storageRef =
+            FirebaseStorage.instance.ref().child('product_images/$fileName');
 
-    // رفع الصور إلى Firebase Storage
-    for (var image in _selectedImages) {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final storageRef = FirebaseStorage.instance.ref().child('product_images/$fileName');
-
-      try {
-        await storageRef.putFile(File(image.path));
-        String downloadUrl = await storageRef.getDownloadURL();
-        uploadedPhotos.add(downloadUrl);
-      } catch (e) {
-        print("❌ Error uploading image: $e");
+        try {
+          await storageRef.putFile(File(image.path));
+          String downloadUrl = await storageRef.getDownloadURL();
+          uploadedPhotos.add(downloadUrl);
+        } catch (e) {
+          print("❌ Error uploading image: $e");
+        }
       }
     }
   }
-}
 
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -153,100 +151,74 @@ Future<void> _pickImages() async {
           child: Column(
             children: [
               GestureDetector(
-  onTap: _pickImages,
-  child: Container(
-    height: 180,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.green),
-      color: Colors.green.shade50,
-    ),
-    child: _selectedImages.isEmpty
-        ? const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.photo_library, size: 50, color: Colors.grey),
-                SizedBox(height: 8),
-                Text("Tap to select images", style: TextStyle(color: Colors.grey)),
-              ],
-            ),
-          )
-        : ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _selectedImages.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.file(
-                  File(_selectedImages[index].path),
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
+                onTap: _pickImages,
+                child: Container(
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green),
+                    color: Colors.green.shade50,
+                  ),
+                  child: _selectedImages.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.photo_library,
+                                  size: 50, color: Colors.grey),
+                              SizedBox(height: 8),
+                              Text("Tap to select images",
+                                  style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _selectedImages.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.file(
+                                File(_selectedImages[index].path),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        ),
                 ),
-              );
-            },
-          ),
-  ),
-),
+              ),
 
               const SizedBox(height: 15),
 
               //category
-              DropdownButtonFormField<String>(
-                  value: selectedCategory,
-                  decoration: _dropdownDecoration("Category"),
-                  items: ProductData.produitsElevages.keys
-                      .map(
-                        (categorie) => DropdownMenuItem(
-                          value: categorie,
-                          child: Text(categorie),
-                        ),
-                      )
-                      .toList(),
+              ProductData.buildDropdown(
+                  selectedValue: selectedCategory,
+                  items: ProductData.produitsElevages.keys.toList(),
+                  label: "Category",
                   onChanged: (value) {
                     setState(() {
                       selectedCategory = value;
                       selectedproduct = null;
                     });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select a category';
-                    }
-                    return null;
                   }),
-              const SizedBox(height: 15),
+
               //Produit
               if (selectedCategory != null)
-                DropdownButtonFormField<String>(
-                    value: selectedproduct,
-                    decoration: _dropdownDecoration("المنتجات"),
-                    items: ProductData.produitsElevages[selectedCategory]!
-                        .map(
-                          (produit) => DropdownMenuItem(
-                            value: produit,
-                            child: Text(produit),
-                          ),
-                        )
-                        .toList(),
+                ProductData.buildDropdown(
+                    selectedValue: selectedproduct,
+                    items: ProductData.produitsElevages[selectedCategory]!,
+                    label: 'product',
                     onChanged: (value) {
                       setState(() {
                         selectedproduct = value;
                       });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a product';
-                      }
-                      return null;
                     }),
-              const SizedBox(height: 15),
 
               //quantity
-
-              _buildTextField(
+              ProductData.buildTextField(
                 controller: quantiteController,
                 hintText: "الكمية",
                 icon: Icons.scale,
@@ -255,11 +227,9 @@ Future<void> _pickImages() async {
                   return null;
                 },
               ),
-              const SizedBox(height: 15),
 
               //prix
-
-              _buildTextField(
+              ProductData.buildTextField(
                 controller: prixController,
                 hintText: "السعر",
                 icon: Icons.attach_money,
@@ -268,59 +238,33 @@ Future<void> _pickImages() async {
                   return null;
                 },
               ),
-              const SizedBox(height: 15),
 
               //wilaya selection
-              DropdownButtonFormField<String>(
-                  value: selectedWilaya,
-                  decoration: _dropdownDecoration("Wilaya"),
-                  items:ProductData.wilayas.keys
-                      .map(
-                        (wilaya) => DropdownMenuItem(
-                          value: wilaya,
-                          child: Text(wilaya),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedWilaya = value;
-                      selectedDaira = null;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select a wilaya';
-                    }
-                    return null;
-                  }),
-              const SizedBox(height: 15),
+              ProductData.buildDropdown(
+                selectedValue: selectedWilaya,
+                items: ProductData.wilayas.keys.toList(),
+                label: "Wilaya",
+                onChanged: (value) {
+                  setState(() {
+                    selectedWilaya = value;
+                    selectedDaira = null;
+                  });
+                },
+              ),
 
               if (selectedWilaya != null)
-                DropdownButtonFormField<String>(
-                    value: selectedDaira,
-                    decoration: _dropdownDecoration("Daïra"),
-                    items:ProductData.wilayas[selectedWilaya]!
-                        .map(
-                          (daira) => DropdownMenuItem(
-                            value: daira,
-                            child: Text(daira),
-                          ),
-                        )
-                        .toList(),
+                ProductData.buildDropdown(
+                    selectedValue: selectedDaira,
+                    items: ProductData.wilayas[selectedWilaya]!,
+                    label: "Daïra",
                     onChanged: (value) {
                       setState(() {
                         selectedDaira = value;
                       });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a daira';
-                      }
-                      return null;
                     }),
-              const SizedBox(height: 15),
-              _buildTextField(
+
+              //description
+              ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
                 icon: Icons.description,
@@ -329,7 +273,7 @@ Future<void> _pickImages() async {
                   return null;
                 },
               ),
-              const SizedBox(height: 15),
+
               SizedBox(
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields
@@ -361,43 +305,6 @@ Future<void> _pickImages() async {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    required String? Function(dynamic value) validator,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.green.shade50,
-        prefixIcon: Icon(icon, color: Colors.green.shade700),
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  InputDecoration _dropdownDecoration(String label) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.green.shade50,
-      labelText: label,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
       ),
     );
   }

@@ -1,6 +1,9 @@
+import 'package:agriplant/Front_end/Saved.dart';
 import 'package:agriplant/Front_end/Security_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:agriplant/Front_end/theme_provider.dart';
 import 'package:agriplant/Front_end/language_provider.dart';
@@ -35,6 +38,25 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          //saved
+          ListTile(
+            leading: Icon(IconlyBold.bookmark,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            title: Text('Saved',
+                style:
+                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Saved()));
+            },
+          ),
+          Divider(
+              color: isDarkMode
+                  ? const Color.fromARGB(255, 16, 24, 20)
+                  : Colors.white),
+
           // security
           ListTile(
             leading: Icon(IconlyBold.shieldFail,
@@ -159,6 +181,64 @@ class _SettingsPageState extends State<SettingsPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const Contact_us_page()),
+              );
+            },
+          ),
+
+          Divider(
+              color: isDarkMode
+                  ? const Color.fromARGB(255, 16, 24, 20)
+                  : Colors.white),
+
+          ListTile(
+            leading: Icon(Icons.logout_sharp,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            title: Text('Log out',
+                style:
+                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            onTap: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    title: const Text(
+                      'Attention ⚠️',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                    content: const Text(
+                      'Are you sure you want to log out from this account?',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          GoogleSignIn googleSignIn = GoogleSignIn();
+                          googleSignIn.disconnect();
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              "login_page", (route) => false);
+                        },
+                        child: const Text("Yes"),
+                      ),
+                    ],
+                  );
+                },
               );
             },
           ),

@@ -11,12 +11,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Agriculteur.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Commercant.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Eleveur.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Entreprise.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Reparateur.dart';
 import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Transporteur.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Veterinaire.dart';
 import 'package:agriplant/Front_end/user_type_handler.dart';
 
 class HomePage extends StatefulWidget {
@@ -169,18 +166,6 @@ class _HomePageState extends State<HomePage> {
         page = const AddProductExpert();
         print("im $selectedType");
         break;
-      case 'Vétérinaire':
-        page = const AddProductVeterinaire();
-        print("im $selectedType");
-        break;
-      case 'Entreprise':
-        page = const AddProductEntreprise();
-        print("im $selectedType");
-        break;
-      case 'Commerçant':
-        page = const AddProductCommercant();
-        print("im $selectedType");
-        break;
       case 'Transporteur':
         page = const AddProductTransporteur();
         print("im $selectedType");
@@ -197,13 +182,13 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  void showMessagePopup() {
+  void showMessagePopup(String? value) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("⚠️ Access Restricted"),
-          content: const Text("Clients cannot add products."),
+          content: Text("$value cannot add products."),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -254,7 +239,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-           BecomeTypeAction(onTypeChanged: _loadSelectedType),
+          BecomeTypeAction(onTypeChanged: _loadSelectedType),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton.filledTonal(
@@ -278,8 +263,11 @@ class _HomePageState extends State<HomePage> {
             // If "Add" icon is clicked
             String? activeType = (await getActiveTypeFromFirestore());
 
-            if (activeType == "Client") {
-              showMessagePopup(); // Show popup if the user is a client
+            if (activeType == "Client" ||
+                activeType == "Vétérinaire" ||
+                activeType == "Entreprise") {
+              showMessagePopup(
+                  activeType); // Show popup if the user is a client
             } else {
               navigateToUserPage(context);
             }

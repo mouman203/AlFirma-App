@@ -60,7 +60,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
 
   Future<void> _submitForm() async {
   if (_formKey.currentState!.validate()) {
-    if (uploadedPhotos.isEmpty) {
+    if (uploadedPhotos == []) {
       // منع الإرسال بدون صورة
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("📸 الرجاء تحميل صورة المنتج أولًا")),
@@ -82,7 +82,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
       ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
       comments: [],
       unite: selectedUnite ?? '',
-      photos: uploadedPhotos , // ✅ استخدام رابط الصورة هنا
+      photos: uploadedPhotos, // ✅ استخدام رابط الصورة هنا
       liked: [],
       disliked: [],
       date_of_add: DateTime.now(),
@@ -236,99 +236,53 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                     ),
                ),
               const SizedBox(height: 15),
-
-              DropdownButtonFormField<String>(
-                  value: selectedCategory,
-                  decoration: _dropdownDecoration("Category"),
-                  items: Category
-                      !.map(
-                        (category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(category),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
+              
+                  ProductData.buildDropdown(selectedValue: selectedCategory,
+                   items: Category!, 
+                   label: 'type', 
+                   onChanged: (value) {
                     setState(() {
                       selectedCategory = value;
                       selectedsubCategory = null;
                       selectedproduct = null;
                     });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select a type';
-                    }
-                    return null;
                   }),
-              const SizedBox(height: 15),
-
               if (selectedCategory == "منتوجات فلاحية" ||
                   selectedCategory == "معدات")
                   Column(
                     children: [
-                                  DropdownButtonFormField<String>(
-                    value: selectedsubCategory,
-                    decoration: _dropdownDecoration("Catégorie"),
+                    ProductData.buildDropdown(selectedValue: selectedsubCategory, 
                     items: (selectedCategory == "منتوجات فلاحية"
                             ? Category
-                            : ProductData.equipmentCategories.keys)
-                        !.map(
-                          (categorie) => DropdownMenuItem(
-                            value: categorie,
-                            child: Text(categorie),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
+                            : ProductData.equipmentCategories.keys.toList())!, 
+                        label: 'category', onChanged: (value) {
                       setState(() {
                         selectedsubCategory = value;
                         selectedproduct = null;
                       });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a category';
-                      }
-                      return null;
-                    }),
-              const SizedBox(height: 15),
+                    },),
                     ],
                   ),
-                
-              
-
               if ((selectedCategory == "منتوجات فلاحية" ||
                       selectedCategory == "معدات") &&
                   selectedsubCategory != null)
                   Column(
                     children: [
-                      DropdownButtonFormField<String>(
-                  value: selectedproduct,
-                  decoration: _dropdownDecoration("Produit"),
-                  items: (selectedCategory == "منتوجات فلاحية"
+                ProductData.buildDropdown(selectedValue: selectedproduct, 
+                items: (selectedCategory == "منتوجات فلاحية"
                           ? ProductData.agriCategories[selectedsubCategory!]
-                          : ProductData.equipmentCategories[selectedsubCategory!])!
-                      .map(
-                        (produit) => DropdownMenuItem(
-                          value: produit,
-                          child: Text(produit),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
+                          : ProductData.equipmentCategories[selectedsubCategory!])!, 
+                          label: 'Produit', 
+                          onChanged: (value) {
                     setState(() {
                       selectedproduct = value;
                     });
-                  },
-                ),
-              const SizedBox(height: 15),
+                  },),
                     ],
                   ),
-                
 
               if (selectedCategory == "منتوجات فلاحية")
-                _buildTextField(
+                ProductData.buildTextField(
                     controller: quantiteController,
                     hintText: "الكمية",
                     icon: Icons.scale,
@@ -341,7 +295,7 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                     }),
 
               if (selectedCategory == "أراضي")
-                _buildTextField(
+                ProductData.buildTextField(
                     controller: surfaceController,
                     hintText: "المساحة",
                     icon: Icons.landscape,
@@ -352,10 +306,9 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                       }
                       return null;
                     }),
-              const SizedBox(height: 15),
               if (selectedCategory == "منتوجات فلاحية" ||
                   selectedCategory == "أراضي")
-                _buildTextField(
+                ProductData.buildTextField(
                     controller: prixController,
                     hintText: "السعر",
                     icon: Icons.attach_money,
@@ -366,82 +319,35 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                       }
                       return null;
                     }),
-              const SizedBox(height: 15),
+
+              if (selectedCategory != null &&
+                      unitsByCategory.containsKey(selectedCategory!))
+                    ProductData.buildDropdown(selectedValue: selectedUnite, items: unitsByCategory[selectedCategory]!, label: 'Unit', onChanged: (value) {
+                        setState(() {
+                          selectedUnite = value;
+                        });
+                      },),
+
 
               //wilaya selection
-              DropdownButtonFormField<String>(
-                  value: selectedWilaya,
-                  decoration: _dropdownDecoration("Wilaya"),
-                  items: ProductData.wilayas.keys
-                      .map(
-                        (wilaya) => DropdownMenuItem(
-                          value: wilaya,
-                          child: Text(wilaya),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
+                  ProductData.buildDropdown(selectedValue: selectedWilaya, items: ProductData.wilayas.keys.toList(), label: 'Wilaya', onChanged: (value) {
                     setState(() {
                       selectedWilaya = value;
                       selectedDaira = null;
                     });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select a wilaya';
-                    }
-                    return null;
-                  }),
-              const SizedBox(height: 15),
+                  },),
+        
 
+              //Daira selection
               if (selectedWilaya != null)
-                DropdownButtonFormField<String>(
-                    value: selectedDaira,
-                    decoration: _dropdownDecoration("Daïra"),
-                    items: ProductData.wilayas[selectedWilaya]!
-                        .map(
-                          (daira) => DropdownMenuItem(
-                            value: daira,
-                            child: Text(daira),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
+                    ProductData.buildDropdown(selectedValue: selectedDaira, items: ProductData.wilayas[selectedWilaya]!, label: 'Daira', onChanged: (value) {
                       setState(() {
                         selectedDaira = value;
                       });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a daira';
-                      }
-                      return null;
                     }),
-              if (selectedCategory != null &&
-                      unitsByCategory.containsKey(selectedCategory!))
-                    DropdownButtonFormField<String>(
-                      value: selectedUnite,
-                      decoration: _dropdownDecoration("الوحدة"),
-                      items: unitsByCategory[selectedCategory]!
-                          .map((unit) => DropdownMenuItem(
-                                value: unit,
-                                child: Text(unit),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedUnite = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'يرجى اختيار الوحدة';
-                        }
-                        return null;
-                      },
-                    ),
-              const SizedBox(height: 15),
-              _buildTextField(
+              
+ 
+              ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
                 icon: Icons.description,
@@ -450,7 +356,7 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                   return null;
                 },
               ),
-              const SizedBox(height: 15),
+     
               SizedBox(
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields
@@ -486,40 +392,7 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    required String? Function(dynamic value) validator,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.green.shade50,
-        prefixIcon: Icon(icon, color: Colors.green.shade700),
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
+  
 
-  InputDecoration _dropdownDecoration(String label) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.green.shade50,
-      labelText: label,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-    );
-  }
+ 
 }

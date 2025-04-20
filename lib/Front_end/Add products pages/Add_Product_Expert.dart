@@ -1,4 +1,5 @@
 import 'package:agriplant/Back_end/ExpertiseService.dart';
+import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +26,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
 
   bool _isLoading = false; // To show a loading indicator
 
-   void _resetForm() {
+  void _resetForm() {
     _formKey.currentState?.reset();
     imageController.clear();
     prixController.clear();
@@ -34,7 +35,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
       selectedCategorie = null;
       selectedWilaya = null;
       selectedDaira = null;
-      selectedTypeC = null; 
+      selectedTypeC = null;
     });
   }
 
@@ -45,7 +46,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
       });
       // Create a Product object
       ExpertiseService newService = ExpertiseService(
-       id: "", // سيتم تعيينه تلقائيًا في Firestore
+        id: "", // سيتم تعيينه تلقائيًا في Firestore
         typeService: "Expertise",
         categorie: selectedCategorie ?? '',
         price: prixController.text.isNotEmpty
@@ -64,7 +65,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
         TypeC: selectedTypeC,
       );
 
-       await newService.addExpertiseService(newService);
+      await newService.addExpertiseService(newService);
 
       _showSuccessDialog();
       _resetForm();
@@ -98,7 +99,6 @@ class _AddProductExpertState extends State<AddProductExpert> {
       setState(() {
         _selectedImages = images;
       });
- 
 
       // رفع الصور إلى Firebase Storage
       for (var image in _selectedImages) {
@@ -130,7 +130,6 @@ class _AddProductExpertState extends State<AddProductExpert> {
       ),
     );
   }
-
 
   final Map<String, List<String>> categories = {
     "استشارات الزراعة": [
@@ -164,72 +163,8 @@ class _AddProductExpertState extends State<AddProductExpert> {
   String? selectedCategorie;
   String? selectedTypeC;
 
-  final Map<String, List<String>> wilayas = {
-    "01 - Adrar": ["Adrar", "Aoulef", "Reggane", "Timimoun", "Zaouiet Kounta", "Fenoughil", "Tsabit", "Tinerkouk"],
-  "02 - Chlef": ["Chlef", "Ténès", "Abou El Hassane", "El Karimia", "Ouled Fares", "Oued Fodda", "Sobha", "Beni Haoua", "Taougrit"],
-  "03 - Laghouat": ["Laghouat", "Aflou", "Brida", "Ksar El Hirane", "Hassi R'Mel", "Aïn Madhi", "Oued Morra", "Tadjemout"],
-  "04 - Oum El Bouaghi": ["Oum El Bouaghi", "Aïn Beïda", "Aïn M'lila", "F'kirina", "Meskiana", "Souk Naamane", "Aïn Babouche"],
-  "05 - Batna": ["Batna", "Arris", "Barika", "Merouana", "T'kout", "N'gaous", "El Madher", "Aïn Touta", "Ichmoul"],
-  "06 - Béjaïa": ["Béjaïa", "Akbou", "Amizour", "Sidi Aïch", "Tazmalt", "Kherrata", "El Kseur", "Souk El Ténine", "Adekar"],
-  "07 - Biskra": ["Biskra", "Tolga", "Ourlal", "Sidi Okba", "El Kantara", "Oumache", "Lichana", "M'Chouneche", "Foughala"],
-  "08 - Béchar": ["Béchar", "Kenadsa", "Taghit", "Lahmar", "Abadla", "Beni Abbes", "Igli", "Timoudi", "El Ouata"],
-  "09 - Blida": ["Blida", "Boufarik", "Bouinan", "El Affroun", "Mouzaïa", "Larbaa", "Oued Djer", "Chebli"],
-  "10 - Bouira": ["Bouira", "Lakhdaria", "Sour El Ghozlane", "Kadiria", "Haizer", "M'Chedallah", "Aïn Bessem", "El Hachimia"],
-  "11 - Tamanrasset": ["Tamanrasset", "Abalessa", "In Guezzam", "In Salah", "Tazrouk", "Tinzaouatine"],
-  "12 - Tébessa": ["Tébessa", "Bir El Ater", "Cheria", "El Ogla", "Negrine", "Ouenza", "El Aouinet"],
-  "13 - Tlemcen": ["Tlemcen", "Ghazaouet", "Maghnia", "Nedroma", "Remchi", "Sebdou", "Beni Snous", "Bensekrane"],
-  "14 - Tiaret": ["Tiaret", "Frenda", "Mahdia", "Sougueur", "Medroussa", "Mechraa Safa", "Ksar Chellala"],
-  "15 - Tizi Ouzou": ["Tizi Ouzou", "Azazga", "Draa El Mizan", "Larbaa Nath Irathen", "Boghni", "Aïn El Hammam", "Tizi Rached"],
-  "16 - Alger": ["Alger-Centre", "Bab El Oued", "El Harrach", "Bir Mourad Raïs", "Hussein Dey", "Rouiba", "Dar El Beida", "Birtouta", "Baraki", "Bouzareah", "Chéraga", "Draria", "Zéralda"],
-  "17 - Djelfa": ["Djelfa", "Aïn Oussera", "Hassi Bahbah", "Messaad", "Charef", "El Idrissia", "Zaafrane", "Birine", "Dar Chioukh"],
-  "18 - Jijel": ["Jijel", "El Milia", "Taher", "Texenna", "Chekfa", "Sidi Maarouf", "El Aouana", "Settara", "Bordj T'har"],
-  "19 - Sétif": ["Sétif", "El Eulma", "Aïn Oulmene", "Bougaa", "Beni Ourtilane", "Hammam Guergour", "Babor", "Guenzet", "Aïn Azel"],
-  "20 - Saïda": ["Saïda", "Aïn El Hadjar", "Ouled Brahim", "Sidi Boubekeur", "Youb", "El Hassasna", "Maamora", "Tircine"],
-  "21 - Skikda": ["Skikda", "Collo", "El Harrouch", "Azzaba", "Tamalous", "Beni Bechir", "Ramadan Djamel", "Filfila", "Oum Toub"],
-  "22 - Sidi Bel Abbès": ["Sidi Bel Abbès", "Tessala", "Ben Badis", "Sfisef", "Mostefa Ben Brahim", "Ras El Ma", "Tabia", "Telagh"],
-  "23 - Annaba": ["Annaba", "El Bouni", "El Hadjar", "Berrahal", "Chetaïbi", "Seraïdi", "Aïn Berda", "Treat"],
-  "24 - Guelma": ["Guelma", "Oued Zenati", "Bouchegouf", "Hammam Debagh", "Héliopolis", "Nechmaya", "Aïn Makhlouf", "Bouati Mahmoud"],
-  "25 - Constantine": ["Constantine", "Hamma Bouziane", "Zighoud Youcef", "El Khroub", "Aïn Smara", "Didouche Mourad", "Ibn Ziad"],
-  "26 - Médéa": ["Médéa", "Berrouaghia", "Ksar El Boukhari", "Tablat", "Béni Slimane", "Oum El Djellil", "El Omaria", "Chahbounia"],
-  "27 - Mostaganem": ["Mostaganem", "Aïn Nouissy", "Bouguirat", "Kheïr Eddine", "Hassi Mameche", "Mesra", "Sidi Ali", "Achaacha"],
-  "28 - M'Sila": ["M'Sila", "Boussaada", "Magra", "Chellal", "Ouled Derradj", "Aïn El Hadjel", "Hammam Dalaa", "Sidi Aïssa"],
-  "29 - Mascara": ["Mascara", "Sig", "Tighennif", "Oued Taria", "Bouhanifia", "Ghriss", "Mohammadia", "Aïn Fares"],
-  "30 - Ouargla": ["Ouargla", "Touggourt", "El Hadjira", "Hassi Messaoud", "Sidi Khouiled", "Rouissat", "N'Goussa"],
-  "31 - Oran": ["Oran", "Es Senia", "Arzew", "Aïn El Turk", "Bir El Djir", "Boutlelis", "Gdyel", "Hassi Bounif"],
-  "32 - El Bayadh": ["El Bayadh", "Bougtoub", "Rogassa", "Labiodh Sidi Cheikh", "Brezina", "El Abiodh Sidi Cheikh", "Aïn El Orak"],
-  "33 - Illizi": ["Illizi", "Djanet", "Debdeb", "Bordj Omar Driss"],
-  "34 - Bordj Bou Arréridj": ["Bordj Bou Arréridj", "El Achir", "Medjana", "Ras El Oued", "Bordj Zemoura", "Bir Kasdali", "Aïn Taghrout"],
-  "35 - Boumerdès": ["Boumerdès", "Khemis El Khechna", "Dellys", "Naciria", "Boudouaou", "Bordj Menaïel", "Baghlia"],
-  "36 - El Tarf": ["El Tarf", "Drean", "Ben Mhidi", "El Kala", "Zeramdine", "Bouhadjar", "Bouteldja", "Souarekh"],
-  "37 - Tindouf": ["Tindouf", "Oum El Arayes", "El Ouara"],
-  "38 - Tissemsilt": ["Tissemsilt", "Bordj Bounaama", "Theniet El Had", "Lazharia", "Ammari", "Layoune", "Sidi Slimane"],
-  "39 - El Oued": ["El Oued", "Robbah", "Mih Ouensa", "Guemar", "Debila", "Hassani Abdelkrim", "Taleb Larbi"],
-"40 - Khenchela": ["Khenchela", "El Hamma", "Kais", "Babar", "Bouhmama", "Aïn Touila", "Tamza"],
-"41 - Souk Ahras": ["Souk Ahras", "Sedrata", "Taoura", "Drea", "Haddada", "Mechroha", "Ouled Driss"],
-"42 - Tipaza": ["Tipaza", "Cherchell", "Gouraya", "Hadjout", "Bou Ismail", "Kolea", "Sidi Amar"],
-"43 - Mila": ["Mila", "Grarem Gouga", "Chelghoum Laïd", "Telerghma", "Aïn Beida Harriche", "Oued Athmania", "Tassadane Haddada"],
-"44 - Aïn Defla": ["Aïn Defla", "Khemis Miliana", "Miliana", "El Abadia", "Boumedfaa", "Djelida", "Rouina"],
-"45 - Naâma": ["Naâma", "Mecheria", "Aïn Sefra", "Tiout", "Sfissifa", "Moghrar", "Asla"],
-"46 - Aïn Témouchent": ["Aïn Témouchent", "El Malah", "Beni Saf", "Hammam Bouhadjar", "Oulhaca El Gheraba", "Aïn El Arbaa", "Tamzoura"],
-"47 - Ghardaïa": ["Ghardaïa", "Berriane", "Metlili", "El Menea", "Zelfana", "Dhayet Bendhahoua", "Sebseb"],
-"48 - Relizane": ["Relizane", "Zemmora", "Mekla", "Oued Rhiou", "Ammi Moussa", "Mazouna", "Sidi M'Hamed Ben Ali"],
-"49 - Timimoun": ["Timimoun", "Beni Abbès", "Talmine", "Tinerkouk", "Ouled Said", "Charouine", "Aougrout"],
-"50 - Bordj Badji Mokhtar": ["Bordj Badji Mokhtar", "Timiaouine"],
-"51 - Ouled Djellal": ["Ouled Djellal", "Aïn Ksar", "Sidi Khaled", "Doucen"],
-"52 - Béni Abbès": ["Béni Abbès", "Aïn Sefra", "Kerzaz", "Igli", "Timoudi", "El Ouata"],
-"53 - In Salah": ["In Salah", "In Guezzam", "Foggaret Ezzaouia"],
-"54 - In Guezzam": ["In Guezzam", "Tinzaouatine"],
-"55 - Touggourt": ["Touggourt", "Temacine", "Megarine", "Nezla"],
-"56 - Djanet": ["Djanet", "Bordj El Haouas"],
-"57 - El M'Ghair": ["El M'Ghair", "Djamaa", "Sidi Khelil", "Oum Touyour"],
-"58 - El Meniaa": ["El Meniaa", "Hassi Gara", "Mansoura"]
-};
-
   String? selectedWilaya;
   String? selectedDaira;
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -286,63 +221,36 @@ class _AddProductExpertState extends State<AddProductExpert> {
                 ),
               ),
               const SizedBox(height: 15),
-          
+
               //category
-              DropdownButtonFormField<String>(
-                value: selectedCategorie,
-                decoration: _dropdownDecoration("الاصناف"),
-                items: categories.keys
-                    .map(
-                      (categorie) => DropdownMenuItem(
-                        value: categorie,
-                        child: Text(categorie),
-                      ),
-                    )
-                    .toList(),
+              ProductData.buildDropdown(
+                selectedValue: selectedCategorie,
+                items: categories.keys.toList(),
+                label: 'category',
                 onChanged: (value) {
                   setState(() {
                     selectedCategorie = value;
                     selectedTypeC = null;
                   });
                 },
-                validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a category';
-                      }
-                      return null;
-                    }
               ),
-              const SizedBox(height: 15),
+            
               //Produit
               if (selectedCategorie != null)
-                DropdownButtonFormField<String>(
-                  value: selectedTypeC,
-                  decoration: _dropdownDecoration("النوع"),
-                  items: categories[selectedCategorie]!
-                      .map(
-                        (TypeC) => DropdownMenuItem(
-                          value: TypeC,
-                          child: Text(TypeC),
-                        ),
-                      )
-                      .toList(),
+                ProductData.buildDropdown(
+                  selectedValue: selectedTypeC,
+                  items: categories[selectedCategorie]!,
+                  label: 'type',
                   onChanged: (value) {
                     setState(() {
                       selectedTypeC = value;
                     });
                   },
-                  validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a Type ';
-                      }
-                      return null;
-                    }
                 ),
-              const SizedBox(height: 15),
-          
+           
+
               //prix
-          
-              _buildTextField(
+              ProductData.buildTextField(
                 controller: prixController,
                 hintText: "السعر",
                 icon: Icons.attach_money,
@@ -351,61 +259,35 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   return null;
                 },
               ),
-              const SizedBox(height: 15),
-          
+           
+
               //wilaya selection
-              DropdownButtonFormField<String>(
-                value: selectedWilaya,
-                decoration: _dropdownDecoration("Wilaya"),
-                items: wilayas.keys
-                    .map(
-                      (wilaya) => DropdownMenuItem(
-                        value: wilaya,
-                        child: Text(wilaya),
-                      ),
-                    )
-                    .toList(),
+              ProductData.buildDropdown(
+                selectedValue: selectedWilaya,
+                items: ProductData.wilayas.keys.toList(),
+                label: 'wilaya',
                 onChanged: (value) {
                   setState(() {
                     selectedWilaya = value;
                     selectedDaira = null;
                   });
                 },
-                validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a wilaya';
-                      }
-                      return null;
-                    }
               ),
-              const SizedBox(height: 15),
           
+
               if (selectedWilaya != null)
-                DropdownButtonFormField<String>(
-                  value: selectedDaira,
-                  decoration: _dropdownDecoration("Daïra"),
-                  items: wilayas[selectedWilaya]!
-                      .map(
-                        (daira) => DropdownMenuItem(
-                          value: daira,
-                          child: Text(daira),
-                        ),
-                      )
-                      .toList(),
+                ProductData.buildDropdown(
+                  selectedValue: selectedDaira,
+                  items: ProductData.wilayas[selectedWilaya]!,
+                  label: "Daira",
                   onChanged: (value) {
                     setState(() {
                       selectedDaira = value;
                     });
                   },
-                  validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a daira';
-                      }
-                      return null;
-                    }
                 ),
-              const SizedBox(height: 15),
-              _buildTextField(
+            
+              ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
                 icon: Icons.description,
@@ -414,7 +296,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   return null;
                 },
               ),
-              const SizedBox(height: 15),
+            
               SizedBox(
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields
@@ -422,67 +304,30 @@ class _AddProductExpertState extends State<AddProductExpert> {
                     ? const Center(
                         child: CircularProgressIndicator()) // Show progress
                     : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade700,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {
-                    try {
-                      _submitForm();
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          try {
+                            _submitForm();
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Error: $e")),
                             );
-                    }
-                  },
-                  child: const Text(
-                    "Share",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                ),
+                          }
+                        },
+                        child: const Text(
+                          "Share",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    required String? Function(dynamic value) validator,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.green.shade50,
-        prefixIcon: Icon(icon, color: Colors.green.shade700),
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  InputDecoration _dropdownDecoration(String label) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.green.shade50,
-      labelText: label,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
       ),
     );
   }
