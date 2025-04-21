@@ -43,7 +43,9 @@ class _ItemCardState extends State<ItemCard> {
           .collection('Saved')
           .doc(widget.item.id)
           .get();
-      if (doc.exists) {
+
+      if (doc.exists && mounted) {
+ 
         setState(() {
           isSaved = true;
         });
@@ -129,7 +131,6 @@ class _ItemCardState extends State<ItemCard> {
     return data;
   }
 
-
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
@@ -189,9 +190,8 @@ class _ItemCardState extends State<ItemCard> {
                     icon: isSaved
                         ? const Icon(IconlyBold.bookmark)
                         : const Icon(IconlyLight.bookmark),
-                    color: isSaved
-                        ? Theme.of(context).colorScheme.primary
-                        : null,
+                    color:
+                        isSaved ? Theme.of(context).colorScheme.primary : null,
                   ),
                 ),
               ),

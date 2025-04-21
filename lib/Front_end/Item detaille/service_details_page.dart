@@ -59,25 +59,28 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
       category = service.categorie;
     } else if (service is RepairService) {
       category = service.categorie;
-      checkIfSaved();
+      _checkIfSaved();
     }
   }
 
-  Future<void> checkIfSaved() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null) {
-      final doc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(uid)
-          .collection('Saved')
-          .doc(widget.service.id)
-          .get();
+Future<void> _checkIfSaved() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid != null) {
+    final doc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Saved')
+        .doc(widget.service.id)
+        .get();
 
+    if (doc.exists && mounted) {  // Ensure setState is only called if the widget is still in the tree
       setState(() {
-        isSaved = doc.exists;
+        isSaved = true;
       });
     }
   }
+}
+
 
   Future<void> toggleSave() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;

@@ -56,24 +56,27 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     } else if (product is ProductElev) {
       category = product.category;
     }
-    checkIfSaved();
+    _checkIfSaved();
   }
 
-  Future<void> checkIfSaved() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null) {
-      final doc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(uid)
-          .collection('Saved')
-          .doc(widget.product.id)
-          .get();
+ Future<void> _checkIfSaved() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid != null) {
+    final doc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Saved')
+        .doc(widget.product.id)
+        .get();
 
+    if (doc.exists && mounted) {  // Ensure setState is only called if the widget is still in the tree
       setState(() {
-        isSaved = doc.exists;
+        isSaved = true;
       });
     }
   }
+}
+
 
   Future<void> toggleSave() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
