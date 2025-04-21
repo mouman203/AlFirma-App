@@ -45,7 +45,6 @@ class _ItemCardState extends State<ItemCard> {
           .get();
 
       if (doc.exists && mounted) {
- 
         setState(() {
           isSaved = true;
         });
@@ -134,7 +133,7 @@ class _ItemCardState extends State<ItemCard> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
@@ -156,11 +155,15 @@ class _ItemCardState extends State<ItemCard> {
         }
       },
       child: Card(
-        color: isDark ? scheme.onSecondary : scheme.secondaryFixed,
+        color: isDarkMode ? scheme.onSecondary : scheme.secondaryFixed,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: Colors.grey.shade200),
+          side: BorderSide(
+              color: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
+              width: 2.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

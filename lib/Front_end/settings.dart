@@ -1,4 +1,3 @@
-import 'package:agriplant/Front_end/Saved.dart';
 import 'package:agriplant/Front_end/Security_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,20 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          //saved
-          ListTile(
-            leading: Icon(IconlyBold.bookmark,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            title: Text('Saved',
-                style:
-                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-            trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Saved()));
-            },
-          ),
+          
           Divider(
               color: isDarkMode
                   ? const Color.fromARGB(255, 16, 24, 20)

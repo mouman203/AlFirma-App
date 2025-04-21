@@ -262,15 +262,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: CircleAvatar(
                     radius: 93,
                     backgroundColor: isDarkMode
-                        ? const Color(0xFF273930)
+                        ? const Color(0xFF90D5AE)
                         : const Color(0xFF256C4C),
                     child: CircleAvatar(
                       radius: 90,
-                      backgroundImage: profilePic != null
-                          ? NetworkImage(profilePic!)
-                          : isDarkMode
-                              ? const AssetImage("assets/anonymeD.png")
-                              : const AssetImage("assets/anonyme.png")
+                      backgroundImage:
+                          (profilePic != null && profilePic!.isNotEmpty)
+                              ? NetworkImage(profilePic!)
+                              : (isDarkMode
+                                      ? const AssetImage("assets/anonymeD.png")
+                                      : const AssetImage("assets/anonyme.png"))
                                   as ImageProvider,
                     ),
                   ),
@@ -426,7 +427,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 crossAxisCount: 2,
                                 childAspectRatio: 0.8,
                                 crossAxisSpacing: 10,
-                                mainAxisSpacing: 8,
+                                mainAxisSpacing: 2,
                               ),
                               itemBuilder: (context, index) {
                                 return ItemCard(item: itemList[index]);
