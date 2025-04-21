@@ -1,3 +1,4 @@
+import 'package:agriplant/Front_end/Document_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,27 @@ void showSuccessPopup(BuildContext context, String? type) {
       return AlertDialog(
         title: const Text("🎉 Congratulations!"),
         content: Text("Yeeey! You are now a $type!"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showAlertsPopup(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("🎉 Alert!"),
+        content: Text(
+            "You have to upload some files .. after validation you received a notification"),
         actions: [
           TextButton(
             onPressed: () {
@@ -167,6 +189,48 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     await saveUserData(selectedTypes, activeType!);
   }
 
+  Object getLabelForDoc(selectedType) {
+    switch (selectedType) {
+      case 'Vétérinaire':
+        return Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DocumentPage(userType: 'Vétérinaire'),
+          ),
+        );
+      case 'Expert Agri':
+        return Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DocumentPage(userType: 'Expert Agri'),
+          ),
+        );
+      case 'Entreprise':
+        return Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DocumentPage(userType: 'Entreprise'),
+          ),
+        );
+      case 'Transporteur':
+        return Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DocumentPage(userType: 'Transporteur'),
+          ),
+        );
+      case 'Réparateur':
+        return Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DocumentPage(userType: 'Réparateur'),
+          ),
+        );
+      default:
+        return Null;
+    }
+  }
+
   Future<void> addTypeFlow(BuildContext context) async {
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
@@ -227,10 +291,16 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
           activeType = selectedType;
         }
       });
+
+      getLabelForDoc(selectedType);
       await setActiveType(activeType!);
       await saveUserData(selectedTypes, activeType!);
       widget.onTypeChanged(); // 👈 Add this
-      showSuccessPopup(context, selectedType);
+      if (activeType == 'Eleveur' || activeType == 'Agriculteur') {
+        showSuccessPopup(context, selectedType);
+      } else {
+        showAlertsPopup(context);
+      }
     }
   }
 
