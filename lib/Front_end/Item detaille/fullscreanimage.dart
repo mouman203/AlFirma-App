@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:agriplant/Front_end/Product%20detaille/_ZoomableImage.dart';
+import 'package:agriplant/Front_end/Item%20detaille/_ZoomableImage.dart';
 
 class FullScreenImageViewer extends StatefulWidget {
   final List<String> photos;

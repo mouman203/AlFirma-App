@@ -1,8 +1,10 @@
-import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/ExpertiseService.dart';
 import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/Back_end/RepairService.dart';
+import 'package:agriplant/Back_end/TransportService.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
-import 'package:agriplant/widgets_UI/product_card.dart';
+import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String username = "Loading...";
-  String role="";
+  String role = "";
   String profilePic = "";
   int followersCount = 0;
   int followingCount = 0;
@@ -82,33 +84,52 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
-  Future<List<Product>> _fetchUserProducts(String userId) async {
-  final firestore = FirebaseFirestore.instance;
+  Future<List<Object>> fetchAllUserItems(String userId) async {
+    final firestore = FirebaseFirestore.instance;
 
-  final agriSnap = await firestore
-      .collection('Products')
-      .doc('Agricol_products')
-      .collection('Agricol_products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
+    // Fetch Agricol Products
+    final agriSnap = await firestore
+        .collection('Products')
+        .doc('Agricol_products')
+        .collection('Agricol_products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
 
-  final elevSnap = await firestore
-      .collection('Products')
-      .doc('Eleveur_products')
-      .collection('Eleveur_products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
+    final agriProducts =
+        agriSnap.docs.map((doc) => Productagri.fromFirestore(doc)).toList();
 
-   List<Product> agricolProducts = agriSnap.docs.map((doc) {
-      return Productagri.fromFirestore(doc);
-    }).toList();
+    // Fetch Eleveur Products
+    final elevSnap = await firestore
+        .collection('Products')
+        .doc('Eleveur_products')
+        .collection('Eleveur_products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
 
-  List<Product> eleveurProducts = elevSnap.docs.map((doc) {
-      return ProductElev.fromFirestore(doc);
-    }).toList();
+    final elevProducts =
+        elevSnap.docs.map((doc) => ProductElev.fromFirestore(doc)).toList();
 
-  return [...agricolProducts, ...eleveurProducts];
-}
+    // Fetch and filter Services
+    final expertiseServices = await ExpertiseService.getExpertiseServicesOnce();
+    final repairServices = await RepairService.getRepairServicesOnce();
+    final transportServices = await TransportService.getTransportServicesOnce();
+
+    final filteredExpertise =
+        expertiseServices.where((e) => e.ownerId == userId).toList();
+    final filteredRepairs =
+        repairServices.where((e) => e.ownerId == userId).toList();
+    final filteredTransport =
+        transportServices.where((e) => e.ownerId == userId).toList();
+
+    // Combine all into one list
+    return [
+      ...agriProducts,
+      ...elevProducts,
+      ...filteredExpertise,
+      ...filteredRepairs,
+      ...filteredTransport,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,173 +141,183 @@ class _UserProfilePageState extends State<UserProfilePage> {
         children: [
           //the profile pic and the name of the user
           Padding(
-            padding: const EdgeInsets.only(left:8.0,right: 8),
+            padding: const EdgeInsets.only(left: 8.0, right: 8),
             child: Container(
-             decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).colorScheme.primaryContainer,
-                  Theme.of(context).colorScheme.secondaryContainer,
-                  
-                  
-                ],
-                stops: [0.0, 1.0], // 50% الأول للون الأول، والباقي للون الثاني
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-                  borderRadius: const BorderRadius.all(Radius.circular(30)),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.primaryContainer,
+                    Theme.of(context).colorScheme.secondaryContainer,
+                  ],
+                  stops: [
+                    0.0,
+                    1.0
+                  ], // 50% الأول للون الأول، والباقي للون الثاني
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
+                borderRadius: const BorderRadius.all(Radius.circular(30)),
+              ),
               child: Column(
                 children: [
                   Padding(
-                padding: const EdgeInsets.only(top: 40, bottom: 16),
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundImage:
-                      profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
-                  child: profilePic.isEmpty
-                      ? const Icon(Icons.person, size: 60)
-                      : null,
-                ),
-              ),
-              Text(username, style: Theme.of(context).textTheme.displaySmall),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
+                    padding: const EdgeInsets.only(top: 40, bottom: 16),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundImage: profilePic.isNotEmpty
+                          ? NetworkImage(profilePic)
+                          : null,
+                      child: profilePic.isEmpty
+                          ? const Icon(Icons.person, size: 60)
+                          : null,
+                    ),
+                  ),
+                  Text(username,
+                      style: Theme.of(context).textTheme.displaySmall),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("$followersCount",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text(
-                        "Followers",
-                        style: Theme.of(context).textTheme.titleMedium
-                        
-                        ),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                  Column(
-                    children: [
-                      Text("$followingCount",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text(
-                        "Following",
-                        style: Theme.of(context).textTheme.titleMedium
-                        
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              //the bottoms of follow and contact 
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Row(
-                  mainAxisAlignment:MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                  onPressed: _toggleFollow,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isFollowing ? Colors.red :Color.fromARGB(255, 47, 114, 38),
-                  ),
-                  child: Text(isFollowing ? "Unfollow" : "Follow",style: const TextStyle(color: Colors.black),),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatPage(receiverId: widget.userId),
+                      Column(
+                        children: [
+                          Text("$followersCount",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text("Followers",
+                              style: Theme.of(context).textTheme.titleMedium),
+                        ],
                       ),
-                    );
-                  },
-                  child: const Icon(Icons.message,size: 25,),
-                ),
-                  ],
-                ),
-              ),
-              
-              
-              
+                      const SizedBox(width: 20),
+                      Column(
+                        children: [
+                          Text("$followingCount",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text("Following",
+                              style: Theme.of(context).textTheme.titleMedium),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  //the bottoms of follow and contact
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _toggleFollow,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isFollowing
+                                ? Colors.red
+                                : const Color.fromARGB(255, 47, 114, 38),
+                          ),
+                          child: Text(
+                            isFollowing ? "Unfollow" : "Follow",
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ChatPage(receiverId: widget.userId),
+                              ),
+                            );
+                          },
+                          child: const Icon(
+                            Icons.message,
+                            size: 25,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 10),
-          
-        
+
           //the products of the user
           Padding(
-            padding: const EdgeInsets.only(left :8.0,right: 8),
+            padding: const EdgeInsets.only(left: 8.0, right: 8),
             child: Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).colorScheme.secondaryContainer,
-                  Theme.of(context).colorScheme.primaryContainer,
-                  
-                ],
-                stops: [0.0, 0.4], // 50% الأول للون الأول، والباقي للون الثاني
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-                  borderRadius: const BorderRadius.all(Radius.circular(30),),
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.secondaryContainer,
+                    Theme.of(context).colorScheme.primaryContainer,
+                  ],
+                  stops: [
+                    0.0,
+                    0.4
+                  ], // 50% الأول للون الأول، والباقي للون الثاني
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-              
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(30),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
                     const Text(
-                      "Products",
-                      style: TextStyle(fontSize: 20,),
+                      "Items",
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FutureBuilder<List<Product>>(
-                    future: _fetchUserProducts(widget.userId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                  
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return  Text("There are not products for $username yet.",
-                            style: TextStyle(fontSize: 16, color: Colors.grey));
-                      }
-                  
-                      final productList = snapshot.data!;
-                  
-                      return GridView.builder(
-                        itemCount: productList.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.8,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 8,
-                        ),
-                        itemBuilder: (context, index) {
-                          return ProductCard(product: productList[index]);
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FutureBuilder<List<Object>>(
+                        future: fetchAllUserItems(widget.userId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Text(
+                                "There are not items for $username yet.",
+                                style: const TextStyle(
+                                    fontSize: 16, color: Colors.grey));
+                          }
+
+                          final itemList = snapshot.data!;
+
+                          return GridView.builder(
+                            itemCount: itemList.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.8,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 8,
+                            ),
+                            itemBuilder: (context, index) {
+                              return ItemCard(item: itemList[index]);
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
-                )
+                      ),
+                    )
                   ],
                 ),
               ),
             ),
           )
-          
-          
         ],
       ),
     );

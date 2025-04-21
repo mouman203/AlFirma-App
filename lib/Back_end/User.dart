@@ -15,7 +15,7 @@ class Users {
 
   // constricteur
 
- // التحقق من صحة البريد الإلكتروني
+  // التحقق من صحة البريد الإلكتروني
   bool isEmailValid(String email) {
     final emailRegex =
         RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
@@ -279,7 +279,7 @@ class Users {
           'email': email,
           'password': password,
           'userType': [],
-          'activeType':'Client',
+          'activeType': 'Client',
           'createdAt': FieldValue.serverTimestamp(),
           'Verify': verify,
         });
@@ -359,278 +359,370 @@ class Users {
 //sign in with google
 
   Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
-  try {
-    showLoadingDialog(context); // عرض مؤشر الانتظار
+    try {
+      showLoadingDialog(context); // عرض مؤشر الانتظار
 
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
-    await googleSignIn.signOut();
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
+      await googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleUser == null) {
+      if (googleUser == null) {
+        Navigator.pop(context); // إغلاق مؤشر التحميل
+        print("❌ تم إلغاء تسجيل الدخول");
+        return;
+      }
+
+      print("✅ تسجيل الدخول ناجح: ${googleUser.email}");
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // تسجيل الدخول إلى Firebase
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      User? firebaseUser = userCredential.user;
+
+      if (firebaseUser != null) {
+        // مرجع إلى Firestore
+        final userRef = FirebaseFirestore.instance
+            .collection("Users")
+            .doc(firebaseUser.uid);
+
+        // التحقق مما إذا كان المستخدم موجود مسبقًا
+        final doc = await userRef.get();
+
+        if (!doc.exists) {
+          // تقسيم الاسم إلى اسم أول واسم أخير
+          List<String> nameParts =
+              googleUser.displayName?.split(" ") ?? ["", ""];
+          String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+          String lastName =
+              nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+
+          // حفظ بيانات المستخدم الجديدة فقط إذا لم تكن موجودة
+          await userRef.set({
+            "email": firebaseUser.email,
+            "Verify": true,
+            "first_name": firstName,
+            "last_name": lastName,
+            "phone": firebaseUser.phoneNumber ?? "",
+            "password": "signed with google",
+            "photo": firebaseUser.photoURL ?? "",
+            "userType": [],
+            'activeType': 'Client',
+            "following": [],
+            "followers": [],
+            "created_at": FieldValue.serverTimestamp(),
+          });
+        } else {
+          print(" المستخدم موجود مسبقًا ");
+        }
+      }
+
       Navigator.pop(context); // إغلاق مؤشر التحميل
-      print("❌ تم إلغاء تسجيل الدخول");
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('lastPageIndex', 0);
+
+      // الانتقال إلى الصفحة الرئيسية
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => homePage),
+      );
+    } catch (e) {
+      Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
+      print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
+      showErrorDialog(context, "⚠️ حدث خطأ أثناء تسجيل الدخول بواسطة Google.");
+    }
+  }
+
+  Future<List<Product>> searchProducts(String query) async {
+    try {
+      List<Product> allProducts = [];
+
+      // جلب منتجات الزراعة
+      QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc('Agricol_products')
+          .collection('Agricol_products')
+          .get();
+
+      List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
+        return Productagri.fromFirestore(doc);
+      }).toList();
+      allProducts.addAll(agricolProducts);
+
+      // جلب منتجات المربين
+      QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc('Eleveur_products')
+          .collection('Eleveur_products')
+          .get();
+
+      List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
+        return ProductElev.fromFirestore(doc);
+      }).toList();
+
+      allProducts.addAll(eleveurProducts);
+
+      // تصفية المنتجات بناءً على الاسم
+      List<Product> matchedProducts = allProducts
+          .where((product) =>
+              product.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+
+      return matchedProducts;
+    } catch (e) {
+      print("❌ حدث خطأ أثناء البحث: $e");
+      return [];
+    }
+  }
+
+  void likeItem(dynamic item) async {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+
+    String collection;
+    String docPath;
+
+    if (item is Product) {
+       collection = item.typeProduct == "AgricolProduct"
+          ? "Agricol_products"
+          : "Eleveur_products";
+      docPath = "Products";
+    } else if (item is Service) {
+      collection = item.typeService;
+      docPath = "Services";
+    } else {
+      print("❌ Unknown item type");
       return;
     }
 
-    print("✅ تسجيل الدخول ناجح: ${googleUser.email}");
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // تسجيل الدخول إلى Firebase
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(googleCredential);
-    User? firebaseUser = userCredential.user;
-
-    if (firebaseUser != null) {
-      // مرجع إلى Firestore
-      final userRef = FirebaseFirestore.instance
-          .collection("Users")
-          .doc(firebaseUser.uid);
-
-      // التحقق مما إذا كان المستخدم موجود مسبقًا
-      final doc = await userRef.get();
-
-      if (!doc.exists) {
-        // تقسيم الاسم إلى اسم أول واسم أخير
-        List<String> nameParts = googleUser.displayName?.split(" ") ?? ["", ""];
-        String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
-        String lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
-
-        // حفظ بيانات المستخدم الجديدة فقط إذا لم تكن موجودة
-        await userRef.set({
-          "email": firebaseUser.email,
-          "Verify": true,
-          "first_name": firstName,
-          "last_name": lastName,
-          "phone": firebaseUser.phoneNumber ?? "",
-          "password": "signed with google",
-          "photo": firebaseUser.photoURL ?? "",
-          "userType": [],
-          'activeType': 'Client',
-          "following": [],
-          "followers": [],
-          "created_at": FieldValue.serverTimestamp(),
-        });
-
-      } else {
-        print(" المستخدم موجود مسبقًا ");
-      }
-    }
-
-    Navigator.pop(context); // إغلاق مؤشر التحميل
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('lastPageIndex', 0);
-
-    // الانتقال إلى الصفحة الرئيسية
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => homePage),
-    );
-  } catch (e) {
-    Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
-    print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
-    showErrorDialog(context, "⚠️ حدث خطأ أثناء تسجيل الدخول بواسطة Google.");
-  }
-}
-
-  void likeProduct(Product product) async {
-    String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-    final collectionName = product.typeProduct == "AgricolProduct"
-    ? "Agricol_products"
-    : "Eleveur_products";
-    DocumentReference productRef =
-        FirebaseFirestore.instance.collection('Products')
-        .doc(collectionName)
-        .collection(collectionName)
-        .doc(product.id);
+    DocumentReference ref = FirebaseFirestore.instance
+        .collection(docPath)
+        .doc(collection)
+        .collection(collection)
+        .doc(item.id);
 
     try {
-      // جلب البيانات المحدثة قبل التعديل
-      DocumentSnapshot doc = await productRef.get();
-
+      DocumentSnapshot doc = await ref.get();
       if (doc.exists) {
-        List<String> likedUsers =
-            List<String>.from(doc.get("liked") ?? []); // جلب قائمة الإعجابات
+        List<String> likedUsers = List<String>.from(doc.get("liked") ?? []);
 
         if (likedUsers.contains(userId)) {
-          // 👎 إزالة الإعجاب إذا كان موجودًا
-          await productRef.update({
+          await ref.update({
             'liked': FieldValue.arrayRemove([userId])
           });
-          print("👎 Removed like from product ${product.id}");
+          print("👎 Removed like from item ${item.id}");
         } else {
-          // ✅ إضافة إلى قائمة الإعجابات
-          await productRef.update({
+          await ref.update({
             'liked': FieldValue.arrayUnion([userId]),
-            'disliked':
-                FieldValue.arrayRemove([userId]), // إزالة من disliked إن وجد
+            'disliked': FieldValue.arrayRemove([userId]),
           });
-          print("👍 Liked product ${product.id}");
+          print("👍 Liked item ${item.id}");
         }
-      } else {
-        print("❌ Product not found!");
       }
     } catch (e) {
-      print("❌ Failed to like product: $e");
+      print("❌ Failed to like item: $e");
     }
   }
 
-  void dislikeProduct(Product product) async {
+  void dislikeItem(dynamic item) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-   final collectionName = product.typeProduct == "AgricolProduct"
-    ? "Agricol_products"
-    : "Eleveur_products";
-    DocumentReference productRef =
-        FirebaseFirestore.instance.collection('Products').doc(collectionName)
-        .collection(collectionName).doc(product.id);
+
+    String collection;
+    String docPath;
+
+    if (item is Product) {
+       collection = item.typeProduct == "AgricolProduct"
+          ? "Agricol_products"
+          : "Eleveur_products";
+      docPath = "Products";
+    } else if (item is Service) {
+      collection = item.typeService;
+      docPath = "Services";
+    } else {
+      print("❌ Unknown item type");
+      return;
+    }
+
+    DocumentReference ref = FirebaseFirestore.instance
+        .collection(docPath)
+        .doc(collection)
+        .collection(collection)
+        .doc(item.id);
 
     try {
-      // جلب البيانات المحدثة من Firestore
-      DocumentSnapshot doc = await productRef.get();
-
+      DocumentSnapshot doc = await ref.get();
       if (doc.exists) {
-        List<String> dislikedUsers = List<String>.from(
-            doc.get("disliked") ?? []); // جلب قائمة الـ disliked
-
+        List<String> dislikedUsers =
+            List<String>.from(doc.get("disliked") ?? []);
         if (dislikedUsers.contains(userId)) {
-          // 👎 إزالة "عدم الإعجاب" إذا كان موجودًا
-          await productRef.update({
+          await ref.update({
             'disliked': FieldValue.arrayRemove([userId])
           });
-          print("👎 Removed dislike from product ${product.id}");
+          print("👎 Removed dislike from item ${item.id}");
         } else {
-          // ✅ إضافة إلى قائمة "عدم الإعجاب" وإزالة من قائمة الإعجابات إن كان موجودًا
-          await productRef.update({
+          await ref.update({
             'disliked': FieldValue.arrayUnion([userId]),
-            'liked': FieldValue.arrayRemove([userId]), // إزالة من liked إن وجد
+            'liked': FieldValue.arrayRemove([userId]),
           });
-          print("👎 Disliked product ${product.id}");
+          print("👎 Disliked item ${item.id}");
         }
-      } else {
-        print("❌ Product not found!");
       }
     } catch (e) {
-      print("❌ Failed to dislike product: $e");
+      print("❌ Failed to dislike item: $e");
     }
   }
 
   Future<void> addComment(
-  String productId,
+  String itemId,
   String userId,
-  String commentText,
-  String typeProduct, // تمرير نوع المنتج: "AgricolProduct" أو "EleveurProduct"
+  String text,
+  dynamic item, // Product or Service
 ) async {
   try {
-    // تحديد المسار بناءً على نوع المنتج
-    String docPath = typeProduct == "AgricolProduct"
-        ? "Agricol_products"
-        : "Eleveur_products";
+    String docPath;
+    String rootCollection;
 
-    DocumentReference productRef = FirebaseFirestore.instance
-        .collection('Products')
+    // Determine whether it's a Product or a Service
+    if (item is Product) {
+      switch (item.typeProduct) {
+        case "AgricolProduct":
+          docPath = "Agricol_products";
+          break;
+        case "EleveurProduct":
+          docPath = "Eleveur_products";
+          break;
+        default:
+          throw Exception("❌ Unknown product type: ${item.typeProduct}");
+      }
+      rootCollection = "Products";
+    } else if (item is Service) {
+      switch (item.typeService) {
+        case "Transportation":
+          docPath = "Transportation";
+          break;
+        case "Expertise":
+          docPath = "Expertise";
+          break;
+        case "Repairs":
+          docPath = "Repairs";
+          break;
+        default:
+          throw Exception("❌ Unknown service type: ${item.typeService}");
+      }
+      rootCollection = "Services";
+    } else {
+      throw Exception("❌ Unknown item type!");
+    }
+
+    // Firestore document reference
+    DocumentReference ref = FirebaseFirestore.instance
+        .collection(rootCollection)
         .doc(docPath)
         .collection(docPath)
-        .doc(productId);
+        .doc(itemId);
 
+    // Create a new comment map
     Map<String, String> newComment = {
       "userId": userId,
-      "text": commentText,
+      "text": text,
     };
 
-    await productRef.update({
-      "comments": FieldValue.arrayUnion([newComment])
-    });
+    // Check if document exists
+    DocumentSnapshot docSnapshot = await ref.get();
 
-    print("✅ تم إضافة التعليق بنجاح!");
+    if (!docSnapshot.exists) {
+      // If the document does not exist, create it and add the comment
+      await ref.set({
+        "comments": [newComment] // Initialize the comments field with the first comment
+      });
+      print("✅ Document created and comment added successfully.");
+    } else {
+      // If the document exists, update the comments array
+      await ref.update({
+        "comments": FieldValue.arrayUnion([newComment]),
+      });
+      print("✅ Comment added successfully.");
+    }
   } catch (e) {
-    print("⚠️ خطأ أثناء إضافة التعليق: $e");
+    print("⚠️ Error adding comment: $e");
   }
 }
 
 
   Future<void> deleteComment(
-  String productId,
-  String userId,
-  String text,
-  String typeProduct, // تمرير نوع المنتج
-) async {
-  try {
-    // تحديد المسار بناءً على نوع المنتج
-    String docPath = typeProduct == "AgricolProduct"
-        ? "Agricol_products"
-        : "Eleveur_products";
+    String itemId,
+    String userId,
+    String text,
+    dynamic item, // Product or Service
+  ) async {
+    try {
+      String docPath;
+      String rootCollection;
 
-    DocumentReference productRef = FirebaseFirestore.instance
-        .collection('Products')
-        .doc(docPath)
-        .collection(docPath)
-        .doc(productId);
+      if (item is Product) {
+        switch (item.typeProduct) {
+          case "AgricolProduct":
+            docPath = "Agricol_products";
+            break;
+          case "EleveurProduct":
+            docPath = "Eleveur_products";
+            break;
+          default:
+            throw Exception("❌ نوع منتوج غير معروف: ${item.typeProduct}");
+        }
+        rootCollection = "Products";
+      } else if (item is Service) {
+        switch (item.typeService) {
+          case "Transportation":
+            docPath = "Transportation";
+            break;
+          case "Expertise":
+            docPath = "Expertise";
+            break;
+          case "Repairs":
+            docPath = "Repairs";
+            break;
+          default:
+            throw Exception("❌ نوع الخدمة غير معروف: ${item.typeService}");
+        }
+        rootCollection = "Services";
+      } else {
+        throw Exception("❌ العنصر غير معروف!");
+      }
 
-    await productRef.update({
-      'comments': FieldValue.arrayRemove([
-        {'userId': userId, 'text': text}
-      ]),
-    });
+      DocumentReference ref = FirebaseFirestore.instance
+          .collection(rootCollection)
+          .doc(docPath)
+          .collection(docPath)
+          .doc(itemId);
 
-    print("✅ تم حذف التعليق بنجاح.");
-  } catch (e) {
-    print("⚠️ خطأ أثناء حذف التعليق: $e");
+      await ref.update({
+        'comments': FieldValue.arrayRemove([
+          {'userId': userId, 'text': text}
+        ]),
+      });
+
+      print("✅ تم حذف التعليق بنجاح.");
+    } catch (e) {
+      print("⚠️ خطأ أثناء حذف التعليق: $e");
+    }
   }
-}
-
-  Future<List<Product>> searchProducts(String query) async {
-  try {
-    List<Product> allProducts = [];
-
-    // جلب منتجات الزراعة
-    QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .get();
-
-    List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
-      return Productagri.fromFirestore(doc);
-    }).toList();
-    allProducts.addAll(agricolProducts);
-
-    // جلب منتجات المربين
-    QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Eleveur_products')
-        .collection('Eleveur_products')
-        .get();
-
-    List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
-      return ProductElev.fromFirestore(doc);
-    }).toList();
-
-    allProducts.addAll(eleveurProducts);
-
-    // تصفية المنتجات بناءً على الاسم
-    List<Product> matchedProducts = allProducts
-        .where((product) => product.name
-            .toLowerCase()
-            .contains(query.toLowerCase()))
-        .toList();
-
-
-  return matchedProducts;
-  } catch (e) {
-    print("❌ حدث خطأ أثناء البحث: $e");
-    return [];
-  }
-}
 
   void showDeleteConfirmationDialog(
-      BuildContext context, String productId, String userId, String text ,String typeProduct) {
+    BuildContext context, {
+    required String itemId,
+    required String userId,
+    required String text,
+    required dynamic item, // Product or Service
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -640,245 +732,19 @@ class Users {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // إغلاق مربع الحوار بدون حذف
+                Navigator.of(context).pop();
               },
               child: const Text("إلغاء", style: TextStyle(color: Colors.grey)),
             ),
             TextButton(
               onPressed: () {
-                deleteComment(productId, userId, text,typeProduct); // تنفيذ الحذف
-                Navigator.of(context).pop(); // إغلاق مربع الحوار
-              },
-              child: const Text("حذف", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void likeService(Service service) async {
-  String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-
-  // تحديد اسم المجموعة بناءً على نوع الخدمة
-  String collectionName;
-  switch (service.typeService) {
-    case "Transportation":
-      collectionName = "Transportation";
-      break;
-    case "Expertise":
-      collectionName = "Expertise";
-      break;
-    case "Repairs":
-      collectionName = "Repairs";
-      break;
-    default:
-      print("❌ نوع الخدمة غير معروف: ${service.typeService}");
-      return;
-  }
-
-  DocumentReference serviceRef = FirebaseFirestore.instance
-      .collection('Services')
-      .doc(collectionName)
-      .collection(collectionName)
-      .doc(service.id);
-
-  try {
-    // جلب البيانات المحدثة قبل التعديل
-    DocumentSnapshot doc = await serviceRef.get();
-
-    if (doc.exists) {
-      List<String> likedUsers = List<String>.from(doc.get("liked") ?? []);
-
-      if (likedUsers.contains(userId)) {
-        // 👎 إزالة الإعجاب إذا كان موجودًا
-        await serviceRef.update({
-          'liked': FieldValue.arrayRemove([userId])
-        });
-        print("👎 تم إزالة الإعجاب من الخدمة ${service.id}");
-      } else {
-        // 👍 إضافة الإعجاب وإزالة من قائمة عدم الإعجاب
-        await serviceRef.update({
-          'liked': FieldValue.arrayUnion([userId]),
-          'disliked': FieldValue.arrayRemove([userId]),
-        });
-        print("👍 تم الإعجاب بالخدمة ${service.id}");
-      }
-    } else {
-      print("❌ لم يتم العثور على الخدمة!");
-    }
-  } catch (e) {
-    print("❌ خطأ أثناء تنفيذ الإعجاب: $e");
-  }
-}
-
-
- void dislikeService(Service service) async {
-  String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-
-  // تحديد المسار بناءً على نوع الخدمة
-  String collectionName;
-  switch (service.typeService) {
-    case "Transportation":
-      collectionName = "Transportation";
-      break;
-    case "Expertise":
-      collectionName = "Expertise";
-      break;
-    case "Repairs":
-      collectionName = "Repairs";
-      break;
-    default:
-      print("❌ نوع الخدمة غير معروف: ${service.typeService}");
-      return;
-  }
-
-  DocumentReference serviceRef = FirebaseFirestore.instance
-      .collection('Services')
-      .doc(collectionName)
-      .collection(collectionName)
-      .doc(service.id);
-
-  try {
-    // جلب البيانات المحدثة من Firestore
-    DocumentSnapshot doc = await serviceRef.get();
-
-    if (doc.exists) {
-      List<String> dislikedUsers =
-          List<String>.from(doc.get("disliked") ?? []);
-
-      if (dislikedUsers.contains(userId)) {
-        // 👎 إزالة "عدم الإعجاب" إذا كان موجودًا
-        await serviceRef.update({
-          'disliked': FieldValue.arrayRemove([userId])
-        });
-        print("👎 تم إزالة عدم الإعجاب من الخدمة ${service.id}");
-      } else {
-        // 👎 إضافة إلى "عدم الإعجاب" وإزالة من "الإعجاب"
-        await serviceRef.update({
-          'disliked': FieldValue.arrayUnion([userId]),
-          'liked': FieldValue.arrayRemove([userId]),
-        });
-        print("👎 تم عدم الإعجاب بالخدمة ${service.id}");
-      }
-    } else {
-      print("❌ لم يتم العثور على الخدمة!");
-    }
-  } catch (e) {
-    print("❌ خطأ أثناء تنفيذ عدم الإعجاب: $e");
-  }
-}
-
-
- Future<void> addSComment(
-  String serviceId,
-  String userId,
-  String commentText,
-  String typeService,
-) async {
-  try {
-    // تحديد المسار بناءً على نوع الخدمة
-    String docPath;
-    switch (typeService) {
-      case "Transportation":
-        docPath = "Transportation";
-        break;
-      case "Expertise":
-        docPath = "Expertise";
-        break;
-      case "Repairs":
-        docPath = "Repairs";
-      break;
-      default:
-        throw Exception("❌ نوع الخدمة غير معروف: $typeService");
-    }
-
-    DocumentReference serviceRef = FirebaseFirestore.instance
-        .collection('Services')
-        .doc(docPath)
-        .collection(docPath)
-        .doc(serviceId);
-
-    Map<String, String> newComment = {
-      "userId": userId,
-      "text": commentText,
-    };
-
-    await serviceRef.update({
-      "comments": FieldValue.arrayUnion([newComment])
-    });
-
-    print("✅ تم إضافة التعليق بنجاح!");
-  } catch (e) {
-    print("⚠️ خطأ أثناء إضافة التعليق: $e");
-  }
-}
-
-
-  Future<void> deleteSComment(
-  String serviceId,
-  String userId,
-  String text,
-  String typeService,
-) async {
-  try {
-    // Get the proper Firestore subcollection name based on the service type
-    String docPath;
-    switch (typeService) {
-      case "Transportation":
-        docPath = "Transportation";
-        break;
-      case "Expertise":
-        docPath = "Expertise";
-        break;
-      case "Repairs":
-        docPath = "Repairs";
-        break;
-      default:
-        throw Exception("❌ نوع الخدمة غير معروف: $typeService");
-    }
-
-    // Construct the document reference
-    DocumentReference serviceRef = FirebaseFirestore.instance
-        .collection('Services')
-        .doc(docPath)
-        .collection(docPath)
-        .doc(serviceId);
-
-    // Perform the update to remove the comment
-    await serviceRef.update({
-      'comments': FieldValue.arrayRemove([
-        {'userId': userId, 'text': text}
-      ]),
-    });
-
-    print("✅ تم حذف التعليق بنجاح.");
-  } catch (e) {
-    print("⚠️ خطأ أثناء حذف التعليق: $e");
-  }
-}
-
-
-  void showDeleteConfirmationDialogS(BuildContext context, String serviceId,
-      String userId, String text, String typeService) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("تأكيد الحذف"),
-          content: const Text("هل أنت متأكد أنك تريد حذف هذا التعليق؟"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // إغلاق مربع الحوار بدون حذف
-              },
-              child: const Text("إلغاء", style: TextStyle(color: Colors.grey)),
-            ),
-            TextButton(
-              onPressed: () {
-                deleteSComment(
-                    serviceId, userId, text, typeService); // تنفيذ الحذف
-                Navigator.of(context).pop(); // إغلاق مربع الحوار
+                deleteComment(
+                  itemId,
+                  userId,
+                  text,
+                  item,
+                );
+                Navigator.of(context).pop();
               },
               child: const Text("حذف", style: TextStyle(color: Colors.red)),
             ),

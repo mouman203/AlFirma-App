@@ -5,7 +5,6 @@ class ProductElev extends Product {
   String? category;
   double? quantite;
 
-
   ProductElev({
     required String id,
     required String name,
@@ -23,7 +22,6 @@ class ProductElev extends Product {
     required String daira,
     this.category,
     this.quantite,
-
   }) : super(
           id: id,
           name: name,
@@ -45,7 +43,7 @@ class ProductElev extends Product {
     return {
       "id": id,
       "name": name,
-      "typeProduct":"EleveurProduct",
+      "typeProduct": "EleveurProduct",
       "price": price,
       "description": description,
       "rate": rate,
@@ -61,39 +59,39 @@ class ProductElev extends Product {
       "date_of_add": Timestamp.fromDate(date_of_add),
     };
   }
-factory ProductElev.fromFirestore(DocumentSnapshot doc) {
-  final json = doc.data() as Map<String, dynamic>;
 
-  return ProductElev(
-    id: json['id'] ?? doc.id,
-    name: json['name'] ?? '',
-    typeProduct: json['typeProduct'] ?? '',
-    price: (json['price'] ?? 0).toDouble(),
-    description: json['description'] ?? '',
-    rate: json['rate'] ?? 0,
-    ownerId: json['ownerId'],
-    comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
-    photos: List<String>.from(json['photos'] ?? []),
-    liked: List<String>.from(json['liked'] ?? []),
-    disliked: List<String>.from(json['disliked'] ?? []),
-    date_of_add: (json['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
-    category: json['category'],
-    quantite: (json['quantite'] as num?)?.toDouble(),
-    wilaya: json['wilaya'],
-    daira: json['daira'],
-  );
-}
+  factory ProductElev.fromFirestore(DocumentSnapshot doc) {
+    final json = doc.data() as Map<String, dynamic>;
 
+    return ProductElev(
+      id: json['id'] ?? doc.id,
+      name: json['name'] ?? '',
+      typeProduct: json['typeProduct'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      description: json['description'] ?? '',
+      rate: json['rate'] ?? 0,
+      ownerId: json['ownerId'],
+      comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
+      photos: List<String>.from(json['photos'] ?? []),
+      liked: List<String>.from(json['liked'] ?? []),
+      disliked: List<String>.from(json['disliked'] ?? []),
+      date_of_add:
+          (json['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      category: json['category'],
+      quantite: (json['quantite'] as num?)?.toDouble(),
+      wilaya: json['wilaya'],
+      daira: json['daira'],
+    );
+  }
 
-
- /// 1**Add a new product to Firestore**
+  /// 1**Add a new product to Firestore**
   Future<void> addProduct(ProductElev product) async {
     try {
-      final docRef =
-          FirebaseFirestore.instance
+      final docRef = FirebaseFirestore.instance
           .collection("Products")
           .doc("Eleveur_products")
-          .collection('Eleveur_products').doc();
+          .collection('Eleveur_products')
+          .doc();
       product.id = docRef.id;
       await docRef.set(product.toJson());
       print("Product added successfully!");
@@ -105,10 +103,11 @@ factory ProductElev.fromFirestore(DocumentSnapshot doc) {
   /// 2**Update an existing product**
   Future<void> updateInFirestore() async {
     try {
-     
       await FirebaseFirestore.instance
-          .collection('Produit_Elevage')
-          .doc(id)
+          .collection('Products') // Collection رئيسي
+          .doc('Eleveur_products') // Document وسيط
+          .collection('Eleveur_products') // Collection فرعي
+          .doc(id) // الوثيقة اللي تحب تحدثها
           .update(toJson());
     } catch (e) {
       print("there is an error in updating an existing product $e");
@@ -118,7 +117,6 @@ factory ProductElev.fromFirestore(DocumentSnapshot doc) {
   /// 3**Delete a product from Firestore**
   Future<void> deleteFromFirestore() async {
     try {
-     
       await FirebaseFirestore.instance
           .collection('Produit_Elevage')
           .doc(id)

@@ -1,5 +1,5 @@
 import 'package:agriplant/Back_end/RepairService.dart';
-import 'package:agriplant/widgets_UI/service_card.dart';
+import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:flutter/material.dart';
 
 class RepairsPage extends StatefulWidget {
@@ -715,7 +715,7 @@ class _RepairsPageState extends State<RepairsPage> {
                     mainAxisSpacing: 8,
                   ),
                   itemBuilder: (context, index) {
-                    return ServiceCard(service: filtered[index]);
+                    return ItemCard(item: filtered[index]);
                   },
                 );
               },

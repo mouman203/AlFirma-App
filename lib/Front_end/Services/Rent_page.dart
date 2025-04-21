@@ -6,7 +6,8 @@ class RentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rent')),
+      appBar: AppBar(title: const Text('Rent'),
+      elevation: 5,),
       body: const Center(child: Text('Rent Service Page')),
     );
   }

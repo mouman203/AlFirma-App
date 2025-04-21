@@ -4,7 +4,7 @@ import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Filter/filter_bottom_sheet.dart';
 import 'package:agriplant/Search/SearchHistoryManager%20.dart';
-import 'package:agriplant/widgets_UI/product_card.dart';
+import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -443,8 +443,9 @@ Future<void> fetchAllProducts() async {
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 8,
                                     ),
-                                    itemBuilder: (context, index) {
-                                      return ProductCard(product: productList[index]);
+                                   itemBuilder: (context, index) {
+                                      return ItemCard(item: productList[index],);
+                                      
                                     },
                                   ),
                                 ),

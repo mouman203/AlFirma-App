@@ -1,9 +1,11 @@
-import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/ExpertiseService.dart';
 import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/Back_end/RepairService.dart';
+import 'package:agriplant/Back_end/TransportService.dart';
 import 'package:agriplant/Front_end/Edit_profile_page.dart';
 import 'package:agriplant/Front_end/settings.dart';
-import 'package:agriplant/widgets_UI/product_card.dart';
+import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -46,9 +48,10 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<List<Product>> _fetchUserProducts(String userId) async {
+  Future<List<Object>> fetchAllUserItems(String userId) async {
     final firestore = FirebaseFirestore.instance;
 
+    // Fetch Agricol Products
     final agriSnap = await firestore
         .collection('Products')
         .doc('Agricol_products')
@@ -56,6 +59,10 @@ class _ProfilePageState extends State<ProfilePage> {
         .where('ownerId', isEqualTo: userId)
         .get();
 
+    final agriProducts =
+        agriSnap.docs.map((doc) => Productagri.fromFirestore(doc)).toList();
+
+    // Fetch Eleveur Products
     final elevSnap = await firestore
         .collection('Products')
         .doc('Eleveur_products')
@@ -63,16 +70,31 @@ class _ProfilePageState extends State<ProfilePage> {
         .where('ownerId', isEqualTo: userId)
         .get();
 
-    List<Product> agricolProducts = agriSnap.docs.map((doc) {
-      return Productagri.fromFirestore(doc);
-    }).toList();
+    final elevProducts =
+        elevSnap.docs.map((doc) => ProductElev.fromFirestore(doc)).toList();
 
-    List<Product> eleveurProducts = elevSnap.docs.map((doc) {
-      return ProductElev.fromFirestore(doc);
-    }).toList();
+    // Fetch and filter Services
+    final expertiseServices = await ExpertiseService.getExpertiseServicesOnce();
+    final repairServices = await RepairService.getRepairServicesOnce();
+    final transportServices = await TransportService.getTransportServicesOnce();
 
-    return [...agricolProducts, ...eleveurProducts];
+    final filteredExpertise =
+        expertiseServices.where((e) => e.ownerId == userId).toList();
+    final filteredRepairs =
+        repairServices.where((e) => e.ownerId == userId).toList();
+    final filteredTransport =
+        transportServices.where((e) => e.ownerId == userId).toList();
+
+    // Combine all into one list
+    return [
+      ...agriProducts,
+      ...elevProducts,
+      ...filteredExpertise,
+      ...filteredRepairs,
+      ...filteredTransport,
+    ];
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -186,34 +208,35 @@ class _ProfilePageState extends State<ProfilePage> {
 
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: FutureBuilder<List<Product>>(
+            child: FutureBuilder<List<Object>>(
               future:
-                  _fetchUserProducts(FirebaseAuth.instance.currentUser!.uid),
+                  fetchAllUserItems(FirebaseAuth.instance.currentUser!.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text("لا توجد منتجات لهذا المستخدم.");
+                  return const Text("There are not items for this user.");
                 }
 
-                final productList = snapshot.data!;
+                final itemList = snapshot.data!;
 
-                return GridView.builder(
-                  itemCount: productList.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.8,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemBuilder: (context, index) {
-                    return ProductCard(product: productList[index]);
-                  },
-                );
+                          return GridView.builder(
+                            itemCount: itemList.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.8,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 8,
+                            ),
+                            itemBuilder: (context, index) {
+                              return ItemCard(item: itemList[index]);
+                            },
+                          );
               },
             ),
           ),
