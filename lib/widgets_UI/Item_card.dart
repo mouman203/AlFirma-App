@@ -33,51 +33,49 @@ class _ItemCardState extends State<ItemCard> {
   }
 
   // Check if the item is saved
- Future<void> _checkIfSaved() async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid != null) {
-    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+  Future<void> _checkIfSaved() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
 
-    // Ensure the 'saved' field exists and is a list of strings
-    final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
+      // Ensure the 'saved' field exists and is a list of strings
+      final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
 
-    // Check if the item ID exists in the saved list
-    final exists = savedList.contains(widget.item.id);
+      // Check if the item ID exists in the saved list
+      final exists = savedList.contains(widget.item.id);
 
-    if (exists && mounted) {
-      setState(() {
-        isSaved = true;
-      });
+      if (exists && mounted) {
+        setState(() {
+          isSaved = true;
+        });
+      }
     }
   }
-}
 
-Future<void> _toggleSavedStatus() async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid == null) return;
+  Future<void> _toggleSavedStatus() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
 
-  final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
-  final itemId = widget.item.id; // Ensure item.id exists and is valid
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+    final itemId = widget.item.id; // Ensure item.id exists and is valid
 
-  if (isSaved) {
-    // Remove the item ID from the 'saved' list
-    await userRef.update({
-      'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
-    });
-    setState(() => isSaved = false);
-    widget.onUnsave?.call();
-  } else {
-    // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
-    await userRef.update({
-      'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
-    });
-    setState(() => isSaved = true);
+    if (isSaved) {
+      // Remove the item ID from the 'saved' list
+      await userRef.update({
+        'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
+      });
+      setState(() => isSaved = false);
+      widget.onUnsave?.call();
+    } else {
+      // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
+      await userRef.update({
+        'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
+      });
+      setState(() => isSaved = true);
+    }
   }
-}
 
-
-
-  
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
@@ -170,7 +168,7 @@ Future<void> _toggleSavedStatus() async {
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 5),
                   Text(
                     item is TransportService
                         ? (item.moyenDeTransport ?? 'No Transport Available')
@@ -182,7 +180,7 @@ Future<void> _toggleSavedStatus() async {
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 5),
                   // Display price
                   if (item is Product)
                     // If Product, show price and unit (if Productagri)
@@ -201,7 +199,7 @@ Future<void> _toggleSavedStatus() async {
                     // If Service, show only price
                     Text("دج${item.price}",
                         style: Theme.of(context).textTheme.bodyLarge),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 7),
 
                   // Reactions for Service and Product
                   StreamBuilder<DocumentSnapshot>(
