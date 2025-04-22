@@ -111,7 +111,7 @@ Future<void> _toggleSavedStatus() async {
               color: isDarkMode
                   ? const Color(0xFF90D5AE)
                   : const Color(0xFF256C4C),
-              width: 2.5),
+              width: 1.3),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
