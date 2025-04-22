@@ -59,17 +59,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     _checkIfSaved();
   }
 
- Future<void> _checkIfSaved() async {
+ // Check if the item is saved
+Future<void> _checkIfSaved() async {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   if (uid != null) {
-    final doc = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('Saved')
-        .doc(widget.product.id)
-        .get();
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    
+    // Ensure the 'saved' field is a list of strings (IDs)
+    final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
 
-    if (doc.exists && mounted) {  // Ensure setState is only called if the widget is still in the tree
+    // Check if the item ID exists in the saved list
+    final exists = savedList.contains(widget.product.id);
+
+    if (exists && mounted) {
       setState(() {
         isSaved = true;
       });
@@ -77,60 +79,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   }
 }
 
+// Toggle the saved status
+Future<void> _toggleSavedStatus() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid == null) return;
 
-  Future<void> toggleSave() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
+  final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
 
-    final docRef = FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('Saved')
-        .doc(widget.product.id);
+  final itemId = widget.product.id; // Ensure item.id exists and is valid
 
-    if (isSaved) {
-      await docRef.delete();
-    } else {
-      final product = widget.product;
-
-      final productData = {
-        'id': product.id,
-        'ownerId': product.ownerId,
-        'name': product.name,
-        'typeProduct': product.typeProduct,
-        'description': product.description,
-        'photos': product.photos,
-        'price': product.price,
-        'rate': product.rate,
-        'comments': product.comments,
-        'liked': product.liked,
-        'disliked': product.disliked,
-        'date_of_add': Timestamp.fromDate(product.date_of_add),
-        'wilaya': product.wilaya,
-        'daira': product.daira,
-      };
-
-      // Add specific fields based on type
-      if (product is Productagri) {
-        productData['unite'] = product.unite;
-        productData['quantite'] = product.quantite;
-        productData['surface'] = product.surface;
-        productData['category'] = product.category;
-        productData['subcategory'] = product.subcategory;
-      } else if (product is ProductElev) {
-        productData['quantite'] = product.quantite;
-        productData['category'] = product.category;
-      }
-
-      await docRef.set(productData);
-    }
-    if (widget.onUnsave != null) {
-      widget.onUnsave!();
-    }
-    setState(() {
-      isSaved = !isSaved;
+  if (isSaved) {
+    // Remove the item ID from the 'saved' list
+    await userRef.update({
+      'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
     });
+    setState(() => isSaved = false);
+    widget.onUnsave?.call();
+  } else {
+    // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
+    await userRef.update({
+      'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
+    });
+    setState(() => isSaved = true);
   }
+}
+
 
   @override
   void dispose() {
@@ -185,7 +158,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               elevation: 5,
               actions: [
                 IconButton(
-                  onPressed: toggleSave,
+                  onPressed: _toggleSavedStatus,
                   icon: Icon(
                     isSaved ? IconlyBold.bookmark : IconlyLight.bookmark,
                     color: isSaved ? colorScheme.primary : null,

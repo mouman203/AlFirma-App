@@ -84,52 +84,68 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
-  Future<List<Object>> fetchAllUserItems(String userId) async {
-    final firestore = FirebaseFirestore.instance;
+ Future<List<Object>> fetchAllUserItems(String userId) async {
+  final firestore = FirebaseFirestore.instance;
 
-    // Fetch Agricol Products
-    final agriSnap = await firestore
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
+  // Fetch Agricol Products
+  final agriSnap = await firestore
+      .collection('Products')
+      .doc('Agricol_products')
+      .collection('Agricol_products')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final agriProducts =
+      agriSnap.docs.map(Productagri.fromFirestore).toList();
 
-    final agriProducts =
-        agriSnap.docs.map((doc) => Productagri.fromFirestore(doc)).toList();
+  // Fetch Eleveur Products
+  final elevSnap = await firestore
+      .collection('Products')
+      .doc('Eleveur_products')
+      .collection('Eleveur_products')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final elevProducts =
+      elevSnap.docs.map(ProductElev.fromFirestore).toList();
 
-    // Fetch Eleveur Products
-    final elevSnap = await firestore
-        .collection('Products')
-        .doc('Eleveur_products')
-        .collection('Eleveur_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
+  // Fetch Expertise Services
+  final expertiseSnap = await firestore
+      .collection('Services')
+      .doc('Expertise')
+      .collection('Expertise')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final expertiseServices =
+      expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
 
-    final elevProducts =
-        elevSnap.docs.map((doc) => ProductElev.fromFirestore(doc)).toList();
+  // Fetch Repair Services
+  final repairSnap = await firestore
+      .collection('Services')
+      .doc('Repairs')
+      .collection('Repairs')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final repairServices =
+      repairSnap.docs.map(RepairService.fromFirestore).toList();
 
-    // Fetch and filter Services
-    final expertiseServices = await ExpertiseService.getExpertiseServicesOnce();
-    final repairServices = await RepairService.getRepairServicesOnce();
-    final transportServices = await TransportService.getTransportServicesOnce();
+  // Fetch Transport Services
+  final transportSnap = await firestore
+      .collection('Services')
+      .doc('Transportation')
+      .collection('Transportation')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final transportServices =
+      transportSnap.docs.map(TransportService.fromFirestore).toList();
 
-    final filteredExpertise =
-        expertiseServices.where((e) => e.ownerId == userId).toList();
-    final filteredRepairs =
-        repairServices.where((e) => e.ownerId == userId).toList();
-    final filteredTransport =
-        transportServices.where((e) => e.ownerId == userId).toList();
-
-    // Combine all into one list
-    return [
-      ...agriProducts,
-      ...elevProducts,
-      ...filteredExpertise,
-      ...filteredRepairs,
-      ...filteredTransport,
-    ];
-  }
+  // Combine all items into one list
+  return [
+    ...agriProducts,
+    ...elevProducts,
+    ...expertiseServices,
+    ...repairServices,
+    ...transportServices,
+  ];
+}
 
   @override
   Widget build(BuildContext context) {

@@ -285,11 +285,8 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
       await addUserType(selectedType);
       setState(() {
         selectedTypes.insert(0, selectedType);
-        if (activeType == 'Client') {
           activeType = selectedType;
-        } else {
-          activeType = selectedType;
-        }
+        
       });
 
       getLabelForDoc(selectedType);

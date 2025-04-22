@@ -1,9 +1,7 @@
 import 'package:agriplant/Back_end/ExpertiseService.dart';
-import 'package:agriplant/Back_end/Product.dart';
 import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/Back_end/RepairService.dart';
-import 'package:agriplant/Back_end/Service.dart';
 import 'package:agriplant/Back_end/TransportService.dart';
 import 'package:agriplant/Front_end/Edit_profile_page.dart';
 import 'package:agriplant/Front_end/settings.dart';
@@ -51,201 +49,130 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<List<Object>> fetchAllUserItems(String userId) async {
-    final firestore = FirebaseFirestore.instance;
+ Future<List<Object>> fetchAllUserItems(String userId) async {
+  final firestore = FirebaseFirestore.instance;
 
-    // Fetch Agricol Products
-    final agriSnap = await firestore
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
+  // Fetch Agricol Products
+  final agriSnap = await firestore
+      .collection('Products')
+      .doc('Agricol_products')
+      .collection('Agricol_products')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final agriProducts =
+      agriSnap.docs.map(Productagri.fromFirestore).toList();
 
-    final agriProducts =
-        agriSnap.docs.map((doc) => Productagri.fromFirestore(doc)).toList();
+  // Fetch Eleveur Products
+  final elevSnap = await firestore
+      .collection('Products')
+      .doc('Eleveur_products')
+      .collection('Eleveur_products')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final elevProducts =
+      elevSnap.docs.map(ProductElev.fromFirestore).toList();
 
-    // Fetch Eleveur Products
-    final elevSnap = await firestore
-        .collection('Products')
-        .doc('Eleveur_products')
-        .collection('Eleveur_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
+  // Fetch Expertise Services
+  final expertiseSnap = await firestore
+      .collection('Services')
+      .doc('Expertise')
+      .collection('Expertise')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final expertiseServices =
+      expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
 
-    final elevProducts =
-        elevSnap.docs.map((doc) => ProductElev.fromFirestore(doc)).toList();
+  // Fetch Repair Services
+  final repairSnap = await firestore
+      .collection('Services')
+      .doc('Repairs')
+      .collection('Repairs')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final repairServices =
+      repairSnap.docs.map(RepairService.fromFirestore).toList();
 
-    // Fetch and filter Services
-    final expertiseServices = await ExpertiseService.getExpertiseServicesOnce();
-    final repairServices = await RepairService.getRepairServicesOnce();
-    final transportServices = await TransportService.getTransportServicesOnce();
+  // Fetch Transport Services
+  final transportSnap = await firestore
+      .collection('Services')
+      .doc('Transportation')
+      .collection('Transportation')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+  final transportServices =
+      transportSnap.docs.map(TransportService.fromFirestore).toList();
 
-    final filteredExpertise =
-        expertiseServices.where((e) => e.ownerId == userId).toList();
-    final filteredRepairs =
-        repairServices.where((e) => e.ownerId == userId).toList();
-    final filteredTransport =
-        transportServices.where((e) => e.ownerId == userId).toList();
+  // Combine all items into one list
+  return [
+    ...agriProducts,
+    ...elevProducts,
+    ...expertiseServices,
+    ...repairServices,
+    ...transportServices,
+  ];
+}
+Future<List<dynamic>> _loadSavedItems() async {
+  final currentUser = FirebaseAuth.instance.currentUser;
+  if (currentUser == null) return [];
 
-    // Combine all into one list
-    return [
-      ...agriProducts,
-      ...elevProducts,
-      ...filteredExpertise,
-      ...filteredRepairs,
-      ...filteredTransport,
-    ];
+  final firestore = FirebaseFirestore.instance;
+
+  final userDoc = await firestore.collection('Users').doc(currentUser.uid).get();
+  if (!userDoc.exists || !userDoc.data()!.containsKey('saved')) {
+    print("❌ No saved items found for the current user.");
+    return [];
   }
 
-  Future<List<dynamic>> _loadSavedItems() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return [];
+  final savedItemIds = List<String>.from(userDoc['saved'] ?? []);
+  print("🎉 Loaded saved item IDs: $savedItemIds");
 
-    final snapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(currentUser.uid)
-        .collection('Saved')
-        .get();
+  final List<dynamic> savedItems = [];
 
-    return snapshot.docs
-        .map((doc) {
-          final data = doc.data();
-          final type = data['typeService'] ?? data['typeProduct'];
+  for (var itemId in savedItemIds) {
+    try {
+      bool found = false;
 
-          if (type == 'Expertise') {
-            return ExpertiseService(
-              id: data['id'],
-              categorie: data['categorie'],
-              typeService: type,
-              price: (data['price'] as num).toDouble(),
-              description: data['description'],
-              rate: data['rate'],
-              ownerId: data['ownerId'],
-              comments: List<Map<String, dynamic>>.from(data['comments']),
-              photos: List<String>.from(data['photos']),
-              liked: List<String>.from(data['liked']),
-              disliked: List<String>.from(data['disliked']),
-              wilaya: data['wilaya'],
-              daira: data['daira'],
-              TypeC: data['TypeC'],
-              date_of_add: (data['date_of_add'] as Timestamp).toDate(),
-            );
-          } else if (type == 'Transport') {
-            return TransportService(
-              id: data['id'],
-              categorie: data['categorie'],
-              typeService: type,
-              price: (data['price'] as num).toDouble(),
-              description: data['description'],
-              rate: data['rate'],
-              ownerId: data['ownerId'],
-              comments: List<Map<String, dynamic>>.from(data['comments']),
-              photos: List<String>.from(data['photos']),
-              liked: List<String>.from(data['liked']),
-              disliked: List<String>.from(data['disliked']),
-              wilaya: data['wilaya'],
-              daira: data['daira'],
-              moyenDeTransport: data['moyenDeTransport'],
-              date_of_add: (data['date_of_add'] as Timestamp).toDate(),
-            );
-          } else if (type == 'Repairs') {
-            return RepairService(
-              id: data['id'],
-              categorie: data['categorie'],
-              typeService: type,
-              price: (data['price'] as num).toDouble(),
-              description: data['description'],
-              rate: data['rate'],
-              ownerId: data['ownerId'],
-              comments: List<Map<String, dynamic>>.from(data['comments']),
-              photos: List<String>.from(data['photos']),
-              liked: List<String>.from(data['liked']),
-              disliked: List<String>.from(data['disliked']),
-              wilaya: data['wilaya'],
-              daira: data['daira'],
-              date_of_add: (data['date_of_add'] as Timestamp).toDate(),
-            );
-          } else if (data['typeProduct'] == 'AgricolProduct') {
-            return Productagri(
-              id: data['id'] ?? '',
-              name: data['name'] ?? '',
-              typeProduct: data['typeProduct'] ?? '',
-              price: (data['price'] ?? 0).toDouble(),
-              description: data['description'] ?? '',
-              rate: data['rate'] ?? 0,
-              ownerId: data['ownerId'] ?? '',
-              comments: List<Map<String, dynamic>>.from(data['comments'] ?? []),
-              photos: List<String>.from(data['photos'] ?? []),
-              liked: List<String>.from(data['liked'] ?? []),
-              disliked: List<String>.from(data['disliked'] ?? []),
-              category: data['category'],
-              unite: data['unite'],
-              subcategory: data['subcategory'],
-              quantite: (data['quantite'] as num?)?.toDouble(),
-              surface: (data['surface'] as num?)?.toDouble(),
-              wilaya: data['wilaya'],
-              daira: data['daira'],
-              date_of_add: (data['date_of_add'] as Timestamp?)?.toDate() ??
-                  DateTime.now(),
-            );
-          } else if (data['typeProduct'] == 'EleveurProduct') {
-            return ProductElev(
-              id: data['id'] ?? '',
-              name: data['name'] ?? '',
-              typeProduct: data['typeProduct'] ?? '',
-              price: (data['price'] ?? 0).toDouble(),
-              description: data['description'] ?? '',
-              rate: data['rate'] ?? 0,
-              ownerId: data['ownerId'],
-              comments: List<Map<String, dynamic>>.from(data['comments'] ?? []),
-              photos: List<String>.from(data['photos'] ?? []),
-              liked: List<String>.from(data['liked'] ?? []),
-              disliked: List<String>.from(data['disliked'] ?? []),
-              category: data['category'],
-              quantite: (data['quantite'] as num?)?.toDouble(),
-              wilaya: data['wilaya'],
-              daira: data['daira'],
-              date_of_add: (data['date_of_add'] as Timestamp?)?.toDate() ??
-                  DateTime.now(),
-            );
-          } else if (data['typeService'] != null) {
-            return Service(
-              id: data['id'],
-              categorie: data['categorie'],
-              typeService: data['typeService'],
-              price: (data['price'] as num).toDouble(),
-              description: data['description'],
-              rate: data['rate'],
-              ownerId: data['ownerId'],
-              comments: List<Map<String, dynamic>>.from(data['comments']),
-              photos: List<String>.from(data['photos']),
-              liked: List<String>.from(data['liked']),
-              disliked: List<String>.from(data['disliked']),
-              date_of_add: (data['date_of_add'] as Timestamp).toDate(),
-            );
-          } else if (data['typeProduct'] != null) {
-            return Product(
-              id: data['id'],
-              name: data['name'],
-              typeProduct: data['typeProduct'],
-              price: (data['price'] as num).toDouble(),
-              description: data['description'],
-              rate: data['rate'],
-              ownerId: data['ownerId'],
-              comments: List<Map<String, dynamic>>.from(data['comments']),
-              photos: List<String>.from(data['photos']),
-              liked: List<String>.from(data['liked']),
-              disliked: List<String>.from(data['disliked']),
-              date_of_add: (data['date_of_add'] as Timestamp).toDate(),
-              wilaya: data['wilaya'],
-              daira: data['daira'],
-            );
-          }
-        })
-        .whereType<dynamic>()
-        .toList();
+      final fetchPatterns = {
+        'Products/Agricol_products/Agricol_products': (DocumentSnapshot snap) => Productagri.fromFirestore(snap),
+        'Products/Eleveur_products/Eleveur_products': (DocumentSnapshot snap) => ProductElev.fromFirestore(snap),
+        'Services/Expertise/Expertise': (DocumentSnapshot snap) => ExpertiseService.fromFirestore(snap),
+        'Services/Repairs/Repairs': (DocumentSnapshot snap) => RepairService.fromFirestore(snap),
+        'Services/Transportation/Transportation': (DocumentSnapshot snap) => TransportService.fromFirestore(snap),
+      };
+
+      for (final entry in fetchPatterns.entries) {
+        final pathParts = entry.key.split('/');
+        final snap = await firestore
+            .collection(pathParts[0])
+            .doc(pathParts[1])
+            .collection(pathParts[2])
+            .doc(itemId)
+            .get();
+
+        print("🧐 Checking ${entry.key} for ID $itemId");
+
+        if (snap.exists) {
+          savedItems.add(entry.value(snap));
+          print("✅ Found item in ${entry.key}");
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        print("❌ ID $itemId not found in any structured collection.");
+      }
+    } catch (e) {
+      print('❌ Error loading item $itemId: $e');
+    }
   }
+
+  print("🎉 Finished loading saved items: ${savedItems.length} found.");
+  return savedItems;
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {

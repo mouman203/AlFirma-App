@@ -104,32 +104,34 @@ class ExpertiseService extends Service {
     }
   }
 
-  static Future<List<ExpertiseService>> getExpertiseServicesOnce() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('Services')
-        .doc('Expertise')
-        .collection('Expertise')
-        .get();
+ factory ExpertiseService.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
 
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      return ExpertiseService(
-        id: doc.id,
-        categorie: data['categorie'],
-        typeService: data['typeService'],
-        price: (data['price'] as num).toDouble(),
-        description: data['description'],
-        rate: data['rate'],
-        ownerId: data['ownerId'],
-        comments: List<Map<String, dynamic>>.from(data['comments']),
-        photos: List<String>.from(data['photos']),
-        liked: List<String>.from(data['liked']),
-        disliked: List<String>.from(data['disliked']),
-        wilaya: data['wilaya'],
-        daira: data['daira'],
-        TypeC: data['TypeC'],
-        date_of_add: (data['date_of_add'] as Timestamp).toDate(),
-      );
-    }).toList();
+    return ExpertiseService(
+      id: doc.id,
+      categorie: data['categorie'],
+      typeService: data['typeService'],
+      price: (data['price'] as num?)?.toDouble() ?? 0,
+      description: data['description'] ?? '',
+      rate: data['rate'] ?? 0,
+      ownerId: data['ownerId'] ?? '',
+      comments: List<Map<String, dynamic>>.from(data['comments'] ?? []),
+      photos: List<String>.from(data['photos'] ?? []),
+      liked: List<String>.from(data['liked'] ?? []),
+      disliked: List<String>.from(data['disliked'] ?? []),
+      wilaya: data['wilaya'],
+      daira: data['daira'],
+      TypeC: data['TypeC'] ?? '',
+      date_of_add: (data['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    );
   }
+  static Future<List<ExpertiseService>> getExpertiseServicesOnce() async {
+  final snapshot = await FirebaseFirestore.instance
+      .collection('Services')
+      .doc('Expertise')
+      .collection('Expertise')
+      .get();
+
+  return snapshot.docs.map(ExpertiseService.fromFirestore).toList();
+}
 }

@@ -104,33 +104,35 @@ class TransportService extends Service {
       print("❌ Error deleting transport service: $e");
     }
   }
-  static Future<List<TransportService>> getTransportServicesOnce() async {
+factory TransportService.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    return TransportService(
+      id: doc.id,
+      categorie: data['categorie'],
+      typeService: data['typeService'],
+      price: (data['price'] as num?)?.toDouble() ?? 0,
+      description: data['description'] ?? '',
+      rate: data['rate'] ?? 0,
+      ownerId: data['ownerId'] ?? '',
+      comments: List<Map<String, dynamic>>.from(data['comments'] ?? []),
+      photos: List<String>.from(data['photos'] ?? []),
+      liked: List<String>.from(data['liked'] ?? []),
+      disliked: List<String>.from(data['disliked'] ?? []),
+      wilaya: data['wilaya'],
+      daira: data['daira'],
+      moyenDeTransport: data['moyenDeTransport'] ?? '',
+      date_of_add: (data['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    );
+  }
+
+static Future<List<TransportService>> getTransportservicesOnce() async {
   final snapshot = await FirebaseFirestore.instance
       .collection('Services')
       .doc('Transportation')
       .collection('Transportation')
       .get();
 
-  return snapshot.docs.map((doc) {
-    final data = doc.data();
-    return TransportService(
-      id: doc.id,
-      categorie: data['categorie'],
-      typeService: data['typeService'],
-      price: (data['price'] as num).toDouble(),
-      description: data['description'],
-      rate: data['rate'],
-      ownerId: data['ownerId'],
-      comments: List<Map<String, dynamic>>.from(data['comments']),
-      photos: List<String>.from(data['photos']),
-      liked: List<String>.from(data['liked']),
-      disliked: List<String>.from(data['disliked']),
-      wilaya: data['wilaya'],
-      daira: data['daira'],
-      moyenDeTransport: data['moyenDeTransport'],
-      date_of_add: (data['date_of_add'] as Timestamp).toDate(),
-    );
-  }).toList();
+  return snapshot.docs.map(TransportService.fromFirestore).toList();
 }
-
 }

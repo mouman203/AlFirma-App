@@ -62,18 +62,19 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
       _checkIfSaved();
     }
   }
-
+/// Check if the item is saved
 Future<void> _checkIfSaved() async {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   if (uid != null) {
-    final doc = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('Saved')
-        .doc(widget.service.id)
-        .get();
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    
+    // Ensure the 'saved' field is a list of strings (IDs)
+    final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
 
-    if (doc.exists && mounted) {  // Ensure setState is only called if the widget is still in the tree
+    // Check if the item ID exists in the saved list
+    final exists = savedList.contains(widget.service.id);
+
+    if (exists && mounted) {
       setState(() {
         isSaved = true;
       });
@@ -81,59 +82,32 @@ Future<void> _checkIfSaved() async {
   }
 }
 
+// Toggle the saved status
+Future<void> _toggleSavedStatus() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid == null) return;
 
-  Future<void> toggleSave() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
+  final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
 
-    final docRef = FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('Saved')
-        .doc(widget.service.id);
+  final itemId = widget.service.id; // Ensure item.id exists and is valid
 
-    if (isSaved) {
-      await docRef.delete();
-    } else {
-      final service = widget.service;
-      final serviceData = {
-        'id': service.id,
-        'categorie': service.categorie,
-        'typeService': service.typeService,
-        'price': service.price,
-        'description': service.description,
-        'rate': service.rate,
-        'ownerId': service.ownerId,
-        'comments': service.comments,
-        'photos': service.photos,
-        'liked': service.liked,
-        'disliked': service.disliked,
-        'date_of_add': Timestamp.fromDate(service.date_of_add),
-      };
-
-      if (service is ExpertiseService) {
-        serviceData['TypeC'] = service.TypeC;
-        serviceData['wilaya'] = service.wilaya;
-        serviceData['daira'] = service.daira;
-      } else if (service is TransportService) {
-        serviceData['moyenDeTransport'] = service.moyenDeTransport;
-        serviceData['wilaya'] = service.wilaya;
-        serviceData['daira'] = service.daira;
-      } else if (service is RepairService) {
-        serviceData['wilaya'] = service.wilaya;
-        serviceData['daira'] = service.daira;
-      }
-
-      await docRef.set(serviceData);
-    }
-
-    if (widget.onUnsave != null) {
-      widget.onUnsave!();
-    }
-    setState(() {
-      isSaved = !isSaved;
+  if (isSaved) {
+    // Remove the item ID from the 'saved' list
+    await userRef.update({
+      'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
     });
+    setState(() => isSaved = false);
+    widget.onUnsave?.call();
+  } else {
+    // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
+    await userRef.update({
+      'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
+    });
+    setState(() => isSaved = true);
   }
+}
+
+
 
   @override
   void dispose() {
@@ -188,7 +162,7 @@ Future<void> _checkIfSaved() async {
               elevation: 5,
               actions: [
                 IconButton(
-                  onPressed: toggleSave,
+                  onPressed: _toggleSavedStatus,
                   icon: Icon(
                     isSaved ? IconlyBold.bookmark : IconlyLight.bookmark,
                     color: isSaved ? colorScheme.primary : null,

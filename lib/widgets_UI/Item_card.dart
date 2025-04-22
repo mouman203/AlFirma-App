@@ -3,7 +3,6 @@ import 'package:agriplant/Back_end/ProductAgri.dart';
 import 'package:agriplant/Back_end/ProductElev.dart';
 import 'package:agriplant/Back_end/Service.dart';
 import 'package:agriplant/Back_end/ExpertiseService.dart';
-import 'package:agriplant/Back_end/RepairService.dart';
 import 'package:agriplant/Back_end/TransportService.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Item%20detaille/product_details_page.dart';
@@ -34,102 +33,51 @@ class _ItemCardState extends State<ItemCard> {
   }
 
   // Check if the item is saved
-  Future<void> _checkIfSaved() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null) {
-      final doc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(uid)
-          .collection('Saved')
-          .doc(widget.item.id)
-          .get();
+ Future<void> _checkIfSaved() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid != null) {
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
 
-      if (doc.exists && mounted) {
-        setState(() {
-          isSaved = true;
-        });
-      }
+    // Ensure the 'saved' field exists and is a list of strings
+    final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
+
+    // Check if the item ID exists in the saved list
+    final exists = savedList.contains(widget.item.id);
+
+    if (exists && mounted) {
+      setState(() {
+        isSaved = true;
+      });
     }
   }
+}
 
-  // Toggle the saved status
-  Future<void> _toggleSavedStatus() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
+Future<void> _toggleSavedStatus() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid == null) return;
 
-    final docRef = FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('Saved')
-        .doc(widget.item.id);
+  final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+  final itemId = widget.item.id; // Ensure item.id exists and is valid
 
-    if (isSaved) {
-      await docRef.delete();
-      setState(() => isSaved = false);
-      widget.onUnsave?.call(); // Notify parent to refresh or remove from list
-    } else {
-      final data = _buildItemData(); // Build data to save in Firestore
-      await docRef.set(data);
-      setState(() => isSaved = true);
-    }
+  if (isSaved) {
+    // Remove the item ID from the 'saved' list
+    await userRef.update({
+      'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
+    });
+    setState(() => isSaved = false);
+    widget.onUnsave?.call();
+  } else {
+    // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
+    await userRef.update({
+      'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
+    });
+    setState(() => isSaved = true);
   }
+}
 
-  // Helper function to build the item data for Firestore
-  Map<String, dynamic> _buildItemData() {
-    final item = widget.item;
-    final data = {
-      'id': item.id,
-      'price': item.price,
-      'description': item.description,
-      'photos': item.photos,
-      'date_of_add': Timestamp.fromDate(item.date_of_add),
-      'ownerId': item.ownerId,
-    };
 
-    if (item is Service) {
-      data['categorie'] = item.categorie;
-      data['typeService'] = item.typeService;
-      data['rate'] = item.rate;
-      data['comments'] = item.comments;
-      data['liked'] = item.liked;
-      data['disliked'] = item.disliked;
-      if (item is ExpertiseService) {
-        data['TypeC'] = item.TypeC;
-        data['wilaya'] = item.wilaya;
-        data['daira'] = item.daira;
-      } else if (item is TransportService) {
-        data['moyenDeTransport'] = item.moyenDeTransport;
-        data['wilaya'] = item.wilaya;
-        data['daira'] = item.daira;
-      } else if (item is RepairService) {
-        data['wilaya'] = item.wilaya;
-        data['daira'] = item.daira;
-      }
-    } else if (item is Product) {
-      data['name'] = item.name;
-      data['typeProduct'] = item.typeProduct;
-      data['rate'] = item.rate;
-      data['comments'] = item.comments;
-      data['liked'] = item.liked;
-      data['disliked'] = item.disliked;
-      data['wilaya'] = item.wilaya;
-      data['daira'] = item.daira;
 
-      if (item is Productagri) {
-        data['category'] = item.category;
-        data['unite'] = item.unite;
-        data['quantite'] = item.quantite;
-        data['surface'] = item.surface;
-        data['subcategory'] = item.subcategory;
-      } else if (item is ProductElev) {
-        data['category'] = item.category;
-        data['quantite'] = item.quantite;
-      }
-    }
-
-    return data;
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
