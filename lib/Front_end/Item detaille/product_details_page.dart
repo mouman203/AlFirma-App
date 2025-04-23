@@ -241,7 +241,7 @@ Future<void> _toggleSavedStatus() async {
                           child: FutureBuilder<DocumentSnapshot>(
                             future: FirebaseFirestore.instance
                                 .collection('Users')
-                                .doc(widget.product.ownerId!.trim())
+                                .doc(widget.product.ownerId!)
                                 .get(),
                             builder: (context, userSnapshot) {
                               if (userSnapshot.connectionState ==
@@ -282,24 +282,12 @@ Future<void> _toggleSavedStatus() async {
                                       child: FutureBuilder<DocumentSnapshot>(
                                         future: FirebaseFirestore.instance
                                             .collection('Users')
-                                            .doc(FirebaseAuth
-                                                .instance.currentUser!.uid)
+                                            .doc(widget.product.ownerId!)
                                             .get(),
                                         builder: (context, snapshot) {
                                           String? photoURL;
 
-                                          // حالة حساب Google
-                                          if (FirebaseAuth.instance.currentUser
-                                                  ?.providerData
-                                                  .any((provider) =>
-                                                      provider.providerId ==
-                                                      "google.com") ==
-                                              true) {
-                                            photoURL = FirebaseAuth
-                                                .instance.currentUser?.photoURL;
-                                          }
-                                          // حالة التسجيل العادي + صورة من Firestore
-                                          else if (snapshot.hasData &&
+                                           if (snapshot.hasData &&
                                               snapshot.data!.exists) {
                                             photoURL =
                                                 snapshot.data!.get('photo') ??
