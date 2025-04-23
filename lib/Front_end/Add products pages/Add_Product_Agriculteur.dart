@@ -197,6 +197,9 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
           key: _formKey,
           child: Column(
             children: [
+             
+             
+             // add the images
               GestureDetector(
                     onTap: _pickImages,
                     child: Container(
@@ -235,6 +238,8 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                             ),
                     ),
                ),
+             
+             
               const SizedBox(height: 15),
               
                   ProductData.buildDropdown(selectedValue: selectedCategory,
@@ -252,8 +257,8 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                   Column(
                     children: [
                     ProductData.buildDropdown(selectedValue: selectedsubCategory, 
-                    items: (selectedCategory == "منتوجات فلاحية"
-                            ? Category
+                    items: ( selectedCategory== "منتوجات فلاحية"
+                            ? ProductData.agriCategories[selectedCategory]
                             : ProductData.equipmentCategories.keys.toList())!, 
                         label: 'category', onChanged: (value) {
                       setState(() {
@@ -270,8 +275,8 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                     children: [
                 ProductData.buildDropdown(selectedValue: selectedproduct, 
                 items: (selectedCategory == "منتوجات فلاحية"
-                          ? ProductData.agriCategories[selectedsubCategory!]
-                          : ProductData.equipmentCategories[selectedsubCategory!])!, 
+                          ? ProductData.agriSubCategories[selectedsubCategory!]
+                          : ProductData.equipmentCategories[selectedsubCategory])!, 
                           label: 'Produit', 
                           onChanged: (value) {
                     setState(() {
