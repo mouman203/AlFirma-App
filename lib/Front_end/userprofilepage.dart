@@ -158,7 +158,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           children: [
             //the profile pic and the name of the user
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8),
+              padding: const EdgeInsets.only(left: 8.0, right: 8,top: 8),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -258,12 +258,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 10),
         
             //the products of the user
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8),
+              padding: const EdgeInsets.only(left: 8.0, right: 8,bottom: 8),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
