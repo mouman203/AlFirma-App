@@ -16,7 +16,6 @@ class AddProductAgriculteur extends StatefulWidget {
 class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   // Controllers for input fields
-  final TextEditingController imageController = TextEditingController();
   final TextEditingController quantiteController = TextEditingController();
   final TextEditingController surfaceController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
@@ -42,7 +41,6 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
 
   void _resetForm() {
     _formKey.currentState?.reset();
-    imageController.clear();
     quantiteController.clear();
     surfaceController.clear();
     prixController.clear();
@@ -52,15 +50,16 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
       selectedWilaya = null;
       selectedDaira = null;
       selectedproduct = null;
-      selectedCategory = null; // Reset dropdown value
+      selectedCategory = null;
+      _selectedImages.clear(); // Reset dropdown value
     });
   }
 
- // هذا المتغير سيحمل رابط الصورة بعد الرفع
 
   Future<void> _submitForm() async {
-  if (_formKey.currentState!.validate()) {
-    if (uploadedPhotos == []) {
+    await uploadSelectedImages();
+  if (_formKey.currentState != null && _formKey.currentState!.validate()){
+    if (uploadedPhotos.isEmpty) {
       // منع الإرسال بدون صورة
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("📸 الرجاء تحميل صورة المنتج أولًا")),
@@ -124,31 +123,28 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
     return null;
   }
 }
+Future<void> uploadSelectedImages() async {
+  uploadedPhotos.clear(); // تنظيف القديم
+
+  for (var image in _selectedImages) {
+    final file = File(image.path);
+    final url = await uploadImageToFirebase(file);
+    if (url != null) {
+      uploadedPhotos.add(url);
+    }
+  }
+}
+
  
   List<XFile> _selectedImages = [];
   List<String> uploadedPhotos = [];
 
-  Future<void> _pickImages() async {
+ Future<void> _pickImages() async {
   final List<XFile> images = await ImagePicker().pickMultiImage();
-
-  if ( images.isNotEmpty) {
+  if (images.isNotEmpty) {
     setState(() {
       _selectedImages = images;
     });
-
-    // رفع الصور إلى Firebase Storage
-    for (var image in _selectedImages) {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final storageRef = FirebaseStorage.instance.ref().child('product_images/$fileName');
-
-      try {
-        await storageRef.putFile(File(image.path));
-        String downloadUrl = await storageRef.getDownloadURL();
-        uploadedPhotos.add(downloadUrl);
-      } catch (e) {
-        print("❌ Error uploading image: $e");
-      }
-    }
   }
 }
 
@@ -200,44 +196,72 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
              
              
              // add the images
-              GestureDetector(
-                    onTap: _pickImages,
-                    child: Container(
-                      height: 180,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.green),
-                        color: Colors.green.shade50,
-                      ),
-                      child: _selectedImages.isEmpty
-                          ? const Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.photo_library, size: 50, color: Colors.grey),
-                                  SizedBox(height: 8),
-                                  Text("Tap to select images", style: TextStyle(color: Colors.grey)),
-                                ],
-                              ),
-                            )
-                          : ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _selectedImages.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image.file(
-                                    File(_selectedImages[index].path),
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                              },
-                            ),
-                    ),
-               ),
+           GestureDetector(
+  onTap: _pickImages,
+  child: Container(
+    height: 180,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.green),
+      color: Colors.green.shade50,
+    ),
+    child: _selectedImages.isEmpty
+        ? const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.photo_library, size: 50, color: Colors.grey),
+                SizedBox(height: 8),
+                Text("Tap to select images", style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          )
+        : ListView.builder(
+  scrollDirection: Axis.horizontal,
+  itemCount: _selectedImages.length,
+  itemBuilder: (context, index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Stack(
+        children: [
+          Image.file(
+            File(_selectedImages[index].path),
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () {
+                // 👇 هذا التعديل يتم بأمان داخل setState وخارج التكرار
+                setState(() {
+                  _selectedImages.removeAt(index);
+                  if (uploadedPhotos.length > index) {
+                    uploadedPhotos.removeAt(index);
+                  }
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.7),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+),
+
+  ),
+),
+
              
              
               const SizedBox(height: 15),
@@ -377,7 +401,13 @@ Future<String?> uploadImageToFirebase(File imageFile) async {
                         ),
                         onPressed: () {
                           try {
+                            setState(() {
+                              _isLoading = true;
+                            });
                             _submitForm();
+                            setState(() {
+                              _isLoading = true;
+                            });
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Error: $e")),
