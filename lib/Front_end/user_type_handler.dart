@@ -24,23 +24,29 @@ Future<void> addUserType(String userType) async {
           FirebaseFirestore.instance.collection('Users').doc(user.uid);
       final snapshot = await docRef.get();
 
-      // Get the current user types (if any)
-      List<dynamic> currentTypes = snapshot.data()?['userType'] ?? [];
+      Map<String, dynamic> currentTypes =
+          Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
 
-      // Only add the userType if it's not already in the list
-      if (!currentTypes.contains(userType)) {
-        currentTypes.add(userType);
+      if (!currentTypes.containsKey(userType)) {
+        currentTypes[userType] = {
+          'status': 'pending',
+          'createdAt': FieldValue.serverTimestamp(),
+          'path': '',
+          // تضيف حقول حسب الحاجة
+        };
+
         await docRef.update({
-          'userType': currentTypes, // Ensure the field name is consistent
+          'userType': currentTypes,
           'userTypeUpdatedAt': FieldValue.serverTimestamp(),
         });
-        print("User type updated successfully!");
+
+        print("✅ User type '$userType' added successfully as a map.");
       }
     } else {
-      print("No user is logged in!");
+      print("⚠️ No user is logged in.");
     }
   } catch (e) {
-    print("Error updating user type: $e");
+    print("❌ Error updating user type: $e");
   }
 }
 
@@ -106,19 +112,20 @@ Future<Map<String, dynamic>> fetchUserTypesAndActive() async {
 
   if (!docSnapshot.exists) {
     print("❌ User document not found.");
-    return {'userType': [], 'activeType': ''};
+    return {'userType': <String>[], 'activeType': ''};
   }
 
   final data = docSnapshot.data()!;
-  List<String> types = List<String>.from(data['userType']?.keys ?? []);
+  Map<String, dynamic> typesMap =
+      Map<String, dynamic>.from(data['userType'] ?? {});
+  List<String> types = typesMap.keys.toList();
   String? type = data['activeType'];
 
   print("✅ Fetched from Firestore:");
-  print("userType: $types");
+  print("userType keys: $types");
   print("activeType: $type");
 
-  // ✅ Assign default if activeType is null
-  if (type!.isEmpty) {
+  if (type == null || type.isEmpty) {
     type = 'Client';
     await docRef.update({'activeType': type});
     print("⚠️ activeType was null, defaulted to 'Client'");
@@ -206,12 +213,14 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
           ),
         );
       case 'Entreprise':
-        return Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DocumentPage(userType: 'Entreprise'),
+        return {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const DocumentPage(userType: 'Entreprise'),
+            ),
           ),
-        );
+        };
       case 'Transporteur':
         return Navigator.push(
           context,
@@ -231,7 +240,35 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     }
   }
 
+  Future<void> deleteUserTypeKey(String keyToDelete) async {
+   try {
+                  // Get the current user's UID
+                  User? user = FirebaseAuth.instance.currentUser;
+                  if (user == null) {
+                    throw Exception("No user is currently logged in.");
+                  }
+
+                  // Reference the user's document in Firestore
+                  DocumentReference userDocRef = FirebaseFirestore.instance
+                      .collection('Users')
+                      .doc(user.uid);
+
+                  // Update the user's document to delete the specific key from the userType map
+                  await userDocRef.update({
+                    'userType.$keyToDelete': FieldValue.delete(),
+                  });
+
+                 
+
+                  print(
+                      "Key '$keyToDelete' successfully deleted from userType.");
+                } catch (e) {
+                  print("Error deleting key from userType: $e");
+                }
+  }
+
   Future<void> addTypeFlow(BuildContext context) async {
+    print("selected types : $selectedTypes");
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
 
@@ -240,8 +277,9 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
       position: RelativeRect.fromLTRB(90, 102, overlay.size.width - 20, 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: Colors.transparent,
-      items:
-          UserTypes.keys.where((type) => !selectedTypes.contains(type)).map((type) {
+      items: UserTypes.keys
+          .where((type) => !selectedTypes.contains(type))
+          .map((type) {
         final imagePath = 'assets/become/${normalize(type)}.jpg';
         return PopupMenuItem<String>(
           value: type,
@@ -284,14 +322,12 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     if (selectedType != null) {
       await getLabelForDoc(selectedType);
 
-      
       await addUserType(selectedType);
       setState(() {
         selectedTypes.insert(0, selectedType);
         activeType = selectedType;
       });
 
-      
       await setActiveType(activeType!);
       await saveUserData(selectedTypes, activeType!);
       widget.onTypeChanged(); // 👈 Add this
@@ -439,7 +475,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                     top: 8,
                                     child: GestureDetector(
                                       onTap: () async {
-                                        selectedTypes.remove(type);
+                                        deleteUserTypeKey(type);
 
                                         if (selectedTypes.isEmpty) {
                                           activeType = "Client";
