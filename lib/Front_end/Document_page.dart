@@ -49,8 +49,6 @@ class _DocumentFormState extends State<DocumentForm> {
     'Entreprise': ['شهادة'],
   };
 
-  
-
   Future<void> _pickImage(String label) async {
     showDialog(
       context: context,
@@ -154,16 +152,21 @@ class _DocumentFormState extends State<DocumentForm> {
         String downloadUrl = await storageRef.getDownloadURL();
 
         // Create a collection for the userType and add the document there
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(userId) // You need the userId to reference this user
-            .collection(selectedUserType) // The collection name is the userType
-            .add({
-          'documentName': doc,
-          'documentUrl': downloadUrl,
-          'validator': 'pending',
-          'uploadedAt': FieldValue.serverTimestamp(),
-        });
+        // Create a collection for the userType and add the document there
+
+        await FirebaseFirestore.instance.collection('Users').doc(userId).set({
+          'userType': {
+            selectedUserType: {
+              'validator': 'pending',
+              'documents': {
+                doc: {
+                  'documentUrl': downloadUrl,
+                  'uploadedAt': FieldValue.serverTimestamp(),
+                }
+              }
+            }
+          }
+        }, SetOptions(merge: true)); // لتفادي مسح البيانات السابقة
       }
 
       // Show success message

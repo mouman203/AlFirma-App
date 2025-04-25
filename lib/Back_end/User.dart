@@ -278,7 +278,7 @@ class Users {
           'followers': [],
           'email': email,
           'password': password,
-          'userType': [],
+          'userType': {},
           'activeType': 'Client',
           'createdAt': FieldValue.serverTimestamp(),
           'Verify': verify,

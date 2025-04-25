@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // List of all possible user types
-final List<String> UserTypes = [
-  'Agriculteur',
-  'Éleveur',
-  'Expert Agri',
-  'Vétérinaire',
-  'Entreprise',
-  'Transporteur',
-  'Réparateur'
-];
+final Map<String, dynamic> UserTypes = {
+  'Agriculteur': {},
+  'Éleveur': {},
+  'Expert Agri': {},
+  'Vétérinaire': {},
+  'Entreprise': {},
+  'Transporteur': {},
+  'Réparateur': {}
+};
 
 // Add user type to the Firestore user's list (if not already exists)
 Future<void> addUserType(String userType) async {
@@ -110,7 +110,7 @@ Future<Map<String, dynamic>> fetchUserTypesAndActive() async {
   }
 
   final data = docSnapshot.data()!;
-  List<String> types = List<String>.from(data['userType'] ?? []);
+  List<String> types = List<String>.from(data['userType']?.keys ?? []);
   String? type = data['activeType'];
 
   print("✅ Fetched from Firestore:");
@@ -241,7 +241,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: Colors.transparent,
       items:
-          UserTypes.where((type) => !selectedTypes.contains(type)).map((type) {
+          UserTypes.keys.where((type) => !selectedTypes.contains(type)).map((type) {
         final imagePath = 'assets/become/${normalize(type)}.jpg';
         return PopupMenuItem<String>(
           value: type,
@@ -282,14 +282,16 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     );
 
     if (selectedType != null) {
+      await getLabelForDoc(selectedType);
+
+      
       await addUserType(selectedType);
       setState(() {
         selectedTypes.insert(0, selectedType);
-          activeType = selectedType;
-        
+        activeType = selectedType;
       });
 
-      getLabelForDoc(selectedType);
+      
       await setActiveType(activeType!);
       await saveUserData(selectedTypes, activeType!);
       widget.onTypeChanged(); // 👈 Add this
@@ -444,19 +446,6 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                         } else if (activeType == type) {
                                           activeType = selectedTypes.first;
                                         }
-
-                                        final user =
-                                            FirebaseAuth.instance.currentUser;
-                                        await FirebaseFirestore.instance
-                                            .collection('Users')
-                                            .doc(user!.uid)
-                                            .update({
-                                          'userType': selectedTypes,
-                                          'activeType': activeType,
-                                          'userTypeUpdatedAt':
-                                              FieldValue.serverTimestamp(),
-                                        });
-
                                         await saveUserData(
                                             selectedTypes, activeType!);
 
