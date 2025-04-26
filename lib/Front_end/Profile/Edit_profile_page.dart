@@ -25,6 +25,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String? firstNameError;
   String? lastNameError;
   String? phoneNumError;
+  String? wilayaError;
+  String? dairaError;
 
   String? selectedWilaya;
   String? selectedDaira;
@@ -116,29 +118,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       );
     }
-  }
-
-  // Validation method
-  bool validateFields() {
-    if (_PhoneNumController.text.length != 10) {
-      setState(() {
-        phoneNumError = "Phone number must be exactly 10 digits";
-      });
-    } else {
-      setState(() {
-        phoneNumError = null;
-      });
-      // proceed with submission
-    }
-
-    setState(() {
-      firstNameError = _firstNameController.text.isEmpty
-          ? 'First Name cannot be empty'
-          : null;
-      lastNameError =
-          _lastNameController.text.isEmpty ? 'Last Name cannot be empty' : null;
-    });
-    return firstNameError == null && lastNameError == null;
   }
 
   Future<void> _updateProfile() async {
@@ -281,10 +260,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
             selectedValue: selectedWilaya,
             items: ProductData.wilayas.keys.toList(),
             label: 'Wilaya',
+            errorText: wilayaError,
             onChanged: (value) {
               setState(() {
                 selectedWilaya = value;
-                selectedDaira = null;
+                selectedDaira = '';
               });
             },
           ),
@@ -295,6 +275,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               selectedValue: selectedDaira,
               items: ProductData.wilayas[selectedWilaya] ?? [],
               label: 'Daira',
+              errorText: dairaError,
               onChanged: (value) {
                 setState(() {
                   selectedDaira = value;
@@ -310,10 +291,38 @@ class _EditProfilePageState extends State<EditProfilePage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (validateFields()) {
-                    _updateProfile();
-                  }
-                  ;
+                  setState(() {
+                    if (_firstNameController.text.isEmpty ||
+                        _lastNameController.text.isEmpty ||
+                        _PhoneNumController.text.isEmpty ||
+                        _PhoneNumController.text.length != 10 ||
+                        selectedWilaya == '' ||
+                        selectedDaira == '') {
+                      if (_firstNameController.text.isEmpty) {
+                        firstNameError = "يرجى إدخال الاسم";
+                      }
+                      if (_lastNameController.text.isEmpty) {
+                        lastNameError = "يرجى إدخال اللقب";
+                      }
+                      if (_PhoneNumController.text.isEmpty) {
+                        phoneNumError = "يرجى إدخال رقم الهاتف";
+                      }
+                      if (_PhoneNumController.text.length != 10) {
+                        phoneNumError = "يرجى ادخال 10 ارقام";
+                      }
+                      if (selectedDaira == '') {
+                        dairaError = "يرجى ادخال الدائرة";
+                      }
+                      if (selectedWilaya == '') {
+                        wilayaError = "يرجى ادخال الولاية";
+                      }
+                      //rani dyr validation f onchanged f drop down
+                    } else {
+                        _updateProfile();
+                      
+                      print("$selectedWilaya");
+                    }
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode
@@ -341,7 +350,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required TextEditingController controller,
     required IconData icon,
     required String hintText,
-    String? errorText,
+    required String? errorText,
   }) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
@@ -352,6 +361,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ? const Color.fromARGB(255, 55, 72, 56)
               : Colors.green.shade50,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: errorText != null
+                ? Colors.red
+                : Colors.transparent, // 👈 Red border if error
+            width: 1.5,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -397,7 +412,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required String? selectedValue,
     required List<String> items,
     required String label,
-    required void Function(String?) onChanged,
+    required String? errorText,
+    required void Function(String?) onChanged, // 👈 Add IconData parameter
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -405,30 +421,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
         decoration: BoxDecoration(
           color: Colors.green.shade50,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: errorText != null
+                ? Colors.red
+                : Colors.transparent, // 👈 Red border if error
+            width: 1.5,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: DropdownButtonFormField<String>(
-            value: items.contains(selectedValue) ? selectedValue : null,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              hintText: '',
-            ),
-            items: items
-                .map(
-                  (item) => DropdownMenuItem(
-                    value: item,
-                    child: Text(item),
+          child: Row(
+            children: [
+              Icon(
+                Icons.add_location_alt_sharp,
+                color: const Color(0xFF256C4C),
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: items.contains(selectedValue) ? selectedValue : null,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: label,
+                    errorText: errorText,
                   ),
-                )
-                .toList(),
-            onChanged: onChanged,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select a $label';
-              }
-              return null;
-            },
+                  items: items
+                      .map(
+                        (item) => DropdownMenuItem(
+                          value: item,
+                          child: Text(item),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: onChanged,
+                ),
+              ),
+            ],
           ),
         ),
       ),

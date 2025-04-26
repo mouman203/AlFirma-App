@@ -418,6 +418,8 @@ class Users {
             'activeType': 'Client',
             "following": [],
             "followers": [],
+            "wilaya":'',
+            "daira":'',
             "created_at": FieldValue.serverTimestamp(),
           });
         } else {

@@ -1,9 +1,10 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agriplant/data/ProductData.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -25,6 +26,8 @@ class _SignUpPageState extends State<SignUpPage> {
   String? firstNameError;
   String? lastNameError;
   String? emailError;
+  String? wilayaError;
+  String? dairaError;
   String? phoneError;
   String? passwordError;
   String? confirmPasswordError;
@@ -94,6 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     // First Name field
                     _buildTextField(
                       controller: _firstNameController,
+                      keyType: TextInputType.name,
                       icon: Icons.person,
                       hintText: "First Name",
                       errorText: firstNameError,
@@ -103,6 +107,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     // Last Name field
                     _buildTextField(
                       controller: _lastNameController,
+                      keyType: TextInputType.name,
                       icon: Icons.person,
                       hintText: "Last Name",
                       errorText: lastNameError,
@@ -112,6 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     // Email field
                     _buildTextField(
                       controller: _emailController,
+                      keyType: TextInputType.emailAddress,
                       icon: Icons.email,
                       hintText: "Email",
                       errorText: emailError,
@@ -121,181 +127,203 @@ class _SignUpPageState extends State<SignUpPage> {
                     // Phone number field
                     _buildTextField(
                       controller: _phoneController,
+                      keyType: TextInputType.number,
                       icon: Icons.phone,
-                      hintText: "Phone Number ",
+                      hintText: "Phone Number",
                       errorText: phoneError,
                     ),
                     const SizedBox(height: 20),
 
+                    
                     // Wilaya Dropdown
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? const Color.fromARGB(255, 39, 57, 48)
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            value: _selectedWilaya,
-                            hint: Text(
-                              "Select Wilaya",
-                              style: TextStyle(
-                                color: isDarkMode
-                                    ? Colors.white
-                                    : const Color(0xFF256C4C),
-                              ),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              maxHeight: 300,
-                              offset: const Offset(0, 0),
-                              width: MediaQuery.of(context).size.width -
-                                  100, // 50 padding left + right
-                              decoration: BoxDecoration(
-                                color: isDarkMode
-                                    ? const Color.fromARGB(255, 30, 45, 38)
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            buttonStyleData: const ButtonStyleData(
-                              height: 50,
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                            ),
-                            iconStyleData: IconStyleData(
-                              iconEnabledColor: isDarkMode
-                                  ? Colors.white
-                                  : const Color(0xFF256C4C),
-                              iconDisabledColor: isDarkMode
-                                  ? Colors.white
-                                  : const Color(0xFF256C4C),
-                            ),
-                            onChanged: (newValue) {
-                              setState(() {
-                                _selectedWilaya = newValue;
-                                _selectedDaira = null;
-                              });
-                              if (newValue != null) {
-                                updateDairaList(newValue);
-                              }
-                            },
-                            selectedItemBuilder: (BuildContext context) {
-                              return ProductData.wilayas.keys
-                                  .map<Widget>((wilaya) {
-                                return Align(
-                                  // 👈 Align instead of Center
-                                  alignment: Alignment
-                                      .centerLeft, // 👈 center vertically, left horizontally
-                                  child: Text(
-                                    getWilayaName(wilaya),
-                                    style: TextStyle(
-                                      color: isDarkMode
-                                          ? Colors.white
-                                          : const Color(0xFF256C4C),
-                                    ),
-                                  ),
-                                );
-                              }).toList();
-                            },
-                            items: ProductData.wilayas.keys
-                                .map<DropdownMenuItem<String>>((wilaya) {
-                              return DropdownMenuItem<String>(
-                                value: wilaya,
-                                child: Text(
-                                  wilaya,
-                                  style: TextStyle(
+                       padding: const EdgeInsets.symmetric(horizontal: 50),
+                       child: Container(
+                         decoration: BoxDecoration(
+                           color: isDarkMode
+                               ? const Color.fromARGB(255, 39, 57, 48)
+                               : Theme.of(context)
+                                   .colorScheme
+                                   .secondaryContainer,
+                           borderRadius: BorderRadius.circular(12),
+                         ),
+                         child: DropdownButtonHideUnderline(
+                           child: DropdownButton2<String>(
+                             isExpanded: true,
+                             value: _selectedWilaya,
+                             hint: Row(
+                               children:[Icon(
+                                    Icons.add_location_alt_sharp,
                                     color: isDarkMode
                                         ? Colors.white
                                         : const Color(0xFF256C4C),
+                                    size: 20,
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ),
+                                  const SizedBox(width: 8), 
+                                Text(
+                                 "Select Wilaya",
+                                 style: TextStyle(
+                                   color: isDarkMode
+                                       ? Colors.white
+                                       : const Color(0xFF256C4C),
+                                 ),
+                               )],
+                             ),
+                             dropdownStyleData: DropdownStyleData(
+                               maxHeight: 300,
+                               offset: const Offset(0, 0),
+                               width: MediaQuery.of(context).size.width -
+                                   100, // 50 padding left + right
+                               decoration: BoxDecoration(
+                                 color: isDarkMode
+                                     ? const Color.fromARGB(255, 30, 45, 38)
+                                     : Theme.of(context)
+                                         .colorScheme
+                                         .secondaryContainer,
+                                 borderRadius: BorderRadius.circular(12),
+                               ),
+                             ),
+                             buttonStyleData: const ButtonStyleData(
+                               height: 50,
+                               padding: EdgeInsets.symmetric(horizontal: 10),
+                             ),
+                             iconStyleData: IconStyleData(
+                               iconEnabledColor: isDarkMode
+                                   ? Colors.white
+                                   : const Color(0xFF256C4C),
+                               iconDisabledColor: isDarkMode
+                                   ? Colors.white
+                                   : const Color(0xFF256C4C),
+                             ),
+                             onChanged: (newValue) {
+                               setState(() {
+                                 _selectedWilaya = newValue;
+                                 _selectedDaira = null;
+                               });
+                               if (newValue != null) {
+                                 updateDairaList(newValue);
+                               }
+                             },
+                             selectedItemBuilder: (BuildContext context) {
+                               return ProductData.wilayas.keys
+                                   .map<Widget>((wilaya) {
+                                 return Align(
+                                   // 👈 Align instead of Center
+                                   alignment: Alignment
+                                       .centerLeft, // 👈 center vertically, left horizontally
+                                   child: Text(
+                                     getWilayaName(wilaya),
+                                     style: TextStyle(
+                                       color: isDarkMode
+                                           ? Colors.white
+                                           : const Color(0xFF256C4C),
+                                     ),
+                                   ),
+                                 );
+                               }).toList();
+                             },
+                             items: ProductData.wilayas.keys
+                                 .map<DropdownMenuItem<String>>((wilaya) {
+                               return DropdownMenuItem<String>(
+                                 value: wilaya,
+                                 child: Text(
+                                   wilaya,
+                                   style: TextStyle(
+                                     color: isDarkMode
+                                         ? Colors.white
+                                         : const Color(0xFF256C4C),
+                                   ),
+                                 ),
+                               );
+                             }).toList(),
+                           ),
+                         ),
+                       ),
+                     ),
+
                     const SizedBox(height: 16),
 
                     // Daira Dropdown
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? const Color.fromARGB(255, 39, 57, 48)
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            value: _selectedDaira,
-                            hint: Text(
-                              "Select Daira",
-                              style: TextStyle(
-                                color: isDarkMode
-                                    ? Colors.white
-                                    : const Color(0xFF256C4C),
-                              ),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              maxHeight: 300,
-                              offset: const Offset(0, 0),
-                              width: MediaQuery.of(context).size.width - 100,
-                              decoration: BoxDecoration(
-                                color: isDarkMode
-                                    ? const Color.fromARGB(255, 30, 45, 38)
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            buttonStyleData: const ButtonStyleData(
-                              height: 50,
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                            ),
-                            iconStyleData: IconStyleData(
-                              iconEnabledColor: isDarkMode
-                                  ? Colors.white
-                                  : const Color(0xFF256C4C),
-                              iconDisabledColor: isDarkMode
-                                  ? Colors.white
-                                  : const Color(0xFF256C4C),
-                            ),
-                            onChanged: (newValue) {
-                              setState(() {
-                                _selectedDaira = newValue;
-                              });
-                            },
-                            items: availableDairas
-                                .map<DropdownMenuItem<String>>((daira) {
-                              return DropdownMenuItem<String>(
-                                value: daira,
-                                child: Text(
-                                  daira,
-                                  style: TextStyle(
+                       padding: const EdgeInsets.symmetric(horizontal: 50),
+                       child: Container(
+                         decoration: BoxDecoration(
+                           color: isDarkMode
+                               ? const Color.fromARGB(255, 39, 57, 48)
+                               : Theme.of(context)
+                                   .colorScheme
+                                   .secondaryContainer,
+                           borderRadius: BorderRadius.circular(12),
+                         ),
+                         child: DropdownButtonHideUnderline(
+                           child: DropdownButton2<String>(
+                             isExpanded: true,
+                             value: _selectedDaira,
+                             hint: Row(
+                               children: [ Icon(
+                                    Icons.add_location_alt_sharp,
                                     color: isDarkMode
                                         ? Colors.white
                                         : const Color(0xFF256C4C),
+                                    size: 20,
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ),
+                                  const SizedBox(width: 8),Text(
+                                 "Select Daira",
+                                 style: TextStyle(
+                                   color: isDarkMode
+                                       ? Colors.white
+                                       : const Color(0xFF256C4C),
+                                 ),
+                               ),]
+                             ),
+                             dropdownStyleData: DropdownStyleData(
+                               maxHeight: 300,
+                               offset: const Offset(0, 0),
+                               width: MediaQuery.of(context).size.width - 100,
+                               decoration: BoxDecoration(
+                                 color: isDarkMode
+                                     ? const Color.fromARGB(255, 30, 45, 38)
+                                     : Theme.of(context)
+                                         .colorScheme
+                                         .secondaryContainer,
+                                 borderRadius: BorderRadius.circular(12),
+                               ),
+                             ),
+                             buttonStyleData: const ButtonStyleData(
+                               height: 50,
+                               padding: EdgeInsets.symmetric(horizontal: 10),
+                             ),
+                             iconStyleData: IconStyleData(
+                               iconEnabledColor: isDarkMode
+                                   ? Colors.white
+                                   : const Color(0xFF256C4C),
+                               iconDisabledColor: isDarkMode
+                                   ? Colors.white
+                                   : const Color(0xFF256C4C),
+                             ),
+                             onChanged: (newValue) {
+                               setState(() {
+                                 _selectedDaira = newValue;
+                               });
+                             },
+                             items: availableDairas
+                                 .map<DropdownMenuItem<String>>((daira) {
+                               return DropdownMenuItem<String>(
+                                 value: daira,
+                                 child: Text(
+                                   daira,
+                                   style: TextStyle(
+                                     color: isDarkMode
+                                         ? Colors.white
+                                         : const Color(0xFF256C4C),
+                                   ),
+                                 ),
+                               );
+                             }).toList(),
+                           ),
+                         ),
+                       ),
+                     ),
 
                     const SizedBox(height: 20),
 
@@ -341,8 +369,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   _phoneController.text.isEmpty ||
                                   _passwordController.text.isEmpty ||
                                   _confirmPasswordController.text.isEmpty ||
-                                  _selectedWilaya == null ||
-                                  _selectedDaira == null) {
+                                   _selectedWilaya == null ||
+                                   _selectedDaira == null) {
                                 if (_firstNameController.text.isEmpty) {
                                   firstNameError = "يرجى إدخال الاسم";
                                 }
@@ -361,67 +389,66 @@ class _SignUpPageState extends State<SignUpPage> {
                                 if (_confirmPasswordController.text.isEmpty) {
                                   confirmPasswordError =
                                       "يرجى تأكيد كلمة المرور";
-                                }
-                                if (_selectedWilaya == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Row(
-                                        children: [
-                                          Icon(Icons.error_outline,
-                                              color: Colors.black),
-                                          Expanded(
-                                            child: Text(
-                                              'يرجى اختيار الولاية',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      backgroundColor: const Color(0xFFFFCC31),
-                                      duration: const Duration(seconds: 4),
-                                      behavior: SnackBarBehavior
-                                          .floating, // this makes it float above nicely
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      margin: const EdgeInsets.all(16),
-                                    ),
-                                  );
-                                }
-                                if (_selectedDaira == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Row(
-                                        children: [
-                                          Icon(Icons.error_outline,
-                                              color: Colors.black),
-                                          Expanded(
-                                            child: Text(
-                                              'يرجى اختيار الدائرة',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      backgroundColor: const Color(0xFFFFCC31),
-                                      duration: const Duration(seconds: 4),
-                                      behavior: SnackBarBehavior
-                                          .floating, // this makes it float above nicely
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      margin: const EdgeInsets.all(16),
-                                    ),
-                                  );
-                                }
+                                }if (_selectedWilaya == null) {
+                                   ScaffoldMessenger.of(context).showSnackBar(
+                                     SnackBar(
+                                       content: const Row(
+                                         children: [
+                                           Icon(Icons.error_outline,
+                                               color: Colors.black),
+                                           Expanded(
+                                             child: Text(
+                                               'يرجى اختيار الولاية',
+                                               style: TextStyle(
+                                                 color: Colors.black,
+                                                 fontWeight: FontWeight.bold,
+                                                 fontSize: 20,
+                                               ),
+                                             ),
+                                           ),
+                                         ],
+                                       ),
+                                       backgroundColor: const Color(0xFFFFCC31),
+                                       duration: const Duration(seconds: 4),
+                                       behavior: SnackBarBehavior
+                                           .floating, // this makes it float above nicely
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(12),
+                                       ),
+                                       margin: const EdgeInsets.all(16),
+                                     ),
+                                   );
+                                 }
+                                 if (_selectedDaira == null) {
+                                   ScaffoldMessenger.of(context).showSnackBar(
+                                     SnackBar(
+                                       content: const Row(
+                                         children: [
+                                           Icon(Icons.error_outline,
+                                               color: Colors.black),
+                                           Expanded(
+                                             child: Text(
+                                               'يرجى اختيار الدائرة',
+                                               style: TextStyle(
+                                                 color: Colors.black,
+                                                 fontWeight: FontWeight.bold,
+                                                 fontSize: 20,
+                                               ),
+                                             ),
+                                           ),
+                                         ],
+                                       ),
+                                       backgroundColor: const Color(0xFFFFCC31),
+                                       duration: const Duration(seconds: 4),
+                                       behavior: SnackBarBehavior
+                                           .floating, // this makes it float above nicely
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(12),
+                                       ),
+                                       margin: const EdgeInsets.all(16),
+                                     ),
+                                   );
+                                 }
                                 return;
                               } else if (!user
                                   .isEmailValid(_emailController.text)) {
@@ -488,6 +515,7 @@ class _SignUpPageState extends State<SignUpPage> {
     required IconData icon,
     required String hintText,
     String? errorText,
+    required TextInputType? keyType,
   }) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
@@ -516,6 +544,13 @@ class _SignUpPageState extends State<SignUpPage> {
                       color:
                           isDarkMode ? Colors.white : const Color(0xFF256C4C)),
                   controller: controller,
+                  inputFormatters: hintText == "Phone Number"
+                      ? [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ]
+                      : null,
+                  keyboardType: keyType,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
