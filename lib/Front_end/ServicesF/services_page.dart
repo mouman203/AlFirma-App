@@ -1,11 +1,11 @@
 import 'dart:ui';
+import 'package:agriplant/Front_end/ServicesF/Consultation_page.dart';
+import 'package:agriplant/Front_end/ServicesF/Expertise_page.dart';
+import 'package:agriplant/Front_end/ServicesF/Hire_worker_page.dart';
+import 'package:agriplant/Front_end/ServicesF/Rent_page.dart';
+import 'package:agriplant/Front_end/ServicesF/Repairs_page.dart';
+import 'package:agriplant/Front_end/ServicesF/Transportation_page.dart';
 import 'package:flutter/material.dart';
-import 'package:agriplant/Front_end/Services/consultation_page.dart';
-import 'package:agriplant/Front_end/Services/expertise_page.dart';
-import 'package:agriplant/Front_end/Services/hire_worker_page.dart';
-import 'package:agriplant/Front_end/Services/Repairs_page.dart';
-import 'package:agriplant/Front_end/Services/rent_page.dart';
-import 'package:agriplant/Front_end/Services/transportation_page.dart';
 
 // Service model
 class PService {
@@ -59,7 +59,7 @@ class ServicesPage extends StatelessWidget {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.85,
-          crossAxisSpacing: 8,
+          crossAxisSpacing: 7,
           mainAxisSpacing: 7,
         ),
         itemBuilder: (context, index) {

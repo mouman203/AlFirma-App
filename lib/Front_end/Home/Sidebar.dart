@@ -1,5 +1,5 @@
-import 'package:agriplant/Front_end/settings.dart';
-import 'package:agriplant/Front_end/theme_provider.dart';
+import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
+import 'package:agriplant/Front_end/Providers/theme_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';

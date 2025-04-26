@@ -1,41 +1,45 @@
-import 'package:agriplant/Back_end/ExpertiseService.dart';
+import 'package:agriplant/Back_end/Products/ProductElev.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class AddProductExpert extends StatefulWidget {
-  const AddProductExpert({Key? key}) : super(key: key);
+class AddProductEleveur extends StatefulWidget {
+  const AddProductEleveur({Key? key}) : super(key: key);
 
   @override
-  State<AddProductExpert> createState() => _AddProductExpertState();
+  State<AddProductEleveur> createState() => _AddProductEleveurState();
 }
 
-class _AddProductExpertState extends State<AddProductExpert> {
+class _AddProductEleveurState extends State<AddProductEleveur> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers for input fields
 
   final TextEditingController imageController = TextEditingController();
+  final TextEditingController quantiteController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  File? _image;
+  String? selectedCategory;
+  String? selectedproduct;
+  String? selectedWilaya;
+  String? selectedDaira;
 
   bool _isLoading = false; // To show a loading indicator
 
   void _resetForm() {
     _formKey.currentState?.reset();
     imageController.clear();
+    quantiteController.clear();
     prixController.clear();
     descriptionController.clear();
     setState(() {
-      selectedCategorie = null;
+      selectedCategory = null;
       selectedWilaya = null;
       selectedDaira = null;
-      selectedTypeC = null;
+      selectedproduct = null; // Reset dropdown value
     });
   }
 
@@ -45,53 +49,48 @@ class _AddProductExpertState extends State<AddProductExpert> {
         _isLoading = true;
       });
       // Create a Product object
-      ExpertiseService newService = ExpertiseService(
-        id: "", // سيتم تعيينه تلقائيًا في Firestore
-        typeService: "Expertise",
-        categorie: selectedCategorie ?? '',
+      ProductElev newProduct = ProductElev(
+        id: UniqueKey().toString(), // أو استخدم UUID
+        name: selectedproduct ?? '', // أو أي اسم تختاره
+        typeProduct: "EleveurProduct", // أو أي اسم تختاره
         price: prixController.text.isNotEmpty
-            ? double.tryParse(prixController.text)!
+            ? double.tryParse(prixController.text) ?? 0.0
             : 0.0,
         description: descriptionController.text,
         rate: 0,
-        ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
+        ownerId: FirebaseAuth.instance.currentUser?.uid,
         comments: [],
-        photos: uploadedPhotos, // ✅ استخدام رابط الصورة هنا
+        photos: uploadedPhotos, // قائمة روابط الصور من Firebase Storage
         liked: [],
         disliked: [],
         date_of_add: DateTime.now(),
-        wilaya: selectedWilaya,
-        daira: selectedDaira,
-        TypeC: selectedTypeC,
+        category: selectedCategory,
+        quantite: quantiteController.text.isNotEmpty
+            ? double.tryParse(quantiteController.text)
+            : null,
+        wilaya: selectedWilaya!,
+        daira: selectedDaira!,
       );
+      // Add to Firestore
+      await newProduct.addProduct(newProduct);
 
-      await newService.addExpertiseService(newService);
+      // Show success message
+      _showSuccessDialog(context);
 
-      _showSuccessDialog();
+      // Clear the form
       _resetForm();
-      setState(() => _isLoading = false);
+
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
-  Future<String?> uploadImageToFirebase(File imageFile) async {
-    try {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference ref =
-          FirebaseStorage.instance.ref().child('service_image/$fileName');
-
-      UploadTask uploadTask = ref.putFile(imageFile);
-      TaskSnapshot snapshot = await uploadTask;
-
-      String downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
-    } catch (e) {
-      print('❌ فشل في رفع الصورة: $e');
-      return null;
-    }
-  }
+  //produit elevage
 
   List<XFile> _selectedImages = [];
   List<String> uploadedPhotos = [];
+
   Future<void> _pickImages() async {
     final List<XFile> images = await ImagePicker().pickMultiImage();
 
@@ -104,7 +103,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
       for (var image in _selectedImages) {
         String fileName = DateTime.now().millisecondsSinceEpoch.toString();
         final storageRef =
-            FirebaseStorage.instance.ref().child('service_image/$fileName');
+            FirebaseStorage.instance.ref().child('product_images/$fileName');
 
         try {
           await storageRef.putFile(File(image.path));
@@ -117,60 +116,29 @@ class _AddProductExpertState extends State<AddProductExpert> {
     }
   }
 
-  void _showSuccessDialog() {
+  void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Success"),
-        content: const Text("Added Successfully! ✅"),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context), child: const Text("OK")),
-        ],
-      ),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Success"),
+          content: const Text("Added Successfully! ✅"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
-
-  final Map<String, List<String>> categories = {
-    "استشارات الزراعة": [
-      "استشارات في الزراعة العضوية",
-      "استشارات في الزراعة المستدامة",
-      "تحليل التربة",
-      "تحليل المياه",
-    ],
-    "خدمات التوعية والتدريب": [
-      " حول تقنيات الزراعة الحديثة",
-      "ورش العمل الزراعية",
-    ],
-    "التكنولوجيا الزراعية": [
-      "استشارات في استخدام التكنولوجيا الزراعية",
-      "تطبيقات الزراعة الذكية "
-    ],
-    "خدمات توجيهية للمزارعين": [
-      "خطط الزراعة الخاصة بالمزارع",
-      "إدارة المحاصيل بشكل فعال",
-    ],
-    "مراقبة صحة النباتات والحيوانات": [
-      "مراقبة الأمراض والآفات الزراعية",
-      "الوقاية والتغذية المناسبة للمحاصيل ",
-    ],
-    "الاستشارات المالية والإدارية": [
-      "استشارات في التمويل الزراعي",
-      "استشارات في إدارة المزارع",
-    ],
-  };
-
-  String? selectedCategorie;
-  String? selectedTypeC;
-
-  String? selectedWilaya;
-  String? selectedDaira;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Agricultural Expert 🌱👨‍🌾"),
+        title: const Text("Produit Elevage 🐏"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context), // Back button functionality
@@ -185,69 +153,80 @@ class _AddProductExpertState extends State<AddProductExpert> {
               GestureDetector(
                 onTap: _pickImages,
                 child: Container(
-                  width: double.infinity,
                   height: 180,
+                  width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.green.shade50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green.shade700),
+                    border: Border.all(color: Colors.green),
+                    color: Colors.green.shade50,
                   ),
-                  child: _image == null
+                  child: _selectedImages.isEmpty
                       ? const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.camera_alt,
-                                size: 50,
-                                color: Colors.grey,
-                              ),
+                              Icon(Icons.photo_library,
+                                  size: 50, color: Colors.grey),
                               SizedBox(height: 8),
-                              Text(
-                                "Appuyez pour ajouter une photo",
-                                style: TextStyle(color: Colors.grey),
-                              ),
+                              Text("Tap to select images",
+                                  style: TextStyle(color: Colors.grey)),
                             ],
                           ),
                         )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            _image!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _selectedImages.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.file(
+                                File(_selectedImages[index].path),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
                         ),
                 ),
               ),
+
               const SizedBox(height: 15),
 
               //category
               ProductData.buildDropdown(
-                selectedValue: selectedCategorie,
-                items: categories.keys.toList(),
-                label: 'category',
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategorie = value;
-                    selectedTypeC = null;
-                  });
-                },
-              ),
-            
-              //Produit
-              if (selectedCategorie != null)
-                ProductData.buildDropdown(
-                  selectedValue: selectedTypeC,
-                  items: categories[selectedCategorie]!,
-                  label: 'type',
+                  selectedValue: selectedCategory,
+                  items: ProductData.produitsElevages.keys.toList(),
+                  label: "Category",
                   onChanged: (value) {
                     setState(() {
-                      selectedTypeC = value;
+                      selectedCategory = value;
+                      selectedproduct = null;
                     });
-                  },
-                ),
-           
+                  }),
+
+              //Produit
+              if (selectedCategory != null)
+                ProductData.buildDropdown(
+                    selectedValue: selectedproduct,
+                    items: ProductData.produitsElevages[selectedCategory]!,
+                    label: 'product',
+                    onChanged: (value) {
+                      setState(() {
+                        selectedproduct = value;
+                      });
+                    }),
+
+              //quantity
+              ProductData.buildTextField(
+                controller: quantiteController,
+                hintText: "الكمية",
+                icon: Icons.scale,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  return null;
+                },
+              ),
 
               //prix
               ProductData.buildTextField(
@@ -259,13 +238,12 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   return null;
                 },
               ),
-           
 
               //wilaya selection
               ProductData.buildDropdown(
                 selectedValue: selectedWilaya,
                 items: ProductData.wilayas.keys.toList(),
-                label: 'wilaya',
+                label: "Wilaya",
                 onChanged: (value) {
                   setState(() {
                     selectedWilaya = value;
@@ -273,20 +251,19 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   });
                 },
               ),
-          
 
               if (selectedWilaya != null)
                 ProductData.buildDropdown(
-                  selectedValue: selectedDaira,
-                  items: ProductData.wilayas[selectedWilaya]!,
-                  label: "Daira",
-                  onChanged: (value) {
-                    setState(() {
-                      selectedDaira = value;
-                    });
-                  },
-                ),
-            
+                    selectedValue: selectedDaira,
+                    items: ProductData.wilayas[selectedWilaya]!,
+                    label: "Daïra",
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDaira = value;
+                      });
+                    }),
+
+              //description
               ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
@@ -296,7 +273,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   return null;
                 },
               ),
-            
+
               SizedBox(
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields

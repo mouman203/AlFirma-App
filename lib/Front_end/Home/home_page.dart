@@ -1,20 +1,20 @@
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Client.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Expert.dart';
-import 'package:agriplant/Front_end/Sidebar.dart';
-import 'package:agriplant/Front_end/explore_page.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Client.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Expert.dart';
+import 'package:agriplant/Front_end/Home/Sidebar.dart';
+import 'package:agriplant/Front_end/Home/explore_page.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
-import 'package:agriplant/Front_end/profile_page.dart';
-import 'package:agriplant/Front_end/Services/services_page.dart';
+import 'package:agriplant/Front_end/Profile/profile_page.dart';
+import 'package:agriplant/Front_end/ServicesF/services_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Agriculteur.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Eleveur.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Reparateur.dart';
-import 'package:agriplant/Front_end/Add%20products%20pages/Add_Product_Transporteur.dart';
-import 'package:agriplant/Front_end/user_type_handler.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Agriculteur.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Eleveur.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Reparateur.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Transporteur.dart';
+import 'package:agriplant/Front_end/Home/user_type_handler.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

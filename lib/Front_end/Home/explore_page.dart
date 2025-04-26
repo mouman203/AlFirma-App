@@ -1,6 +1,6 @@
-import 'package:agriplant/Back_end/Product.dart';
-import 'package:agriplant/Back_end/ProductAgri.dart';
-import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/Back_end/Products/Product.dart';
+import 'package:agriplant/Back_end/Products/ProductAgri.dart';
+import 'package:agriplant/Back_end/Products/ProductElev.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Filter/filter_bottom_sheet.dart';
 import 'package:agriplant/Search/SearchHistoryManager%20.dart';

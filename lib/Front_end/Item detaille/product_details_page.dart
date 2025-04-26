@@ -1,10 +1,10 @@
-import 'package:agriplant/Back_end/Product.dart';
-import 'package:agriplant/Back_end/ProductAgri.dart';
-import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/Back_end/Products/Product.dart';
+import 'package:agriplant/Back_end/Products/ProductAgri.dart';
+import 'package:agriplant/Back_end/Products/ProductElev.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Front_end/Item%20detaille/fullscreanimage.dart';
-import 'package:agriplant/Front_end/userprofilepage.dart';
+import 'package:agriplant/Front_end/Profile/userprofilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';

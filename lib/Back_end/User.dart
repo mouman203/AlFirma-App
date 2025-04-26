@@ -1,8 +1,9 @@
-import 'package:agriplant/Back_end/Product.dart';
-import 'package:agriplant/Back_end/ProductAgri.dart';
-import 'package:agriplant/Back_end/ProductElev.dart';
-import 'package:agriplant/Back_end/Service.dart';
-import 'package:agriplant/Front_end/LoginPage.dart';
+import 'package:agriplant/Back_end/Products/Product.dart';
+import 'package:agriplant/Back_end/Products/ProductAgri.dart';
+import 'package:agriplant/Back_end/Products/ProductElev.dart';
+import 'package:agriplant/Back_end/ServicesB/Service.dart';
+import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
+import 'package:agriplant/Front_end/Authentication/ProfilePicturePage.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -240,7 +241,6 @@ class Users {
     required String wilaya,
     required String daira,
     required bool verify,
-    required Widget destPage,
   }) async {
     if (!checkInfo_signup(context, first_name, last_name, phone, email, verify,
         password, confirmationpassword)) {
@@ -287,18 +287,15 @@ class Users {
           'daira':daira,
         });
         print('User registered successfully');
-        Navigator.pop(context); // إغلاق مؤشر التحميل
-        // ✅ التوجيه إلى الصفحة المقصودة
-        Navigator.of(context).pushNamed("login_page");
-        AwesomeDialog(
-                context: context,
-                dialogType: DialogType.info,
-                animType: AnimType.scale,
-                title: 'Noiiiiice',
-                desc:
-                    'know you are one of us .. \n last step : plz go to verify your e-mail')
-            .show();
-        print("Verification E-mail sent successfully");
+         Navigator.pop(context);
+
+      // ✅ Navigate to the profile picture page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ProfilePicturePage(userId: uid),
+        ),
+      );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

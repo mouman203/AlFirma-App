@@ -1,4 +1,4 @@
-import 'package:agriplant/Front_end/settings.dart';
+import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

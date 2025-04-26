@@ -1,10 +1,10 @@
-import 'package:agriplant/Back_end/ExpertiseService.dart';
-import 'package:agriplant/Back_end/ProductAgri.dart';
-import 'package:agriplant/Back_end/ProductElev.dart';
-import 'package:agriplant/Back_end/RepairService.dart';
-import 'package:agriplant/Back_end/TransportService.dart';
-import 'package:agriplant/Front_end/Edit_profile_page.dart';
-import 'package:agriplant/Front_end/settings.dart';
+import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
+import 'package:agriplant/Back_end/Products/ProductAgri.dart';
+import 'package:agriplant/Back_end/Products/ProductElev.dart';
+import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
+import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
+import 'package:agriplant/Front_end/Profile/Edit_profile_page.dart';
+import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

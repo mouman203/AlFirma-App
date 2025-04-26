@@ -1,12 +1,12 @@
-import 'package:agriplant/Front_end/Security_page.dart';
+import 'package:agriplant/Front_end/Profile/Settings/Security_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:agriplant/Front_end/theme_provider.dart';
-import 'package:agriplant/Front_end/language_provider.dart';
-import 'package:agriplant/Front_end/Contact_us_page.dart';
+import 'package:agriplant/Front_end/Providers/theme_provider.dart';
+import 'package:agriplant/Front_end/Providers/language_provider.dart';
+import 'package:agriplant/Front_end/Profile/Settings/Contact_us_page.dart';
 import 'package:app_settings/app_settings.dart';
 
 class SettingsPage extends StatefulWidget {

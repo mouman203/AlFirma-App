@@ -1,19 +1,20 @@
-import 'package:agriplant/Back_end/RepairService.dart';
+import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class AddProductReparateur extends StatefulWidget {
-  const AddProductReparateur({Key? key}) : super(key: key);
+class AddProductExpert extends StatefulWidget {
+  const AddProductExpert({Key? key}) : super(key: key);
 
   @override
-  State<AddProductReparateur> createState() => _AddProductReparateurState();
+  State<AddProductExpert> createState() => _AddProductExpertState();
 }
 
-class _AddProductReparateurState extends State<AddProductReparateur> {
+class _AddProductExpertState extends State<AddProductExpert> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers for input fields
@@ -33,7 +34,8 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
     setState(() {
       selectedCategorie = null;
       selectedWilaya = null;
-      selectedDaira = null; // Reset dropdown value
+      selectedDaira = null;
+      selectedTypeC = null;
     });
   }
 
@@ -43,9 +45,9 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
         _isLoading = true;
       });
       // Create a Product object
-      RepairService newService = RepairService(
+      ExpertiseService newService = ExpertiseService(
         id: "", // سيتم تعيينه تلقائيًا في Firestore
-        typeService: "Repairs",
+        typeService: "Expertise",
         categorie: selectedCategorie ?? '',
         price: prixController.text.isNotEmpty
             ? double.tryParse(prixController.text)!
@@ -60,9 +62,10 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
         date_of_add: DateTime.now(),
         wilaya: selectedWilaya,
         daira: selectedDaira,
+        TypeC: selectedTypeC,
       );
 
-      await newService.addRepairService(newService);
+      await newService.addExpertiseService(newService);
 
       _showSuccessDialog();
       _resetForm();
@@ -128,15 +131,37 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
     );
   }
 
-  // Types of repair services
+  final Map<String, List<String>> categories = {
+    "استشارات الزراعة": [
+      "استشارات في الزراعة العضوية",
+      "استشارات في الزراعة المستدامة",
+      "تحليل التربة",
+      "تحليل المياه",
+    ],
+    "خدمات التوعية والتدريب": [
+      " حول تقنيات الزراعة الحديثة",
+      "ورش العمل الزراعية",
+    ],
+    "التكنولوجيا الزراعية": [
+      "استشارات في استخدام التكنولوجيا الزراعية",
+      "تطبيقات الزراعة الذكية "
+    ],
+    "خدمات توجيهية للمزارعين": [
+      "خطط الزراعة الخاصة بالمزارع",
+      "إدارة المحاصيل بشكل فعال",
+    ],
+    "مراقبة صحة النباتات والحيوانات": [
+      "مراقبة الأمراض والآفات الزراعية",
+      "الوقاية والتغذية المناسبة للمحاصيل ",
+    ],
+    "الاستشارات المالية والإدارية": [
+      "استشارات في التمويل الزراعي",
+      "استشارات في إدارة المزارع",
+    ],
+  };
+
   String? selectedCategorie;
-  final List<String> categories = [
-    "إصلاح المعدات الزراعية",
-    "إصلاح الآلات الثقيلة",
-    "إصلاح أنظمة الري",
-    "صيانة المنشآت",
-    "إصلاح المعدات الكهربائية"
-  ];
+  String? selectedTypeC;
 
   String? selectedWilaya;
   String? selectedDaira;
@@ -145,7 +170,7 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Réparation 🛠️"),
+        title: const Text("Agricultural Expert 🌱👨‍🌾"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context), // Back button functionality
@@ -199,14 +224,29 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
 
               //category
               ProductData.buildDropdown(
-                  selectedValue: selectedCategorie,
-                  items: categories,
-                  label: "category",
+                selectedValue: selectedCategorie,
+                items: categories.keys.toList(),
+                label: 'category',
+                onChanged: (value) {
+                  setState(() {
+                    selectedCategorie = value;
+                    selectedTypeC = null;
+                  });
+                },
+              ),
+            
+              //Produit
+              if (selectedCategorie != null)
+                ProductData.buildDropdown(
+                  selectedValue: selectedTypeC,
+                  items: categories[selectedCategorie]!,
+                  label: 'type',
                   onChanged: (value) {
                     setState(() {
-                      selectedCategorie = value;
+                      selectedTypeC = value;
                     });
-                  }),
+                  },
+                ),
            
 
               //prix
@@ -220,17 +260,19 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
                 },
               ),
            
+
               //wilaya selection
               ProductData.buildDropdown(
-                  selectedValue: selectedWilaya,
-                  items: ProductData.wilayas.keys.toList(),
-                  label: "Wilaya",
-                  onChanged: (value) {
-                    setState(() {
-                      selectedWilaya = value;
-                      selectedDaira = null;
-                    });
-                  }),
+                selectedValue: selectedWilaya,
+                items: ProductData.wilayas.keys.toList(),
+                label: 'wilaya',
+                onChanged: (value) {
+                  setState(() {
+                    selectedWilaya = value;
+                    selectedDaira = null;
+                  });
+                },
+              ),
           
 
               if (selectedWilaya != null)
@@ -244,7 +286,7 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
                     });
                   },
                 ),
-         
+            
               ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",

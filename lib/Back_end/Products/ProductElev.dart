@@ -1,4 +1,4 @@
-import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/Products/Product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductElev extends Product {

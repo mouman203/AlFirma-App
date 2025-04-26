@@ -1,4 +1,4 @@
-import 'package:agriplant/Back_end/ProductAgri.dart';
+import 'package:agriplant/Back_end/Products/ProductAgri.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';

@@ -1,10 +1,10 @@
-import 'package:agriplant/Back_end/ExpertiseService.dart';
-import 'package:agriplant/Back_end/RepairService.dart';
-import 'package:agriplant/Back_end/TransportService.dart';
+import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
+import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
+import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Front_end/Item%20detaille/fullscreanimage.dart';
-import 'package:agriplant/Front_end/userprofilepage.dart';
+import 'package:agriplant/Front_end/Profile/userprofilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
-import '../../Back_end/Service.dart';
+import '../../Back_end/ServicesB/Service.dart';
 
 class ServiceDetailsPage extends StatefulWidget {
   final Service service;

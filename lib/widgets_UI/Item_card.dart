@@ -1,9 +1,9 @@
-import 'package:agriplant/Back_end/Product.dart';
-import 'package:agriplant/Back_end/ProductAgri.dart';
-import 'package:agriplant/Back_end/ProductElev.dart';
-import 'package:agriplant/Back_end/Service.dart';
-import 'package:agriplant/Back_end/ExpertiseService.dart';
-import 'package:agriplant/Back_end/TransportService.dart';
+import 'package:agriplant/Back_end/Products/Product.dart';
+import 'package:agriplant/Back_end/Products/ProductAgri.dart';
+import 'package:agriplant/Back_end/Products/ProductElev.dart';
+import 'package:agriplant/Back_end/ServicesB/Service.dart';
+import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
+import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Item%20detaille/product_details_page.dart';
 import 'package:agriplant/Front_end/Item%20detaille/service_details_page.dart';

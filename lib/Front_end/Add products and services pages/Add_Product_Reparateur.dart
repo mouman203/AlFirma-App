@@ -1,4 +1,4 @@
-import 'package:agriplant/Back_end/ProductElev.dart';
+import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,40 +6,34 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class AddProductEleveur extends StatefulWidget {
-  const AddProductEleveur({Key? key}) : super(key: key);
+class AddProductReparateur extends StatefulWidget {
+  const AddProductReparateur({Key? key}) : super(key: key);
 
   @override
-  State<AddProductEleveur> createState() => _AddProductEleveurState();
+  State<AddProductReparateur> createState() => _AddProductReparateurState();
 }
 
-class _AddProductEleveurState extends State<AddProductEleveur> {
+class _AddProductReparateurState extends State<AddProductReparateur> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers for input fields
 
   final TextEditingController imageController = TextEditingController();
-  final TextEditingController quantiteController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  String? selectedCategory;
-  String? selectedproduct;
-  String? selectedWilaya;
-  String? selectedDaira;
+  File? _image;
 
   bool _isLoading = false; // To show a loading indicator
 
   void _resetForm() {
     _formKey.currentState?.reset();
     imageController.clear();
-    quantiteController.clear();
     prixController.clear();
     descriptionController.clear();
     setState(() {
-      selectedCategory = null;
+      selectedCategorie = null;
       selectedWilaya = null;
-      selectedDaira = null;
-      selectedproduct = null; // Reset dropdown value
+      selectedDaira = null; // Reset dropdown value
     });
   }
 
@@ -49,48 +43,52 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
         _isLoading = true;
       });
       // Create a Product object
-      ProductElev newProduct = ProductElev(
-        id: UniqueKey().toString(), // أو استخدم UUID
-        name: selectedproduct ?? '', // أو أي اسم تختاره
-        typeProduct: "EleveurProduct", // أو أي اسم تختاره
+      RepairService newService = RepairService(
+        id: "", // سيتم تعيينه تلقائيًا في Firestore
+        typeService: "Repairs",
+        categorie: selectedCategorie ?? '',
         price: prixController.text.isNotEmpty
-            ? double.tryParse(prixController.text) ?? 0.0
+            ? double.tryParse(prixController.text)!
             : 0.0,
         description: descriptionController.text,
         rate: 0,
-        ownerId: FirebaseAuth.instance.currentUser?.uid,
+        ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
         comments: [],
-        photos: uploadedPhotos, // قائمة روابط الصور من Firebase Storage
+        photos: uploadedPhotos, // ✅ استخدام رابط الصورة هنا
         liked: [],
         disliked: [],
         date_of_add: DateTime.now(),
-        category: selectedCategory,
-        quantite: quantiteController.text.isNotEmpty
-            ? double.tryParse(quantiteController.text)
-            : null,
-        wilaya: selectedWilaya!,
-        daira: selectedDaira!,
+        wilaya: selectedWilaya,
+        daira: selectedDaira,
       );
-      // Add to Firestore
-      await newProduct.addProduct(newProduct);
 
-      // Show success message
-      _showSuccessDialog(context);
+      await newService.addRepairService(newService);
 
-      // Clear the form
+      _showSuccessDialog();
       _resetForm();
-
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
-  //produit elevage
+  Future<String?> uploadImageToFirebase(File imageFile) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference ref =
+          FirebaseStorage.instance.ref().child('service_image/$fileName');
+
+      UploadTask uploadTask = ref.putFile(imageFile);
+      TaskSnapshot snapshot = await uploadTask;
+
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('❌ فشل في رفع الصورة: $e');
+      return null;
+    }
+  }
 
   List<XFile> _selectedImages = [];
   List<String> uploadedPhotos = [];
-
   Future<void> _pickImages() async {
     final List<XFile> images = await ImagePicker().pickMultiImage();
 
@@ -103,7 +101,7 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
       for (var image in _selectedImages) {
         String fileName = DateTime.now().millisecondsSinceEpoch.toString();
         final storageRef =
-            FirebaseStorage.instance.ref().child('product_images/$fileName');
+            FirebaseStorage.instance.ref().child('service_image/$fileName');
 
         try {
           await storageRef.putFile(File(image.path));
@@ -116,29 +114,38 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
     }
   }
 
-  void _showSuccessDialog(BuildContext context) {
+  void _showSuccessDialog() {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Success"),
-          content: const Text("Added Successfully! ✅"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        title: const Text("Success"),
+        content: const Text("Added Successfully! ✅"),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text("OK")),
+        ],
+      ),
     );
   }
+
+  // Types of repair services
+  String? selectedCategorie;
+  final List<String> categories = [
+    "إصلاح المعدات الزراعية",
+    "إصلاح الآلات الثقيلة",
+    "إصلاح أنظمة الري",
+    "صيانة المنشآت",
+    "إصلاح المعدات الكهربائية"
+  ];
+
+  String? selectedWilaya;
+  String? selectedDaira;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Produit Elevage 🐏"),
+        title: const Text("Réparation 🛠️"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context), // Back button functionality
@@ -153,80 +160,54 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
               GestureDetector(
                 onTap: _pickImages,
                 child: Container(
-                  height: 180,
                   width: double.infinity,
+                  height: 180,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green),
                     color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.shade700),
                   ),
-                  child: _selectedImages.isEmpty
+                  child: _image == null
                       ? const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.photo_library,
-                                  size: 50, color: Colors.grey),
+                              Icon(
+                                Icons.camera_alt,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
                               SizedBox(height: 8),
-                              Text("Tap to select images",
-                                  style: TextStyle(color: Colors.grey)),
+                              Text(
+                                "Appuyez pour ajouter une photo",
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ],
                           ),
                         )
-                      : ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _selectedImages.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image.file(
-                                File(_selectedImages[index].path),
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            );
-                          },
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            _image!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
                         ),
                 ),
               ),
-
               const SizedBox(height: 15),
 
               //category
               ProductData.buildDropdown(
-                  selectedValue: selectedCategory,
-                  items: ProductData.produitsElevages.keys.toList(),
-                  label: "Category",
+                  selectedValue: selectedCategorie,
+                  items: categories,
+                  label: "category",
                   onChanged: (value) {
                     setState(() {
-                      selectedCategory = value;
-                      selectedproduct = null;
+                      selectedCategorie = value;
                     });
                   }),
-
-              //Produit
-              if (selectedCategory != null)
-                ProductData.buildDropdown(
-                    selectedValue: selectedproduct,
-                    items: ProductData.produitsElevages[selectedCategory]!,
-                    label: 'product',
-                    onChanged: (value) {
-                      setState(() {
-                        selectedproduct = value;
-                      });
-                    }),
-
-              //quantity
-              ProductData.buildTextField(
-                controller: quantiteController,
-                hintText: "الكمية",
-                icon: Icons.scale,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  return null;
-                },
-              ),
+           
 
               //prix
               ProductData.buildTextField(
@@ -238,32 +219,32 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
                   return null;
                 },
               ),
-
+           
               //wilaya selection
               ProductData.buildDropdown(
-                selectedValue: selectedWilaya,
-                items: ProductData.wilayas.keys.toList(),
-                label: "Wilaya",
-                onChanged: (value) {
-                  setState(() {
-                    selectedWilaya = value;
-                    selectedDaira = null;
-                  });
-                },
-              ),
+                  selectedValue: selectedWilaya,
+                  items: ProductData.wilayas.keys.toList(),
+                  label: "Wilaya",
+                  onChanged: (value) {
+                    setState(() {
+                      selectedWilaya = value;
+                      selectedDaira = null;
+                    });
+                  }),
+          
 
               if (selectedWilaya != null)
                 ProductData.buildDropdown(
-                    selectedValue: selectedDaira,
-                    items: ProductData.wilayas[selectedWilaya]!,
-                    label: "Daïra",
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDaira = value;
-                      });
-                    }),
-
-              //description
+                  selectedValue: selectedDaira,
+                  items: ProductData.wilayas[selectedWilaya]!,
+                  label: "Daira",
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDaira = value;
+                    });
+                  },
+                ),
+         
               ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
@@ -273,7 +254,7 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
                   return null;
                 },
               ),
-
+            
               SizedBox(
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields
