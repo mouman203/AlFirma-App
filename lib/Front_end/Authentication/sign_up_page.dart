@@ -325,7 +325,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         });
                       },
                     ),
-                    const SizedBox(height: 70),
+                    const SizedBox(height: 50),
 
                     // Sign up button
                     Padding(
@@ -340,7 +340,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                   _emailController.text.isEmpty ||
                                   _phoneController.text.isEmpty ||
                                   _passwordController.text.isEmpty ||
-                                  _confirmPasswordController.text.isEmpty) {
+                                  _confirmPasswordController.text.isEmpty ||
+                                  _selectedWilaya == null ||
+                                  _selectedDaira == null) {
                                 if (_firstNameController.text.isEmpty) {
                                   firstNameError = "يرجى إدخال الاسم";
                                 }
@@ -359,6 +361,66 @@ class _SignUpPageState extends State<SignUpPage> {
                                 if (_confirmPasswordController.text.isEmpty) {
                                   confirmPasswordError =
                                       "يرجى تأكيد كلمة المرور";
+                                }
+                                if (_selectedWilaya == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Row(
+                                        children: [
+                                          Icon(Icons.error_outline,
+                                              color: Colors.black),
+                                          Expanded(
+                                            child: Text(
+                                              'يرجى اختيار الولاية',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      backgroundColor: const Color(0xFFFFCC31),
+                                      duration: const Duration(seconds: 4),
+                                      behavior: SnackBarBehavior
+                                          .floating, // this makes it float above nicely
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      margin: const EdgeInsets.all(16),
+                                    ),
+                                  );
+                                }
+                                if (_selectedDaira == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Row(
+                                        children: [
+                                          Icon(Icons.error_outline,
+                                              color: Colors.black),
+                                          Expanded(
+                                            child: Text(
+                                              'يرجى اختيار الدائرة',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      backgroundColor: const Color(0xFFFFCC31),
+                                      duration: const Duration(seconds: 4),
+                                      behavior: SnackBarBehavior
+                                          .floating, // this makes it float above nicely
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      margin: const EdgeInsets.all(16),
+                                    ),
+                                  );
                                 }
                                 return;
                               } else if (!user
@@ -403,7 +465,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           child: Text("Sign Up",
                               style: GoogleFonts.roboto(
-                                  fontSize: 18,
+                                  fontSize: 20,
                                   color: isDarkMode
                                       ? Colors.black
                                       : Colors.white)),
