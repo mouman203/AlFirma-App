@@ -238,6 +238,7 @@ class Users {
     required String password,
     required String confirmationpassword,
     required String wilaya,
+    required String daira,
     required bool verify,
     required Widget destPage,
   }) async {
@@ -282,6 +283,8 @@ class Users {
           'activeType': 'Client',
           'createdAt': FieldValue.serverTimestamp(),
           'Verify': verify,
+          'wilaya':wilaya,
+          'daira':daira,
         });
         print('User registered successfully');
         Navigator.pop(context); // إغلاق مؤشر التحميل

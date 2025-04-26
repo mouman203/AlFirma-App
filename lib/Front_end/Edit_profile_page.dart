@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:agriplant/data/ProductData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,12 +20,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String userId = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _PhoneNumController = TextEditingController();
 
   String? firstNameError;
   String? lastNameError;
+  String? phoneNumError;
+
+  String? selectedWilaya;
+  String? selectedDaira;
 
   String? _currentFirstName;
   String? _currentLastName;
+  String? _currentPhoneNum;
+  String? _currentWilaya;
+  String? _currentDaira;
 
   @override
   void initState() {
@@ -40,10 +50,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         _currentFirstName = userDoc["first_name"] ?? '';
         _currentLastName = userDoc["last_name"] ?? '';
+        _currentWilaya = userDoc["wilaya"] ?? '';
+        _currentDaira = userDoc["daira"] ?? '';
+        _currentPhoneNum = userDoc["phone"] ?? '';
         _currentImage = userDoc["photo"];
 
         _firstNameController.text = _currentFirstName!;
         _lastNameController.text = _currentLastName!;
+        _PhoneNumController.text = _currentPhoneNum!;
+        selectedWilaya = _currentWilaya;
+        selectedDaira = _currentDaira;
       });
     }
   }
@@ -51,10 +67,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? _selectedImageFile;
   String? _currentImage;
   bool isLoading = false;
+  final ImagePicker picker = ImagePicker();
 
-  //to pick
-  Future<void> pickImage() async {
-    final ImagePicker picker = ImagePicker();
+  //to pick from gallery
+  Future<void> pickImageGallery() async {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image == null) return;
@@ -62,6 +78,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       _selectedImageFile = File(image.path); // 👈 show the image in your UI
     });
+  }
+
+  //tp pick from camera
+  Future<void> pickImageCamera() async {
+    final image = await picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _selectedImageFile = File(image.path);
+      });
+      Navigator.pop(context); // Close dialog
+    }
   }
 
 //to upload
@@ -90,55 +118,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-/*
-  Future<void> pickAndUploadImage() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-
-      setState(() => isLoading = true);
-      setState(() {
-        _selectedImageFile = File(image.path); // 👈 show image
-        isLoading = true;
-      });
-
-      File imageFile = File(image.path);
-      String imagePath = 'Profile_Pic/image_${Random().nextInt(100000)}.jpg';
-
-      // Upload to Firebase Storage
-      final ref = FirebaseStorage.instance.ref().child(imagePath);
-      await ref.putFile(imageFile);
-
-      // Get download URL
-      final imageUrl = await ref.getDownloadURL();
-
-      // Save URL & location to Firestore
-      await FirebaseFirestore.instance.collection('Users').doc(userId).update({
-        'location': imagePath,
-        'photo': imageUrl,
-      });
-
-      /*ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Upload complete!")),
-      );*/
-    } catch (e) {
-      print("Upload error: $e");
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text("Error"),
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-*/
   // Validation method
   bool validateFields() {
+    if (_PhoneNumController.text.length != 10) {
+      setState(() {
+        phoneNumError = "Phone number must be exactly 10 digits";
+      });
+    } else {
+      setState(() {
+        phoneNumError = null;
+      });
+      // proceed with submission
+    }
+
     setState(() {
       firstNameError = _firstNameController.text.isEmpty
           ? 'First Name cannot be empty'
@@ -152,14 +144,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _updateProfile() async {
     if (_firstNameController.text != _currentFirstName ||
         _lastNameController.text != _currentLastName ||
-        _selectedImageFile != null) {
+        _PhoneNumController.text != _currentPhoneNum ||
+        selectedWilaya != _currentWilaya ||
+        selectedDaira != _currentDaira ||
+        _selectedImageFile != _currentImage) {
       // Only update if there are changes
       await FirebaseFirestore.instance.collection('Users').doc(userId).update({
         'first_name': _firstNameController.text,
         'last_name': _lastNameController.text,
+        'phone': _PhoneNumController.text,
+        'wilaya': selectedWilaya,
+        'daira': selectedDaira
       });
-
-      uploadImage(_selectedImageFile!);
+      if (_selectedImageFile != null) {
+        uploadImage(_selectedImageFile!);
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
@@ -169,6 +168,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const SnackBar(content: Text('No changes detected')),
       );
     }
+  }
+
+  Future<void> showPopUp() async {
+    showDialog(
+      context: context,
+      builder: (_) => SafeArea(
+        child: AlertDialog(
+          title: const Text('اختيار صورة'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('اختيار من المعرض'),
+                onTap: () async {
+                  pickImageGallery();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('التقاط صورة بالكاميرا'),
+                onTap: () async {
+                  pickImageCamera();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -186,27 +215,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
       body: ListView(
         children: [
           GestureDetector(
-            onTap: () => pickImage(),
+            onTap: () => showPopUp(),
             child: Padding(
               padding: const EdgeInsets.only(top: 54, bottom: 16),
               child: isLoading
                   ? const CircularProgressIndicator()
                   : CircleAvatar(
-                      radius: 90,
-                      backgroundColor:
-                          isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                      backgroundImage: _selectedImageFile != null
-                          ? FileImage(_selectedImageFile!) as ImageProvider
-                          : (_currentImage != null
-                              ? NetworkImage(_currentImage!)
-                              : null),
-                      child: _selectedImageFile == null
-                          ? const Icon(Icons.camera_alt,
-                              size: 30, color: Colors.black54)
-                          : null,
+                      radius: 93, // outer radius
+                      backgroundColor: isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
+                      child: CircleAvatar(
+                        radius: 90, // inner radius
+                        backgroundImage: _selectedImageFile != null
+                            ? FileImage(_selectedImageFile!) as ImageProvider
+                            : (_currentImage != null
+                                ? NetworkImage(_currentImage!)
+                                : AssetImage(isDarkMode
+                                    ? "assets/anonymeD.png"
+                                    : "assets/anonyme.png") as ImageProvider),
+                        child:
+                            _selectedImageFile == null && _currentImage == null
+                                ? const Icon(Icons.camera_alt,
+                                    size: 30, color: Colors.black54)
+                                : null,
+                      ),
                     ),
             ),
           ),
+
           const SizedBox(height: 70),
 
           // First name field
@@ -226,6 +263,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
             hintText: "Last Name",
             errorText: lastNameError,
           ),
+
+          const SizedBox(height: 20),
+
+          // Phone num field
+          _buildTextField(
+            controller: _PhoneNumController,
+            icon: Icons.phone,
+            hintText: "Phone Number",
+            errorText: phoneNumError,
+          ),
+
+          const SizedBox(height: 20),
+
+          //wilaya selection
+          buildDropdown(
+            selectedValue: selectedWilaya,
+            items: ProductData.wilayas.keys.toList(),
+            label: 'Wilaya',
+            onChanged: (value) {
+              setState(() {
+                selectedWilaya = value;
+                selectedDaira = null;
+              });
+            },
+          ),
+          const SizedBox(height: 20),
+
+          //Daira selection
+          buildDropdown(
+              selectedValue: selectedDaira,
+              items: ProductData.wilayas[selectedWilaya] ?? [],
+              label: 'Daira',
+              onChanged: (value) {
+                setState(() {
+                  selectedDaira = value;
+                });
+              }),
 
           const SizedBox(height: 70),
 
@@ -251,8 +325,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: Text("Submit",
-                    style:
-                        GoogleFonts.roboto(fontSize: 18,color: isDarkMode ? Colors.black : Colors.white)),
+                    style: GoogleFonts.roboto(
+                        fontSize: 18,
+                        color: isDarkMode ? Colors.black : Colors.white)),
               ),
             ),
           ),
@@ -290,6 +365,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Expanded(
                 child: TextField(
                   controller: controller,
+                  inputFormatters: hintText == "Phone Number"
+                      ? [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ]
+                      : null,
+                  keyboardType: hintText == "Phone Number"
+                      ? TextInputType.number
+                      : TextInputType.name,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
@@ -303,6 +387,48 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget buildDropdown({
+    required String? selectedValue,
+    required List<String> items,
+    required String label,
+    required void Function(String?) onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 50),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.green.shade50,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: DropdownButtonFormField<String>(
+            value: items.contains(selectedValue) ? selectedValue : null,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              hintText: '',
+            ),
+            items: items
+                .map(
+                  (item) => DropdownMenuItem(
+                    value: item,
+                    child: Text(item),
+                  ),
+                )
+                .toList(),
+            onChanged: onChanged,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a $label';
+              }
+              return null;
+            },
           ),
         ),
       ),

@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
 
@@ -20,45 +19,44 @@ class _MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: const Text("Messages"),
-      backgroundColor: isDarkMode
-            ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
-            : Theme.of(context).colorScheme.secondaryContainer),// Light 
+      appBar: AppBar(
+          title: const Text("Messages"),
+          backgroundColor: isDarkMode
+              ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
+              : Theme.of(context).colorScheme.secondaryContainer), // Light
       body: _buildMessagesList(),
     );
   }
 
- /// 🟢 **وظيفة 1: جلب بيانات الرسائل المرسلة والمستلمة**
-Stream<List<QueryDocumentSnapshot>> _getMessagesStream() {
-  String currentUserId = _auth.currentUser!.uid;
+  /// 🟢 **وظيفة 1: جلب بيانات الرسائل المرسلة والمستلمة**
+  Stream<List<QueryDocumentSnapshot>> _getMessagesStream() {
+    String currentUserId = _auth.currentUser!.uid;
 
-  Stream<List<QueryDocumentSnapshot>> sentMessages = _firestore
-      .collection('Messages')
-      .where("senderId", isEqualTo: currentUserId)
-      .snapshots()
-      .map((snapshot) => snapshot.docs);
+    Stream<List<QueryDocumentSnapshot>> sentMessages = _firestore
+        .collection('Messages')
+        .where("senderId", isEqualTo: currentUserId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs);
 
-  Stream<List<QueryDocumentSnapshot>> receivedMessages = _firestore
-      .collection('Messages')
-      .where("receiverId", isEqualTo: currentUserId)
-      .snapshots()
-      .map((snapshot) => snapshot.docs);
+    Stream<List<QueryDocumentSnapshot>> receivedMessages = _firestore
+        .collection('Messages')
+        .where("receiverId", isEqualTo: currentUserId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs);
 
-  return Rx.combineLatest2(
-    sentMessages,
-    receivedMessages,
-    (List<QueryDocumentSnapshot> sent, List<QueryDocumentSnapshot> received) {
-      print("Total Messages Combined: ${sent.length + received.length}");
-      return [...sent, ...received];
-    },
-  );
-}
-
-
-
+    return Rx.combineLatest2(
+      sentMessages,
+      receivedMessages,
+      (List<QueryDocumentSnapshot> sent, List<QueryDocumentSnapshot> received) {
+        print("Total Messages Combined: ${sent.length + received.length}");
+        return [...sent, ...received];
+      },
+    );
+  }
 
   /// 🔵 **وظيفة 2: فرز وتجميع الرسائل**
-  Map<String, Map<String, dynamic>> _processMessages(List<QueryDocumentSnapshot> messages, String currentUserId) {
+  Map<String, Map<String, dynamic>> _processMessages(
+      List<QueryDocumentSnapshot> messages, String currentUserId) {
     messages.sort((a, b) {
       Timestamp timeA = a['timestamp'] ?? Timestamp(0, 0);
       Timestamp timeB = b['timestamp'] ?? Timestamp(0, 0);
@@ -69,7 +67,7 @@ Stream<List<QueryDocumentSnapshot>> _getMessagesStream() {
     for (var doc in messages) {
       var messageData = doc.data() as Map<String, dynamic>;
       String sender = messageData['senderId'] ?? "Unknown Sender";
-String receiver = messageData['receiverId'] ?? "Unknown Receiver";
+      String receiver = messageData['receiverId'] ?? "Unknown Receiver";
       String otherUserId = sender == currentUserId ? receiver : sender;
 
       if (!lastMessages.containsKey(otherUserId)) {
@@ -98,16 +96,17 @@ String receiver = messageData['receiverId'] ?? "Unknown Receiver";
 
         return ListTile(
           leading: CircleAvatar(
-  backgroundImage: userData['photo'] != null
-      ? NetworkImage(userData['photo'])
-      : null,
-  child: userData['photo'] == null 
-      ? Text(username[0].toUpperCase(), style: const TextStyle(fontSize: 20))
-      : null,
-),
-
+            backgroundImage: userData['photo'] != null
+                ? NetworkImage(userData['photo'])
+                : null,
+            child: userData['photo'] == null
+                ? Text(username[0].toUpperCase(),
+                    style: const TextStyle(fontSize: 20))
+                : null,
+          ),
           title: Text(username),
-          subtitle: Text(lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
+          subtitle:
+              Text(lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
           onTap: () {
             Navigator.push(
               context,
@@ -123,29 +122,36 @@ String receiver = messageData['receiverId'] ?? "Unknown Receiver";
 
   /// 🔴 **وظيفة 4: بناء واجهة عرض الرسائل**
   Widget _buildMessagesList() {
-  return StreamBuilder<List<QueryDocumentSnapshot>>(
-    stream: _getMessagesStream(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      }
+    return StreamBuilder<List<QueryDocumentSnapshot>>(
+      stream: _getMessagesStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        print("No messages found!");
-        return const SizedBox();
-      }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          print("No messages found!");
+          return const SizedBox();
+        }
 
-      String currentUserId = _auth.currentUser!.uid;
-      Map<String, Map<String, dynamic>> lastMessages = _processMessages(snapshot.data!, currentUserId);
+        String currentUserId = _auth.currentUser!.uid;
+        Map<String, Map<String, dynamic>> lastMessages =
+            _processMessages(snapshot.data!, currentUserId);
 
-      return ListView(
-        children: lastMessages.entries.map((entry) {
-          return _buildUserListTile(entry.key, entry.value);
-        }).toList(),
-      );
-    },
-  );
-}
-
-
+        return ListView(
+          padding: const EdgeInsets.all(8),
+          children: lastMessages.entries.map((entry) {
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200, // dark background
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: _buildUserListTile(entry.key, entry.value),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
 }

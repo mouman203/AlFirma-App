@@ -1,6 +1,8 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/home_page.dart';
+import 'package:agriplant/data/ProductData.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -24,6 +26,8 @@ class _SignUpPageState extends State<SignUpPage> {
   String? lastNameError;
   String? emailError;
   String? phoneError;
+  String? wilayaError;
+  String? dairaError;
   String? passwordError;
   String? confirmPasswordError;
 
@@ -32,56 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   // Wilaya selection variables
   String? _selectedWilaya;
-  final List<String> _wilayas = [
-    "Adrar",
-    "Chlef",
-    "Laghouat",
-    "Oum El Bouaghi",
-    "Batna",
-    "Béjaïa",
-    "Biskra",
-    "Béchar",
-    "Blida",
-    "Bouira",
-    "Tamanrasset",
-    "Tébessa",
-    "Tlemcen",
-    "Tiaret",
-    "Tizi Ouzou",
-    "Algiers",
-    "Djelfa",
-    "Jijel",
-    "Sétif",
-    "Saïda",
-    "Skikda",
-    "Sidi Bel Abbès",
-    "Annaba",
-    "Guelma",
-    "Constantine",
-    "Médéa",
-    "Mostaganem",
-    "M'Sila",
-    "Mascara",
-    "Ouargla",
-    "Oran",
-    "El Bayadh",
-    "Illizi",
-    "Bordj Bou Arréridj",
-    "Boumerdès",
-    "El Tarf",
-    "Tindouf",
-    "Tissemsilt",
-    "El Oued",
-    "Khenchela",
-    "Souk Ahras",
-    "Tipaza",
-    "Mila",
-    "Aïn Defla",
-    "Naâma",
-    "Aïn Témouchent",
-    "Ghardaïa",
-    "Relizane"
-  ];
+  String? _selectedDaira;
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
               // firstName field
               _buildTextField(
                 controller: _firstNameController,
+                keyType: TextInputType.name,
                 icon: Icons.person,
                 hintText: "First Name",
                 errorText: firstNameError,
@@ -150,6 +106,7 @@ class _SignUpPageState extends State<SignUpPage> {
               // lastName field
               _buildTextField(
                 controller: _lastNameController,
+                keyType: TextInputType.name,
                 icon: Icons.person,
                 hintText: "Last Name",
                 errorText: lastNameError,
@@ -159,6 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
               // Email field
               _buildTextField(
                 controller: _emailController,
+                keyType: TextInputType.emailAddress,
                 icon: Icons.email,
                 hintText: "Email",
                 errorText: emailError,
@@ -168,68 +126,40 @@ class _SignUpPageState extends State<SignUpPage> {
               // Phone number field
               _buildTextField(
                 controller: _phoneController,
+                keyType: TextInputType.number,
                 icon: Icons.phone,
-                hintText: "Phone Number ",
+                hintText: "Phone Number",
                 errorText: phoneError,
               ),
               const SizedBox(height: 20),
 
               // Wilaya dropdown
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? const Color.fromARGB(
-                            255, 39, 57, 48) // Dark green in dark mode
-                        : Theme.of(context)
-                            .colorScheme
-                            .secondaryContainer, // Light green in light mode
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                    hint: Text("Select your Wilaya",
-                        style: TextStyle(
-                          color: isDarkMode
-                              ? Colors.white
-                              : const Color(0xFF256C4C),
-                        )),
-
-                    dropdownColor: isDarkMode
-                        ? const Color.fromARGB(
-                            255, 55, 72, 56) // Dark green in dark mode
-                        : Theme.of(context)
-                            .colorScheme
-                            .secondaryContainer, // Light green in light mode,
-                    value: _selectedWilaya,
-                    icon: Icon(
-                      Icons.arrow_drop_down, // Default dropdown arrow icon
-                      color:
-                          isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                    ),
-                    items: _wilayas
-                        .map((wilaya) => DropdownMenuItem(
-                              value: wilaya,
-                              child: Text(wilaya,
-                                  style: TextStyle(
-                                    color: isDarkMode
-                                        ? Colors.white
-                                        : const Color(0xFF256C4C),
-                                  )),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedWilaya = value;
-                      });
-                    },
-                  ),
-                ),
+              buildLocationDropdown(
+                selectedValue: _selectedWilaya,
+                items: ProductData.wilayas.keys.toList(),
+                label: "wilaya",
+                errorText: wilayaError,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedWilaya = value;
+                  });
+                },
               ),
+              const SizedBox(height: 20),
+
+              //Daira dropdown
+              buildLocationDropdown(
+                selectedValue: _selectedDaira,
+                items: ProductData.wilayas[_selectedWilaya] ?? [],
+                label: "daira",
+                errorText: dairaError,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedDaira = value;
+                  });
+                },
+              ),
+
               const SizedBox(height: 20),
 
               // Password field
@@ -273,7 +203,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             _emailController.text.isEmpty ||
                             _phoneController.text.isEmpty ||
                             _passwordController.text.isEmpty ||
-                            _confirmPasswordController.text.isEmpty) {
+                            _confirmPasswordController.text.isEmpty ||
+                            _selectedDaira == null ||
+                            _selectedWilaya == null) {
                           if (_firstNameController.text.isEmpty) {
                             firstNameError = "يرجى إدخال الاسم";
                           }
@@ -285,6 +217,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           }
                           if (_phoneController.text.isEmpty) {
                             phoneError = "يرجى إدخال رقم الهاتف";
+                          }
+                          if (_selectedWilaya == null) {
+                            wilayaError = 'يرجى اختيار الولاية';
+                          }
+                          if (_selectedDaira == null) {
+                            dairaError = 'يرجى اختيار الدائرة';
                           }
                           if (_passwordController.text.isEmpty) {
                             passwordError = "يرجى إدخال كلمة المرور";
@@ -313,6 +251,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 _confirmPasswordController.text,
                             phone: _phoneController.text,
                             wilaya: _selectedWilaya ?? '',
+                            daira: _selectedDaira ?? '',
                             destPage:
                                 const HomePage(), // Assuming HomePage is a Widget
                             first_name: _firstNameController.text,
@@ -349,6 +288,7 @@ class _SignUpPageState extends State<SignUpPage> {
     required TextEditingController controller,
     required IconData icon,
     required String hintText,
+    required TextInputType keyType,
     String? errorText,
   }) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -375,6 +315,13 @@ class _SignUpPageState extends State<SignUpPage> {
               Expanded(
                 child: TextField(
                   controller: controller,
+                  inputFormatters: hintText == "Phone Number"
+                      ? [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ]
+                      : null,
+                  keyboardType: keyType,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
@@ -451,6 +398,79 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildLocationDropdown({
+    required String? selectedValue,
+    required List<String> items,
+    required String label,
+    String? errorText,
+    required void Function(String?) onChanged,
+  }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 50),
+      child: Container(
+          decoration: BoxDecoration(
+            color: isDarkMode
+                ? const Color.fromARGB(255, 39, 57, 48)
+                : Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.add_location_alt_sharp,
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      errorText: errorText,
+                    ),
+                    hint: Text(
+                      "Select your $label",
+                      style: TextStyle(
+                        color:
+                            isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                      ),
+                    ),
+                    dropdownColor: isDarkMode
+                        ? const Color.fromARGB(255, 55, 72, 56)
+                        : Theme.of(context).colorScheme.secondaryContainer,
+                    value: selectedValue,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color:
+                          isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                    ),
+                    items: items
+                        .map(
+                          (item) => DropdownMenuItem(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                color: isDarkMode
+                                    ? Colors.white
+                                    : const Color(0xFF256C4C),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: onChanged,
+                  ),
+                )
+              ],
+            ),
+          )),
     );
   }
 }
