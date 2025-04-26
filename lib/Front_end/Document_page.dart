@@ -157,7 +157,6 @@ class _DocumentFormState extends State<DocumentForm> {
         await FirebaseFirestore.instance.collection('Users').doc(userId).set({
           'userType': {
             selectedUserType: {
-              'validator': 'pending',
               'documents': {
                 doc: {
                   'documentUrl': downloadUrl,

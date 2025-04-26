@@ -28,12 +28,18 @@ Future<void> addUserType(String userType) async {
           Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
 
       if (!currentTypes.containsKey(userType)) {
-        currentTypes[userType] = {
-          'status': 'pending',
-          'createdAt': FieldValue.serverTimestamp(),
-          'path': '',
-          // تضيف حقول حسب الحاجة
-        };
+        if (userType == 'Agriculteur' || userType == 'Éleveur') {
+          currentTypes[userType] = {
+            'createdAt': FieldValue.serverTimestamp(),
+            // تضيف حقول حسب الحاجة
+          };
+        } else {
+          currentTypes[userType] = {
+            'validation': 'pending',
+            'createdAt': FieldValue.serverTimestamp(),
+            // تضيف حقول حسب الحاجة
+          };
+        }
 
         await docRef.update({
           'userType': currentTypes,
@@ -241,30 +247,33 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
   }
 
   Future<void> deleteUserTypeKey(String keyToDelete) async {
-   try {
-                  // Get the current user's UID
-                  User? user = FirebaseAuth.instance.currentUser;
-                  if (user == null) {
-                    throw Exception("No user is currently logged in.");
-                  }
+    try {
+      // Get the current user's UID
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception("No user is currently logged in.");
+      }
 
-                  // Reference the user's document in Firestore
-                  DocumentReference userDocRef = FirebaseFirestore.instance
-                      .collection('Users')
-                      .doc(user.uid);
+      // Reference the user's document in Firestore
+      DocumentReference userDocRef =
+          FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
-                  // Update the user's document to delete the specific key from the userType map
-                  await userDocRef.update({
-                    'userType.$keyToDelete': FieldValue.delete(),
-                  });
+      // Update the user's document to delete the specific key from the userType map
+      await userDocRef.update({
+        'userType.$keyToDelete': FieldValue.delete(),
+      });
 
-                 
+      print("Key '$keyToDelete' successfully deleted from userType.");
 
-                  print(
-                      "Key '$keyToDelete' successfully deleted from userType.");
-                } catch (e) {
-                  print("Error deleting key from userType: $e");
-                }
+      if (selectedTypes.isEmpty) {
+        setActiveType('Client');
+      } else if (activeType == keyToDelete) {
+        setActiveType(selectedTypes.first);
+      }
+      print('selected : $selectedTypes');
+    } catch (e) {
+      print("Error deleting key from userType: $e");
+    }
   }
 
   Future<void> addTypeFlow(BuildContext context) async {
@@ -321,17 +330,29 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
     if (selectedType != null) {
       await getLabelForDoc(selectedType);
-
+      // 2. أولاً حفظ البيانات قبل التحقق من التفعيل
       await addUserType(selectedType);
       setState(() {
-        selectedTypes.insert(0, selectedType);
+        selectedTypes.add(selectedType);
+      });
+
+      // 2. تحقق من حالة التفعيل
+      final isValid = await getValidation(selectedType) ?? false;
+
+      // 3. إذا النوع غير مفعل، أظهر رسالة تحذير
+      if (!isValid) {
+        return; // 🛑 لا تضيف النوع إذا غير مفعل
+      }
+
+      // 4. إذا كان النوع مفعل، أضفه إلى القائمة وحدث الحالة
+      setState(() {
         activeType = selectedType;
       });
 
-      await setActiveType(activeType!);
+      //await setActiveType(activeType!);
       await saveUserData(selectedTypes, activeType!);
       widget.onTypeChanged(); // 👈 Add this
-      if (activeType == 'Eleveur' || activeType == 'Agriculteur') {
+      if (activeType == 'Éleveur' || activeType == 'Agriculteur') {
         showSuccessPopup(context, selectedType);
       } else {
         showAlertsPopup(context);
@@ -339,7 +360,39 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     }
   }
 
-  @override
+  Future<bool?> getValidation(String type) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+
+      final doc = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(user.uid)
+          .get();
+
+      final data = doc.data();
+      if (data != null) {
+        if (data['userType'] == 'Agriculteur' ||
+            data['userType'] == 'Éleveur') {
+          return true;
+        } else if (data['userType'] != null) {
+          final userTypeMap = Map<String, dynamic>.from(data['userType']);
+          final typeData = userTypeMap[type];
+
+          if (typeData != null && typeData['validation'] == 'pending') {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+      return false; // default: not validated or doesn't exist
+    } catch (e) {
+      print("Error checking validation: $e");
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -426,11 +479,18 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                           context: context,
                           position: const RelativeRect.fromLTRB(40, 103, 10, 0),
                           color: Colors.transparent,
-                          items: selectedTypes.map((type) {
+                          items:
+                              await Future.wait(selectedTypes.map((type) async {
+                            final isValid = await getValidation(type) ?? false;
                             final imagePath =
                                 'assets/become/${normalize(type)}.jpg';
+
                             return PopupMenuItem<String>(
-                              value: type,
+                              enabled:
+                                  isValid, // Prevents selection if not valid
+                              value: isValid
+                                  ? type
+                                  : null, // Returns the type only if it's valid
                               padding: EdgeInsets.zero,
                               height: 100,
                               child: Stack(
@@ -466,25 +526,30 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                               ),
                                             ),
                                           ),
+                                          if (!isValid)
+                                            Container(
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              child: Center(
+                                                child: Icon(Icons.lock,
+                                                    color: Colors.white,
+                                                    size: 30),
+                                              ),
+                                            ),
                                         ],
                                       ),
                                     ),
                                   ),
+                                  // Trash icon - stays visible no matter if valid or not
                                   Positioned(
                                     right: 8,
                                     top: 8,
                                     child: GestureDetector(
                                       onTap: () async {
                                         deleteUserTypeKey(type);
-
-                                        if (selectedTypes.isEmpty) {
-                                          activeType = "Client";
-                                        } else if (activeType == type) {
-                                          activeType = selectedTypes.first;
-                                        }
+                                        selectedTypes.remove(type);
                                         await saveUserData(
                                             selectedTypes, activeType!);
-
                                         setState(() {});
                                         Navigator.pop(context);
                                       },
@@ -504,8 +569,27 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                   ),
                                 ],
                               ),
+                              onTap: () {
+                                if (!isValid) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('تنبيه'),
+                                      content: const Text(
+                                          'هذا النوع غير مفعل من طرف الإدارة.'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text('حسناً'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
                             );
-                          }).toList(),
+                          }).toList()),
                         );
 
                         if (newActive != null && newActive != activeType) {
