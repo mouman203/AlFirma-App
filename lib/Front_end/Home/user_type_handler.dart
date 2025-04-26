@@ -15,8 +15,7 @@ final Map<String, dynamic> UserTypes = {
   'Réparateur': {}
 };
 
-// Add user type to the Firestore user's list (if not already exists)
-Future<void> addUserType(String userType) async {
+Future<void> addUserTypeNoDoc(String userType) async {
   try {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -28,31 +27,18 @@ Future<void> addUserType(String userType) async {
           Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
 
       if (!currentTypes.containsKey(userType)) {
-        if (userType == 'Agriculteur' || userType == 'Éleveur') {
-          currentTypes[userType] = {
-            'createdAt': FieldValue.serverTimestamp(),
-            // تضيف حقول حسب الحاجة
-          };
-        } else {
-          currentTypes[userType] = {
-            'validation': 'pending',
-            'createdAt': FieldValue.serverTimestamp(),
-            // تضيف حقول حسب الحاجة
-          };
-        }
+        currentTypes[userType] = {
+          'createdAt': FieldValue.serverTimestamp(),
+          // تضيف حقول حسب الحاجة
+        };
 
         await docRef.update({
           'userType': currentTypes,
-          'userTypeUpdatedAt': FieldValue.serverTimestamp(),
         });
-
-        print("✅ User type '$userType' added successfully as a map.");
       }
-    } else {
-      print("⚠️ No user is logged in.");
     }
   } catch (e) {
-    print("❌ Error updating user type: $e");
+    print("there is a problem 'function userType' $e");
   }
 }
 
@@ -202,7 +188,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     await saveUserData(selectedTypes, activeType!);
   }
 
-  Object getLabelForDoc(selectedType) {
+  Object getLabelForDoc(selectedType) async {
     switch (selectedType) {
       case 'Vétérinaire':
         return Navigator.push(
@@ -329,13 +315,17 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     );
 
     if (selectedType != null) {
+      if (selectedType == 'Agriculteur' || selectedType == 'Éleveur') {
+        await addUserTypeNoDoc(selectedType);
+        setState(() {
+          selectedTypes.insert(0, selectedType);
+        });
+      }else{
+
       await getLabelForDoc(selectedType);
-      // 2. أولاً حفظ البيانات قبل التحقق من التفعيل
-      await addUserType(selectedType);
-      setState(() {
+       setState(() {
         selectedTypes.add(selectedType);
       });
-
       // 2. تحقق من حالة التفعيل
       final isValid = await getValidation(selectedType) ?? false;
 
@@ -357,7 +347,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
       } else {
         showAlertsPopup(context);
       }
-    }
+    }}
   }
 
   Future<bool?> getValidation(String type) async {

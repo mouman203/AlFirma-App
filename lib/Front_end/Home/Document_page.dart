@@ -124,13 +124,16 @@ class _DocumentFormState extends State<DocumentForm> {
 
   Future<void> _submitDocuments() async {
     setState(() => isLoading = true);
+    
 
     // Fetch the userType you selected (could be passed from UI)
     String selectedUserType =
-        widget.userType; // Assume widget.userType is the selected userType
+        widget.userType; 
 
+       
+        
+        // Assume widget.userType is the selected userType
     List<String> userDocs = requiredDocuments[selectedUserType] ?? [];
-    final userId = FirebaseAuth.instance.currentUser?.uid;
     try {
       // Loop through the documents and upload them
       for (String doc in userDocs) {
@@ -151,21 +154,46 @@ class _DocumentFormState extends State<DocumentForm> {
         // Get the download URL of the uploaded file
         String downloadUrl = await storageRef.getDownloadURL();
 
-        // Create a collection for the userType and add the document there
-        // Create a collection for the userType and add the document there
+        try {
+          User? user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            final docRef =
+                FirebaseFirestore.instance.collection('Users').doc(user.uid);
+            final snapshot = await docRef.get();
 
-        await FirebaseFirestore.instance.collection('Users').doc(userId).set({
-          'userType': {
-            selectedUserType: {
-              'documents': {
-                doc: {
-                  'documentUrl': downloadUrl,
-                  'uploadedAt': FieldValue.serverTimestamp(),
-                }
-              }
+            Map<String, dynamic> currentTypes =
+                Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
+
+            if (!currentTypes.containsKey(selectedUserType)) {
+              currentTypes[selectedUserType] = {
+                'validation': 'pending',
+                selectedUserType: {
+                  'documents': {
+                    doc: {
+                      'documentUrl': downloadUrl,
+                      'uploadedAt': FieldValue.serverTimestamp(),
+                    }
+                  }
+                },
+                'createdAt': FieldValue.serverTimestamp(),
+                // تضيف حقول حسب الحاجة
+              };
+
+              await docRef.update({
+                'userType': currentTypes,
+                'userTypeUpdatedAt': FieldValue.serverTimestamp(),
+              });
+
+              print(
+                  "✅ User type '$selectedUserType' added successfully as a map.");
             }
+          } else {
+            print("⚠️ No user is logged in.");
           }
-        }, SetOptions(merge: true)); // لتفادي مسح البيانات السابقة
+        } catch (e) {
+          print("❌ Error updating user type: $e");
+        }
+        SetOptions(merge: true); // لتفادي مسح البيانات السابقة
       }
 
       // Show success message
