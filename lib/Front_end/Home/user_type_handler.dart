@@ -32,9 +32,7 @@ Future<void> addUserTypeNoDoc(String userType) async {
           // تضيف حقول حسب الحاجة
         };
 
-        await docRef.update({
-          'userType': currentTypes,
-        });
+        await docRef.update({'userType': currentTypes, 'activeType': userType});
       }
     }
   } catch (e) {
@@ -320,34 +318,34 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
         setState(() {
           selectedTypes.insert(0, selectedType);
         });
-      }else{
-
-      await getLabelForDoc(selectedType);
-       setState(() {
-        selectedTypes.add(selectedType);
-      });
-      // 2. تحقق من حالة التفعيل
-      final isValid = await getValidation(selectedType) ?? false;
-
-      // 3. إذا النوع غير مفعل، أظهر رسالة تحذير
-      if (!isValid) {
-        return; // 🛑 لا تضيف النوع إذا غير مفعل
-      }
-
-      // 4. إذا كان النوع مفعل، أضفه إلى القائمة وحدث الحالة
-      setState(() {
-        activeType = selectedType;
-      });
-
-      //await setActiveType(activeType!);
-      await saveUserData(selectedTypes, activeType!);
-      widget.onTypeChanged(); // 👈 Add this
-      if (activeType == 'Éleveur' || activeType == 'Agriculteur') {
-        showSuccessPopup(context, selectedType);
       } else {
-        showAlertsPopup(context);
+        await getLabelForDoc(selectedType);
+        setState(() {
+          selectedTypes.add(selectedType);
+        });
+        // 2. تحقق من حالة التفعيل
+        final isValid = await getValidation(selectedType) ?? false;
+
+        // 3. إذا النوع غير مفعل، أظهر رسالة تحذير
+        if (!isValid) {
+          return; // 🛑 لا تضيف النوع إذا غير مفعل
+        }
+
+        // 4. إذا كان النوع مفعل، أضفه إلى القائمة وحدث الحالة
+        setState(() {
+          activeType = selectedType;
+        });
+
+        //await setActiveType(activeType!);
+        await saveUserData(selectedTypes, activeType!);
+        widget.onTypeChanged(); // 👈 Add this
+        if (activeType == 'Éleveur' || activeType == 'Agriculteur') {
+          showSuccessPopup(context, selectedType);
+        } else {
+          showAlertsPopup(context);
+        }
       }
-    }}
+    }
   }
 
   Future<bool?> getValidation(String type) async {

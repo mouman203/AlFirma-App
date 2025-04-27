@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:agriplant/Front_end/Home/user_type_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -48,6 +49,10 @@ class _DocumentFormState extends State<DocumentForm> {
     'Réparateur': ['بطاقة الهوية (الوجه)', 'بطاقة الهوية (الظهر)', 'شهادة'],
     'Entreprise': ['شهادة'],
   };
+
+  void updateUserType(String activeType) {
+    setActiveType(activeType); // Calling the function
+  }
 
   Future<void> _pickImage(String label) async {
     showDialog(
@@ -124,15 +129,11 @@ class _DocumentFormState extends State<DocumentForm> {
 
   Future<void> _submitDocuments() async {
     setState(() => isLoading = true);
-    
 
     // Fetch the userType you selected (could be passed from UI)
-    String selectedUserType =
-        widget.userType; 
+    String selectedUserType = widget.userType;
 
-       
-        
-        // Assume widget.userType is the selected userType
+    // Assume widget.userType is the selected userType
     List<String> userDocs = requiredDocuments[selectedUserType] ?? [];
     try {
       // Loop through the documents and upload them
@@ -186,6 +187,7 @@ class _DocumentFormState extends State<DocumentForm> {
 
               print(
                   "✅ User type '$selectedUserType' added successfully as a map.");
+              updateUserType(selectedUserType);
             }
           } else {
             print("⚠️ No user is logged in.");
