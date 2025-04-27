@@ -59,51 +59,98 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     _checkIfSaved();
   }
 
- // Check if the item is saved
-Future<void> _checkIfSaved() async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid != null) {
-    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    
-    // Ensure the 'saved' field is a list of strings (IDs)
-    final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
+  // Check if the item is saved
+  Future<void> _checkIfSaved() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
 
-    // Check if the item ID exists in the saved list
-    final exists = savedList.contains(widget.product.id);
+      // Ensure the 'saved' field is a list of strings (IDs)
+      final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
 
-    if (exists && mounted) {
-      setState(() {
-        isSaved = true;
-      });
+      // Check if the item ID exists in the saved list
+      final exists = savedList.contains(widget.product.id);
+
+      if (exists && mounted) {
+        setState(() {
+          isSaved = true;
+        });
+      }
     }
   }
-}
 
 // Toggle the saved status
-Future<void> _toggleSavedStatus() async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid == null) return;
+  Future<void> _toggleSavedStatus() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
 
-  final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
 
-  final itemId = widget.product.id; // Ensure item.id exists and is valid
+    final itemId = widget.product.id; // Ensure item.id exists and is valid
 
-  if (isSaved) {
-    // Remove the item ID from the 'saved' list
-    await userRef.update({
-      'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
-    });
-    setState(() => isSaved = false);
-    widget.onUnsave?.call();
-  } else {
-    // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
-    await userRef.update({
-      'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
-    });
-    setState(() => isSaved = true);
+    if (isSaved) {
+      // Remove the item ID from the 'saved' list
+      await userRef.update({
+        'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
+      });
+      setState(() => isSaved = false);
+      widget.onUnsave?.call();
+    } else {
+      // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
+      await userRef.update({
+        'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
+      });
+      setState(() => isSaved = true);
+    }
   }
-}
 
+  Future<void> signaler(String categoryId) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return;
+      final itemId = widget.product.id;
+
+      // Fetch product details
+      DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc(categoryId == 'AgricolProduct'
+              ? 'Agricol_products'
+              : 'Eleveur_product') // The category document ID
+          .collection(categoryId == 'AgricolProduct'
+              ? 'Agricol_products'
+              : 'Eleveur_product') // The subcollection name
+          .doc(itemId) // The product ID
+          .get();
+
+      if (!productSnapshot.exists) {
+        print('Product not found');
+        return;
+      }
+
+      final molLanance = productSnapshot.get('ownerId'); // Get owner of product
+
+      // Now store the signal
+      await FirebaseFirestore.instance.collection('Signal').doc(uid).set({
+        'Annonce': itemId,
+        'li signala': uid,
+        'mol lanance': molLanance,
+      }, SetOptions(merge: true)); // Important: Merge true!
+
+      print('Signaled by $uid');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Thanks for helping us with your signal 🙏'),
+          duration: Duration(seconds: 5), // ⏳ 5 seconds
+          behavior: SnackBarBehavior.floating, // (optional) makes it float
+          backgroundColor:
+              Color.fromARGB(255, 47, 114, 38), // (optional) success color
+        ),
+      );
+    } catch (e) {
+      print("there is a problem 'product detail page' $e");
+    }
+  }
 
   @override
   void dispose() {
@@ -157,6 +204,17 @@ Future<void> _toggleSavedStatus() async {
                   isDarkMode ? colorScheme.surface : colorScheme.surface,
               elevation: 5,
               actions: [
+                IconButton(
+                  onPressed: () async {
+                    await signaler(widget.product.typeProduct);
+                  },
+                  icon: Icon(
+                    Icons.report_problem_outlined,
+                    color: isDarkMode
+                        ? colorScheme.onSurface
+                        : colorScheme.onSurface,
+                  ),
+                ),
                 IconButton(
                   onPressed: _toggleSavedStatus,
                   icon: Icon(
@@ -287,7 +345,7 @@ Future<void> _toggleSavedStatus() async {
                                         builder: (context, snapshot) {
                                           String? photoURL;
 
-                                           if (snapshot.hasData &&
+                                          if (snapshot.hasData &&
                                               snapshot.data!.exists) {
                                             photoURL =
                                                 snapshot.data!.get('photo') ??
