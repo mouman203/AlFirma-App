@@ -66,7 +66,7 @@ void showAlertsPopup(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text("🎉 Alert!"),
+        title: const Text("⚠️ Alert!"),
         content: Text(
             "You have to upload some files .. after validation you received a notification"),
         actions: [
@@ -320,9 +320,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
         });
       } else {
         await getLabelForDoc(selectedType);
-        setState(() {
-          selectedTypes.add(selectedType);
-        });
+
         // 2. تحقق من حالة التفعيل
         final isValid = await getValidation(selectedType) ?? false;
 
@@ -331,14 +329,12 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
           return; // 🛑 لا تضيف النوع إذا غير مفعل
         }
 
-        // 4. إذا كان النوع مفعل، أضفه إلى القائمة وحدث الحالة
         setState(() {
           activeType = selectedType;
         });
 
-        //await setActiveType(activeType!);
         await saveUserData(selectedTypes, activeType!);
-        widget.onTypeChanged(); // 👈 Add this
+        widget.onTypeChanged();
         if (activeType == 'Éleveur' || activeType == 'Agriculteur') {
           showSuccessPopup(context, selectedType);
         } else {

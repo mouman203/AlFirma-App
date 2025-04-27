@@ -187,7 +187,10 @@ class _DocumentFormState extends State<DocumentForm> {
 
               print(
                   "✅ User type '$selectedUserType' added successfully as a map.");
-              updateUserType(selectedUserType);
+              /*if (selectedUserType == 'Agriculteur' ||
+                  selectedUserType == 'Éleveur') {
+                setActiveType(selectedUserType);
+              }*/
             }
           } else {
             print("⚠️ No user is logged in.");
