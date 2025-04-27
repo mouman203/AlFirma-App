@@ -80,6 +80,90 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
+  void showReportProblemDialog(BuildContext context) {
+    TextEditingController otherController = TextEditingController();
+    String selectedOption = '';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: Text('Report a Problem'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                reportOptionButton(
+                  context: context,
+                  label: 'Wrong Information',
+                  selectedOption: selectedOption,
+                  onPressed: () {
+                    setState(() {
+                      selectedOption = 'Wrong Information';
+                    });
+                  },
+                ),
+                SizedBox(height: 10),
+                reportOptionButton(
+                  context: context,
+                  label: 'Spam or Scam',
+                  selectedOption: selectedOption,
+                  onPressed: () {
+                    setState(() {
+                      selectedOption = 'Spam or Scam';
+                    });
+                  },
+                ),
+                SizedBox(height: 10),
+                reportOptionButton(
+                  context: context,
+                  label: 'Other',
+                  selectedOption: selectedOption,
+                  onPressed: () {
+                    setState(() {
+                      selectedOption = 'Other';
+                    });
+                  },
+                ),
+                SizedBox(height: 10),
+                if (selectedOption == 'Other') ...[
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: otherController,
+                    decoration: InputDecoration(
+                      labelText: 'Describe the problem',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                  ),
+                ]
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  String reportText = selectedOption == 'Other'
+                      ? otherController.text
+                      : selectedOption;
+                  signaler(widget.product.typeProduct, selectedOption);
+                  print('Reported Problem: $reportText');
+                  Navigator.pop(context);
+                },
+                child: Text('Submit'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 // Toggle the saved status
   Future<void> _toggleSavedStatus() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -105,7 +189,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
-  Future<void> signaler(String categoryId) async {
+  Future<void> signaler(String categoryId, String selectedOption) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) return;
@@ -134,9 +218,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       await FirebaseFirestore.instance.collection('Signal').doc(uid).set({
         'li signala': uid,
         'Annonce': {
-          molLanance: FieldValue.arrayUnion([
-            itemId
-          ]), // molLanance as the key, and the array of Annonce as the value
+          'mol lanance : $molLanance':
+              FieldValue.arrayUnion(['itemId : $itemId']),
+          'itemId : $itemId': FieldValue.arrayUnion([selectedOption]),
+          // molLanance as the key, and the array of Annonce as the value
         },
       }, SetOptions(merge: true)); // Important: Merge true!
 
@@ -187,6 +272,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
+  Widget reportOptionButton({
+    required BuildContext context,
+    required String label,
+    required String selectedOption,
+    required VoidCallback onPressed,
+  }) {
+    final bool isSelected = label == selectedOption;
+
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Colors.grey.shade200,
+          foregroundColor:
+              isSelected ? Colors.white : Theme.of(context).colorScheme.primary,
+          elevation: isSelected ? 4 : 0,
+        ),
+        onPressed: onPressed,
+        child: Text(label),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -209,7 +319,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               actions: [
                 IconButton(
                   onPressed: () async {
-                    await signaler(widget.product.typeProduct);
+                    showReportProblemDialog(context);
                   },
                   icon: Icon(
                     Icons.report_problem_outlined,
