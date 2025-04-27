@@ -132,9 +132,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
       // Now store the signal
       await FirebaseFirestore.instance.collection('Signal').doc(uid).set({
-        'Annonce': itemId,
         'li signala': uid,
-        'mol lanance': molLanance,
+        'Annonce': {
+          molLanance: FieldValue.arrayUnion([
+            itemId
+          ]), // molLanance as the key, and the array of Annonce as the value
+        },
       }, SetOptions(merge: true)); // Important: Merge true!
 
       print('Signaled by $uid');
