@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userName = name;
         isLoading = false;
+        currentPageIndex = 0;
       });
     }
   }
