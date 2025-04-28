@@ -1,6 +1,8 @@
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Authentication/sign_up_page.dart';
 import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
+import 'package:agriplant/Front_end/Profile/profile_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +34,43 @@ Future<void> main() async {
       child: const MainApp(),
     ),
   );
+}
+
+Future<bool> fetchUserVerificationStatus() async {
+  // Check if the user is signed in
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    // No user is signed in
+    print("No user is signed in.");
+    return false;
+  }
+
+  try {
+    // Get the user's document from Firestore using the UID
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(user.uid) // Use the UID from FirebaseAuth
+        .get();
+
+    // Check if the document exists
+    if (userDoc.exists) {
+      // Get the 'Verify' field
+      var verifyValue = userDoc.get('Verify');
+      if (verifyValue == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      // If the document does not exist
+      print('User document does not exist.');
+      return false;
+    }
+  } catch (e) {
+    print('Error fetching user verification status: $e');
+    return false;
+  }
 }
 
 class MainApp extends StatelessWidget {
@@ -83,15 +122,27 @@ class MainApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: (FirebaseAuth.instance.currentUser != null &&
-              FirebaseAuth.instance.currentUser!.emailVerified)
-          ? const HomePage()
-          : const LoginPage(),
+      home: FutureBuilder<bool>(
+        future: fetchUserVerificationStatus(), // Fetch verification status here
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (FirebaseAuth.instance.currentUser != null &&
+              fetchUserVerificationStatus == true) {
+            return const HomePage();
+          } else {
+            return const LoginPage();
+          }
+        },
+      ),
       routes: {
         'home_page': (context) => const HomePage(),
         'sign_up_page': (context) => const SignUpPage(),
         'login_page': (context) => const LoginPage(),
         'settings_page': (context) => const SettingsPage(),
+        'profile_page':(context) => const ProfilePage(),
       },
     );
   }

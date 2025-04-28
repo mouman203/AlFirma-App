@@ -4,6 +4,7 @@ import 'package:agriplant/Back_end/Products/ProductElev.dart';
 import 'package:agriplant/Back_end/ServicesB/Service.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Authentication/ProfilePicturePage.dart';
+import 'package:agriplant/Front_end/Profile/Edit_profile_page.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,11 +13,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Users {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-
-   //continue as guest
-    Future<void> signInAnonymously(BuildContext context, Widget homePage) async {
+  //continue as guest
+  Future<void> signInAnonymously(BuildContext context, Widget homePage) async {
     try {
       await _auth.signInAnonymously();
       Navigator.of(context).pushReplacement(
@@ -30,11 +30,11 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
     }
   }
 
-//to verify user is a guest 
+//to verify user is a guest
   static bool isGuestUser() {
-  User? user = FirebaseAuth.instance.currentUser;
-  return user != null && user.isAnonymous;
-}
+    User? user = FirebaseAuth.instance.currentUser;
+    return user != null && user.isAnonymous;
+  }
 
   // التحقق من صحة البريد الإلكتروني
   bool isEmailValid(String email) {
@@ -303,19 +303,19 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
           'activeType': 'Client',
           'createdAt': FieldValue.serverTimestamp(),
           'Verify': verify,
-          'wilaya':wilaya,
-          'daira':daira,
+          'wilaya': wilaya,
+          'daira': daira,
         });
         print('User registered successfully');
-         Navigator.pop(context);
+        Navigator.pop(context);
 
-      // ✅ Navigate to the profile picture page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ProfilePicturePage(userId: uid),
-        ),
-      );
+        // ✅ Navigate to the profile picture page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProfilePicturePage(userId: uid),
+          ),
+        );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
@@ -428,7 +428,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
           // حفظ بيانات المستخدم الجديدة فقط إذا لم تكن موجودة
           await userRef.set({
             "email": firebaseUser.email,
-            "Verify": true,
+            "Verify": false,
             "first_name": firstName,
             "last_name": lastName,
             "phone": firebaseUser.phoneNumber ?? "",
@@ -438,25 +438,37 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
             'activeType': 'Client',
             "following": [],
             "followers": [],
-            "wilaya":'',
-            "daira":'',
+            "wilaya": '',
+            "daira": '',
             "created_at": FieldValue.serverTimestamp(),
           });
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EditProfilePage(frompage: 'login')),
+          );
         } else {
-          print(" المستخدم موجود مسبقًا ");
+          print(" المستخدم موجود مسبقًا ${doc.get('Verify')}");
+          if (doc.get('Verify') == false) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditProfilePage(frompage: 'login')),
+            );
+          } else {
+            Navigator.pop(context); // إغلاق مؤشر التحميل
+
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('lastPageIndex', 0);
+
+            // الانتقال إلى الصفحة الرئيسية
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => homePage),
+            );
+          }
         }
       }
-
-      Navigator.pop(context); // إغلاق مؤشر التحميل
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('lastPageIndex', 0);
-
-      // الانتقال إلى الصفحة الرئيسية
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => homePage),
-      );
     } catch (e) {
       Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
       print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
@@ -513,7 +525,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
     String docPath;
 
     if (item is Product) {
-       collection = item.typeProduct == "AgricolProduct"
+      collection = item.typeProduct == "AgricolProduct"
           ? "Agricol_products"
           : "Eleveur_products";
       docPath = "Products";
@@ -561,7 +573,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
     String docPath;
 
     if (item is Product) {
-       collection = item.typeProduct == "AgricolProduct"
+      collection = item.typeProduct == "AgricolProduct"
           ? "Agricol_products"
           : "Eleveur_products";
       docPath = "Products";
@@ -603,81 +615,82 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
   }
 
   Future<void> addComment(
-  String itemId,
-  String userId,
-  String text,
-  dynamic item, // Product or Service
-) async {
-  try {
-    String docPath;
-    String rootCollection;
+    String itemId,
+    String userId,
+    String text,
+    dynamic item, // Product or Service
+  ) async {
+    try {
+      String docPath;
+      String rootCollection;
 
-    // Determine whether it's a Product or a Service
-    if (item is Product) {
-      switch (item.typeProduct) {
-        case "AgricolProduct":
-          docPath = "Agricol_products";
-          break;
-        case "EleveurProduct":
-          docPath = "Eleveur_products";
-          break;
-        default:
-          throw Exception("❌ Unknown product type: ${item.typeProduct}");
+      // Determine whether it's a Product or a Service
+      if (item is Product) {
+        switch (item.typeProduct) {
+          case "AgricolProduct":
+            docPath = "Agricol_products";
+            break;
+          case "EleveurProduct":
+            docPath = "Eleveur_products";
+            break;
+          default:
+            throw Exception("❌ Unknown product type: ${item.typeProduct}");
+        }
+        rootCollection = "Products";
+      } else if (item is Service) {
+        switch (item.typeService) {
+          case "Transportation":
+            docPath = "Transportation";
+            break;
+          case "Expertise":
+            docPath = "Expertise";
+            break;
+          case "Repairs":
+            docPath = "Repairs";
+            break;
+          default:
+            throw Exception("❌ Unknown service type: ${item.typeService}");
+        }
+        rootCollection = "Services";
+      } else {
+        throw Exception("❌ Unknown item type!");
       }
-      rootCollection = "Products";
-    } else if (item is Service) {
-      switch (item.typeService) {
-        case "Transportation":
-          docPath = "Transportation";
-          break;
-        case "Expertise":
-          docPath = "Expertise";
-          break;
-        case "Repairs":
-          docPath = "Repairs";
-          break;
-        default:
-          throw Exception("❌ Unknown service type: ${item.typeService}");
+
+      // Firestore document reference
+      DocumentReference ref = FirebaseFirestore.instance
+          .collection(rootCollection)
+          .doc(docPath)
+          .collection(docPath)
+          .doc(itemId);
+
+      // Create a new comment map
+      Map<String, String> newComment = {
+        "userId": userId,
+        "text": text,
+      };
+
+      // Check if document exists
+      DocumentSnapshot docSnapshot = await ref.get();
+
+      if (!docSnapshot.exists) {
+        // If the document does not exist, create it and add the comment
+        await ref.set({
+          "comments": [
+            newComment
+          ] // Initialize the comments field with the first comment
+        });
+        print("✅ Document created and comment added successfully.");
+      } else {
+        // If the document exists, update the comments array
+        await ref.update({
+          "comments": FieldValue.arrayUnion([newComment]),
+        });
+        print("✅ Comment added successfully.");
       }
-      rootCollection = "Services";
-    } else {
-      throw Exception("❌ Unknown item type!");
+    } catch (e) {
+      print("⚠️ Error adding comment: $e");
     }
-
-    // Firestore document reference
-    DocumentReference ref = FirebaseFirestore.instance
-        .collection(rootCollection)
-        .doc(docPath)
-        .collection(docPath)
-        .doc(itemId);
-
-    // Create a new comment map
-    Map<String, String> newComment = {
-      "userId": userId,
-      "text": text,
-    };
-
-    // Check if document exists
-    DocumentSnapshot docSnapshot = await ref.get();
-
-    if (!docSnapshot.exists) {
-      // If the document does not exist, create it and add the comment
-      await ref.set({
-        "comments": [newComment] // Initialize the comments field with the first comment
-      });
-      print("✅ Document created and comment added successfully.");
-    } else {
-      // If the document exists, update the comments array
-      await ref.update({
-        "comments": FieldValue.arrayUnion([newComment]),
-      });
-      print("✅ Comment added successfully.");
-    }
-  } catch (e) {
-    print("⚠️ Error adding comment: $e");
   }
-}
-
 
   Future<void> deleteComment(
     String itemId,

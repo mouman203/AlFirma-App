@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:agriplant/Front_end/Home/home_page.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +11,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  final String frompage;
+
+  const EditProfilePage({super.key, required this.frompage});
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -55,7 +58,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _currentWilaya = userDoc["wilaya"] ?? '';
         _currentDaira = userDoc["daira"] ?? '';
         _currentPhoneNum = userDoc["phone"] ?? '';
-        _currentImage = userDoc["photo"];
+        _currentImage = userDoc["photo"] ?? '';
 
         _firstNameController.text = _currentFirstName!;
         _lastNameController.text = _currentLastName!;
@@ -126,7 +129,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _PhoneNumController.text != _currentPhoneNum ||
         selectedWilaya != _currentWilaya ||
         selectedDaira != _currentDaira ||
-        _selectedImageFile != _currentImage) {
+        _selectedImageFile != null) {
       // Only update if there are changes
       await FirebaseFirestore.instance.collection('Users').doc(userId).update({
         'first_name': _firstNameController.text,
@@ -139,8 +142,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
         uploadImage(_selectedImageFile!);
       }
 
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId) // Using UID to access the document directly
+          .update({'Verify': true});
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -187,25 +199,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: widget.frompage == 'profile'
+            ? Text('Edit Profile')
+            : Text('Continuing sign in ...'),
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
         elevation: 5,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+           Navigator.pop(context);
+          },
+        ),
       ),
       body: ListView(
         children: [
-          GestureDetector(
-            onTap: () => showPopUp(),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 54, bottom: 16),
-              child: isLoading
-                  ? const CircularProgressIndicator()
-                  : CircleAvatar(
-                      radius: 93, // outer radius
-                      backgroundColor: isDarkMode
-                          ? const Color(0xFF90D5AE)
-                          : const Color(0xFF256C4C),
-                      child: CircleAvatar(
-                        radius: 90, // inner radius
+          Stack(children: [
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 54, bottom: 16),
+                child: CircleAvatar(
+                    radius: 93,
+                    backgroundColor: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C),
+                    child: CircleAvatar(
+                        radius: 90,
                         backgroundImage: _selectedImageFile != null
                             ? FileImage(_selectedImageFile!) as ImageProvider
                             : (_currentImage != null
@@ -217,13 +236,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             _selectedImageFile == null && _currentImage == null
                                 ? const Icon(Icons.camera_alt,
                                     size: 30, color: Colors.black54)
-                                : null,
-                      ),
-                    ),
+                                : null)),
+              ),
             ),
-          ),
+            Positioned(
+              top: 54,
+              right: 100,
+              child: CircleAvatar(
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
+                child: IconButton(
+                  icon: Icon(Icons.edit,
+                      color:
+                          isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+                  onPressed: () {
+                    showPopUp();
+                  },
+                ),
+              ),
+            )
+          ]),
 
-          const SizedBox(height: 70),
+          const SizedBox(height: 50),
 
           // First name field
           _buildTextField(
@@ -282,7 +316,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 });
               }),
 
-          const SizedBox(height: 70),
+          const SizedBox(height: 50),
 
           // Submit button
           Padding(
@@ -318,9 +352,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       }
                       //rani dyr validation f onchanged f drop down
                     } else {
-                        _updateProfile();
-                      
-                      print("$selectedWilaya");
+                      _updateProfile();
                     }
                   });
                 },
@@ -340,6 +372,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
             ),
           ),
+          const SizedBox(height: 50),
         ],
       ),
     );
