@@ -1,3 +1,4 @@
+import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Client.dart';
 import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Expert.dart';
 import 'package:agriplant/Front_end/Home/Sidebar.dart';
@@ -224,30 +225,47 @@ class _HomePageState extends State<HomePage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            isLoading
-                ? Text(
-                    "⏳ Loading...",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  )
-                : Text(
-                    userName != null
-                        ? "Hi ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
-                        : "Welcome 👋🏼 ",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-            Text("The ${selectedType} ",
-                style: Theme.of(context).textTheme.bodySmall)
+            if (Users.isGuestUser()) ...[
+              Text(
+                "Welcome 👋🏼",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text(
+                "Enjoy exploring our app 🔍",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ] else ...[
+              isLoading
+                  ? Text(
+                      "⏳ Loading...",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    )
+                  : Text(
+                      userName != null
+                          ? "Hi ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
+                          : "Welcome 👋🏼",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+              Text(
+                "The $selectedType",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
           ],
         ),
         actions: [
-          BecomeTypeAction(onTypeChanged: _loadSelectedType),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: IconButton.filledTonal(
-              onPressed: () {},
-              icon: const Icon(IconlyBroken.notification),
+          if (!Users.isGuestUser()) ...[
+            BecomeTypeAction(onTypeChanged: _loadSelectedType),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: IconButton.filledTonal(
+                onPressed: () {},
+                icon: const Icon(
+                  IconlyBroken.notification,
+                ),
+              ),
             ),
-          ),
+          ]
         ],
       ),
       body: RefreshIndicator(
@@ -260,6 +278,33 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
         currentIndex: currentPageIndex,
         onTap: (index) async {
+          // Block guest users from accessing "Add"  and "messages" and  "Profile"
+          if (Users.isGuestUser() && (index == 2 || index == 3 || index == 4)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Row(
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.black,
+                    ),
+                    Expanded(
+                      child: Text(
+                        "Guest access is limited. Please log in to continue.",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: Color(0xFFFFCC31),
+              ),
+            );
+            return;
+          }
+
           if (index == 2) {
             // If "Add" icon is clicked
             String? activeType = (await getActiveTypeFromFirestore());

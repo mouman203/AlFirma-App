@@ -12,9 +12,29 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Users {
-  // les variables
 
-  // constricteur
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
+   //continue as guest
+    Future<void> signInAnonymously(BuildContext context, Widget homePage) async {
+    try {
+      await _auth.signInAnonymously();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => homePage),
+      );
+    } catch (e) {
+      print('Error during anonymous sign-in: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: const Text('Failed to continue as guest')),
+      );
+    }
+  }
+
+//to verify user is a guest 
+  static bool isGuestUser() {
+  User? user = FirebaseAuth.instance.currentUser;
+  return user != null && user.isAnonymous;
+}
 
   // التحقق من صحة البريد الإلكتروني
   bool isEmailValid(String email) {

@@ -285,17 +285,30 @@ class _ExplorePageState extends State<ExplorePage> {
                       controller: _controller,
                       decoration: InputDecoration(
                         hintText: "Search here",
+                        hintStyle: TextStyle(color:isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C)),
                         isDense: true,
                         contentPadding: const EdgeInsets.all(12.0),
                         border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(99)),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(
+                            color: isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C),
+                          ),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(99)),
                         ),
-                        prefixIcon: const Icon(IconlyLight.search),
+                        prefixIcon: Icon(
+                          IconlyLight.search,
+                          color: isDarkMode
+                              ? const Color(0xFF90D5AE)
+                              : const Color(0xFF256C4C),
+                          size: 25,
+                        ),
                       ),
                     ),
                   ),

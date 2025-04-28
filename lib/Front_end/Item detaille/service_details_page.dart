@@ -62,52 +62,184 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
       _checkIfSaved();
     }
   }
-/// Check if the item is saved
-Future<void> _checkIfSaved() async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid != null) {
-    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    
-    // Ensure the 'saved' field is a list of strings (IDs)
-    final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
 
-    // Check if the item ID exists in the saved list
-    final exists = savedList.contains(widget.service.id);
+  /// Check if the item is saved
+  Future<void> _checkIfSaved() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
 
-    if (exists && mounted) {
-      setState(() {
-        isSaved = true;
-      });
+      // Ensure the 'saved' field is a list of strings (IDs)
+      final savedList = List<String>.from(userDoc.data()?['saved'] ?? []);
+
+      // Check if the item ID exists in the saved list
+      final exists = savedList.contains(widget.service.id);
+
+      if (exists && mounted) {
+        setState(() {
+          isSaved = true;
+        });
+      }
     }
   }
-}
+
+  Future<void> signaler(String categoryId, String selectedOption) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return;
+      final itemId = widget.service.id;
+
+      // Fetch product details
+      DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('Services')
+          .doc(widget.service
+              .typeService) // 'Transportation' or 'Expertise'or'Repairs'
+          .collection(widget.service.typeService)
+          .doc(itemId) // The service ID
+          .get();
+
+      if (!productSnapshot.exists) {
+        print('Service not found');
+        return;
+      }
+
+      final molLanance = productSnapshot.get('ownerId'); // Get owner of product
+
+      // Now store the signal
+      await FirebaseFirestore.instance.collection('Signal').doc(uid).set({
+        'li signala': uid,
+        'Annonce': {
+          'mol lanance : $molLanance':
+              FieldValue.arrayUnion(['itemId : $itemId']),
+          'itemId : $itemId': FieldValue.arrayUnion([selectedOption]),
+          // molLanance as the key, and the array of Annonce as the value
+        },
+      }, SetOptions(merge: true)); // Important: Merge true!
+
+      print('Signaled by $uid');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Thanks for helping us with your signal 🙏'),
+          duration: Duration(seconds: 5), // ⏳ 5 seconds
+          behavior: SnackBarBehavior.floating, // (optional) makes it float
+          backgroundColor:
+              Color.fromARGB(255, 47, 114, 38), // (optional) success color
+        ),
+      );
+    } catch (e) {
+      print("there is a problem 'service detail page' $e");
+    }
+  }
+
+  void showReportProblemDialog(BuildContext context) {
+    TextEditingController otherController = TextEditingController();
+    String selectedOption = '';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: const Text('Report a Problem'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                reportOptionButton(
+                  context: context,
+                  label: 'Wrong Information',
+                  selectedOption: selectedOption,
+                  onPressed: () {
+                    setState(() {
+                      selectedOption = 'Wrong Information';
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                reportOptionButton(
+                  context: context,
+                  label: 'Spam or Scam',
+                  selectedOption: selectedOption,
+                  onPressed: () {
+                    setState(() {
+                      selectedOption = 'Spam or Scam';
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                reportOptionButton(
+                  context: context,
+                  label: 'Other',
+                  selectedOption: selectedOption,
+                  onPressed: () {
+                    setState(() {
+                      selectedOption = 'Other';
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                if (selectedOption == 'Other') ...[
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: otherController,
+                    decoration: const InputDecoration(
+                      labelText: 'Describe the problem',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                  ),
+                ]
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  String reportText = selectedOption == 'Other'
+                      ? otherController.text
+                      : selectedOption;
+                  signaler(widget.service.typeService, selectedOption);
+                  print('Reported Problem: $reportText');
+                  Navigator.pop(context);
+                },
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
 // Toggle the saved status
-Future<void> _toggleSavedStatus() async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid == null) return;
+  Future<void> _toggleSavedStatus() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
 
-  final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
 
-  final itemId = widget.service.id; // Ensure item.id exists and is valid
+    final itemId = widget.service.id; // Ensure item.id exists and is valid
 
-  if (isSaved) {
-    // Remove the item ID from the 'saved' list
-    await userRef.update({
-      'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
-    });
-    setState(() => isSaved = false);
-    widget.onUnsave?.call();
-  } else {
-    // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
-    await userRef.update({
-      'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
-    });
-    setState(() => isSaved = true);
+    if (isSaved) {
+      // Remove the item ID from the 'saved' list
+      await userRef.update({
+        'saved': FieldValue.arrayRemove([itemId]) // Only the ID as a string
+      });
+      setState(() => isSaved = false);
+      widget.onUnsave?.call();
+    } else {
+      // Add the item ID to the 'saved' list (using arrayUnion to prevent duplicates)
+      await userRef.update({
+        'saved': FieldValue.arrayUnion([itemId]) // Only the ID as a string
+      });
+      setState(() => isSaved = true);
+    }
   }
-}
-
-
 
   @override
   void dispose() {
@@ -141,6 +273,31 @@ Future<void> _toggleSavedStatus() async {
     }
   }
 
+  Widget reportOptionButton({
+    required BuildContext context,
+    required String label,
+    required String selectedOption,
+    required VoidCallback onPressed,
+  }) {
+    final bool isSelected = label == selectedOption;
+
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Colors.grey.shade200,
+          foregroundColor:
+              isSelected ? Colors.white : Theme.of(context).colorScheme.primary,
+          elevation: isSelected ? 4 : 0,
+        ),
+        onPressed: onPressed,
+        child: Text(label),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -156,20 +313,32 @@ Future<void> _toggleSavedStatus() async {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text("Details"),
-              backgroundColor:
-                  isDarkMode ? colorScheme.surface : colorScheme.surface,
-              elevation: 5,
-              actions: [
-                IconButton(
-                  onPressed: _toggleSavedStatus,
-                  icon: Icon(
-                    isSaved ? IconlyBold.bookmark : IconlyLight.bookmark,
-                    color: isSaved ? colorScheme.primary : null,
-                  ),
-                ),
-              ],
-            ),
+                title: const Text("Details"),
+                backgroundColor:
+                    isDarkMode ? colorScheme.surface : colorScheme.surface,
+                elevation: 5,
+                actions: [
+                  if (!Users.isGuestUser()) ...[
+                    IconButton(
+                      onPressed: () async {
+                        showReportProblemDialog(context);
+                      },
+                      icon: Icon(
+                        Icons.report_problem_outlined,
+                        color: isDarkMode
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurface,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _toggleSavedStatus,
+                      icon: Icon(
+                        isSaved ? IconlyBold.bookmark : IconlyLight.bookmark,
+                        color: isSaved ? colorScheme.primary : null,
+                      ),
+                    ),
+                  ]
+                ]),
             body: ListView(padding: const EdgeInsets.all(8), children: [
               SizedBox(
                 height: 250,
@@ -521,16 +690,49 @@ Future<void> _toggleSavedStatus() async {
                                     Row(
                                       children: [
                                         IconButton(
-                                          icon: Icon(Icons.thumb_up,
-                                              size: 20,
-                                              color: isLiked
-                                                  ? const Color.fromARGB(
-                                                      255, 47, 114, 38)
-                                                  : Colors.grey),
-                                          onPressed: () {
-                                            user.likeItem(widget.service);
-                                          },
-                                        ),
+                                            icon: Icon(Icons.thumb_up,
+                                                size: 20,
+                                                color: Users.isGuestUser()
+                                                    ? (liked.isNotEmpty
+                                                        ? Colors.green
+                                                        : Colors
+                                                            .grey) // If guest, show green if liked, grey if not
+                                                    : (isLiked
+                                                        ? Colors.green
+                                                        : Colors.grey)),
+                                            onPressed: () {
+                                              if (Users.isGuestUser()) {
+                                                // Show a message or handle the scenario where the guest cannot press the button
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.error_outline,
+                                                          color: Colors.black,
+                                                        ),
+                                                        Expanded(
+                                                          child: Text(
+                                                            'Please log in to like or dislike items.',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 18,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    backgroundColor:
+                                                        Color(0xFFFFCC31),
+                                                  ),
+                                                );
+                                              } else {
+                                                user.likeItem(widget.service);
+                                              }
+                                              ;
+                                            }),
                                         Text(
                                           "${liked.length}",
                                           style: TextStyle(
@@ -549,11 +751,45 @@ Future<void> _toggleSavedStatus() async {
                                         IconButton(
                                           icon: Icon(Icons.thumb_down,
                                               size: 20,
-                                              color: isDisliked
-                                                  ? Colors.red
-                                                  : Colors.grey),
+                                              color: Users.isGuestUser()
+                                                  ? (disliked.isNotEmpty
+                                                      ? Colors.red
+                                                      : Colors
+                                                          .grey) // If guest, show red if disliked, grey if not
+                                                  : (isDisliked
+                                                      ? Colors.red
+                                                      : Colors.grey)),
                                           onPressed: () {
-                                            user.dislikeItem(widget.service);
+                                            if (Users.isGuestUser()) {
+                                              // Show a message or handle the scenario where the guest cannot press the button
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.error_outline,
+                                                        color: Colors.black,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Please log in to like or dislike items.',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  backgroundColor:
+                                                      Color(0xFFFFCC31),
+                                                ),
+                                              );
+                                            } else {
+                                              // User is not a guest, allow them to dislike the item
+                                              user.dislikeItem(widget.service);
+                                            }
                                           },
                                         ),
                                         Text(
@@ -565,16 +801,6 @@ Future<void> _toggleSavedStatus() async {
                                                   : Colors.black),
                                         ),
                                       ],
-                                    ),
-                                    const SizedBox(width: 5),
-
-                                    // زر التعليق
-                                    IconButton(
-                                      icon: const Icon(Icons.comment,
-                                          size: 20, color: Colors.grey),
-                                      onPressed: () {
-                                        print("Comment Clicked!");
-                                      },
                                     ),
                                   ],
                                 );
@@ -593,7 +819,8 @@ Future<void> _toggleSavedStatus() async {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           FilledButton.icon(
-                              onPressed: () {
+                            onPressed: () async {
+                              if (!Users.isGuestUser()) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -601,9 +828,34 @@ Future<void> _toggleSavedStatus() async {
                                         receiverId: widget.service.ownerId!),
                                   ),
                                 );
-                              },
-                              icon: const Icon(IconlyLight.message),
-                              label: const Text("Contact")),
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          color: Colors.black,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'You need to log in to send a message.',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Color(0xFFFFCC31),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(IconlyLight.message),
+                            label: const Text("Contact"),
+                          ),
                           const SizedBox(
                             width: 50,
                           ),
@@ -631,14 +883,49 @@ Future<void> _toggleSavedStatus() async {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content:
-                                            Text('تعذر فتح تطبيق الاتصال')),
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.error_outline,
+                                            color: Colors.black,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              'تعذر فتح تطبيق الاتصال',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      backgroundColor: Color(0xFFFFCC31),
+                                    ),
                                   );
                                 }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text('رقم الهاتف غير متوفر')),
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          color: Colors.black,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'رقم الهاتف غير متوفر',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Color(0xFFFFCC31),
+                                  ),
                                 );
                               }
                             },
@@ -661,100 +948,106 @@ Future<void> _toggleSavedStatus() async {
               ),
               //add a comment :
 
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    FutureBuilder<DocumentSnapshot>(
-                      future: FirebaseFirestore.instance
-                          .collection('Users')
-                          .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .get(),
-                      builder: (context, snapshot) {
-                        String? photoURL;
+              // Hide the entire Container for guest users
+              if (!Users.isGuestUser()) ...[
+                // Only show this for logged-in users
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 5,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('Users')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .get(),
+                        builder: (context, snapshot) {
+                          String? photoURL;
 
-                        // حالة حساب Google
-                        if (FirebaseAuth.instance.currentUser?.providerData.any(
-                                (provider) =>
-                                    provider.providerId == "google.com") ==
-                            true) {
-                          photoURL =
-                              FirebaseAuth.instance.currentUser?.photoURL;
-                        }
-                        // حالة التسجيل العادي + صورة من Firestore
-                        else if (snapshot.hasData && snapshot.data!.exists) {
-                          photoURL = snapshot.data!.get('photo') ?? null;
-                        }
+                          // حالة حساب Google
+                          if (FirebaseAuth.instance.currentUser?.providerData
+                                  .any((provider) =>
+                                      provider.providerId == "google.com") ==
+                              true) {
+                            photoURL =
+                                FirebaseAuth.instance.currentUser?.photoURL;
+                          }
+                          // حالة التسجيل العادي + صورة من Firestore
+                          else if (snapshot.hasData && snapshot.data!.exists) {
+                            photoURL = snapshot.data!.get('photo') ?? null;
+                          }
 
-                        return CircleAvatar(
-                          backgroundColor: Colors.grey,
-                          backgroundImage:
-                              photoURL != null ? NetworkImage(photoURL) : null,
-                          child: photoURL == null
-                              ? Text(
-                                  FirebaseAuth.instance.currentUser?.displayName
-                                              ?.isNotEmpty ==
-                                          true
-                                      ? FirebaseAuth
-                                          .instance.currentUser!.displayName!
-                                          .substring(0, 1)
-                                          .toUpperCase()
-                                      : "U",
-                                  style: const TextStyle(color: Colors.white),
-                                )
-                              : null,
-                        );
-                      },
-                    ),
+                          return CircleAvatar(
+                            backgroundColor: Colors.grey,
+                            backgroundImage: photoURL != null
+                                ? NetworkImage(photoURL)
+                                : null,
+                            child: photoURL == null
+                                ? Text(
+                                    FirebaseAuth.instance.currentUser
+                                                ?.displayName?.isNotEmpty ==
+                                            true
+                                        ? FirebaseAuth
+                                            .instance.currentUser!.displayName!
+                                            .substring(0, 1)
+                                            .toUpperCase()
+                                        : "U",
+                                    style: const TextStyle(color: Colors.white),
+                                  )
+                                : null,
+                          );
+                        },
+                      ),
 
-                    const SizedBox(width: 10),
+                      const SizedBox(width: 10),
 
-                    // حقل الإدخال
-                    Expanded(
-                      child: TextField(
-                        focusNode: _focusNode,
-                        autofocus: false,
-                        controller: controller,
-                        decoration: const InputDecoration(
-                          hintText: "اكتب تعليقًا...",
-                          border: InputBorder.none,
+                      // حقل الإدخال (Input field) and زر الإرسال (Send button)
+                      Expanded(
+                        child: TextField(
+                          focusNode: _focusNode,
+                          autofocus: false,
+                          controller: controller,
+                          decoration: const InputDecoration(
+                            hintText: "اكتب تعليقًا...",
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
-                    ),
 
-                    // زر الإرسال
-                    IconButton(
-                      icon: const Icon(Icons.send,
-                          color: Color.fromARGB(255, 47, 114, 38)),
-                      onPressed: () {
-                        if (controller.text.isEmpty) {
-                          user.showErrorDialog(
-                              context, "You can't add an empty comment");
-                        } else {
-                          user.addComment(
+                      // زر الإرسال (Send button)
+                      IconButton(
+                        icon: const Icon(Icons.send,
+                            color: Color.fromARGB(255, 47, 114, 38)),
+                        onPressed: () {
+                          if (controller.text.isEmpty) {
+                            user.showErrorDialog(
+                                context, "You can't add an empty comment.");
+                          } else {
+                            user.addComment(
                               widget.service.id,
                               FirebaseAuth.instance.currentUser?.uid ?? "guest",
                               controller.text,
-                              widget.service);
-                          controller.clear();
-                        }
-                      },
-                    ),
-                  ],
+                              widget.service,
+                            );
+                            controller.clear();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
 
               const SizedBox(
                 height: 10,

@@ -3,6 +3,7 @@ import 'package:agriplant/Back_end/Products/ProductAgri.dart';
 import 'package:agriplant/Back_end/Products/ProductElev.dart';
 import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
 import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
+import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -84,68 +85,66 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
- Future<List<Object>> fetchAllUserItems(String userId) async {
-  final firestore = FirebaseFirestore.instance;
+  Future<List<Object>> fetchAllUserItems(String userId) async {
+    final firestore = FirebaseFirestore.instance;
 
-  // Fetch Agricol Products
-  final agriSnap = await firestore
-      .collection('Products')
-      .doc('Agricol_products')
-      .collection('Agricol_products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final agriProducts =
-      agriSnap.docs.map(Productagri.fromFirestore).toList();
+    // Fetch Agricol Products
+    final agriSnap = await firestore
+        .collection('Products')
+        .doc('Agricol_products')
+        .collection('Agricol_products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final agriProducts = agriSnap.docs.map(Productagri.fromFirestore).toList();
 
-  // Fetch Eleveur Products
-  final elevSnap = await firestore
-      .collection('Products')
-      .doc('Eleveur_products')
-      .collection('Eleveur_products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final elevProducts =
-      elevSnap.docs.map(ProductElev.fromFirestore).toList();
+    // Fetch Eleveur Products
+    final elevSnap = await firestore
+        .collection('Products')
+        .doc('Eleveur_products')
+        .collection('Eleveur_products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final elevProducts = elevSnap.docs.map(ProductElev.fromFirestore).toList();
 
-  // Fetch Expertise Services
-  final expertiseSnap = await firestore
-      .collection('Services')
-      .doc('Expertise')
-      .collection('Expertise')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final expertiseServices =
-      expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
+    // Fetch Expertise Services
+    final expertiseSnap = await firestore
+        .collection('Services')
+        .doc('Expertise')
+        .collection('Expertise')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final expertiseServices =
+        expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
 
-  // Fetch Repair Services
-  final repairSnap = await firestore
-      .collection('Services')
-      .doc('Repairs')
-      .collection('Repairs')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final repairServices =
-      repairSnap.docs.map(RepairService.fromFirestore).toList();
+    // Fetch Repair Services
+    final repairSnap = await firestore
+        .collection('Services')
+        .doc('Repairs')
+        .collection('Repairs')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final repairServices =
+        repairSnap.docs.map(RepairService.fromFirestore).toList();
 
-  // Fetch Transport Services
-  final transportSnap = await firestore
-      .collection('Services')
-      .doc('Transportation')
-      .collection('Transportation')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final transportServices =
-      transportSnap.docs.map(TransportService.fromFirestore).toList();
+    // Fetch Transport Services
+    final transportSnap = await firestore
+        .collection('Services')
+        .doc('Transportation')
+        .collection('Transportation')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final transportServices =
+        transportSnap.docs.map(TransportService.fromFirestore).toList();
 
-  // Combine all items into one list
-  return [
-    ...agriProducts,
-    ...elevProducts,
-    ...expertiseServices,
-    ...repairServices,
-    ...transportServices,
-  ];
-}
+    // Combine all items into one list
+    return [
+      ...agriProducts,
+      ...elevProducts,
+      ...expertiseServices,
+      ...repairServices,
+      ...transportServices,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +157,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           children: [
             //the profile pic and the name of the user
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8,top: 8),
+              padding: const EdgeInsets.only(left: 8.0, right: 8, top: 8),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -221,38 +220,40 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: _toggleFollow,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isFollowing
-                                  ? Colors.red
-                                  : const Color.fromARGB(255, 47, 114, 38),
-                            ),
-                            child: Text(
-                              isFollowing ? "Unfollow" : "Follow",
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChatPage(receiverId: widget.userId),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Only show buttons for logged-in users
+                            if (!Users.isGuestUser()) ...[
+                              ElevatedButton(
+                                onPressed: _toggleFollow,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isFollowing
+                                      ? Colors.red
+                                      : const Color.fromARGB(255, 47, 114, 38),
                                 ),
-                              );
-                            },
-                            child: const Icon(
-                              Icons.message,
-                              size: 25,
-                            ),
-                          ),
-                        ],
-                      ),
+                                child: Text(
+                                  isFollowing ? "Unfollow" : "Follow",
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ChatPage(receiverId: widget.userId),
+                                    ),
+                                  );
+                                },
+                                child: const Icon(
+                                  Icons.message,
+                                  size: 25,
+                                ),
+                              ),
+                            ],
+                          ]),
                     ),
                   ],
                 ),
@@ -260,10 +261,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
 
             const SizedBox(height: 10),
-        
+
             //the products of the user
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8,bottom: 8),
+              padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -303,16 +304,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-            
+
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
                               return Text(
                                   "There are not items for $username yet.",
                                   style: const TextStyle(
                                       fontSize: 16, color: Colors.grey));
                             }
-            
+
                             final itemList = snapshot.data!;
-            
+
                             return GridView.builder(
                               itemCount: itemList.length,
                               shrinkWrap: true,

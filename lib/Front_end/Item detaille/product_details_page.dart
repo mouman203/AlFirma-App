@@ -89,7 +89,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
-            title: Text('Report a Problem'),
+            title: const Text('Report a Problem'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -103,7 +103,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     });
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 reportOptionButton(
                   context: context,
                   label: 'Spam or Scam',
@@ -114,7 +114,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     });
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 reportOptionButton(
                   context: context,
                   label: 'Other',
@@ -125,12 +125,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     });
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 if (selectedOption == 'Other') ...[
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
                     controller: otherController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Describe the problem',
                       border: OutlineInputBorder(),
                     ),
@@ -144,7 +144,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -155,7 +155,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   print('Reported Problem: $reportText');
                   Navigator.pop(context);
                 },
-                child: Text('Submit'),
+                child: const Text('Submit'),
               ),
             ],
           ),
@@ -227,7 +227,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
       print('Signaled by $uid');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Thanks for helping us with your signal 🙏'),
           duration: Duration(seconds: 5), // ⏳ 5 seconds
           behavior: SnackBarBehavior.floating, // (optional) makes it float
@@ -317,24 +317,26 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   isDarkMode ? colorScheme.surface : colorScheme.surface,
               elevation: 5,
               actions: [
-                IconButton(
-                  onPressed: () async {
-                    showReportProblemDialog(context);
-                  },
-                  icon: Icon(
-                    Icons.report_problem_outlined,
-                    color: isDarkMode
-                        ? colorScheme.onSurface
-                        : colorScheme.onSurface,
+                if (!Users.isGuestUser()) ...[
+                  IconButton(
+                    onPressed: () async {
+                      showReportProblemDialog(context);
+                    },
+                    icon: Icon(
+                      Icons.report_problem_outlined,
+                      color: isDarkMode
+                          ? colorScheme.onSurface
+                          : colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: _toggleSavedStatus,
-                  icon: Icon(
-                    isSaved ? IconlyBold.bookmark : IconlyLight.bookmark,
-                    color: isSaved ? colorScheme.primary : null,
+                  IconButton(
+                    onPressed: _toggleSavedStatus,
+                    icon: Icon(
+                      isSaved ? IconlyBold.bookmark : IconlyLight.bookmark,
+                      color: isSaved ? colorScheme.primary : null,
+                    ),
                   ),
-                ),
+                ]
               ],
             ),
             body: ListView(padding: const EdgeInsets.all(8), children: [
@@ -645,16 +647,49 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     Row(
                                       children: [
                                         IconButton(
-                                          icon: Icon(Icons.thumb_up,
-                                              size: 20,
-                                              color: isLiked
-                                                  ? const Color.fromARGB(
-                                                      255, 47, 114, 38)
-                                                  : Colors.grey),
-                                          onPressed: () {
-                                            user.likeItem(widget.product);
-                                          },
-                                        ),
+                                            icon: Icon(Icons.thumb_up,
+                                                size: 20,
+                                                color: Users.isGuestUser()
+                                                    ? (liked.isNotEmpty
+                                                        ? Colors.green
+                                                        : Colors
+                                                            .grey) // If guest, show green if liked, grey if not
+                                                    : (isLiked
+                                                        ? Colors.green
+                                                        : Colors.grey)),
+                                            onPressed: () {
+                                              if (Users.isGuestUser()) {
+                                                // Show a message or handle the scenario where the guest cannot press the button
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.error_outline,
+                                                          color: Colors.black,
+                                                        ),
+                                                        Expanded(
+                                                          child: Text(
+                                                            'Please log in to like or dislike items.',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 18,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    backgroundColor:
+                                                        Color(0xFFFFCC31),
+                                                  ),
+                                                );
+                                              } else {
+                                                user.likeItem(widget.product);
+                                              }
+                                              ;
+                                            }),
                                         Text(
                                           "${liked.length}",
                                           style: TextStyle(
@@ -673,11 +708,45 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         IconButton(
                                           icon: Icon(Icons.thumb_down,
                                               size: 20,
-                                              color: isDisliked
-                                                  ? Colors.red
-                                                  : Colors.grey),
+                                              color: Users.isGuestUser()
+                                                  ? (disliked.isNotEmpty
+                                                      ? Colors.red
+                                                      : Colors
+                                                          .grey) // If guest, show red if disliked, grey if not
+                                                  : (isDisliked
+                                                      ? Colors.red
+                                                      : Colors.grey)),
                                           onPressed: () {
-                                            user.dislikeItem(widget.product);
+                                            if (Users.isGuestUser()) {
+                                              // Show a message or handle the scenario where the guest cannot press the button
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.error_outline,
+                                                        color: Colors.black,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Please log in to like or dislike items.',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  backgroundColor:
+                                                      Color(0xFFFFCC31),
+                                                ),
+                                              );
+                                            } else {
+                                              // User is not a guest, allow them to dislike the item
+                                              user.dislikeItem(widget.product);
+                                            }
                                           },
                                         ),
                                         Text(
@@ -689,16 +758,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                   : Colors.black),
                                         ),
                                       ],
-                                    ),
-                                    const SizedBox(width: 5),
-
-                                    // زر التعليق
-                                    IconButton(
-                                      icon: const Icon(Icons.comment,
-                                          size: 20, color: Colors.grey),
-                                      onPressed: () {
-                                        print("Comment Clicked!");
-                                      },
                                     ),
                                   ],
                                 );
@@ -717,7 +776,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           FilledButton.icon(
-                              onPressed: () {
+                            onPressed: () async {
+                              if (!Users.isGuestUser()) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -725,9 +785,34 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         receiverId: widget.product.ownerId!),
                                   ),
                                 );
-                              },
-                              icon: const Icon(IconlyLight.message),
-                              label: const Text("Contact")),
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          color: Colors.black,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'You need to log in to send a message.',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Color(0xFFFFCC31),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(IconlyLight.message),
+                            label: const Text("Contact"),
+                          ),
                           const SizedBox(
                             width: 50,
                           ),
@@ -755,14 +840,49 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content:
-                                            Text('تعذر فتح تطبيق الاتصال')),
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.error_outline,
+                                            color: Colors.black,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              'تعذر فتح تطبيق الاتصال',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      backgroundColor: Color(0xFFFFCC31),
+                                    ),
                                   );
                                 }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text('رقم الهاتف غير متوفر')),
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          color: Colors.black,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'رقم الهاتف غير متوفر',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Color(0xFFFFCC31),
+                                  ),
                                 );
                               }
                             },
@@ -785,100 +905,106 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
               //add a comment :
 
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    FutureBuilder<DocumentSnapshot>(
-                      future: FirebaseFirestore.instance
-                          .collection('Users')
-                          .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .get(),
-                      builder: (context, snapshot) {
-                        String? photoURL;
+              // Hide the entire Container for guest users
+              if (!Users.isGuestUser()) ...[
+                // Only show this for logged-in users
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 5,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('Users')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .get(),
+                        builder: (context, snapshot) {
+                          String? photoURL;
 
-                        // حالة حساب Google
-                        if (FirebaseAuth.instance.currentUser?.providerData.any(
-                                (provider) =>
-                                    provider.providerId == "google.com") ==
-                            true) {
-                          photoURL =
-                              FirebaseAuth.instance.currentUser?.photoURL;
-                        }
-                        // حالة التسجيل العادي + صورة من Firestore
-                        else if (snapshot.hasData && snapshot.data!.exists) {
-                          photoURL = snapshot.data!.get('photo') ?? null;
-                        }
+                          // حالة حساب Google
+                          if (FirebaseAuth.instance.currentUser?.providerData
+                                  .any((provider) =>
+                                      provider.providerId == "google.com") ==
+                              true) {
+                            photoURL =
+                                FirebaseAuth.instance.currentUser?.photoURL;
+                          }
+                          // حالة التسجيل العادي + صورة من Firestore
+                          else if (snapshot.hasData && snapshot.data!.exists) {
+                            photoURL = snapshot.data!.get('photo') ?? null;
+                          }
 
-                        return CircleAvatar(
-                          backgroundColor: Colors.grey,
-                          backgroundImage:
-                              photoURL != null ? NetworkImage(photoURL) : null,
-                          child: photoURL == null
-                              ? Text(
-                                  FirebaseAuth.instance.currentUser?.displayName
-                                              ?.isNotEmpty ==
-                                          true
-                                      ? FirebaseAuth
-                                          .instance.currentUser!.displayName!
-                                          .substring(0, 1)
-                                          .toUpperCase()
-                                      : "U",
-                                  style: const TextStyle(color: Colors.white),
-                                )
-                              : null,
-                        );
-                      },
-                    ),
+                          return CircleAvatar(
+                            backgroundColor: Colors.grey,
+                            backgroundImage: photoURL != null
+                                ? NetworkImage(photoURL)
+                                : null,
+                            child: photoURL == null
+                                ? Text(
+                                    FirebaseAuth.instance.currentUser
+                                                ?.displayName?.isNotEmpty ==
+                                            true
+                                        ? FirebaseAuth
+                                            .instance.currentUser!.displayName!
+                                            .substring(0, 1)
+                                            .toUpperCase()
+                                        : "U",
+                                    style: const TextStyle(color: Colors.white),
+                                  )
+                                : null,
+                          );
+                        },
+                      ),
 
-                    const SizedBox(width: 10),
+                      const SizedBox(width: 10),
 
-                    // حقل الإدخال
-                    Expanded(
-                      child: TextField(
-                        focusNode: _focusNode,
-                        autofocus: false,
-                        controller: controller,
-                        decoration: const InputDecoration(
-                          hintText: "اكتب تعليقًا...",
-                          border: InputBorder.none,
+                      // حقل الإدخال (Input field) and زر الإرسال (Send button)
+                      Expanded(
+                        child: TextField(
+                          focusNode: _focusNode,
+                          autofocus: false,
+                          controller: controller,
+                          decoration: const InputDecoration(
+                            hintText: "اكتب تعليقًا...",
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
-                    ),
 
-                    // زر الإرسال
-                    IconButton(
-                      icon: const Icon(Icons.send,
-                          color: Color.fromARGB(255, 47, 114, 38)),
-                      onPressed: () {
-                        if (controller.text.isEmpty) {
-                          user.showErrorDialog(
-                              context, "You can't add an empty comment");
-                        } else {
-                          user.addComment(
+                      // زر الإرسال (Send button)
+                      IconButton(
+                        icon: const Icon(Icons.send,
+                            color: Color.fromARGB(255, 47, 114, 38)),
+                        onPressed: () {
+                          if (controller.text.isEmpty) {
+                            user.showErrorDialog(
+                                context, "You can't add an empty comment.");
+                          } else {
+                            user.addComment(
                               widget.product.id,
                               FirebaseAuth.instance.currentUser?.uid ?? "guest",
                               controller.text,
-                              widget.product);
-                          controller.clear();
-                        }
-                      },
-                    ),
-                  ],
+                              widget.product,
+                            );
+                            controller.clear();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
 
               const SizedBox(
                 height: 10,

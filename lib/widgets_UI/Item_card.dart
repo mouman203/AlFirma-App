@@ -129,20 +129,23 @@ class _ItemCardState extends State<ItemCard> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: IconButton.filledTonal(
-                    padding: EdgeInsets.zero,
-                    iconSize: 18,
-                    onPressed: _toggleSavedStatus,
-                    icon: isSaved
-                        ? const Icon(IconlyBold.bookmark)
-                        : const Icon(IconlyLight.bookmark),
-                    color:
-                        isSaved ? Theme.of(context).colorScheme.primary : null,
-                  ),
-                ),
+                child: Users.isGuestUser()
+                    ? const SizedBox() // If guest, show nothing
+                    : SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: IconButton.filledTonal(
+                          padding: EdgeInsets.zero,
+                          iconSize: 18,
+                          onPressed: _toggleSavedStatus,
+                          icon: isSaved
+                              ? const Icon(IconlyBold.bookmark)
+                              : const Icon(IconlyLight.bookmark),
+                          color: isSaved
+                              ? Theme.of(context).colorScheme.primary
+                              : null,
+                        ),
+                      ),
               ),
             ),
             // Texts
@@ -237,39 +240,46 @@ class _ItemCardState extends State<ItemCard> {
                             context,
                             icon: Icons.thumb_up,
                             count: liked.length,
-                            color: liked.contains(uid)
-                                ? Colors.green
-                                : Colors.grey,
-                            onTap: () {
-                              if (item is Service) {
-                                widget.user.likeItem(item);
-                              } else {
-                                widget.user.likeItem(item);
-                              }
-                            },
+                            color: Users.isGuestUser()
+                                ? (liked.isNotEmpty
+                                    ? Colors.green
+                                    : Colors
+                                        .grey) // If guest, show green if liked, grey if not
+                                : (liked.contains(uid)
+                                    ? Colors.green
+                                    : Colors.grey),
+                            onTap: Users.isGuestUser()
+                                ? () {}
+                                : () {
+                                    widget.user.likeItem(item);
+                                  },
                           ),
                           const SizedBox(width: 20),
                           _reactionIcon(
                             context,
                             icon: Icons.thumb_down,
                             count: disliked.length,
-                            color: disliked.contains(uid)
-                                ? Colors.red
-                                : Colors.grey,
-                            onTap: () {
-                              if (item is Service) {
-                                widget.user.dislikeItem(item);
-                              } else {
-                                widget.user.dislikeItem(item);
-                              }
-                            },
+                            color: Users.isGuestUser()
+                                ? (disliked.isNotEmpty
+                                    ? Colors.red
+                                    : Colors
+                                        .grey) // If guest, show red if disliked, grey if not
+                                : (disliked.contains(uid)
+                                    ? Colors.red
+                                    : Colors.grey),
+                            onTap: Users.isGuestUser()
+                                ? () {}
+                                : () {
+                                    widget.user.dislikeItem(item);
+                                  },
                           ),
                           const SizedBox(width: 20),
                           _reactionIcon(
                             context,
-                            icon: Icons.comment,
+                            icon: IconlyLight.chat,
                             count: comments.length,
-                            color: Colors.grey,
+                            color:
+                                comments.isEmpty ? Colors.grey : Colors.green,
                             onTap: () {
                               if (item is Service) {
                                 Navigator.push(

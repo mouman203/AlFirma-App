@@ -1,3 +1,4 @@
+import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Profile/Settings/Security_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,6 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          
           Divider(
               color: isDarkMode
                   ? const Color.fromARGB(255, 16, 24, 20)
@@ -45,19 +45,48 @@ class _SettingsPageState extends State<SettingsPage> {
 
           // security
           ListTile(
-            leading: Icon(IconlyBold.shieldFail,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            leading: Icon(
+              IconlyBold.shieldFail,
+              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            ),
             title: Text(
               'Security',
               style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
-            trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            ),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SecurityPage()),
-              );
+              if (Users.isGuestUser()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: Colors.black,
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Only logged-in users can access security features.',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Color(0xFFFFCC31),
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SecurityPage()),
+                );
+              }
             },
           ),
 
@@ -157,17 +186,46 @@ class _SettingsPageState extends State<SettingsPage> {
                   : Colors.white),
           // Contact Us
           ListTile(
-            leading: Icon(Icons.contact_support,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            leading: Icon(
+              Icons.contact_support,
+              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            ),
             title: const Text('Contact Us'),
-            trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            ),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const Contact_us_page()),
-              );
+              if (Users.isGuestUser()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: Colors.black,
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Please log in to contact our support team.',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Color(0xFFFFCC31),
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Contact_us_page()),
+                );
+              }
             },
           ),
 

@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Home/home_page.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -174,6 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
+              const SizedBox(height: 13),
               //  و "نسيت كلمة المرور؟"
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -182,20 +184,31 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
-                        onPressed: () async {
-                          // منطق إعادة تعيين كلمة المرور
-                          user.resetPassword(
-                              context: context, email: _emailController.text);
-                        },
-                        child: Text(
-                          "Forgot Password?",
-                          style: GoogleFonts.roboto(
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
                             fontSize: 16,
                             color: isDarkMode
-                                ? Colors.white
+                                ? const Color(0xFF90D5AE)
                                 : const Color(0xFF256C4C),
                           ),
+                          children: [
+                            TextSpan(
+                              text: "Forgot Password?",
+                              style: const TextStyle(
+                                decoration: TextDecoration
+                                    .underline, // Underline the text
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  // Logic for resetting password
+                                  user.resetPassword(
+                                    context: context,
+                                    email: _emailController.text,
+                                  );
+                                },
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -203,6 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
+              const SizedBox(height: 20),
               // زر تسجيل الدخول
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -228,26 +242,45 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: Text("Login",
                         style: GoogleFonts.roboto(
-                            fontSize: 18, color: Colors.white)),
+                            fontSize: 18,
+                            color: isDarkMode ? Colors.black : Colors.white)),
                   ),
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              // زر إنشاء حساب جديد
-              TextButton(
-                onPressed: () {
-                  // هنا يمكنك إضافة منطق التنقل إلى صفحة إنشاء الحساب
-                  Navigator.of(context).pushReplacementNamed('sign_up_page');
-                },
-                child: Text(
-                  "SIGN_UP",
+              RichText(
+                text: TextSpan(
                   style: GoogleFonts.roboto(
-                      color: isDarkMode
-                          ? Colors.white // white in dark mode
-                          : const Color(0xFF256C4C),
-                      fontSize: 16),
+                    fontSize: 16,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                  children: [
+                    const TextSpan(
+                      text: "Don't have an account? ",
+                      style: TextStyle(
+                        color: Colors.grey, // First part in grey
+                      ),
+                    ),
+                    TextSpan(
+                      text: "Sign Up",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C), // Second part in green
+                        decoration: TextDecoration
+                            .underline, // Optional: Add underline for better UX
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          // Navigate to the sign-up page when "Sign Up" is tapped
+                          Navigator.of(context)
+                              .pushReplacementNamed('sign_up_page');
+                        },
+                    ),
+                  ],
                 ),
               ),
 
@@ -290,6 +323,37 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 20),
+
+              // "Continue as Guest" button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      user.signInAnonymously(context, const HomePage());
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    child: Text(
+                      "Continue as Guest",
+                      style: GoogleFonts.roboto(
+                          fontSize: 18,
+                          color: isDarkMode ? Colors.black : Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
