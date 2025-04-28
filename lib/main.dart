@@ -130,7 +130,7 @@ class MainApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (FirebaseAuth.instance.currentUser != null &&
-              fetchUserVerificationStatus == true) {
+              snapshot.data == true) {
             return const HomePage();
           } else {
             return const LoginPage();
@@ -142,7 +142,7 @@ class MainApp extends StatelessWidget {
         'sign_up_page': (context) => const SignUpPage(),
         'login_page': (context) => const LoginPage(),
         'settings_page': (context) => const SettingsPage(),
-        'profile_page':(context) => const ProfilePage(),
+        'profile_page': (context) => const ProfilePage(),
       },
     );
   }
