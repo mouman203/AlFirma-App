@@ -45,6 +45,9 @@ void showSuccessPopup(BuildContext context, String? type) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+       Future.delayed(const Duration(seconds: 2), () {
+        Navigator.of(context).pop(); // Automatically close after 2 seconds
+      });
       return AlertDialog(
         title: const Text("🎉 Congratulations!"),
         content: Text("Yeeey! You are now a $type!"),
@@ -65,9 +68,12 @@ void showAlertsPopup(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+       Future.delayed(const Duration(seconds: 3), () {
+        Navigator.of(context).pop(); // Automatically close after 2 seconds
+      });
       return AlertDialog(
         title: const Text("⚠️ Alert!"),
-        content: Text(
+        content: const Text(
             "You have to upload some files .. after validation you received a notification"),
         actions: [
           TextButton(
@@ -317,6 +323,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
         await addUserTypeNoDoc(selectedType);
         setState(() {
           selectedTypes.insert(0, selectedType);
+          activeType = selectedType;
         });
       } else {
         await getLabelForDoc(selectedType);
@@ -514,7 +521,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                             Container(
                                               color:
                                                   Colors.black.withOpacity(0.5),
-                                              child: Center(
+                                              child: const Center(
                                                 child: Icon(Icons.lock,
                                                     color: Colors.white,
                                                     size: 30),

@@ -205,6 +205,10 @@ class _DocumentFormState extends State<DocumentForm> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('✅ تم إرسال الوثائق بنجاح')),
       );
+        // 🔥 Wait for 2 seconds, then go back
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(context).pop();
+    });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("❌ خطأ: $e")),

@@ -434,7 +434,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
             "phone": firebaseUser.phoneNumber ?? "",
             "password": "signed with google",
             "photo": firebaseUser.photoURL ?? "",
-            "userType": [],
+            "userType": {},
             'activeType': 'Client',
             "following": [],
             "followers": [],

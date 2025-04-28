@@ -341,7 +341,7 @@ Future<List<dynamic>> _loadSavedItems() async {
                                   child: CircularProgressIndicator());
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(child: Text("No posts yet."));
+                              return const Center(child: Text("No items yet."));
                             }
 
                             final itemList = snapshot.data!;
@@ -373,7 +373,7 @@ Future<List<dynamic>> _loadSavedItems() async {
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text("No saved posts yet."));
+                                  child: Text("No saved items yet."));
                             }
 
                             final savedItems = snapshot.data!;

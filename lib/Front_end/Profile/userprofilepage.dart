@@ -9,6 +9,7 @@ import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String userId; // ✅ معرف المستخدم الذي نريد عرض ملفه الشخصي
@@ -148,7 +149,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(title: Text("$username ($role)")),
@@ -229,11 +230,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: isFollowing
                                       ? Colors.red
-                                      : const Color.fromARGB(255, 47, 114, 38),
+                                      : isDarkMode
+                                          ? const Color(0xFF90D5AE)
+                                          : const Color(0xFF256C4C),
                                 ),
                                 child: Text(
                                   isFollowing ? "Unfollow" : "Follow",
-                                  style: const TextStyle(color: Colors.black),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                               ),
                               const SizedBox(width: 20),
@@ -248,7 +251,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   );
                                 },
                                 child: const Icon(
-                                  Icons.message,
+                                  IconlyBold.message,
                                   size: 25,
                                 ),
                               ),
