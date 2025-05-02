@@ -725,7 +725,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                                       ],
                                                     ),
                                                     backgroundColor:
-                                                        Color(0xFFFFCC31),
+                                                        Color.fromARGB(
+                                                            255, 247, 234, 117),
                                                   ),
                                                 );
                                               } else {
@@ -783,7 +784,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                                     ],
                                                   ),
                                                   backgroundColor:
-                                                      Color(0xFFFFCC31),
+                                                      Color.fromARGB(
+                                                          255, 255, 210, 75),
                                                 ),
                                               );
                                             } else {
@@ -848,7 +850,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                         ),
                                       ],
                                     ),
-                                    backgroundColor: Color(0xFFFFCC31),
+                                    backgroundColor:
+                                        Color.fromARGB(255, 247, 234, 117),
                                   ),
                                 );
                               }
@@ -900,7 +903,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                           ),
                                         ],
                                       ),
-                                      backgroundColor: Color(0xFFFFCC31),
+                                      backgroundColor:
+                                          Color.fromARGB(255, 247, 234, 117),
                                     ),
                                   );
                                 }
@@ -924,7 +928,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                         ),
                                       ],
                                     ),
-                                    backgroundColor: Color(0xFFFFCC31),
+                                    backgroundColor:
+                                        Color.fromARGB(255, 247, 234, 117),
                                   ),
                                 );
                               }

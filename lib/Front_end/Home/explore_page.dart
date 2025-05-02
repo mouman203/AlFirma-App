@@ -2,6 +2,7 @@ import 'package:agriplant/Back_end/Products/Product.dart';
 import 'package:agriplant/Back_end/Products/ProductAgri.dart';
 import 'package:agriplant/Back_end/Products/ProductElev.dart';
 import 'package:agriplant/Back_end/User.dart';
+import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Filter/filter_bottom_sheet.dart';
 import 'package:agriplant/Search/SearchHistoryManager%20.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
@@ -244,8 +245,31 @@ class _ExplorePageState extends State<ExplorePage> {
       child: Scaffold(
         body: Column(
           children: [
-            // ✅ البحث والفلتر
-            // ✅ شريط البحث والفلتر
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: Container(
+                width: double.infinity, 
+                color: const Color.fromARGB(
+                    255, 247, 234, 117), 
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: const Center(
+                  child: Text(
+                    'Login', 
+                    style: TextStyle(
+                      color: Colors.black, 
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 3),
 
             Padding(
               padding: const EdgeInsets.all(10),
@@ -285,7 +309,8 @@ class _ExplorePageState extends State<ExplorePage> {
                       controller: _controller,
                       decoration: InputDecoration(
                         hintText: "Search here",
-                        hintStyle: TextStyle(color:isDarkMode
+                        hintStyle: TextStyle(
+                            color: isDarkMode
                                 ? const Color(0xFF90D5AE)
                                 : const Color(0xFF256C4C)),
                         isDense: true,

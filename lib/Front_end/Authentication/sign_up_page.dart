@@ -57,26 +57,30 @@ class _SignUpPageState extends State<SignUpPage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 30.0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            size: 28,
+            color: isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C), 
+          ),
+          onPressed: () {
+            // Go back to the HomePage when arrow is pressed
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          },
+        ),
+        backgroundColor: Colors.transparent, // Transparent AppBar background
+        elevation: 0, // Remove shadow
+      ),
       body: Column(
         children: [
-          // Back arrow button at the top left
-          Padding(
-            padding: const EdgeInsets.only(top: 60, right: 350),
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                size: 40,
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              }, // Back button functionality
-            ),
-          ),
-
+        
           // Centered content in the body
           Expanded(
             child: SingleChildScrollView(

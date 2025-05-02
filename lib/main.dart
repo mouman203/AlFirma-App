@@ -17,13 +17,22 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
-  );
+  try {
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    // Initialize Firebase App Check (for security)
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.debug,
+    );
+
+    print("Firebase initialized successfully.");
+  } catch (e) {
+    print("Error initializing Firebase: $e");
+  }
 
   runApp(
     MultiProvider(
@@ -37,25 +46,21 @@ Future<void> main() async {
 }
 
 Future<bool> fetchUserVerificationStatus() async {
-  // Check if the user is signed in
-  final user = FirebaseAuth.instance.currentUser;
-
-  if (user == null) {
-    // No user is signed in
-    print("No user is signed in.");
-    return false;
-  }
-
   try {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      print("No user is signed in.");
+      return false;
+    }
+
     // Get the user's document from Firestore using the UID
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('Users')
-        .doc(user.uid) // Use the UID from FirebaseAuth
+        .doc(user.uid)
         .get();
 
-    // Check if the document exists
     if (userDoc.exists) {
-      // Get the 'Verify' field
       var verifyValue = userDoc.get('Verify');
       if (verifyValue == true) {
         return true;
@@ -63,13 +68,29 @@ Future<bool> fetchUserVerificationStatus() async {
         return false;
       }
     } else {
-      // If the document does not exist
       print('User document does not exist.');
       return false;
     }
   } catch (e) {
     print('Error fetching user verification status: $e');
     return false;
+  }
+}
+
+Future<Widget> initializeApp() async {
+  try {
+    bool isVerified = await fetchUserVerificationStatus();
+
+    if (isVerified && FirebaseAuth.instance.currentUser != null) {
+      return const HomePage();
+    }
+
+    // If verification fails or user is not verified, sign in anonymously
+    await FirebaseAuth.instance.signInAnonymously();
+    return const HomePage();
+  } catch (e) {
+    print('Error during app initialization: $e');
+    return const LoginPage(); // or return an error screen if preferred
   }
 }
 
@@ -122,16 +143,25 @@ class MainApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: FutureBuilder<bool>(
-        future: fetchUserVerificationStatus(), // Fetch verification status here
+      home: FutureBuilder<Widget>(
+        future: initializeApp(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 200,
+                  height: 200,
+                ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            print("Error: ${snapshot.error}");
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (FirebaseAuth.instance.currentUser != null &&
-              snapshot.data == true) {
-            return const HomePage();
           } else {
-            return const LoginPage();
+            return snapshot.data!;
           }
         },
       ),

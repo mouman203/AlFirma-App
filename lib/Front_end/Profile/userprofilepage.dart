@@ -152,7 +152,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: Text("$username ($role)")),
+      appBar: AppBar(
+        toolbarHeight: 30.0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            size: 28,
+            color:
+                isDarkMode ? const Color(0xFF90D5AE) : const Color(0xFF256C4C),
+          ),
+          onPressed: () {
+            // Go back to the previous page (pop the current route off the stack)
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.transparent, // Transparent AppBar background
+        elevation: 0, // Remove shadow
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [

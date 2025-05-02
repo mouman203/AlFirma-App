@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:agriplant/Front_end/Home/home_page.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -200,14 +201,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: widget.frompage == 'profile'
-            ? Text('Edit Profile')
-            : Text('Continuing sign in ...'),
+            ? const Text('Edit Profile')
+            : const Text('Continuing sign in ...'),
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
         elevation: 5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-           Navigator.pop(context);
+            Navigator.pop(context);
           },
         ),
       ),
@@ -446,7 +447,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required List<String> items,
     required String label,
     required String? errorText,
-    required void Function(String?) onChanged, // 👈 Add IconData parameter
+    required void Function(String?) onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -455,9 +456,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           color: Colors.green.shade50,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: errorText != null
-                ? Colors.red
-                : Colors.transparent, // 👈 Red border if error
+            color: errorText != null ? Colors.red : Colors.transparent,
             width: 1.5,
           ),
         ),
@@ -465,29 +464,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.add_location_alt_sharp,
-                color: const Color(0xFF256C4C),
+                color: Color(0xFF256C4C),
                 size: 20,
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: DropdownButtonFormField<String>(
+                child: DropdownButtonFormField2<String>(
                   value: items.contains(selectedValue) ? selectedValue : null,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
                     border: InputBorder.none,
-                    hintText: label,
-                    errorText: errorText,
                   ),
+                  hint: Text(label),
                   items: items
                       .map(
-                        (item) => DropdownMenuItem(
+                        (item) => DropdownMenuItem<String>(
                           value: item,
                           child: Text(item),
                         ),
                       )
                       .toList(),
+                  validator: (value) {
+                    if (errorText != null) return errorText;
+                    return null;
+                  },
                   onChanged: onChanged,
+                  buttonStyleData: const ButtonStyleData(
+                    padding: EdgeInsets.symmetric(horizontal: 14),
+                    height: 50,
+                  ),
+                  dropdownStyleData: DropdownStyleData(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ),
             ],

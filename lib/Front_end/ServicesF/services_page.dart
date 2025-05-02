@@ -94,7 +94,7 @@ class ServicesPage extends StatelessWidget {
                     child: Text(
                       service.name,
                       style: const TextStyle(
-                        color: const Color(0xFF256C4C),
+                        color: Colors.white,
                         fontSize: 21,
                         fontWeight: FontWeight.w900,
                       ),

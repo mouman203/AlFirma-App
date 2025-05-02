@@ -42,6 +42,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   
   
+  
 
 
 # The following defines the version and build number for your application.
@@ -80,6 +81,7 @@ flutter_launcher_icons:
   min_sdk_android: 21
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/logo.png" 
+  adaptive_icon_monochrome : "assets/logo.png" 
   icon_size: 100
   web:
     generate: true

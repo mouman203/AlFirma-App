@@ -50,9 +50,13 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadSelectedType() async {
     final type = await getActiveTypeFromFirestore();
-    setState(() {
-      selectedType = type;
-    });
+
+    // Check if the widget is still mounted before calling setState
+    if (mounted) {
+      setState(() {
+        selectedType = type;
+      });
+    }
   }
 
   Future<void> _fetchUserName() async {
@@ -165,7 +169,7 @@ class _HomePageState extends State<HomePage> {
         page = const AddProductEleveur();
         print("im $selectedType");
         break;
-        case 'Commerçant':
+      case 'Commerçant':
         page = const AddProductCommercant();
         print("im $selectedType");
         break;
@@ -216,63 +220,134 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       drawer: const Sidebar(),
       appBar: AppBar(
-        backgroundColor: theme.brightness == Brightness.dark
-            ? colorScheme.surface
-            : colorScheme.surface,
-        centerTitle: false,
-        elevation: 3,
-        leading: IconButton.filledTonal(
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-          icon: const Icon(Icons.menu),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (Users.isGuestUser()) ...[
-              Text(
-                "Welcome 👋🏼",
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Text(
-                "Enjoy exploring our app 🔍",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ] else ...[
-              isLoading
-                  ? Text(
-                      "⏳ Loading...",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    )
-                  : Text(
-                      userName != null
-                          ? "Hi ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
-                          : "Welcome 👋🏼",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-              Text(
-                "The $selectedType",
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+          backgroundColor: theme.brightness == Brightness.dark
+              ? colorScheme.surface
+              : colorScheme.surface,
+          centerTitle: false,
+          elevation: 3,
+          leading: IconButton.filledTonal(
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+            icon: const Icon(Icons.menu),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (Users.isGuestUser()) ...[
+                Text(
+                  "Welcome 👋🏼",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                Text(
+                  "Enjoy exploring our app 🔍",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ] else ...[
+                isLoading
+                    ? Text(
+                        "⏳ Loading...",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      )
+                    : Text(
+                        userName != null
+                            ? "Hi ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
+                            : "Welcome 👋🏼",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                Text(
+                  "The $selectedType",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
             ],
-          ],
-        ),
-        actions: [
-          if (!Users.isGuestUser()) ...[
-            BecomeTypeAction(onTypeChanged: _loadSelectedType),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Users.isGuestUser()
+                  ? FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 3),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        fixedSize: const Size.fromHeight(40),
+                      ),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Row(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.black,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    "Guest access is limited. Please log in to continue.",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Color.fromARGB(255, 247, 234, 117),
+                          ),
+                        );
+                      },
+                      child: const Center(
+                        child: Text(
+                          "Become",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )
+                  : BecomeTypeAction(onTypeChanged: _loadSelectedType),
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: IconButton.filledTonal(
-                onPressed: () {},
+                onPressed: () {
+                  if (Users.isGuestUser()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.black,
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                "Guest access is limited. Please log in to continue.",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        backgroundColor: Color.fromARGB(255, 247, 234, 117),
+                      ),
+                    );
+                  } else {
+                    // navigate to notifications page or whatever you want
+                  }
+                },
                 icon: const Icon(
                   IconlyBroken.notification,
                 ),
               ),
             ),
-          ]
-        ],
-      ),
+          ]),
       body: RefreshIndicator(
           onRefresh: _refreshPage, child: pages[currentPageIndex]),
       bottomNavigationBar: BottomNavigationBar(
@@ -304,7 +379,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                backgroundColor: Color(0xFFFFCC31),
+                backgroundColor: Color.fromARGB(255, 247, 234, 117),
               ),
             );
             return;

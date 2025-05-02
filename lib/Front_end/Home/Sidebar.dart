@@ -24,28 +24,28 @@ class Sidebar extends StatelessWidget {
                 .secondaryContainer, // Light green in light mode
         child: ListView(
           children: [
-            ListTile(
-              leading: Icon(
-                themeProvider.themeMode == ThemeMode.dark
-                    ? Icons.sunny
-                    : Icons.dark_mode,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            if (!Users.isGuestUser())
+              ListTile(
+                leading: Icon(
+                  themeProvider.themeMode == ThemeMode.dark
+                      ? Icons.sunny
+                      : Icons.dark_mode,
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                ),
+                title: Text(
+                  themeProvider.themeMode == ThemeMode.dark
+                      ? 'Light Mode'
+                      : 'Dark Mode',
+                ),
+                trailing: Switch(
+                  inactiveThumbColor: const Color(0xFF256C4C),
+                  activeColor: const Color(0xFF90D5AE),
+                  value: themeProvider.themeMode == ThemeMode.dark,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme(value);
+                  },
+                ),
               ),
-              title: Text(
-                themeProvider.themeMode == ThemeMode.dark
-                    ? 'Light Mode'
-                    : 'Dark Mode',
-              ),
-              trailing: Switch(
-                inactiveThumbColor: const Color(0xFF256C4C),
-                activeColor: const Color(0xFF90D5AE),
-                value: themeProvider.themeMode == ThemeMode.dark,
-                onChanged: (value) {
-                  themeProvider.toggleTheme(value);
-                },
-              ),
-            ),
-
             ListTile(
               leading: Icon(
                 Icons.settings_sharp,
@@ -63,45 +63,62 @@ class Sidebar extends StatelessWidget {
                 );
               },
             ),
-
-            // Show "Log out" only for authenticated users
-            if (!Users.isGuestUser())
+            if (!Users.isGuestUser()) ...[
               ListTile(
-                leading: Icon(
-                  Icons.logout_sharp,
-                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                ),
+                leading: Icon(Icons.logout_sharp,
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
                 title: Text(
                   'Log out',
                   style: TextStyle(
                       color: isDarkMode ? Colors.white : Colors.black),
                 ),
-                onTap: () async {
-                  GoogleSignIn googleSignIn = GoogleSignIn();
-                  googleSignIn.disconnect();
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil("login_page", (route) => false);
-                },
-              ),
-
-            // Show "Login / Sign Up" for guest users only
-            if (Users.isGuestUser())
-              ListTile(
-                leading: Icon(
-                  IconlyBold.profile,
-                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                ),
-                title: Text(
-                  'Login ',
-                  style: TextStyle(
-                      color: isDarkMode ? Colors.white : Colors.black),
-                ),
+                trailing: Icon(Icons.arrow_forward_ios,
+                    color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
                 onTap: () {
-                  Navigator.pushNamed(context, 'login_page');
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        title: const Text(
+                          'Attention ⚠️',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                        content: const Text(
+                          'Are you sure you want to log out from this account?',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("No"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              GoogleSignIn googleSignIn = GoogleSignIn();
+                              googleSignIn.disconnect();
+                              await FirebaseAuth.instance.signOut();
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  "login_page", (route) => false);
+                            },
+                            child: const Text("Yes"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
-
+            ],
             ListTile(
               title: const Text("About Us"),
               leading: Icon(

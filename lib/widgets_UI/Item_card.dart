@@ -276,10 +276,9 @@ class _ItemCardState extends State<ItemCard> {
                           const SizedBox(width: 20),
                           _reactionIcon(
                             context,
-                            icon: IconlyLight.chat,
+                            icon: IconlyBold.chat,
                             count: comments.length,
-                            color:
-                                comments.isEmpty ? Colors.grey : Colors.green,
+                            color: Colors.grey,
                             onTap: () {
                               if (item is Service) {
                                 Navigator.push(

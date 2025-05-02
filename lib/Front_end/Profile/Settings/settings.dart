@@ -2,7 +2,6 @@ import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Profile/Settings/Security_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:agriplant/Front_end/Providers/theme_provider.dart';
@@ -46,7 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
           // security
           ListTile(
             leading: Icon(
-              IconlyBold.shieldFail,
+              Icons.shield,
               color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
             ),
             title: Text(
@@ -78,7 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ],
                     ),
-                    backgroundColor: Color(0xFFFFCC31),
+                    backgroundColor: Color.fromARGB(255, 247, 234, 117),
                   ),
                 );
               } else {
@@ -96,24 +95,28 @@ class _SettingsPageState extends State<SettingsPage> {
                   : Colors.white),
 
           // Dark Mode Toggle
-          ListTile(
-            leading: Icon(
+          if (!Users.isGuestUser())
+            ListTile(
+              leading: Icon(
                 themeProvider.themeMode == ThemeMode.dark
                     ? Icons.sunny
                     : Icons.dark_mode,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            title: Text(themeProvider.themeMode == ThemeMode.dark
-                ? 'Light Mode'
-                : 'Dark Mode'),
-            trailing: Switch(
-              inactiveThumbColor: const Color(0xFF256C4C),
-              activeColor: const Color(0xFF90D5AE),
-              value: themeProvider.themeMode == ThemeMode.dark,
-              onChanged: (value) {
-                themeProvider.toggleTheme(value);
-              },
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+              ),
+              title: Text(
+                themeProvider.themeMode == ThemeMode.dark
+                    ? 'Light Mode'
+                    : 'Dark Mode',
+              ),
+              trailing: Switch(
+                inactiveThumbColor: const Color(0xFF256C4C),
+                activeColor: const Color(0xFF90D5AE),
+                value: themeProvider.themeMode == ThemeMode.dark,
+                onChanged: (value) {
+                  themeProvider.toggleTheme(value);
+                },
+              ),
             ),
-          ),
           Divider(
               color: isDarkMode
                   ? const Color.fromARGB(255, 16, 24, 20)
@@ -156,9 +159,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   : Colors.white),
           // Notifications Toggle
           ListTile(
-            leading: Icon(Icons.notifications_active,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            title: const Text(' Notifications'),
+            leading: Icon(
+              areNotificationsEnabled
+                  ? Icons.notifications_on_sharp
+                  : Icons.notifications_off_sharp, // Change icon when off
+              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            ),
+            title: const Text('Notifications'),
             trailing: Switch(
               inactiveThumbColor: isDarkMode
                   ? const Color(0xFF90D5AE)
@@ -216,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ],
                     ),
-                    backgroundColor: Color(0xFFFFCC31),
+                    backgroundColor: Color.fromARGB(255, 247, 234, 117),
                   ),
                 );
               } else {
@@ -234,58 +241,62 @@ class _SettingsPageState extends State<SettingsPage> {
                   ? const Color.fromARGB(255, 16, 24, 20)
                   : Colors.white),
 
-          ListTile(
-            leading: Icon(Icons.logout_sharp,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            title: Text('Log out',
+          if (!Users.isGuestUser()) ...[
+            ListTile(
+              leading: Icon(Icons.logout_sharp,
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+              title: Text(
+                'Log out',
                 style:
-                    TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-            trailing: Icon(Icons.arrow_forward_ios,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            onTap: () async {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    title: const Text(
-                      'Attention ⚠️',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                    TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios,
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                    content: const Text(
-                      'Are you sure you want to log out from this account?',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
+                      title: const Text(
+                        'Attention ⚠️',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
                       ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("No"),
+                      content: const Text(
+                        'Are you sure you want to log out from this account?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
-                      TextButton(
-                        onPressed: () async {
-                          GoogleSignIn googleSignIn = GoogleSignIn();
-                          googleSignIn.disconnect();
-                          await FirebaseAuth.instance.signOut();
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              "login_page", (route) => false);
-                        },
-                        child: const Text("Yes"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("No"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            GoogleSignIn googleSignIn = GoogleSignIn();
+                            googleSignIn.disconnect();
+                            await FirebaseAuth.instance.signOut();
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                "login_page", (route) => false);
+                          },
+                          child: const Text("Yes"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ]
         ],
       ),
     );
