@@ -48,6 +48,7 @@ class _DocumentFormState extends State<DocumentForm> {
     'Expert Agri': ['بطاقة الهوية (الوجه)', 'بطاقة الهوية (الظهر)', 'شهادة'],
     'Réparateur': ['بطاقة الهوية (الوجه)', 'بطاقة الهوية (الظهر)', 'شهادة'],
     'Entreprise': ['شهادة'],
+    'Commerçant': ['شهادة'],
   };
 
   void updateUserType(String activeType) {

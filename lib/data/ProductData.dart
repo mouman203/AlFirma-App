@@ -11,13 +11,6 @@ class ProductData {
       "النباتات العطرية و الطبية ",
       "الأعلاف ",
     ],
-    "معدات": [
-      "الآلات الزراعية ",
-      "المعدات الزراعية ",
-      "معدات الري ",
-      "معدات التسميد ",
-    ],
-    "أراضي": [],
   };
 
   static final Map<String, List<String>> agriSubCategories = {
@@ -106,11 +99,30 @@ class ProductData {
     ],
   };
 
+  static final Map<String, List<String>> commercantCategories = {
+    "معدات": [
+      "المعدات الزراعية ",
+      "معدات الري ",
+    ],
+    "أراضي": [],
+  };
+
   static final Map<String, List<String>> equipmentCategories = {
-    "الآلات الزراعية ": ["جرار ", "حصادة ", "محراث "],
-    "المعدات الزراعية ": [],
+    "المعدات الزراعية": [
+      "جرار زراعي",
+      "آلة الحرث",
+      "آلة الحصاد",
+      "آلة البذر",
+      "رشاش مبيدات",
+      "محراث",
+      "آلة جمع الأعلاف",
+      "خزان ماء متنقل",
+      "مضخة مياه",
+      "آلة التسميد",
+      "غربال حبوب",
+      "مقطورة زراعية"
+    ],
     "معدات الري ": ["أنابيب الري ", "رشاشات مياه "],
-    "معدات التسميد ": [],
   };
 
   static final Map<String, List<String>> produitsElevages = {
@@ -154,17 +166,20 @@ class ProductData {
   static final Map<String, Map<String, List<String>>> productTypeCategories = {
     "AgricolProduct": agriCategories,
     "EleveurProduct": produitsElevages,
+    "CommercantProduct": commercantCategories
   };
 
   static final Map<String, Map<String, List<String>>> subCategoryDetails = {
     "AgricolProduct": {
       ...agriSubCategories,
+    },
+    "CommercantProduct": {
       ...equipmentCategories,
     },
     "EleveurProduct": {...produitsElevages},
   };
 
-   static final Map<String, List<String>> wilayas = {
+  static final Map<String, List<String>> wilayas = {
     "01 - Adrar": [
       "Adrar",
       "Aoulef",
@@ -834,7 +849,6 @@ class ProductData {
     "57 - El M'Ghair": ["El M'Ghair", "Djamaa"],
     "58 - El Meniaa": ["El Meniaa"]
   };
-  
 
   static List<String> getMainCategories(String? productType) {
     return productType != null

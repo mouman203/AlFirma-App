@@ -1,5 +1,7 @@
 import 'package:agriplant/Back_end/User.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Agriculteur.dart';
 import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Client.dart';
+import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Commercant.dart';
 import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Expert.dart';
 import 'package:agriplant/Front_end/Home/Sidebar.dart';
 import 'package:agriplant/Front_end/Home/explore_page.dart';
@@ -11,7 +13,6 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Agriculteur.dart';
 import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Eleveur.dart';
 import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Reparateur.dart';
 import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Transporteur.dart';
@@ -162,6 +163,10 @@ class _HomePageState extends State<HomePage> {
         break;
       case 'Éleveur':
         page = const AddProductEleveur();
+        print("im $selectedType");
+        break;
+        case 'Commerçant':
+        page = const AddProductCommercant();
         print("im $selectedType");
         break;
       case 'Expert Agri':

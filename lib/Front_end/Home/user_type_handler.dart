@@ -12,7 +12,8 @@ final Map<String, dynamic> UserTypes = {
   'Vétérinaire': {},
   'Entreprise': {},
   'Transporteur': {},
-  'Réparateur': {}
+  'Réparateur': {},
+  'Commerçant': {}
 };
 
 Future<void> addUserTypeNoDoc(String userType) async {
@@ -45,7 +46,7 @@ void showSuccessPopup(BuildContext context, String? type) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-       Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         Navigator.of(context).pop(); // Automatically close after 2 seconds
       });
       return AlertDialog(
@@ -68,7 +69,7 @@ void showAlertsPopup(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-       Future.delayed(const Duration(seconds: 3), () {
+      Future.delayed(const Duration(seconds: 3), () {
         Navigator.of(context).pop(); // Automatically close after 2 seconds
       });
       return AlertDialog(
@@ -231,6 +232,13 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
             builder: (context) => const DocumentPage(userType: 'Réparateur'),
           ),
         );
+      case 'Commerçant':
+        return Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DocumentPage(userType: 'Commerçant'),
+          ),
+        );
       default:
         return Null;
     }
@@ -254,8 +262,9 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
       });
 
       print("Key '$keyToDelete' successfully deleted from userType.");
+      bool isvalid = await getValidation(selectedTypes.first) ?? false;
 
-      if (selectedTypes.isEmpty) {
+      if (selectedTypes.isEmpty || !isvalid) {
         setActiveType('Client');
       } else if (activeType == keyToDelete) {
         setActiveType(selectedTypes.first);
@@ -430,6 +439,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                         'Entreprise': '🏢',
                         'Transporteur': '🛻',
                         'Réparateur': '👨🏻‍🔧',
+                        'Commerçant': '🛍️',
                       };
 
                       final emoji = emojiMap[type] ?? '❓';

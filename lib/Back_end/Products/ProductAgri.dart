@@ -4,6 +4,7 @@ import 'Product.dart';
 class Productagri extends Product {
   String? category;
   String? unite;
+  String? serviceType;
   String? subcategory;
   double? quantite; //les lfruits...
   double? surface; //les terrains
@@ -25,6 +26,7 @@ class Productagri extends Product {
     required String daira,
     this.category,
     this.unite,
+    this.serviceType,
     this.subcategory,
     this.quantite,
     this.surface,
@@ -57,6 +59,7 @@ class Productagri extends Product {
       "ownerId": ownerId,
       "comments": comments,
       "unite": unite,
+      "serviceType":serviceType,
       "photos": photos,
       "liked": liked,
       "disliked": disliked,
@@ -90,6 +93,7 @@ class Productagri extends Product {
           (json['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
       category: json['category'],
       unite: json['unite'],
+      serviceType: json['serviceType'],
       subcategory: json['subcategory'],
       quantite: (json['quantite'] as num?)?.toDouble(),
       surface: (json['surface'] as num?)?.toDouble(),

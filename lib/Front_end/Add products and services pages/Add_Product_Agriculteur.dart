@@ -276,14 +276,12 @@ Future<void> uploadSelectedImages() async {
                       selectedproduct = null;
                     });
                   }),
-              if (selectedCategory == "منتوجات فلاحية" ||
-                  selectedCategory == "معدات")
+              if (selectedCategory == "منتوجات فلاحية")
+                 
                   Column(
                     children: [
                     ProductData.buildDropdown(selectedValue: selectedsubCategory, 
-                    items: ( selectedCategory== "منتوجات فلاحية"
-                            ? ProductData.agriCategories[selectedCategory]
-                            : ProductData.equipmentCategories.keys.toList())!, 
+                    items: (ProductData.agriCategories[selectedCategory])!, 
                         label: 'category', onChanged: (value) {
                       setState(() {
                         selectedsubCategory = value;
@@ -292,15 +290,12 @@ Future<void> uploadSelectedImages() async {
                     },),
                     ],
                   ),
-              if ((selectedCategory == "منتوجات فلاحية" ||
-                      selectedCategory == "معدات") &&
+              if ((selectedCategory == "منتوجات فلاحية") &&
                   selectedsubCategory != null)
                   Column(
                     children: [
                 ProductData.buildDropdown(selectedValue: selectedproduct, 
-                items: (selectedCategory == "منتوجات فلاحية"
-                          ? ProductData.agriSubCategories[selectedsubCategory!]
-                          : ProductData.equipmentCategories[selectedsubCategory])!, 
+                items: (ProductData.agriSubCategories[selectedsubCategory!])!, 
                           label: 'Produit', 
                           onChanged: (value) {
                     setState(() {
