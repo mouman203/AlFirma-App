@@ -1,4 +1,4 @@
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
+import 'package:agriplant/Back_end/Products/ProductCommer%C3%A7ant.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -70,7 +70,7 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
         _isLoading = true;
       });
 
-      Productagri newProduct = Productagri(
+      ProductCommercant newProduct = ProductCommercant(
         id: "", // سيتم تعيينه تلقائيًا في Firestore
         name: selectedproduct ?? '',
         typeProduct: "CommercantProduct",

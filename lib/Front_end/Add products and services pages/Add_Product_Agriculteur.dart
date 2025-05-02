@@ -90,9 +90,6 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
       quantite: quantiteController.text.isNotEmpty
           ? double.tryParse(quantiteController.text)
           : null,
-      surface: surfaceController.text.isNotEmpty
-          ? double.tryParse(surfaceController.text)
-          : null,
       wilaya: selectedWilaya!,
       daira: selectedDaira!,
     );

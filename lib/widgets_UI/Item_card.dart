@@ -178,7 +178,7 @@ class _ItemCardState extends State<ItemCard> {
                         : item is ExpertiseService
                             ? (item.TypeC ?? 'No Expertise Type')
                             : item is Productagri
-                                ? '${item.surface?.toString() ?? item.quantite?.toString()} ${item.unite ?? ''}'
+                                ? '${item.quantite?.toString()} ${item.unite ?? ''}'
                                 : '',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
