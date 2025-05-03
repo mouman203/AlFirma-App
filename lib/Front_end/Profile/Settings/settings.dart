@@ -95,7 +95,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   : Colors.white),
 
           // Dark Mode Toggle
-          if (!Users.isGuestUser())
+         
             ListTile(
               leading: Icon(
                 themeProvider.themeMode == ThemeMode.dark

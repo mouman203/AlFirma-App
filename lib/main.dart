@@ -19,12 +19,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    // Initialize Firebase
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    // Initialize Firebase App Check (for security)
     await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.debug,
     );
@@ -54,7 +52,6 @@ Future<bool> fetchUserVerificationStatus() async {
       return false;
     }
 
-    // Get the user's document from Firestore using the UID
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('Users')
         .doc(user.uid)
@@ -62,11 +59,7 @@ Future<bool> fetchUserVerificationStatus() async {
 
     if (userDoc.exists) {
       var verifyValue = userDoc.get('Verify');
-      if (verifyValue == true) {
-        return true;
-      } else {
-        return false;
-      }
+      return verifyValue == true;
     } else {
       print('User document does not exist.');
       return false;
@@ -79,23 +72,64 @@ Future<bool> fetchUserVerificationStatus() async {
 
 Future<Widget> initializeApp() async {
   try {
-    bool isVerified = await fetchUserVerificationStatus();
+    final user = FirebaseAuth.instance.currentUser;
 
-    if (isVerified && FirebaseAuth.instance.currentUser != null) {
-      return const HomePage();
+    if (user != null) {
+      bool isVerified = await fetchUserVerificationStatus();
+      if (isVerified) {
+        return const HomePage();
+      }
+      if (user.isAnonymous) {
+        return const HomePage();
+      }
     }
 
-    // If verification fails or user is not verified, sign in anonymously
-    await FirebaseAuth.instance.signInAnonymously();
+    if (user == null) {
+      await FirebaseAuth.instance.signInAnonymously();
+    }
+
     return const HomePage();
   } catch (e) {
     print('Error during app initialization: $e');
-    return const LoginPage(); // or return an error screen if preferred
+    return const LoginPage();
   }
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null && user.isAnonymous) {
+        try {
+          await user.delete();
+          debugPrint("Anonymous user deleted on app close.");
+        } catch (e) {
+          debugPrint("Error deleting anonymous user on app close: $e");
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +142,8 @@ class MainApp extends StatelessWidget {
       theme: ThemeData.light().copyWith(
         textTheme: GoogleFonts.nunitoTextTheme(),
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 53, 120, 88)),
+          seedColor: const Color.fromARGB(255, 53, 120, 88),
+        ),
         brightness: Brightness.light,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
@@ -117,18 +152,17 @@ class MainApp extends StatelessWidget {
       ),
       darkTheme: ThemeData.dark().copyWith(
         textTheme: GoogleFonts.nunitoTextTheme().apply(
-          bodyColor: Colors.white, // Ensures text is white in dark mode
+          bodyColor: Colors.white,
           displayColor: Colors.white,
         ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.greenAccent,
-          brightness: Brightness.dark, // Adjusts colors for dark mode
+          brightness: Brightness.dark,
         ),
-        scaffoldBackgroundColor: const Color.fromARGB(
-            255, 16, 24, 20), // Ensures dark mode background
+        scaffoldBackgroundColor: const Color.fromARGB(255, 16, 24, 20),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color.fromARGB(255, 16, 24, 20),
-          foregroundColor: Colors.white, // Dark mode text/icons
+          foregroundColor: Colors.white,
           elevation: 5,
         ),
       ),
@@ -136,7 +170,7 @@ class MainApp extends StatelessWidget {
       supportedLocales: const [
         Locale('en'),
         Locale('fr'),
-        Locale('ar'), // Arabic
+        Locale('ar'),
       ],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

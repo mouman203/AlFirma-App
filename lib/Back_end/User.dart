@@ -13,23 +13,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Users {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  //continue as guest
-  Future<void> signInAnonymously(BuildContext context, Widget homePage) async {
-    try {
-      await _auth.signInAnonymously();
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => homePage),
-      );
-    } catch (e) {
-      print('Error during anonymous sign-in: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: const Text('Failed to continue as guest')),
-      );
-    }
-  }
-
 //to verify user is a guest
   static bool isGuestUser() {
     User? user = FirebaseAuth.instance.currentUser;
@@ -139,25 +122,48 @@ class Users {
     return true;
   }
 
-  // التحقق من البريد الإلكتروني وتحديث Firestore
-  bool Verificationemail(BuildContext context, User user) {
-    // ✅ التحقق مما إذا كان البريد الإلكتروني غير مؤكد
-    if (!user.emailVerified) {
-      user.sendEmailVerification(); // إعادة إرسال رسالة التحقق
-      FirebaseAuth.instance.signOut(); // تسجيل خروج المستخدم
-      showErrorDialog(
-          context,
-          "يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.\n"
-          "تم إرسال رسالة تحقق جديدة إلى ${user.email}.");
-      return false; // ⛔️ منع المستخدم من المتابعة
+  // User class method for email verification and Firestore update
+  static Future<bool> checkEmailVerification(BuildContext context) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Check if email is not verified
+      if (!user.emailVerified) {
+        await user.sendEmailVerification();
+
+        // Show a dialog telling the user to verify their email
+        await AwesomeDialog(
+          context: context,
+          dialogType: DialogType.info,
+          animType: AnimType.scale,
+          title: 'Almost There!',
+          desc:
+              'Please verify your email by clicking the link sent to ${user.email}.',
+          btnOkOnPress: () {
+            // Actions when the user presses OK
+          },
+          btnOkText: 'OK',
+          btnOkColor: Colors.blue,
+        ).show();
+
+        // Log out the user after sending the verification email
+        FirebaseAuth.instance.signOut();
+
+        return false; // Prevent proceeding until the email is verified
+      }
+
+      // If the email is verified, update Firestore with 'Verify' status
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .update({
+        'Verify': true, // Mark the user as verified
+      });
+
+      return true; // Allow the user to proceed
     }
 
-    // ✅ تحديث Firestore إذا تم التحقق من البريد الإلكتروني
-    FirebaseFirestore.instance.collection('Users').doc(user.uid).update({
-      'Verify': true, // تحديث حالة التحقق
-      // ✅ السماح للمستخدم بالمتابعة
-    });
-    return true;
+    return false; // If there is no logged-in user
   }
 
 // عرض مؤشر التحميل
@@ -186,8 +192,6 @@ class Users {
     );
   }
 
-  // تسجيل الدخول مع إدارة الأخطاء
-
   Future<void> signInWithHandling({
     required BuildContext context,
     required String email,
@@ -195,18 +199,34 @@ class Users {
     required Widget homePage,
   }) async {
     if (!checkInfo_login(context, email, password)) return;
+
     try {
-      showLoadingDialog(context);
-      // عرض مؤشر الانتظار
+      showLoadingDialog(context); // عرض مؤشر الانتظار
+
+      // ✅ Delete anonymous user before creating a new one
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null && currentUser.isAnonymous) {
+        try {
+          await currentUser.delete();
+          print("✅ Anonymous user deleted before sign-up.");
+        } catch (e) {
+          print("⚠️ Failed to delete anonymous user: $e");
+        }
+      }
+
       // تسجيل الدخول
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       User? user = userCredential.user;
+
       if (user != null) {
-        if (!Verificationemail(context, user)) {
-          return;
+        // التحقق من البريد الإلكتروني
+        bool isEmailVerified = await checkEmailVerification(context);
+        if (!isEmailVerified) {
+          return; // إذا لم يتم التحقق من البريد الإلكتروني، التوقف هنا
         }
       }
+
       // ✅ تحديث كلمة المرور في Firestore
       await FirebaseFirestore.instance
           .collection('Users')
@@ -214,9 +234,12 @@ class Users {
           .update({
         'password': password, // تحديث كلمة المرور الجديدة
       });
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setInt('lastPageIndex', 0);
+
       Navigator.pop(context);
+
       // ✅ التوجيه إلى الصفحة الرئيسية
       Navigator.pushReplacement(
         context,
@@ -236,15 +259,6 @@ class Users {
     } catch (e) {
       Navigator.popUntil(context, (route) => route.isFirst);
       showErrorDialog(context, '⚠️ حدث خطأ غير متوقع.');
-    }
-  }
-
-  // تسجيل الخروج
-  Future<void> signOut(BuildContext context) async {
-    try {
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      showErrorDialog(context, 'حدث خطأ غير متوقع.');
     }
   }
 
@@ -269,7 +283,6 @@ class Users {
 
     try {
       print("🔄 Attempting to close dialog...");
-      // showLoadingDialog(context); // عرض مؤشر الانتظار
       showLoadingDialog(context);
 
       if (await checkIfEmailExists(email)) {
@@ -279,14 +292,22 @@ class Users {
         showErrorDialog(context, 'البريد الإلكتروني مسجل مسبقًا.');
         return;
       } else {
+        // ✅ Delete anonymous user before creating a new one
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser != null && currentUser.isAnonymous) {
+          try {
+            await currentUser.delete();
+            print("✅ Anonymous user deleted before sign-up.");
+          } catch (e) {
+            print("⚠️ Failed to delete anonymous user: $e");
+          }
+        }
         // Step 1: Create user in Firebase Authentication
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
-        // Send verification email
-        User? user = userCredential.user;
-        if (user != null && !user.emailVerified) {
-          await user.sendEmailVerification();
-        }
+
+        // Do NOT send verification email here. Already handled in ProfilePicturePage
+
         String uid = userCredential.user!.uid;
 
         // Step 2: Add user details to Firestore
@@ -359,7 +380,7 @@ class Users {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => const LoginPage()), // 🔥 تحسين إضافي
+                builder: (context) => const LoginPage(frompage: 'ProfilPicture',)), // 🔥 تحسين إضافي
           );
         },
       ).show();

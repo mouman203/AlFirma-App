@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final String? frompage;
+
+  const LoginPage({super.key, this.frompage});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -26,22 +28,24 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 30.0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              size: 28,
-              color: isDarkMode
-                  ? const Color(0xFF90D5AE)
-                  : const Color(0xFF256C4C),
-            ),
-            onPressed: () {
-              // Go back to the HomePage when arrow is pressed
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-            },
-          ),
+          leading: widget.frompage == 'ProfilePicture'
+              ? null
+              : IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    size: 28,
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C),
+                  ),
+                  onPressed: () {
+                    // Go back to the HomePage when arrow is pressed
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+                  },
+                ),
           backgroundColor: Colors.transparent, // Transparent AppBar background
           elevation: 0, // Remove shadow
         ),
@@ -278,7 +282,7 @@ class _LoginPageState extends State<LoginPage> {
                       const TextSpan(
                         text: "Don't have an account? ",
                         style: TextStyle(
-                          color: Colors.grey, // First part in grey
+                          color: Colors.grey,
                         ),
                       ),
                       TextSpan(
@@ -287,13 +291,11 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: 18,
                           color: isDarkMode
                               ? const Color(0xFF90D5AE)
-                              : const Color(0xFF256C4C), // Second part in green
-                          decoration: TextDecoration
-                              .underline, // Optional: Add underline for better UX
+                              : const Color(0xFF256C4C),
+                          decoration: TextDecoration.underline,
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            // Navigate to the sign-up page when "Sign Up" is tapped
                             Navigator.of(context)
                                 .pushReplacementNamed('sign_up_page');
                           },

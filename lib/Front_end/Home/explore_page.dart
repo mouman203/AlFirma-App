@@ -245,31 +245,32 @@ class _ExplorePageState extends State<ExplorePage> {
       child: Scaffold(
         body: Column(
           children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-              child: Container(
-                width: double.infinity, 
-                color: const Color.fromARGB(
-                    255, 247, 234, 117), 
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: const Center(
-                  child: Text(
-                    'Login', 
-                    style: TextStyle(
-                      color: Colors.black, 
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            if (Users.isGuestUser()) ...[
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  color: const Color.fromARGB(255, 247, 234, 117),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: const Center(
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 3),
+              const SizedBox(height: 3),
+            ],
 
             Padding(
               padding: const EdgeInsets.all(10),

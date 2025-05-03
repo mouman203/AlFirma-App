@@ -31,6 +31,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String? phoneNumError;
   String? wilayaError;
   String? dairaError;
+// List to store Dairas based on selected Wilaya
+  List<String> availableDairas = [];
+  void updateDairaList(String wilaya) {
+    setState(() {
+      availableDairas = ProductData.wilayas[wilaya] ?? [];
+    });
+  }
 
   String? selectedWilaya;
   String? selectedDaira;
@@ -199,184 +206,421 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: widget.frompage == 'profile'
-            ? const Text('Edit Profile')
-            : const Text('Continuing sign in ...'),
-        backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
-        elevation: 5,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: ListView(
-        children: [
-          Stack(children: [
-            Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 54, bottom: 16),
-                child: CircleAvatar(
-                    radius: 93,
-                    backgroundColor: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C),
-                    child: CircleAvatar(
-                        radius: 90,
-                        backgroundImage: _selectedImageFile != null
-                            ? FileImage(_selectedImageFile!) as ImageProvider
-                            : (_currentImage != null
-                                ? NetworkImage(_currentImage!)
-                                : AssetImage(isDarkMode
-                                    ? "assets/anonymeD.png"
-                                    : "assets/anonyme.png") as ImageProvider),
-                        child:
-                            _selectedImageFile == null && _currentImage == null
-                                ? const Icon(Icons.camera_alt,
-                                    size: 30, color: Colors.black54)
-                                : null)),
-              ),
-            ),
-            Positioned(
-              top: 54,
-              right: 100,
-              child: CircleAvatar(
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
-                child: IconButton(
-                  icon: Icon(Icons.edit,
-                      color:
-                          isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-                  onPressed: () {
-                    showPopUp();
-                  },
-                ),
-              ),
-            )
-          ]),
-
-          const SizedBox(height: 50),
-
-          // First name field
-          _buildTextField(
-            controller: _firstNameController,
-            icon: Icons.person,
-            hintText: "First Name",
-            errorText: firstNameError,
-          ),
-
-          const SizedBox(height: 20),
-
-          // Last name field
-          _buildTextField(
-            controller: _lastNameController,
-            icon: Icons.person,
-            hintText: "Last Name",
-            errorText: lastNameError,
-          ),
-
-          const SizedBox(height: 20),
-
-          // Phone num field
-          _buildTextField(
-            controller: _PhoneNumController,
-            icon: Icons.phone,
-            hintText: "Phone Number",
-            errorText: phoneNumError,
-          ),
-
-          const SizedBox(height: 20),
-
-          //wilaya selection
-          buildDropdown(
-            selectedValue: selectedWilaya,
-            items: ProductData.wilayas.keys.toList(),
-            label: 'Wilaya',
-            errorText: wilayaError,
-            onChanged: (value) {
-              setState(() {
-                selectedWilaya = value;
-                selectedDaira = '';
-              });
+        appBar: AppBar(
+          title: widget.frompage == 'profile'
+              ? const Text('Edit Profile')
+              : const Text('Continuing sign in ...'),
+          backgroundColor:
+              isDarkMode ? colorScheme.surface : colorScheme.surface,
+          elevation: 5,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
             },
           ),
-          const SizedBox(height: 20),
-
-          //Daira selection
-          buildDropdown(
-              selectedValue: selectedDaira,
-              items: ProductData.wilayas[selectedWilaya] ?? [],
-              label: 'Daira',
-              errorText: dairaError,
-              onChanged: (value) {
-                setState(() {
-                  selectedDaira = value;
-                });
-              }),
-
-          const SizedBox(height: 50),
-
-          // Submit button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    if (_firstNameController.text.isEmpty ||
-                        _lastNameController.text.isEmpty ||
-                        _PhoneNumController.text.isEmpty ||
-                        _PhoneNumController.text.length != 10 ||
-                        selectedWilaya == '' ||
-                        selectedDaira == '') {
-                      if (_firstNameController.text.isEmpty) {
-                        firstNameError = "يرجى إدخال الاسم";
-                      }
-                      if (_lastNameController.text.isEmpty) {
-                        lastNameError = "يرجى إدخال اللقب";
-                      }
-                      if (_PhoneNumController.text.isEmpty) {
-                        phoneNumError = "يرجى إدخال رقم الهاتف";
-                      }
-                      if (_PhoneNumController.text.length != 10) {
-                        phoneNumError = "يرجى ادخال 10 ارقام";
-                      }
-                      if (selectedDaira == '') {
-                        dairaError = "يرجى ادخال الدائرة";
-                      }
-                      if (selectedWilaya == '') {
-                        wilayaError = "يرجى ادخال الولاية";
-                      }
-                      //rani dyr validation f onchanged f drop down
-                    } else {
-                      _updateProfile();
-                    }
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isDarkMode
-                      ? const Color(0xFF90D5AE)
-                      : const Color(0xFF256C4C),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Stack(children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 54, bottom: 16),
+                    child: CircleAvatar(
+                        radius: 93,
+                        backgroundColor: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                        child: CircleAvatar(
+                          radius: 90,
+                          backgroundImage: _selectedImageFile != null
+                              ? FileImage(_selectedImageFile!) as ImageProvider
+                              : (_currentImage != null
+                                  ? NetworkImage(_currentImage!)
+                                  : AssetImage(isDarkMode
+                                      ? "assets/anonymeD.png"
+                                      : "assets/anonyme.png") as ImageProvider),
+                        )),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
-                child: Text("Submit",
-                    style: GoogleFonts.roboto(
-                        fontSize: 18,
-                        color: isDarkMode ? Colors.black : Colors.white)),
+                Positioned(
+                  top: 54,
+                  right: 100,
+                  child: CircleAvatar(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    child: IconButton(
+                      icon: Icon(Icons.edit,
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF256C4C)),
+                      onPressed: () {
+                        showPopUp();
+                      },
+                    ),
+                  ),
+                )
+              ]),
+
+              const SizedBox(height: 40),
+
+              // First name field
+              _buildTextField(
+                controller: _firstNameController,
+                icon: Icons.person,
+                hintText: "First Name",
+                errorText: firstNameError,
               ),
-            ),
+
+              const SizedBox(height: 13),
+
+              // Last name field
+              _buildTextField(
+                controller: _lastNameController,
+                icon: Icons.person,
+                hintText: "Last Name",
+                errorText: lastNameError,
+              ),
+
+              const SizedBox(height: 13),
+
+              // Phone num field
+              _buildTextField(
+                controller: _PhoneNumController,
+                icon: Icons.phone,
+                hintText: "Phone Number",
+                errorText: phoneNumError,
+              ),
+
+              const SizedBox(height: 13),
+
+              // Wilaya Dropdown
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? const Color.fromARGB(255, 39, 57, 48)
+                            : Theme.of(context).colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: wilayaError != null
+                              ? Colors.red
+                              : Colors.transparent,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          value: selectedWilaya,
+                          hint: Row(
+                            children: [
+                              Icon(
+                                Icons.add_location_alt_sharp,
+                                color: isDarkMode
+                                    ? Colors.white
+                                    : const Color(0xFF256C4C),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Select Wilaya",
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : const Color(0xFF256C4C),
+                                ),
+                              ),
+                            ],
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 180,
+                            offset: const Offset(0, 0),
+                            width: MediaQuery.of(context).size.width - 100,
+                            decoration: BoxDecoration(
+                              color: isDarkMode
+                                  ? const Color.fromARGB(255, 30, 45, 38)
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          buttonStyleData: const ButtonStyleData(
+                            height: 50,
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                          ),
+                          iconStyleData: IconStyleData(
+                            iconEnabledColor: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                            iconDisabledColor: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                          ),
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedWilaya = newValue;
+                              selectedDaira = null;
+                              wilayaError = null;
+                              dairaError = null;
+                            });
+                            if (newValue != null) {
+                              updateDairaList(newValue);
+                            }
+                          },
+                          selectedItemBuilder: (BuildContext context) {
+                            return ProductData.wilayas.keys.map((wilaya) {
+                              return Row(
+                                children: [
+                                  Icon(
+                                    Icons.add_location_alt_sharp,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF256C4C),
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    wilaya,
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : const Color(0xFF256C4C),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList();
+                          },
+                          items: ProductData.wilayas.keys
+                              .map<DropdownMenuItem<String>>((wilaya) {
+                            return DropdownMenuItem<String>(
+                              value: wilaya,
+                              child: Text(
+                                wilaya,
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : const Color(0xFF256C4C),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                    if (wilayaError != null) const SizedBox(height: 4),
+                    if (wilayaError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Text(
+                          wilayaError!,
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 13),
+
+              // Daira Dropdown
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? const Color.fromARGB(255, 39, 57, 48)
+                            : Theme.of(context).colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: dairaError != null
+                              ? Colors.red
+                              : Colors.transparent,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          value: selectedDaira,
+                          hint: Row(
+                            children: [
+                              Icon(
+                                Icons.add_location_alt_sharp,
+                                color: isDarkMode
+                                    ? Colors.white
+                                    : const Color(0xFF256C4C),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Select Daira",
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : const Color(0xFF256C4C),
+                                ),
+                              ),
+                            ],
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 180,
+                            offset: const Offset(0, 0),
+                            width: MediaQuery.of(context).size.width - 100,
+                            decoration: BoxDecoration(
+                              color: isDarkMode
+                                  ? const Color.fromARGB(255, 30, 45, 38)
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          buttonStyleData: const ButtonStyleData(
+                            height: 50,
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                          ),
+                          iconStyleData: IconStyleData(
+                            iconEnabledColor: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                            iconDisabledColor: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                          ),
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedDaira = newValue;
+                              dairaError = null;
+                            });
+                          },
+                          selectedItemBuilder: (BuildContext context) {
+                            return availableDairas.map((daira) {
+                              return Row(
+                                children: [
+                                  Icon(
+                                    Icons.add_location_alt_sharp,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF256C4C),
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    daira,
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : const Color(0xFF256C4C),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList();
+                          },
+                          items: availableDairas
+                              .map<DropdownMenuItem<String>>((daira) {
+                            return DropdownMenuItem<String>(
+                              value: daira,
+                              child: Text(
+                                daira,
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : const Color(0xFF256C4C),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                    if (dairaError != null) const SizedBox(height: 4),
+                    if (dairaError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Text(
+                          dairaError!,
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 50),
+
+              // Submit button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if (_firstNameController.text.isEmpty ||
+                            _lastNameController.text.isEmpty ||
+                            _PhoneNumController.text.isEmpty ||
+                            _PhoneNumController.text.length != 10 ||
+                            selectedWilaya == '' ||
+                            selectedDaira == '') {
+                          if (_firstNameController.text.isEmpty) {
+                            firstNameError = "يرجى إدخال الاسم";
+                          }
+                          if (_lastNameController.text.isEmpty) {
+                            lastNameError = "يرجى إدخال اللقب";
+                          }
+                          if (_PhoneNumController.text.isEmpty) {
+                            phoneNumError = "يرجى إدخال رقم الهاتف";
+                          }
+                          if (_PhoneNumController.text.length != 10) {
+                            phoneNumError = "يرجى ادخال 10 ارقام";
+                          }
+                          if (selectedDaira == '') {
+                            dairaError = "يرجى ادخال الدائرة";
+                          }
+                          if (selectedWilaya == '') {
+                            wilayaError = "يرجى ادخال الولاية";
+                          }
+                          //rani dyr validation f onchanged f drop down
+                        } else {
+                          _updateProfile();
+                        }
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    child: Text("Submit",
+                        style: GoogleFonts.roboto(
+                            fontSize: 18,
+                            color: isDarkMode ? Colors.black : Colors.white)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 50),
+            ],
           ),
-          const SizedBox(height: 50),
-        ],
-      ),
-    );
+        ));
   }
 
   // Helper method for TextField with validation
@@ -387,125 +631,73 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required String? errorText,
   }) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDarkMode
-              ? const Color.fromARGB(255, 55, 72, 56)
-              : Colors.green.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: errorText != null
-                ? Colors.red
-                : Colors.transparent, // 👈 Red border if error
-            width: 1.5,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            children: [
-              Icon(icon,
-                  color: isDarkMode
-                      ? Colors.white
-                      : const Color.fromARGB(255, 42, 103, 34)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  inputFormatters: hintText == "Phone Number"
-                      ? [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ]
-                      : null,
-                  keyboardType: hintText == "Phone Number"
-                      ? TextInputType.number
-                      : TextInputType.name,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: hintText,
-                    hintStyle: TextStyle(
-                      color: isDarkMode
-                          ? Colors.white
-                          : const Color.fromARGB(255, 42, 103, 34),
-                    ),
-                    errorText: errorText,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
-  static Widget buildDropdown({
-    required String? selectedValue,
-    required List<String> items,
-    required String label,
-    required String? errorText,
-    required void Function(String?) onChanged,
-  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.green.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: errorText != null ? Colors.red : Colors.transparent,
-            width: 1.5,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.add_location_alt_sharp,
-                color: Color(0xFF256C4C),
-                size: 20,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: errorText != null ? Colors.red : Colors.transparent,
+                width: 1.5,
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: DropdownButtonFormField2<String>(
-                  value: items.contains(selectedValue) ? selectedValue : null,
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    border: InputBorder.none,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Icon(
+                    icon,
+                    color: isDarkMode
+                        ? Colors.white
+                        : const Color.fromARGB(255, 42, 103, 34),
                   ),
-                  hint: Text(label),
-                  items: items
-                      .map(
-                        (item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      inputFormatters: hintText == "Phone Number"
+                          ? [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ]
+                          : null,
+                      keyboardType: hintText == "Phone Number"
+                          ? TextInputType.number
+                          : TextInputType.name,
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? Colors.white
+                            : const Color.fromARGB(255, 42, 103, 34),
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: hintText,
+                        hintStyle: TextStyle(
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color.fromARGB(255, 42, 103, 34),
                         ),
-                      )
-                      .toList(),
-                  validator: (value) {
-                    if (errorText != null) return errorText;
-                    return null;
-                  },
-                  onChanged: onChanged,
-                  buttonStyleData: const ButtonStyleData(
-                    padding: EdgeInsets.symmetric(horizontal: 14),
-                    height: 50,
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          if (errorText != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 4),
+              child: Text(
+                errorText,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            ),
+        ],
       ),
     );
   }

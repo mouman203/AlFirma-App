@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:agriplant/Back_end/User.dart';
+import 'package:agriplant/Front_end/Home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,6 +24,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
   bool isLoading = false;
   bool isImageSelected = false;
 
+  // Pick Image from Gallery or Camera
   Future<void> _pickImage() async {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     showDialog(
@@ -78,6 +79,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
     );
   }
 
+  // Upload the selected image to Firebase Storage and save the URL in Firestore
   Future<void> uploadImageAndSave() async {
     if (_selectedImage == null) return;
     setState(() => isLoading = true);
@@ -88,6 +90,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
       await ref.putFile(_selectedImage!);
       final imageUrl = await ref.getDownloadURL();
 
+      // Save the image URL and path in Firestore
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(widget.userId)
@@ -108,39 +111,26 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
     }
   }
 
-  Future<void> checkEmailVerification(BuildContext context) async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null && !user.emailVerified) {
-      await user.sendEmailVerification();
-      await AwesomeDialog(
-        context: context,
-        dialogType: DialogType.info,
-        animType: AnimType.scale,
-        title: 'Almost There!',
-        desc:
-            'Please verify your email by clicking the link sent to ${user.email}.',
-        btnOkOnPress: () {
-          // You can navigate after dialog here if needed
-        },
-        btnOkText: 'OK',
-        btnOkColor: Colors.blue,
-      ).show();
-      print("Verification E-mail sent successfully");
-    } else if (user != null && user.emailVerified) {
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(user.uid)
-          .update({
-        'Verify': true, // Update the verification status
-      });
-    }
-  }
-
   Future<void> onProceed() async {
-    await checkEmailVerification(context);
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => const LoginPage()));
+    // Ensure that the user uploads the picture before proceeding (if applicable)
+    // Example: await uploadProfilePicture();
+
+    // Call the checkEmailVerification method and await the result
+    bool isVerified = await Users.checkEmailVerification(context);
+
+    if (!isVerified) {
+      // If the email is not verified, navigate to the Login page
+     Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const LoginPage(frompage: 'ProfilPicture')),
+            );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    }
   }
 
   @override
@@ -151,17 +141,17 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
       body: SafeArea(
         child: Stack(
           children: [
+            // "Skip" Button if no image is selected
             if (!isImageSelected)
               Align(
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 185, right: 85),
+                  padding: const EdgeInsets.only(top: 120, right: 35),
                   child: TextButton(
                     onPressed: () => onProceed(),
                     child: Text(
                       "Skip",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: 26,
                         color: isDarkMode
                             ? const Color(0xFF90D5AE)
@@ -211,10 +201,10 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                             ? const Color(0xFF90D5AE)
                             : const Color(0xFF256C4C),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 23, vertical: 12),
+                            horizontal: 20, vertical: 15),
                       ),
                     ),
                   const SizedBox(height: 30),
@@ -226,9 +216,9 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                                 ? const Color(0xFF90D5AE)
                                 : const Color(0xFF256C4C),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
+                                borderRadius: BorderRadius.circular(12)),
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 23),
+                                vertical: 15, horizontal: 20),
                           ),
                           onPressed: () async {
                             if (!isImageSelected) {
@@ -244,7 +234,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                             size: 20,
                           ),
                           label: Text(
-                            isImageSelected ? "Done" : "Upload Picture",
+                            isImageSelected ? "Done" : "Add picture",
                             style: TextStyle(
                                 fontSize: 20,
                                 color:
