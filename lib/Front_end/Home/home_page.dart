@@ -256,7 +256,9 @@ class _HomePageState extends State<HomePage> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                 Text(
-                  "The $selectedType",
+                  selectedType!= null
+                    ? "The $selectedType"
+                    : "Enjoy exploring our app 🔍",
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

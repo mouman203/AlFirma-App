@@ -426,7 +426,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                      "Free AI Scanner",
+                                      "AI Scanner",
                                       style: TextStyle(
                                           fontSize: 21,
                                           color:
@@ -439,7 +439,35 @@ class _ExplorePageState extends State<ExplorePage> {
                                         "Get free Look from our AI Plant Disease Detector",
                                         style: TextStyle(fontSize: 14)),
                                     FilledButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        if (Users.isGuestUser()) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.error_outline,
+                                                    color: Colors.black,
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      "To use the AI scanner, please sign in to your account.",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 247, 234, 117),
+                                            ),
+                                          );
+                                        } else {}
+                                      },
                                       child: Text("Check it out",
                                           style: TextStyle(
                                               color: isDarkMode

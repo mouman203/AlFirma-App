@@ -24,27 +24,28 @@ class Sidebar extends StatelessWidget {
                 .secondaryContainer, // Light green in light mode
         child: ListView(
           children: [
-            ListTile(
-              leading: Icon(
-                themeProvider.themeMode == ThemeMode.dark
-                    ? Icons.sunny
-                    : Icons.dark_mode,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+           
+              ListTile(
+                leading: Icon(
+                  themeProvider.themeMode == ThemeMode.dark
+                      ? Icons.sunny
+                      : Icons.dark_mode,
+                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                ),
+                title: Text(
+                  themeProvider.themeMode == ThemeMode.dark
+                      ? 'Light Mode'
+                      : 'Dark Mode',
+                ),
+                trailing: Switch(
+                  inactiveThumbColor: const Color(0xFF256C4C),
+                  activeColor: const Color(0xFF90D5AE),
+                  value: themeProvider.themeMode == ThemeMode.dark,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme(value);
+                  },
+                ),
               ),
-              title: Text(
-                themeProvider.themeMode == ThemeMode.dark
-                    ? 'Light Mode'
-                    : 'Dark Mode',
-              ),
-              trailing: Switch(
-                inactiveThumbColor: const Color(0xFF256C4C),
-                activeColor: const Color(0xFF90D5AE),
-                value: themeProvider.themeMode == ThemeMode.dark,
-                onChanged: (value) {
-                  themeProvider.toggleTheme(value);
-                },
-              ),
-            ),
             ListTile(
               leading: Icon(
                 Icons.settings_sharp,
@@ -106,8 +107,10 @@ class Sidebar extends StatelessWidget {
                               GoogleSignIn googleSignIn = GoogleSignIn();
                               googleSignIn.disconnect();
                               await FirebaseAuth.instance.signOut();
+                              await FirebaseAuth.instance.signInAnonymously();
+                              
                               Navigator.of(context).pushNamedAndRemoveUntil(
-                                  "Home_page", (route) => false);
+                                   "home_page", (route) => false);
                             },
                             child: const Text("Yes"),
                           ),
