@@ -266,9 +266,11 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
       if (selectedTypes.isEmpty || !isvalid) {
         setActiveType('Client');
+        widget.onTypeChanged();
       } else if (activeType == keyToDelete) {
         setActiveType(selectedTypes.first);
       }
+      widget.onTypeChanged();
       print('selected : $selectedTypes');
     } catch (e) {
       print("Error deleting key from userType: $e");
@@ -277,12 +279,10 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
   Future<void> addTypeFlow(BuildContext context) async {
     print("selected types : $selectedTypes");
-    final RenderBox overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox;
 
     final String? selectedType = await showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(90, 102, overlay.size.width - 20, 0),
+      position: const RelativeRect.fromLTRB(40, 103, 10, 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: Colors.transparent,
       items: UserTypes.keys
@@ -294,7 +294,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: SizedBox(
-              height: 100,
+              height: 94,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -333,6 +333,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
         setState(() {
           selectedTypes.insert(0, selectedType);
           activeType = selectedType;
+          widget.onTypeChanged();
         });
       } else {
         await getLabelForDoc(selectedType);
@@ -347,6 +348,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
         setState(() {
           activeType = selectedType;
+          widget.onTypeChanged();
         });
 
         await saveUserData(selectedTypes, activeType!);
@@ -478,7 +480,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                       onPressed: () async {
                         final newActive = await showMenu<String>(
                           context: context,
-                          position: const RelativeRect.fromLTRB(40, 103, 10, 0),
+                          position: const RelativeRect.fromLTRB(40, 103, 40, 0),
                           color: Colors.transparent,
                           items:
                               await Future.wait(selectedTypes.map((type) async {
@@ -493,13 +495,13 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                   ? type
                                   : null, // Returns the type only if it's valid
                               padding: EdgeInsets.zero,
-                              height: 100,
+                              height: 94,
                               child: Stack(
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
                                     child: SizedBox(
-                                      height: 100,
+                                      height: 94,
                                       child: Stack(
                                         fit: StackFit.expand,
                                         children: [
@@ -549,8 +551,10 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                       onTap: () async {
                                         deleteUserTypeKey(type);
                                         selectedTypes.remove(type);
+                                        widget.onTypeChanged();
                                         await saveUserData(
                                             selectedTypes, activeType!);
+                                            widget.onTypeChanged();
                                         setState(() {});
                                         Navigator.pop(context);
                                       },
@@ -595,6 +599,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
                         if (newActive != null && newActive != activeType) {
                           await setActiveType(newActive);
+                          widget.onTypeChanged();
                           setState(() {
                             selectedTypes.remove(newActive);
                             selectedTypes.insert(0, newActive);

@@ -468,7 +468,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                           }
 
                                           return CircleAvatar(
-                                            backgroundColor: Colors.grey,
                                             backgroundImage: photoURL != null
                                                 ? NetworkImage(photoURL)
                                                 : null,
@@ -486,9 +485,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                             .displayName!
                                                             .substring(0, 1)
                                                             .toUpperCase()
-                                                        : "U",
-                                                    style: const TextStyle(
-                                                        color: Colors.white),
+                                                        : "",
                                                   )
                                                 : null,
                                           );

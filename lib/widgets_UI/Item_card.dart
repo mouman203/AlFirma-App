@@ -101,7 +101,7 @@ class _ItemCardState extends State<ItemCard> {
         }
       },
       child: Card(
-        color: isDarkMode ? scheme.onSecondary : scheme.secondaryFixed,
+        color: isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

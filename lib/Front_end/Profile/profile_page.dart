@@ -39,6 +39,8 @@ class _ProfilePageState extends State<ProfilePage> {
     DocumentSnapshot userDoc =
         await _firestore.collection("Users").doc(userId).get();
 
+    if (!mounted) return; // <- Prevent setState if widget is disposed
+
     if (userDoc.exists) {
       setState(() {
         followersCount = (userDoc["followers"] as List<dynamic>?)?.length ?? 0;
@@ -49,130 +51,132 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
- Future<List<Object>> fetchAllUserItems(String userId) async {
-  final firestore = FirebaseFirestore.instance;
+  Future<List<Object>> fetchAllUserItems(String userId) async {
+    final firestore = FirebaseFirestore.instance;
 
-  // Fetch Agricol Products
-  final agriSnap = await firestore
-      .collection('Products')
-      .doc('Agricol_products')
-      .collection('Agricol_products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final agriProducts =
-      agriSnap.docs.map(Productagri.fromFirestore).toList();
+    // Fetch Agricol Products
+    final agriSnap = await firestore
+        .collection('Products')
+        .doc('Agricol_products')
+        .collection('Agricol_products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final agriProducts = agriSnap.docs.map(Productagri.fromFirestore).toList();
 
-  // Fetch Eleveur Products
-  final elevSnap = await firestore
-      .collection('Products')
-      .doc('Eleveur_products')
-      .collection('Eleveur_products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final elevProducts =
-      elevSnap.docs.map(ProductElev.fromFirestore).toList();
+    // Fetch Eleveur Products
+    final elevSnap = await firestore
+        .collection('Products')
+        .doc('Eleveur_products')
+        .collection('Eleveur_products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final elevProducts = elevSnap.docs.map(ProductElev.fromFirestore).toList();
 
-  // Fetch Expertise Services
-  final expertiseSnap = await firestore
-      .collection('Services')
-      .doc('Expertise')
-      .collection('Expertise')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final expertiseServices =
-      expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
+    // Fetch Expertise Services
+    final expertiseSnap = await firestore
+        .collection('Services')
+        .doc('Expertise')
+        .collection('Expertise')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final expertiseServices =
+        expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
 
-  // Fetch Repair Services
-  final repairSnap = await firestore
-      .collection('Services')
-      .doc('Repairs')
-      .collection('Repairs')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final repairServices =
-      repairSnap.docs.map(RepairService.fromFirestore).toList();
+    // Fetch Repair Services
+    final repairSnap = await firestore
+        .collection('Services')
+        .doc('Repairs')
+        .collection('Repairs')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final repairServices =
+        repairSnap.docs.map(RepairService.fromFirestore).toList();
 
-  // Fetch Transport Services
-  final transportSnap = await firestore
-      .collection('Services')
-      .doc('Transportation')
-      .collection('Transportation')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-  final transportServices =
-      transportSnap.docs.map(TransportService.fromFirestore).toList();
+    // Fetch Transport Services
+    final transportSnap = await firestore
+        .collection('Services')
+        .doc('Transportation')
+        .collection('Transportation')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final transportServices =
+        transportSnap.docs.map(TransportService.fromFirestore).toList();
 
-  // Combine all items into one list
-  return [
-    ...agriProducts,
-    ...elevProducts,
-    ...expertiseServices,
-    ...repairServices,
-    ...transportServices,
-  ];
-}
-Future<List<dynamic>> _loadSavedItems() async {
-  final currentUser = FirebaseAuth.instance.currentUser;
-  if (currentUser == null) return [];
-
-  final firestore = FirebaseFirestore.instance;
-
-  final userDoc = await firestore.collection('Users').doc(currentUser.uid).get();
-  if (!userDoc.exists || !userDoc.data()!.containsKey('saved')) {
-    print("❌ No saved items found for the current user.");
-    return [];
+    // Combine all items into one list
+    return [
+      ...agriProducts,
+      ...elevProducts,
+      ...expertiseServices,
+      ...repairServices,
+      ...transportServices,
+    ];
   }
 
-  final savedItemIds = List<String>.from(userDoc['saved'] ?? []);
-  print("🎉 Loaded saved item IDs: $savedItemIds");
+  Future<List<dynamic>> _loadSavedItems() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return [];
 
-  final List<dynamic> savedItems = [];
+    final firestore = FirebaseFirestore.instance;
 
-  for (var itemId in savedItemIds) {
-    try {
-      bool found = false;
-
-      final fetchPatterns = {
-        'Products/Agricol_products/Agricol_products': (DocumentSnapshot snap) => Productagri.fromFirestore(snap),
-        'Products/Eleveur_products/Eleveur_products': (DocumentSnapshot snap) => ProductElev.fromFirestore(snap),
-        'Services/Expertise/Expertise': (DocumentSnapshot snap) => ExpertiseService.fromFirestore(snap),
-        'Services/Repairs/Repairs': (DocumentSnapshot snap) => RepairService.fromFirestore(snap),
-        'Services/Transportation/Transportation': (DocumentSnapshot snap) => TransportService.fromFirestore(snap),
-      };
-
-      for (final entry in fetchPatterns.entries) {
-        final pathParts = entry.key.split('/');
-        final snap = await firestore
-            .collection(pathParts[0])
-            .doc(pathParts[1])
-            .collection(pathParts[2])
-            .doc(itemId)
-            .get();
-
-        print("🧐 Checking ${entry.key} for ID $itemId");
-
-        if (snap.exists) {
-          savedItems.add(entry.value(snap));
-          print("✅ Found item in ${entry.key}");
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-        print("❌ ID $itemId not found in any structured collection.");
-      }
-    } catch (e) {
-      print('❌ Error loading item $itemId: $e');
+    final userDoc =
+        await firestore.collection('Users').doc(currentUser.uid).get();
+    if (!userDoc.exists || !userDoc.data()!.containsKey('saved')) {
+      print("❌ No saved items found for the current user.");
+      return [];
     }
+
+    final savedItemIds = List<String>.from(userDoc['saved'] ?? []);
+    print("🎉 Loaded saved item IDs: $savedItemIds");
+
+    final List<dynamic> savedItems = [];
+
+    for (var itemId in savedItemIds) {
+      try {
+        bool found = false;
+
+        final fetchPatterns = {
+          'Products/Agricol_products/Agricol_products':
+              (DocumentSnapshot snap) => Productagri.fromFirestore(snap),
+          'Products/Eleveur_products/Eleveur_products':
+              (DocumentSnapshot snap) => ProductElev.fromFirestore(snap),
+          'Services/Expertise/Expertise': (DocumentSnapshot snap) =>
+              ExpertiseService.fromFirestore(snap),
+          'Services/Repairs/Repairs': (DocumentSnapshot snap) =>
+              RepairService.fromFirestore(snap),
+          'Services/Transportation/Transportation': (DocumentSnapshot snap) =>
+              TransportService.fromFirestore(snap),
+        };
+
+        for (final entry in fetchPatterns.entries) {
+          final pathParts = entry.key.split('/');
+          final snap = await firestore
+              .collection(pathParts[0])
+              .doc(pathParts[1])
+              .collection(pathParts[2])
+              .doc(itemId)
+              .get();
+
+          print("🧐 Checking ${entry.key} for ID $itemId");
+
+          if (snap.exists) {
+            savedItems.add(entry.value(snap));
+            print("✅ Found item in ${entry.key}");
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          print("❌ ID $itemId not found in any structured collection.");
+        }
+      } catch (e) {
+        print('❌ Error loading item $itemId: $e');
+      }
+    }
+
+    print("🎉 Finished loading saved items: ${savedItems.length} found.");
+    return savedItems;
   }
-
-  print("🎉 Finished loading saved items: ${savedItems.length} found.");
-  return savedItems;
-}
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +223,8 @@ Future<List<dynamic>> _loadSavedItems() async {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const EditProfilePage(frompage:"profile")),
+                            builder: (context) =>
+                                const EditProfilePage(frompage: "profile")),
                       );
                     },
                   ),
@@ -353,7 +358,7 @@ Future<List<dynamic>> _loadSavedItems() async {
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 childAspectRatio: 0.8,
-                                crossAxisSpacing: 10,
+                                crossAxisSpacing: 9,
                                 mainAxisSpacing: 2,
                               ),
                               itemBuilder: (context, index) {
