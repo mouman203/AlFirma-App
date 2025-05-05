@@ -49,7 +49,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         followersCount = followers.length;
         isFollowing = followers.contains(currentUserId);
         profilePic = userDoc["photo"] ?? "";
-        role = userDoc["activeType"] ?? "Unknown";
+   
       });
     }
   }
@@ -183,9 +183,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             const SizedBox(height: 16),
             Text(username, style: Theme.of(context).textTheme.displaySmall),
-            const SizedBox(height: 10),
-            Text(role, style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 13),
+           
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

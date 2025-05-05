@@ -399,103 +399,114 @@ class Users {
 
 //sign in with google
 
-  Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
-    try {
-      showLoadingDialog(context); // عرض مؤشر الانتظار
+ Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
+  try {
+    showLoadingDialog(context); // Show loading indicator
 
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      // تأكد من تسجيل الخروج قبل محاولة تسجيل الدخول
-      await googleSignIn.signOut();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    // Ensure user is logged out before trying to sign in
+    await googleSignIn.signOut();
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      if (googleUser == null) {
-        Navigator.pop(context); // إغلاق مؤشر التحميل
-        print("❌ تم إلغاء تسجيل الدخول");
-        return;
+    if (googleUser == null) {
+      Navigator.pop(context); // Close loading indicator
+      print("❌ User canceled the sign-in");
+      return;
+    }
+
+    print("✅ Google Sign-In successful: ${googleUser.email}");
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Check if the current user is anonymous and delete if so
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null && currentUser.isAnonymous) {
+      try {
+        await currentUser.delete();
+        print("✅ Anonymous user deleted before Google sign-in.");
+      } catch (e) {
+        print("⚠️ Failed to delete anonymous user: $e");
       }
+    }
 
-      print("✅ تسجيل الدخول ناجح: ${googleUser.email}");
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+    // Sign in to Firebase with Google credentials
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(googleCredential);
+    User? firebaseUser = userCredential.user;
 
-      final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    if (firebaseUser != null) {
+      // Reference to Firestore
+      final userRef = FirebaseFirestore.instance
+          .collection("Users")
+          .doc(firebaseUser.uid);
 
-      // تسجيل الدخول إلى Firebase
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(googleCredential);
-      User? firebaseUser = userCredential.user;
+      // Check if the user already exists
+      final doc = await userRef.get();
 
-      if (firebaseUser != null) {
-        // مرجع إلى Firestore
-        final userRef = FirebaseFirestore.instance
-            .collection("Users")
-            .doc(firebaseUser.uid);
+      if (!doc.exists) {
+        // Split name into first and last name
+        List<String> nameParts = googleUser.displayName?.split(" ") ?? ["", ""];
+        String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+        String lastName =
+            nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
 
-        // التحقق مما إذا كان المستخدم موجود مسبقًا
-        final doc = await userRef.get();
-
-        if (!doc.exists) {
-          // تقسيم الاسم إلى اسم أول واسم أخير
-          List<String> nameParts =
-              googleUser.displayName?.split(" ") ?? ["", ""];
-          String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
-          String lastName =
-              nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
-
-          // حفظ بيانات المستخدم الجديدة فقط إذا لم تكن موجودة
-          await userRef.set({
-            "email": firebaseUser.email,
-            "Verify": false,
-            "first_name": firstName,
-            "last_name": lastName,
-            "phone": firebaseUser.phoneNumber ?? "",
-            "password": "signed with google",
-            "photo": firebaseUser.photoURL ?? "",
-            "userType": {},
-            'activeType': 'Client',
-            "following": [],
-            "followers": [],
-            "wilaya": '',
-            "daira": '',
-            "created_at": FieldValue.serverTimestamp(),
-          });
+        // Save new user data if not already present
+        await userRef.set({
+          "email": firebaseUser.email,
+          "Verify": false,
+          "first_name": firstName,
+          "last_name": lastName,
+          "phone": firebaseUser.phoneNumber ?? "",
+          "password": "signed with Google",
+          "photo": firebaseUser.photoURL ?? "",
+          "userType": {},
+          'activeType': 'Client',
+          "following": [],
+          "followers": [],
+          "wilaya": '',
+          "daira": '',
+          "created_at": FieldValue.serverTimestamp(),
+        });
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EditProfilePage(frompage: 'login')),
+        );
+      } else {
+        print("User already exists: ${doc.get('Verify')}");
+        if (doc.get('Verify') == false) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => EditProfilePage(frompage: 'login')),
           );
         } else {
-          print(" المستخدم موجود مسبقًا ${doc.get('Verify')}");
-          if (doc.get('Verify') == false) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EditProfilePage(frompage: 'login')),
-            );
-          } else {
-            Navigator.pop(context); // إغلاق مؤشر التحميل
+          Navigator.pop(context); // Close loading indicator
 
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setInt('lastPageIndex', 0);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setInt('lastPageIndex', 0);
 
-            // الانتقال إلى الصفحة الرئيسية
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => homePage),
-            );
-          }
+          // Navigate to home page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => homePage),
+          );
         }
       }
-    } catch (e) {
-      Navigator.pop(context); // تأكد من إغلاق التحميل قبل إظهار الخطأ
-      print("⚠️ خطأ أثناء تسجيل الدخول باستخدام Google: $e");
-      showErrorDialog(context, "⚠️ حدث خطأ أثناء تسجيل الدخول بواسطة Google.");
     }
+  } catch (e) {
+    Navigator.pop(context); // Ensure the loading indicator is closed before showing the error
+    print("⚠️ Error during Google sign-in: $e");
+    showErrorDialog(context, "⚠️ Error during Google sign-in.");
   }
+}
+
 
   Future<List<Product>> searchProducts(String query) async {
     try {

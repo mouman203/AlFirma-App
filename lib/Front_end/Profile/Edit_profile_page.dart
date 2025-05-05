@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Home/home_page.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -156,7 +157,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           .update({'Verify': true});
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
+        const SnackBar(content: Text('Profile updated successfully ')),
       );
       Navigator.push(
         context,
@@ -206,20 +207,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-        appBar: AppBar(
-          title: widget.frompage == 'profile'
-              ? const Text('Edit Profile')
-              : const Text('Continuing sign in ...'),
-          backgroundColor:
-              isDarkMode ? colorScheme.surface : colorScheme.surface,
-          elevation: 5,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        appBar: widget.frompage == 'login'
+            ? AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                    );
+                  },
+                ),
+              )
+            : AppBar(
+                title: Text('Edit Profile'),
+                backgroundColor:
+                    isDarkMode ? colorScheme.surface : colorScheme.surface,
+                elevation: 5,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -295,8 +309,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
 
               const SizedBox(height: 13),
-
-              // Wilaya Dropdown
+// Wilaya Dropdown
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Column(
@@ -318,7 +331,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
-                          value: selectedWilaya,
+                          value:
+                              ProductData.wilayas.keys.contains(selectedWilaya)
+                                  ? selectedWilaya
+                                  : null,
                           hint: Row(
                             children: [
                               Icon(
@@ -365,14 +381,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 : const Color(0xFF256C4C),
                           ),
                           onChanged: (newValue) {
-                            setState(() {
-                              selectedWilaya = newValue;
-                              selectedDaira = null;
-                              wilayaError = null;
-                              dairaError = null;
-                            });
-                            if (newValue != null) {
-                              updateDairaList(newValue);
+                            if (newValue != null &&
+                                ProductData.wilayas.containsKey(newValue)) {
+                              setState(() {
+                                selectedWilaya = newValue;
+                                selectedDaira = null;
+                                wilayaError = null;
+                                dairaError = null;
+                                updateDairaList(newValue);
+                              });
                             }
                           },
                           selectedItemBuilder: (BuildContext context) {
@@ -432,7 +449,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
               const SizedBox(height: 13),
 
-              // Daira Dropdown
+               // Daira Dropdown
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Column(
@@ -454,7 +471,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
-                          value: selectedDaira,
+                          value: availableDairas.contains(selectedDaira)
+                              ? selectedDaira
+                              : null,
                           hint: Row(
                             children: [
                               Icon(
@@ -501,10 +520,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 : const Color(0xFF256C4C),
                           ),
                           onChanged: (newValue) {
-                            setState(() {
-                              selectedDaira = newValue;
-                              dairaError = null;
-                            });
+                            if (newValue != null &&
+                                availableDairas.contains(newValue)) {
+                              setState(() {
+                                selectedDaira = newValue;
+                                dairaError = null;
+                              });
+                            }
                           },
                           selectedItemBuilder: (BuildContext context) {
                             return availableDairas.map((daira) {

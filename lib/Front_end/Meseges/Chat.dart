@@ -2,6 +2,7 @@ import 'package:agriplant/Front_end/Profile/userprofilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverId;
@@ -28,7 +29,6 @@ class _ChatPageState extends State<ChatPage> {
     _getReceiverData();
   }
 
-  /// 🟢 **جلب بيانات المستخدم الآخر**
   Future<void> _getReceiverData() async {
     DocumentSnapshot userDoc =
         await _firestore.collection("Users").doc(widget.receiverId).get();
@@ -41,7 +41,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  /// 🟢 **إرسال الرسالة إلى Firestore**
   Future<void> _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
 
@@ -60,7 +59,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  /// 🟢 **الانتقال إلى صفحة الملف الشخصي**
   void _goToProfile() {
     Navigator.push(
       context,
@@ -70,188 +68,210 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  String _formatTimestamp(dynamic timestamp) {
+    if (timestamp == null) return '';
+    DateTime dateTime = timestamp.toDate();
+    return DateFormat.jm().format(dateTime); // Example: 2:43 AM
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final scheme = theme.colorScheme;
+
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: theme.brightness == Brightness.dark
-              ? colorScheme.surface
-              : colorScheme.surface,
-          elevation: 5,
-          title: GestureDetector(
-            onTap: _goToProfile,
-            child: Row(
-              children: [
-                /// 🟠 **دائرة صورة المستخدم**
-                CircleAvatar(
-                  backgroundImage: receiverPhotoUrl.isNotEmpty
-                      ? NetworkImage(receiverPhotoUrl)
-                      : null, // صورة المستخدم
-                  backgroundColor:
-                      Colors.grey[300], // لون افتراضي إذا لم تكن هناك صورة
-                  radius: 18,
-                  child: receiverPhotoUrl.isEmpty
-                      ? const Icon(Icons.person, color: Colors.white)
-                      : null, // أيقونة بديلة عند عدم وجود صورة
-                ),
-                const SizedBox(width: 10),
-
-                /// 🟠 **اسم المستخدم**
-                Text(
-                  receiverName,
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-        ),
-        body: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image:
-                  AssetImage("assets/background_chats.png"), // your image path
-              repeat: ImageRepeat.repeat,
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Column(
+      appBar: AppBar(
+        backgroundColor: theme.brightness == Brightness.dark
+            ? scheme.surface
+            : scheme.surface,
+        elevation: 5,
+        title: GestureDetector(
+          onTap: _goToProfile,
+          child: Row(
             children: [
-              /// 🔵 **عرض الرسائل باستخدام StreamBuilder**
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore
-                      .collection("Messages")
-                      .where(
-                        Filter.or(
-                          Filter.and(
-                              Filter("senderId", isEqualTo: currentUserId),
-                              Filter("receiverId",
-                                  isEqualTo: widget.receiverId)),
-                          Filter.and(
-                              Filter("senderId", isEqualTo: widget.receiverId),
-                              Filter("receiverId", isEqualTo: currentUserId)),
-                        ),
-                      )
-                      .orderBy("timestamp", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(child: Text("No messages yet"));
-                    }
-
-                    var messages = snapshot.data!.docs;
-
-                    return ListView.builder(
-                      itemCount: messages.length,
-                      reverse: true,
-                      padding: const EdgeInsets.all(10),
-                      itemBuilder: (context, index) {
-                        var msg =
-                            messages[index].data() as Map<String, dynamic>;
-                        bool isMe = msg["senderId"] == currentUserId;
-
-                        return Row(
-                          mainAxisAlignment: isMe
-                              ? MainAxisAlignment.end
-                              : MainAxisAlignment.start,
-                          children: [
-                            /// 🟠 **عرض صورة المستخدم بجانب رسائله**
-                            if (!isMe)
-                              GestureDetector(
-                                onTap: _goToProfile,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: CircleAvatar(
-                                    backgroundImage: receiverPhotoUrl.isNotEmpty
-                                        ? NetworkImage(receiverPhotoUrl)
-                                        : null,
-                                    backgroundColor: Colors.grey[300],
-                                    radius: 16,
-                                    child: receiverPhotoUrl.isEmpty
-                                        ? const Icon(Icons.person,
-                                            color: Colors.white)
-                                        : null,
-                                  ),
-                                ),
-                              ),
-
-                            /// 🟢 **رسالة الدردشة**
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: isMe ? Colors.green : Colors.grey[300],
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                msg["message"],
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: isMe ? Colors.white : Colors.black87,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
+              CircleAvatar(
+                backgroundImage: receiverPhotoUrl.isNotEmpty
+                    ? NetworkImage(receiverPhotoUrl)
+                    : (isDarkMode
+                            ? const AssetImage("assets/anonymeD.png")
+                            : const AssetImage("assets/anonyme.png"))
+                        as ImageProvider,
+                radius: 20,
               ),
-
-              /// 🟠 **حقل إدخال الرسالة وزر الإرسال**
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: theme.brightness == Brightness.dark
-                              ? colorScheme.secondaryContainer
-                              : colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: TextField(
-                          controller: _messageController,
-                          decoration: const InputDecoration(
-                            hintText: "Type a message...",
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    CircleAvatar(
-                      backgroundColor: isDarkMode
-                          ? const Color(0xFF90D5AE)
-                          : const Color(0xFF256C4C),
-                      radius: 25,
-                      child: IconButton(
-                        icon: const Icon(Icons.send, color: Colors.white),
-                        onPressed: _sendMessage,
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(width: 14),
+              Text(
+                receiverName,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ],
           ),
-        ));
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/background_chats.png"),
+            repeat: ImageRepeat.repeat,
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection("Messages")
+                    .where(
+                      Filter.or(
+                        Filter.and(Filter("senderId", isEqualTo: currentUserId),
+                            Filter("receiverId", isEqualTo: widget.receiverId)),
+                        Filter.and(
+                            Filter("senderId", isEqualTo: widget.receiverId),
+                            Filter("receiverId", isEqualTo: currentUserId)),
+                      ),
+                    )
+                    .orderBy("timestamp", descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text("No messages yet"));
+                  }
+
+                  var messages = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: messages.length,
+                    reverse: true,
+                    padding: const EdgeInsets.all(10),
+                    itemBuilder: (context, index) {
+                      var msg = messages[index].data() as Map<String, dynamic>;
+                      bool isMe = msg["senderId"] == currentUserId;
+
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: isMe
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                        children: [
+                          if (!isMe)
+                            GestureDetector(
+                              onTap: _goToProfile,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    right: 6.0, bottom: 6),
+                                child: CircleAvatar(
+                                  backgroundImage: receiverPhotoUrl.isNotEmpty
+                                      ? NetworkImage(receiverPhotoUrl)
+                                      : (isDarkMode
+                                              ? const AssetImage(
+                                                  "assets/anonymeD.png")
+                                              : const AssetImage(
+                                                  "assets/anonyme.png"))
+                                          as ImageProvider,
+                                  radius: 18,
+                                ),
+                              ),
+                            ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 6, horizontal: 8),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 14),
+                            decoration: BoxDecoration(
+                              color: isMe
+                                  ? (isDarkMode
+                                      ? const Color(0xFF90D5AE)
+                                      : const Color(0xFF256C4C))
+                                  : (isDarkMode
+                                      ? const Color.fromARGB(255, 178, 178, 178)
+                                      : const Color.fromARGB(255, 95, 94, 94)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            constraints: BoxConstraints(
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.7),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  msg["message"],
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: isDarkMode
+                                        ? Colors.black
+                                        : Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _formatTimestamp(msg["timestamp"]),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: isDarkMode
+                                          ? Colors.black54
+                                          : Colors.white70),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? scheme.onSecondary
+                            : scheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          hintText: "Message...",
+                          hintStyle: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              fontSize: 19),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  CircleAvatar(
+                    backgroundColor: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C),
+                    radius: 25,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.send,
+                        color: isDarkMode ? Colors.black : Colors.white,
+                      ),
+                      onPressed: _sendMessage,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

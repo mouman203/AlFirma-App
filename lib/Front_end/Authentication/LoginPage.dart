@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Home/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,29 +27,48 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 30.0,
-          leading: widget.frompage == 'ProfilePicture'
-              ? null
-              : IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 28,
-                    color: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C),
-                  ),
-                  onPressed: () {
-                    // Go back to the HomePage when arrow is pressed
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                    );
-                  },
+        appBar: widget.frompage == 'ProfilPicture'
+            ? const PreferredSize(
+                preferredSize: Size.fromHeight(30.0), // Set your desired height
+                child: SizedBox(height: 30.0), // SizedBox with height
+              )
+            : PreferredSize(
+                preferredSize:
+                    const Size.fromHeight(30.0), // Set your desired height
+                child: AppBar(
+                  leading: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        size: 28,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                      ),
+                      onPressed: () async {
+                        try {
+                          // Sign in anonymously
+                          await FirebaseAuth.instance.signInAnonymously();
+
+                          // Navigate to HomePage after successful anonymous login
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                          );
+                        } catch (e) {
+                          // Handle errors (e.g., show a dialog or snackbar)
+                          print("Anonymous sign-in failed: $e");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Failed to sign in anonymously. Please try again.')),
+                          );
+                        }
+                      }),
+                  backgroundColor: Colors.transparent, // Transparent background
+                  elevation: 0, // Remove shadow
                 ),
-          backgroundColor: Colors.transparent, // Transparent AppBar background
-          elevation: 0, // Remove shadow
-        ),
+              ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -197,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 //  و "نسيت كلمة المرور؟"
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -238,7 +258,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
                 // زر تسجيل الدخول
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -270,7 +290,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(height: 25),
 
                 RichText(
                   text: TextSpan(
@@ -303,7 +323,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 // sign in another way
 
                 Row(

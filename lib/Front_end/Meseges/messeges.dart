@@ -17,18 +17,31 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(
-          title: const Text("Messages"),
-          backgroundColor: isDarkMode
-              ? const Color.fromARGB(255, 39, 57, 48) // Dark green in dark mode
-              : Theme.of(context).colorScheme.secondaryContainer), // Light
-      body: _buildMessagesList(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 4),
+              child: Row(
+                children: [
+                  Text(
+                    'Messages',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(child: _buildMessagesList()),
+          ],
+        ),
+      ),
     );
   }
 
-  /// 🟢 **وظيفة 1: جلب بيانات الرسائل المرسلة والمستلمة**
   Stream<List<QueryDocumentSnapshot>> _getMessagesStream() {
     String currentUserId = _auth.currentUser!.uid;
 
@@ -48,26 +61,24 @@ class _MessagesPageState extends State<MessagesPage> {
       sentMessages,
       receivedMessages,
       (List<QueryDocumentSnapshot> sent, List<QueryDocumentSnapshot> received) {
-        print("Total Messages Combined: ${sent.length + received.length}");
         return [...sent, ...received];
       },
     );
   }
 
-  /// 🔵 **وظيفة 2: فرز وتجميع الرسائل**
   Map<String, Map<String, dynamic>> _processMessages(
       List<QueryDocumentSnapshot> messages, String currentUserId) {
     messages.sort((a, b) {
       Timestamp timeA = a['timestamp'] ?? Timestamp(0, 0);
       Timestamp timeB = b['timestamp'] ?? Timestamp(0, 0);
-      return timeB.compareTo(timeA); // ترتيب تنازلي (الأحدث أولًا)
+      return timeB.compareTo(timeA);
     });
 
     Map<String, Map<String, dynamic>> lastMessages = {};
     for (var doc in messages) {
       var messageData = doc.data() as Map<String, dynamic>;
-      String sender = messageData['senderId'] ?? "Unknown Sender";
-      String receiver = messageData['receiverId'] ?? "Unknown Receiver";
+      String sender = messageData['senderId'] ?? "";
+      String receiver = messageData['receiverId'] ?? "";
       String otherUserId = sender == currentUserId ? receiver : sender;
 
       if (!lastMessages.containsKey(otherUserId)) {
@@ -77,50 +88,86 @@ class _MessagesPageState extends State<MessagesPage> {
     return lastMessages;
   }
 
-  /// 🟠 **وظيفة 3: جلب معلومات المستخدم وعرضها**
   Widget _buildUserListTile(String userId, Map<String, dynamic> messageData) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
+
     return FutureBuilder<DocumentSnapshot>(
       future: _firestore.collection('Users').doc(userId).get(),
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return const ListTile(title: Text("Loading..."));
         }
-        print("userid$userId");
+
         if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-          return const SizedBox(); // أو يمكنك عرض رسالة خطأ
+          return const SizedBox();
         }
 
         var userData = userSnapshot.data!;
         String username = userData['first_name'] ?? 'Unknown';
         String lastMessage = messageData['message'] ?? '';
+        Timestamp timestamp = messageData['timestamp'] ?? Timestamp(0, 0);
+        DateTime time = timestamp.toDate();
+        String formattedTime =
+            "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
 
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: userData['photo'] != null
-                ? NetworkImage(userData['photo'])
-                : null,
-            child: userData['photo'] == null
-                ? Text(username[0].toUpperCase(),
-                    style: const TextStyle(fontSize: 20))
-                : null,
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+          decoration: BoxDecoration(
+            color: isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(16),
           ),
-          title: Text(username),
-          subtitle:
-              Text(lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatPage(receiverId: userId),
+          child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: CircleAvatar(
+              radius: 24,
+              backgroundImage: userData['photo'] != null
+                  ? NetworkImage(userData['photo'])
+                  : (isDarkMode
+                          ? const AssetImage("assets/anonymeD.png")
+                          : const AssetImage("assets/anonyme.png"))
+                      as ImageProvider,
+            ),
+            title: Text(
+              username,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                color: isDarkMode
+                    ? const Color(0xFF90D5AE)
+                    : const Color(0xFF256C4C),
               ),
-            );
-          },
+            ),
+            subtitle: Text(
+              lastMessage,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: isDarkMode ? Colors.white70 : Colors.black54,
+                fontSize: 15,
+              ),
+            ),
+            trailing: Text(
+              formattedTime,
+              style: TextStyle(
+                  fontSize: 14,
+                  color: isDarkMode ? Colors.white70 : Colors.black54),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatPage(receiverId: userId),
+                ),
+              );
+            },
+          ),
         );
       },
     );
   }
 
-  /// 🔴 **وظيفة 4: بناء واجهة عرض الرسائل**
   Widget _buildMessagesList() {
     return StreamBuilder<List<QueryDocumentSnapshot>>(
       stream: _getMessagesStream(),
@@ -130,8 +177,7 @@ class _MessagesPageState extends State<MessagesPage> {
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          print("No messages found!");
-          return const SizedBox();
+          return const Center(child: Text("No messages yet."));
         }
 
         String currentUserId = _auth.currentUser!.uid;
@@ -139,16 +185,9 @@ class _MessagesPageState extends State<MessagesPage> {
             _processMessages(snapshot.data!, currentUserId);
 
         return ListView(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.only(top: 0),
           children: lastMessages.entries.map((entry) {
-            return Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200, // dark background
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: _buildUserListTile(entry.key, entry.value),
-            );
+            return _buildUserListTile(entry.key, entry.value);
           }).toList(),
         );
       },
