@@ -42,6 +42,22 @@ class _AddProductsState extends State<AddProducts> {
 
   String? userType;
 
+bool _isFormEmpty() {
+  return quantiteController.text.trim().isEmpty &&
+      surfaceController.text.trim().isEmpty &&
+      prixController.text.trim().isEmpty &&
+      descriptionController.text.trim().isEmpty &&
+      (selectedImages.isEmpty) &&
+      (selectedCategory == null || selectedCategory!.isEmpty) &&
+      (selectedsubCategory == null || selectedsubCategory!.isEmpty) &&
+      (selectedTypeService == null || selectedTypeService!.isEmpty) &&
+      (selectedWilaya == null || selectedWilaya!.isEmpty) &&
+      (selectedDaira == null || selectedDaira!.isEmpty) &&
+      (selectedproduct == null || selectedproduct!.isEmpty) &&
+      (selectedUnit == null || selectedUnit!.isEmpty);
+}
+
+
   Future<void> fetchUserType() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
@@ -54,16 +70,19 @@ class _AddProductsState extends State<AddProducts> {
           print("$userType");
           switch (userType) {
             case 'Agriculteur':
-              typeItem = "Agricole Product";
+              print('222222$Category');
+
+              typeItem = "Agricultural Product";
               Category = ProductData.getMainCategories(typeItem, context);
+              print('111111$Category');
 
               break;
             case 'Éleveur':
-              typeItem = "Animalier";
+              typeItem = "Animal Product";
               Category = ProductData.getMainCategories(typeItem, context);
               break;
             case 'Commerçant':
-              typeItem = "Commercant Product";
+              typeItem = "Commercial Product";
               Category = ProductData.getMainCategories(typeItem, context);
               break;
             case 'Expert Agri':
@@ -85,7 +104,7 @@ class _AddProductsState extends State<AddProducts> {
               print(Category);
               break;
             case 'Réparateur':
-              typeItem = "Reaparation";
+              typeItem = "Repairs";
               Category = ProductData.ReparationType;
               break;
             default:
@@ -485,22 +504,32 @@ class _AddProductsState extends State<AddProducts> {
                 },
               ),
 
-//==============================SHARE BUTTON================================
+//==============================RESET BUTTON======================================================
+      ProductData.actionButton(label: "Reset",backgroundColor: Colors.blueGrey.shade700, isLoading: _isLoading, onPressed: _isFormEmpty()
+              ? () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("The form is empty",
+                       style: TextStyle(color: Colors.black),),
+                      backgroundColor: const Color.fromARGB(255, 247, 234, 117),
+                    ),
+                  );
+                }
+              : () {
+                  try {
+                    _resetForm();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error: $e")),
+                    );
+                  }
+                },),
 
-              SizedBox(
-                width: double.infinity, // Make the button full width
-                height: 50, // Match the height of text fields
-                child: _isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator()) // Show progress
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
+//==============================SHARE BUTTON================================
+              ProductData.actionButton(
+                label: "Share",
+                isLoading: _isLoading,
+                onPressed: () {
                           try {
                             setState(() {
                               _isLoading = true;
@@ -514,12 +543,7 @@ class _AddProductsState extends State<AddProducts> {
                               SnackBar(content: Text("Error: $e")),
                             );
                           }
-                        },
-                        child: const Text(
-                          "Share",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
+                        }
               ),
 //==============================FIN================================
             ],

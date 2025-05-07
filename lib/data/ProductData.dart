@@ -214,21 +214,21 @@ class ProductData {
 
 static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext context) {
   return {
-    "AgricolProduct": agriCategories(context),
-    "EleveurProduct": produitsElevages(context),
-    "CommercantProduct": commercantCategories(context),
+    "Agricultural Product": agriCategories(context),
+    "Animal Product": produitsElevages(context),
+    "Commercial Product": commercantCategories(context),
   };
 }
 
 
   static  Map<String, Map<String, List<String>>> subCategoryDetails(BuildContext context) => {
-    "AgricolProduct": {
+    "Agricultural Product": {
       ...agriSubCategories(context),
     },
-    "CommercantProduct": {
+    "Commercial Product": {
       ...equipmentCategories(context),
     },
-    "EleveurProduct": {...produitsElevages(context)},
+    "Animal Product": {...produitsElevages(context)},
   };
 
   static  Map<String, List<String>> wilayas(BuildContext context) => {
@@ -964,7 +964,7 @@ static List<String> getWilaya(BuildContext context) {
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.green.shade50,
-          prefixIcon: Icon(icon, color: Colors.green.shade700),
+          prefixIcon: Icon(icon, color: const Color(0xFF256C4C)),
           hintText: hintText,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -1020,4 +1020,37 @@ static List<String> getWilaya(BuildContext context) {
       ),
     );
   }
+  static Widget actionButton({
+  required String label,
+   Color backgroundColor = const Color(0xFF256C4C),
+  required bool isLoading,
+  required VoidCallback? onPressed,
+}) {
+  return Column(
+    children: [
+      SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: backgroundColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: onPressed,
+                child: Text(
+                  label,
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+      ),
+      const SizedBox(
+        height: 15,),
+    ],
+  );
+}
+
 }

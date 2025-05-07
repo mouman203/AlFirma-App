@@ -52,6 +52,9 @@ class _HomePageState extends State<HomePage> {
         selectedType = type;
       });
     }
+    
+        currentPageIndex = 0;
+
   }
 
   Future<void> _fetchUserName() async {
@@ -327,7 +330,12 @@ class _HomePageState extends State<HomePage> {
         currentIndex: currentPageIndex,
         onTap: (index) async {
           // Block guest users from accessing "Add"  and "messages" and  "Profile"
-          if (Users.isGuestUser() && (index == 2 || index == 3 || index == 4)) {
+         if ((Users.isGuestUser() &&
+                  (index == 2 || index == 3 || index == 4)) ||
+              index == 2 &&
+                  (selectedType == "Vétérinaire" ||
+                      selectedType == "Entreprise" ||
+                      selectedType == "Client")) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Row(
@@ -338,7 +346,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Expanded(
                       child: Text(
-                        S.of(context).guestAccessLimited,
+                        selectedType == "Vétérinaire" ||
+                                selectedType == "Entreprise" ||
+                                selectedType == "Client"
+                            ? " $selectedType can not add products"
+                            : S.of(context).guestAccessLimited,
+                        
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 18,
