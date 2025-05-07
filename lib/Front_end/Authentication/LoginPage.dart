@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Home/home_page.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -58,11 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                         } catch (e) {
                           // Handle errors (e.g., show a dialog or snackbar)
                           print("Anonymous sign-in failed: $e");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text(
-                                    'Failed to sign in anonymously. Please try again.')),
-                          );
+                         
                         }
                       }),
                   backgroundColor: Colors.transparent, // Transparent background
@@ -81,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 10),
 
                 // النص الترحيبي
-                Text("SIGN IN",
+               Text(S.of(context).signIn,
                     style: GoogleFonts.roboto(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -89,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                           ? Colors.white // white in dark mode
                           : Colors.black,
                     )),
-                Text("Welcome to our platform",
+                Text(S.of(context).welcomeMessage2,
                     style: GoogleFonts.roboto(
                       fontSize: 18,
                       color: isDarkMode
@@ -132,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _emailController,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "Email",
+                                hintText: S.of(context).email,
                                 hintStyle: TextStyle(
                                     color: isDarkMode
                                         ? Colors.white // white in dark mode
@@ -184,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                                   _obscurePassword, // إخفاء النص المدخل إذا كان true
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "Password",
+                                hintText: S.of(context).passwordHint,
                                 hintStyle: TextStyle(
                                   color: isDarkMode
                                       ? Colors.white // white in dark mode
@@ -236,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             children: [
                               TextSpan(
-                                text: "Forgot Password?",
+                                 text: S.of(context).forgotPassword,
                                 style: const TextStyle(
                                   decoration: TextDecoration
                                       .underline, // Underline the text
@@ -282,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                       ),
-                      child: Text("Login",
+                      child: Text(S.of(context).login,
                           style: GoogleFonts.roboto(
                               fontSize: 18,
                               color: isDarkMode ? Colors.black : Colors.white)),
@@ -299,14 +296,14 @@ class _LoginPageState extends State<LoginPage> {
                       color: isDarkMode ? Colors.white : Colors.black,
                     ),
                     children: [
-                      const TextSpan(
-                        text: "Don't have an account? ",
-                        style: TextStyle(
+                       TextSpan(
+                        text: S.of(context).noAccount,
+                        style: const TextStyle(
                           color: Colors.grey,
                         ),
                       ),
                       TextSpan(
-                        text: "Sign Up",
+                        text: S.of(context).signup,
                         style: TextStyle(
                           fontSize: 18,
                           color: isDarkMode

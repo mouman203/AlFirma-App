@@ -30,13 +30,17 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
   String? selectedWilaya;
   String? selectedDaira;
   void initState() {
-    super.initState();
-    Category = ProductData.getMainCategories("CommercantProduct");
-    subCategory =
-        ProductData.getSubCategories("CommercantProduct", selectedCategory);
-    Products = ProductData.getProduct("CommercantProduct", selectedsubCategory);
-  }
-
+  super.initState();
+  
+  // Delay the context-dependent initialization until after the widget is built
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    setState(() {
+      Category = ProductData.getMainCategories("CommercantProduct", context);
+      subCategory = ProductData.getSubCategories("CommercantProduct", selectedCategory, context);
+      Products = ProductData.getProduct("CommercantProduct", selectedsubCategory, context);
+    });
+  });
+}
   bool _isLoading = false; // To show a loading indicator
 
   void _resetForm() {
@@ -263,6 +267,7 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
               const SizedBox(height: 15),
 
               ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedCategory,
                   items: Category!,
                   label: 'type',
@@ -277,8 +282,9 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
                 Column(
                   children: [
                     ProductData.buildDropdown(
+                      context: context,
                       selectedValue: selectedsubCategory,
-                      items: (ProductData.equipmentCategories.keys.toList()),
+                      items: (ProductData.equipmentCategories(context).keys.toList()),
                       label: 'category',
                       onChanged: (value) {
                         setState(() {
@@ -289,14 +295,14 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
                     ),
                   ],
                 ),
-              if (selectedsubCategory != null &&
-                  selectedCategory == "معدات")
+              if (selectedsubCategory != null && selectedCategory == "معدات")
                 Column(
                   children: [
                     ProductData.buildDropdown(
+                      context: context,
                       selectedValue: selectedproduct,
                       items: (ProductData
-                          .equipmentCategories[selectedsubCategory])!,
+                          .equipmentCategories(context)[selectedsubCategory])!,
                       label: 'Produit',
                       onChanged: (value) {
                         setState(() {
@@ -309,6 +315,7 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
 
               if (selectedCategory != null)
                 ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedService,
                   items: serviceTypes,
                   label: 'Rent / Sell',
@@ -347,6 +354,7 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
               if (selectedCategory != null &&
                   unitsByCategory.containsKey(selectedCategory!))
                 ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedUnite,
                   items: unitsByCategory[selectedCategory]!,
                   label: 'Unit',
@@ -359,8 +367,9 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
 
               //wilaya selection
               ProductData.buildDropdown(
+                context: context,
                 selectedValue: selectedWilaya,
-                items: ProductData.wilayas.keys.toList(),
+                items: ProductData.wilayas(context).keys.toList(),
                 label: 'Wilaya',
                 onChanged: (value) {
                   setState(() {
@@ -373,8 +382,9 @@ class _AddProductCommercantState extends State<AddProductCommercant> {
               //Daira selection
               if (selectedWilaya != null)
                 ProductData.buildDropdown(
+                    context: context,
                     selectedValue: selectedDaira,
-                    items: ProductData.wilayas[selectedWilaya]!,
+                    items: ProductData.wilayas(context)[selectedWilaya]!,
                     label: 'Daira',
                     onChanged: (value) {
                       setState(() {

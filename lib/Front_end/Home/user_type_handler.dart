@@ -1,4 +1,5 @@
 import 'package:agriplant/Front_end/Home/Document_page.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -50,14 +51,14 @@ void showSuccessPopup(BuildContext context, String? type) {
         Navigator.of(context).pop(); // Automatically close after 2 seconds
       });
       return AlertDialog(
-        title: const Text("🎉 Congratulations!"),
-        content: Text("Yeeey! You are now a $type!"),
+        title: Text(S.of(context).congratulations),
+        content: Text("${S.of(context).successMessage} $type!"),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text("OK"),
+            child:  Text(S.of(context).ok),
           ),
         ],
       );
@@ -73,15 +74,15 @@ void showAlertsPopup(BuildContext context) {
         Navigator.of(context).pop(); // Automatically close after 2 seconds
       });
       return AlertDialog(
-        title: const Text("⚠️ Alert!"),
-        content: const Text(
-            "You have to upload some files .. after validation you received a notification"),
+        title:  Text(S.of(context).alert),
+        content:  Text(
+           S.of(context).alertMessage),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text("OK"),
+            child:  Text(S.of(context).ok),
           ),
         ],
       );
@@ -410,10 +411,10 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                 fixedSize: const Size.fromHeight(40),
               ),
               onPressed: () => addTypeFlow(context),
-              child: const Center(
-                child: Text("Become",
+              child:  Center(
+                child: Text(S.of(context).become,
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             )
           : Row(
@@ -476,7 +477,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                       icon: Icon(Icons.arrow_drop_down_outlined,
                           color: Theme.of(context).colorScheme.primary,
                           size: 35),
-                      tooltip: 'Switch Active Profile',
+                      tooltip: S.of(context).switchActiveProfile,
                       onPressed: () async {
                         final newActive = await showMenu<String>(
                           context: context,
@@ -554,7 +555,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                         widget.onTypeChanged();
                                         await saveUserData(
                                             selectedTypes, activeType!);
-                                            widget.onTypeChanged();
+                                        widget.onTypeChanged();
                                         setState(() {});
                                         Navigator.pop(context);
                                       },
@@ -579,14 +580,14 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      title: const Text('تنبيه'),
-                                      content: const Text(
-                                          'هذا النوع غير مفعل من طرف الإدارة.'),
+                                      title:  Text(S.of(context).alertTitle),
+                                      content:  Text(
+                                         S.of(context).alertContent),
                                       actions: [
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
-                                          child: const Text('حسناً'),
+                                          child:  Text(S.of(context).ok),
                                         ),
                                       ],
                                     ),

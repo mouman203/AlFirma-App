@@ -224,6 +224,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
 
               //category
               ProductData.buildDropdown(
+                context: context,
                 selectedValue: selectedCategorie,
                 items: categories.keys.toList(),
                 label: 'category',
@@ -234,10 +235,11 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   });
                 },
               ),
-            
+
               //Produit
               if (selectedCategorie != null)
                 ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedTypeC,
                   items: categories[selectedCategorie]!,
                   label: 'type',
@@ -247,7 +249,6 @@ class _AddProductExpertState extends State<AddProductExpert> {
                     });
                   },
                 ),
-           
 
               //prix
               ProductData.buildTextField(
@@ -259,12 +260,12 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   return null;
                 },
               ),
-           
 
               //wilaya selection
               ProductData.buildDropdown(
+                context: context,
                 selectedValue: selectedWilaya,
-                items: ProductData.wilayas.keys.toList(),
+                items: ProductData.wilayas(context).keys.toList(),
                 label: 'wilaya',
                 onChanged: (value) {
                   setState(() {
@@ -273,12 +274,12 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   });
                 },
               ),
-          
 
               if (selectedWilaya != null)
                 ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedDaira,
-                  items: ProductData.wilayas[selectedWilaya]!,
+                  items: ProductData.wilayas(context)[selectedWilaya]!,
                   label: "Daira",
                   onChanged: (value) {
                     setState(() {
@@ -286,7 +287,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
                     });
                   },
                 ),
-            
+
               ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
@@ -296,7 +297,7 @@ class _AddProductExpertState extends State<AddProductExpert> {
                   return null;
                 },
               ),
-            
+
               SizedBox(
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields

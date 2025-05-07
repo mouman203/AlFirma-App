@@ -8,6 +8,7 @@ import 'package:agriplant/Front_end/Providers/theme_provider.dart';
 import 'package:agriplant/Front_end/Providers/language_provider.dart';
 import 'package:agriplant/Front_end/Profile/Settings/Contact_us_page.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:agriplant/generated/l10n.dart'; // Import the localization file
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -24,23 +25,24 @@ class _SettingsPageState extends State<SettingsPage> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final languageProvider = Provider.of<LanguageProvider>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final scheme = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Settings'),
-          backgroundColor:
-              isDarkMode ? colorScheme.surface : colorScheme.surface,
-          elevation: 5),
+        title: Text(
+            S.of(context).settings), // Use localized string for appBar title
+        backgroundColor: isDarkMode ? scheme.surface : scheme.surface,
+        elevation: 5,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           Divider(
-              color: isDarkMode
-                  ? const Color.fromARGB(255, 16, 24, 20)
-                  : Colors.white),
+            color: isDarkMode
+                ? const Color.fromARGB(255, 16, 24, 20)
+                : Colors.white,
+          ),
 
           // security
           ListTile(
@@ -49,7 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
               color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
             ),
             title: Text(
-              'Security',
+              S.of(context).security, // Use localized string
               style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
             trailing: Icon(
@@ -59,17 +61,19 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () {
               if (Users.isGuestUser()) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.error_outline,
                           color: Colors.black,
                         ),
                         Expanded(
                           child: Text(
-                            'Only logged-in users can access security features.',
-                            style: TextStyle(
+                            S
+                                .of(context)
+                                .securityMessage, // Use localized message
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18,
                             ),
@@ -77,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ],
                     ),
-                    backgroundColor: Color.fromARGB(255, 247, 234, 117),
+                    backgroundColor: const Color.fromARGB(255, 247, 234, 117),
                   ),
                 );
               } else {
@@ -90,12 +94,12 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
 
           Divider(
-              color: isDarkMode
-                  ? const Color.fromARGB(255, 16, 24, 20)
-                  : Colors.white),
+            color: isDarkMode
+                ? const Color.fromARGB(255, 16, 24, 20)
+                : Colors.white,
+          ),
 
           // Dark Mode Toggle
-
           ListTile(
             leading: Icon(
               themeProvider.themeMode == ThemeMode.dark
@@ -105,8 +109,8 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             title: Text(
               themeProvider.themeMode == ThemeMode.dark
-                  ? 'Light Mode'
-                  : 'Dark Mode',
+                  ? S.of(context).lightMode // Use localized string
+                  : S.of(context).darkMode, // Use localized string
             ),
             trailing: Switch(
               inactiveThumbColor: const Color(0xFF256C4C),
@@ -118,14 +122,16 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           Divider(
-              color: isDarkMode
-                  ? const Color.fromARGB(255, 16, 24, 20)
-                  : Colors.white),
+            color: isDarkMode
+                ? const Color.fromARGB(255, 16, 24, 20)
+                : Colors.white,
+          ),
+
           // Language Selection
           ListTile(
             leading: Icon(Icons.language,
                 color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            title: const Text('Language'),
+            title: Text(S.of(context).language), // Use localized string
             trailing: DropdownButton<Locale>(
               value: languageProvider.locale,
               dropdownColor: Theme.of(context).scaffoldBackgroundColor,
@@ -137,26 +143,29 @@ class _SettingsPageState extends State<SettingsPage> {
                   languageProvider.changeLanguage(newLocale);
                 }
               },
-              items: const [
+              items:  [
                 DropdownMenuItem(
-                  value: Locale('en'),
-                  child: Text('English'),
+                  value: const Locale('en'),
+                  child: Text(S.of(context).languageEnglish),
                 ),
                 DropdownMenuItem(
-                  value: Locale('fr'),
-                  child: Text('French'),
+                  value: const Locale('fr'),
+                  child: Text(S.of(context).languageFrench),
                 ),
                 DropdownMenuItem(
-                  value: Locale('ar'),
-                  child: Text('Arabic'),
+                  value: const Locale('ar'),
+                  child: Text(S.of(context).languageArabic),
                 ),
               ],
             ),
           ),
+
           Divider(
-              color: isDarkMode
-                  ? const Color.fromARGB(255, 16, 24, 20)
-                  : Colors.white),
+            color: isDarkMode
+                ? const Color.fromARGB(255, 16, 24, 20)
+                : Colors.white,
+          ),
+
           // Notifications Toggle
           ListTile(
             leading: Icon(
@@ -165,7 +174,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   : Icons.notifications_off_sharp, // Change icon when off
               color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
             ),
-            title: const Text('Notifications'),
+            title: Text(S.of(context).notifications), // Use localized string
             trailing: Switch(
               inactiveThumbColor: isDarkMode
                   ? const Color(0xFF90D5AE)
@@ -188,16 +197,18 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           Divider(
-              color: isDarkMode
-                  ? const Color.fromARGB(255, 16, 24, 20)
-                  : Colors.white),
+            color: isDarkMode
+                ? const Color.fromARGB(255, 16, 24, 20)
+                : Colors.white,
+          ),
+
           // Contact Us
           ListTile(
             leading: Icon(
               Icons.contact_support,
               color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
             ),
-            title: const Text('Contact Us'),
+            title: Text(S.of(context).contactUs), // Use localized string
             trailing: Icon(
               Icons.arrow_forward_ios,
               color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
@@ -205,17 +216,19 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () {
               if (Users.isGuestUser()) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.error_outline,
                           color: Colors.black,
                         ),
                         Expanded(
                           child: Text(
-                            'Please log in to contact our support team.',
-                            style: TextStyle(
+                            S
+                                .of(context)
+                                .loginToContactSupport, // Localized message
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18,
                             ),
@@ -223,7 +236,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ],
                     ),
-                    backgroundColor: Color.fromARGB(255, 247, 234, 117),
+                    backgroundColor: const Color.fromARGB(255, 247, 234, 117),
                   ),
                 );
               } else {
@@ -237,16 +250,17 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
 
           Divider(
-              color: isDarkMode
-                  ? const Color.fromARGB(255, 16, 24, 20)
-                  : Colors.white),
+            color: isDarkMode
+                ? const Color.fromARGB(255, 16, 24, 20)
+                : Colors.white,
+          ),
 
           if (!Users.isGuestUser()) ...[
             ListTile(
               leading: Icon(Icons.logout_sharp,
                   color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
               title: Text(
-                'Log out',
+                S.of(context).logout, // Localized string for logout
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black),
               ),
@@ -257,40 +271,44 @@ class _SettingsPageState extends State<SettingsPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
+                      backgroundColor: isDarkMode
+                          ? scheme.onSecondary
+                          : scheme.secondaryContainer,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      title: const Text(
-                        'Attention ⚠️',
-                        style: TextStyle(
-                          fontSize: 20,
+                      title: Text(
+                        S.of(context).alertWarning, // Localized alert title
+                        style: const TextStyle(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.red,
                         ),
                       ),
-                      content: const Text(
-                        'Are you sure you want to log out from this account?',
-                        style: TextStyle(
-                          fontSize: 16,
+                      content: Text(
+                        S.of(context).confirmLogout, // Localized logout message
+                        style: const TextStyle(
+                          fontSize: 18,
                           color: Colors.black,
                         ),
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text("No"),
+                          child: Text(S.of(context).no), // Localized "No"
                         ),
                         TextButton(
                           onPressed: () async {
                             GoogleSignIn googleSignIn = GoogleSignIn();
-                            googleSignIn.disconnect();
+                            await googleSignIn.signOut();
                             await FirebaseAuth.instance.signOut();
-                            await FirebaseAuth.instance.signInAnonymously();
-
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                "home_page", (route) => false);
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/login',
+                              (Route<dynamic> route) => false,
+                            );
                           },
-                          child: const Text("Yes"),
+                          child: Text(S.of(context).yes), // Localized "Yes"
                         ),
                       ],
                     );
@@ -298,7 +316,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 );
               },
             ),
-          ]
+          ],
         ],
       ),
     );

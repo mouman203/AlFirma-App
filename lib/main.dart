@@ -14,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:agriplant/generated/l10n.dart'; // <-- Localization import
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ChangeNotifierProvider(create: (context) => LanguageProvider()),
       ],
-      child: MainApp(),
+      child: const MainApp(),
     ),
   );
 }
@@ -134,12 +135,9 @@ class MainApp extends StatelessWidget {
         ),
       ),
       locale: languageProvider.locale,
-      supportedLocales: const [
-        Locale('en'),
-        Locale('fr'),
-        Locale('ar'),
-      ],
+      supportedLocales: S.delegate.supportedLocales, // <-- Updated
       localizationsDelegates: const [
+        S.delegate, 
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -148,14 +146,11 @@ class MainApp extends StatelessWidget {
         future: initializeApp(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            final colorScheme = Theme.of(context).colorScheme;
             return Scaffold(
-              backgroundColor: Colors.white,
-              body: Center(
-                child: Image.asset(
-                  'assets/logo.png',
-                  width: 200,
-                  height: 200,
-                ),
+              backgroundColor: colorScheme.surface,
+              body:  Center(
+                child: CircularProgressIndicator(backgroundColor: colorScheme.surface,),
               ),
             );
           } else if (snapshot.hasError) {
@@ -166,6 +161,7 @@ class MainApp extends StatelessWidget {
           }
         },
       ),
+
       routes: {
         'home_page': (context) => const HomePage(),
         'sign_up_page': (context) => const SignUpPage(),

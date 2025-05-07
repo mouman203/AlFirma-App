@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:agriplant/generated/l10n.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -21,13 +22,14 @@ class _MessagesPageState extends State<MessagesPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 4),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 12, bottom: 4),
               child: Row(
                 children: [
                   Text(
-                    'Messages',
-                    style: TextStyle(
+                    S.of(context).messages, // Localized string
+                    style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                     ),
@@ -90,13 +92,15 @@ class _MessagesPageState extends State<MessagesPage> {
 
   Widget _buildUserListTile(String userId, Map<String, dynamic> messageData) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final scheme = Theme.of(context).colorScheme;
 
     return FutureBuilder<DocumentSnapshot>(
+      // Fetch user data from Firestore
       future: _firestore.collection('Users').doc(userId).get(),
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
-          return const ListTile(title: Text("Loading..."));
+          return ListTile(
+              title:
+                  Text(S.of(context).loading)); // Localized string for loading
         }
 
         if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
@@ -106,6 +110,7 @@ class _MessagesPageState extends State<MessagesPage> {
         var userData = userSnapshot.data!;
         String username = userData['first_name'] ?? 'Unknown';
         String lastMessage = messageData['message'] ?? '';
+        bool isSeen = messageData['isSeen'] ?? false; // Fetch isSeen status
         Timestamp timestamp = messageData['timestamp'] ?? Timestamp(0, 0);
         DateTime time = timestamp.toDate();
         String formattedTime =
@@ -114,7 +119,7 @@ class _MessagesPageState extends State<MessagesPage> {
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
           decoration: BoxDecoration(
-            color: isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(16),
           ),
           child: ListTile(
@@ -139,14 +144,30 @@ class _MessagesPageState extends State<MessagesPage> {
                     : const Color(0xFF256C4C),
               ),
             ),
-            subtitle: Text(
-              lastMessage,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: isDarkMode ? Colors.white70 : Colors.black54,
-                fontSize: 15,
-              ),
+            subtitle: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    lastMessage,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white70 : Colors.black54,
+                      fontSize: 17,
+                    ),
+                  ),
+                ),
+                // Show the seen indicator icon
+                Icon(
+                  Icons.done_all,
+                  size: 18,
+                  color: isSeen
+                      ? (isDarkMode
+                          ? const Color(0xFF1B503A)
+                          : const Color(0xFF64B58B))
+                      : Colors.transparent,
+                ),
+              ],
             ),
             trailing: Text(
               formattedTime,
@@ -177,7 +198,10 @@ class _MessagesPageState extends State<MessagesPage> {
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("No messages yet."));
+          return Center(
+              child: Text(S
+                  .of(context)
+                  .noMessages)); // Localized string for no messages
         }
 
         String currentUserId = _auth.currentUser!.uid;

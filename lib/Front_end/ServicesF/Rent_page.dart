@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/Products/ProductCommer%C3%A7ant.dart';
-import 'package:agriplant/data/ProductData.dart'; // To access wilayas
+import 'package:agriplant/data/ProductData.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +13,18 @@ class RentPage extends StatefulWidget {
 }
 
 class _RentPageState extends State<RentPage> {
-  String selectedWilaya = 'All Wilayas';
-  String selectedDaira = 'All Dairas';
+  String? selectedWilaya;
+  String? selectedDaira;
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    selectedWilaya ??= S.of(context).all_wilayas;
+    selectedDaira ??= S.of(context).all_dairas;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rent Services'),
+        title: Text(S.of(context).rent_services),
         elevation: 5,
       ),
       body: SingleChildScrollView(
@@ -33,79 +36,99 @@ class _RentPageState extends State<RentPage> {
               child: Row(
                 children: [
                   Expanded(
-                    child: DropdownButton2<String>(
-                      iconStyleData: IconStyleData(
-                        iconEnabledColor:
-                            isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                        iconDisabledColor:
-                            isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                      ),
+                    child: DropdownButtonFormField2<String>(
                       isExpanded: true,
                       value: selectedWilaya,
                       onChanged: (newValue) {
                         setState(() {
                           selectedWilaya = newValue!;
-                          selectedDaira =
-                              'All Dairas'; // Reset Daira when Wilaya changes
+                          selectedDaira = S.of(context).all_dairas;
                         });
                       },
-                      items: ['All Wilayas', ...ProductData.wilayas.keys]
-                          .map((wilaya) {
-                        return DropdownMenuItem<String>(
-                          value: wilaya,
-                          child: Text(
-                            wilaya,
-                            style: TextStyle(
-                              color: isDarkMode
-                                  ? Colors.white
-                                  : const Color(0xFF256C4C),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                      decoration: InputDecoration(
+                        // Custom border
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                            width: 1,
                           ),
-                        );
-                      }).toList(),
-                      selectedItemBuilder: (context) {
-                        return ['All Wilayas', ...ProductData.wilayas.keys]
-                            .map((wilaya) {
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              wilaya == 'All Wilayas'
-                                  ? wilaya
-                                  : getWilayaName(wilaya),
-                              style: TextStyle(
-                                color: isDarkMode
-                                    ? Colors.white
-                                    : const Color(0xFF256C4C),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: DropdownButton2<String>(
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                            width: 1,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                      ),
                       iconStyleData: IconStyleData(
                         iconEnabledColor:
                             isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                        iconDisabledColor:
-                            isDarkMode ? Colors.white : const Color(0xFF256C4C),
                       ),
+                      items: [
+                        S.of(context).all_wilayas,
+                        ...ProductData.wilayas(context).keys
+                      ]
+                          .map((wilaya) => DropdownMenuItem<String>(
+                                value: wilaya,
+                                child: Text(
+                                  wilaya == S.of(context).all_wilayas
+                                      ? wilaya
+                                      : wilaya,
+                                  style: TextStyle(
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF256C4C),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                      selectedItemBuilder: (context) {
+                        return [
+                          S.of(context).all_wilayas,
+                          ...ProductData.wilayas(context).keys
+                        ]
+                            .map((wilaya) => Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    wilaya == S.of(context).all_wilayas
+                                        ? wilaya
+                                        : getWilayaName(wilaya),
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : const Color(0xFF256C4C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ))
+                            .toList();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: DropdownButtonFormField2<String>(
                       isExpanded: true,
                       value: selectedDaira,
-                      items: selectedWilaya == 'All Wilayas'
+                      items: selectedWilaya == S.of(context).all_wilayas
                           ? [
                               DropdownMenuItem<String>(
-                                value: 'All Dairas',
+                                value: S.of(context).all_dairas,
                                 child: Text(
-                                  'All Dairas',
+                                  S.of(context).all_dairas,
                                   style: TextStyle(
                                     color: isDarkMode
                                         ? Colors.white
@@ -116,9 +139,9 @@ class _RentPageState extends State<RentPage> {
                             ]
                           : [
                                 DropdownMenuItem<String>(
-                                  value: 'All Dairas',
+                                  value: S.of(context).all_dairas,
                                   child: Text(
-                                    'All Dairas',
+                                    S.of(context).all_dairas,
                                     style: TextStyle(
                                       color: isDarkMode
                                           ? Colors.white
@@ -127,7 +150,8 @@ class _RentPageState extends State<RentPage> {
                                   ),
                                 ),
                               ] +
-                              (ProductData.wilayas[selectedWilaya] ?? [])
+                              (ProductData.wilayas(context)[selectedWilaya] ??
+                                      [])
                                   .map((daira) => DropdownMenuItem<String>(
                                         value: daira,
                                         child: Text(
@@ -145,12 +169,39 @@ class _RentPageState extends State<RentPage> {
                           selectedDaira = val!;
                         });
                       },
+                      decoration: InputDecoration(
+                        // Custom border for second dropdown, same as the first one
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                            width: 1,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                      ),
+                      iconStyleData: IconStyleData(
+                        iconEnabledColor:
+                            isDarkMode ? Colors.white : const Color(0xFF256C4C),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
@@ -164,7 +215,7 @@ class _RentPageState extends State<RentPage> {
                   ),
                   const SizedBox(width: 20),
                   Text(
-                    "Featured Rent",
+                    S.of(context).featured_rent,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(width: 20),
@@ -184,15 +235,16 @@ class _RentPageState extends State<RentPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return const Center(child: Text("Error fetching data"));
+                  return Center(child: Text(S.of(context).error_fetching_data));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text("No Rent services found."));
+                  return Center(
+                      child: Text(S.of(context).no_rent_services_found));
                 }
 
                 var filtered = snapshot.data!.where((s) {
-                  return (selectedWilaya == 'All Wilayas' ||
+                  return (selectedWilaya == S.of(context).all_wilayas ||
                           s.wilaya == selectedWilaya) &&
-                      (selectedDaira == 'All Dairas' ||
+                      (selectedDaira == S.of(context).all_dairas ||
                           s.daira == selectedDaira);
                 }).toList();
 

@@ -6,9 +6,9 @@ class HireWorkerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Hire Worker'),
+      appBar: AppBar(title: const Text('Hire Workers'),
       elevation: 5,),
-      body: const Center(child: Text('Hire Worker Service Page')),
+      body: const Center(child: Text('Hire Workers')),
     );
   }
 }

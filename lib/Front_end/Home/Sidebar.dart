@@ -1,6 +1,7 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
 import 'package:agriplant/Front_end/Providers/theme_provider.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -24,35 +25,34 @@ class Sidebar extends StatelessWidget {
                 .secondaryContainer, // Light green in light mode
         child: ListView(
           children: [
-           
-              ListTile(
-                leading: Icon(
-                  themeProvider.themeMode == ThemeMode.dark
-                      ? Icons.sunny
-                      : Icons.dark_mode,
-                  color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
-                ),
-                title: Text(
-                  themeProvider.themeMode == ThemeMode.dark
-                      ? 'Light Mode'
-                      : 'Dark Mode',
-                ),
-                trailing: Switch(
-                  inactiveThumbColor: const Color(0xFF256C4C),
-                  activeColor: const Color(0xFF90D5AE),
-                  value: themeProvider.themeMode == ThemeMode.dark,
-                  onChanged: (value) {
-                    themeProvider.toggleTheme(value);
-                  },
-                ),
+            ListTile(
+              leading: Icon(
+                themeProvider.themeMode == ThemeMode.dark
+                    ? Icons.sunny
+                    : Icons.dark_mode,
+                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
               ),
+              title: Text(
+                themeProvider.themeMode == ThemeMode.dark
+                    ? S.of(context).lightMode
+                    : S.of(context).darkMode,
+              ),
+              trailing: Switch(
+                inactiveThumbColor: const Color(0xFF256C4C),
+                activeColor: const Color(0xFF90D5AE),
+                value: themeProvider.themeMode == ThemeMode.dark,
+                onChanged: (value) {
+                  themeProvider.toggleTheme(value);
+                },
+              ),
+            ),
             ListTile(
               leading: Icon(
                 Icons.settings_sharp,
                 color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
               ),
               title: Text(
-                'Settings',
+               S.of(context).settings,
                 style:
                     TextStyle(color: isDarkMode ? Colors.white : Colors.black),
               ),
@@ -68,7 +68,7 @@ class Sidebar extends StatelessWidget {
                 leading: Icon(Icons.logout_sharp,
                     color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
                 title: Text(
-                  'Log out',
+                  S.of(context).logout,
                   style: TextStyle(
                       color: isDarkMode ? Colors.white : Colors.black),
                 ),
@@ -82,17 +82,17 @@ class Sidebar extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        title: const Text(
-                          'Attention ⚠️',
-                          style: TextStyle(
+                        title:  Text(
+                           S.of(context).alertWarning,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.red,
                           ),
                         ),
-                        content: const Text(
-                          'Are you sure you want to log out from this account?',
-                          style: TextStyle(
+                        content:  Text(
+                          S.of(context).confirmLogout,
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black,
                           ),
@@ -100,7 +100,7 @@ class Sidebar extends StatelessWidget {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text("No"),
+                            child:  Text(S.of(context).no),
                           ),
                           TextButton(
                             onPressed: () async {
@@ -108,11 +108,11 @@ class Sidebar extends StatelessWidget {
                               googleSignIn.disconnect();
                               await FirebaseAuth.instance.signOut();
                               await FirebaseAuth.instance.signInAnonymously();
-                              
+
                               Navigator.of(context).pushNamedAndRemoveUntil(
-                                   "home_page", (route) => false);
+                                  "home_page", (route) => false);
                             },
-                            child: const Text("Yes"),
+                            child:  Text(S.of(context).yes),
                           ),
                         ],
                       );
@@ -122,7 +122,7 @@ class Sidebar extends StatelessWidget {
               ),
             ],
             ListTile(
-              title: const Text("About Us"),
+              title:  Text(S.of(context).aboutUs),
               leading: Icon(
                 IconlyLight.infoSquare,
                 color: isDarkMode ? Colors.white : const Color(0xFF256C4C),

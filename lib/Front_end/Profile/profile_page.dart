@@ -5,6 +5,7 @@ import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
 import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
 import 'package:agriplant/Front_end/Profile/Edit_profile_page.dart';
 import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -273,7 +274,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Text("$followersCount",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16)),
-                        const Text("Followers"),
+                         Text(S.of(context).followers),
                       ],
                     ),
                     const SizedBox(width: 20),
@@ -282,7 +283,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Text("$followingCount",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16)),
-                        const Text("Following"),
+                         Text(S.of(context).following),
                       ],
                     ),
                   ],
@@ -328,6 +329,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     unselectedLabelColor: Theme.of(context)
                         .colorScheme
                         .onSurface
+                    
                         .withOpacity(0.6),
                   ),
                   const SizedBox(height: 15),
@@ -346,7 +348,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: CircularProgressIndicator());
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(child: Text("No items yet."));
+                              return  Center(child: Text(S.of(context).noItemsYet));
                             }
 
                             final itemList = snapshot.data!;
@@ -377,8 +379,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: CircularProgressIndicator());
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(
-                                  child: Text("No saved items yet."));
+                              return  Center(
+                                  child:Text(S.of(context).noSavedItems));
                             }
 
                             final savedItems = snapshot.data!;

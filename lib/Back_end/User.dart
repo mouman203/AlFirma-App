@@ -5,6 +5,7 @@ import 'package:agriplant/Back_end/ServicesB/Service.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Authentication/ProfilePicturePage.dart';
 import 'package:agriplant/Front_end/Profile/Edit_profile_page.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,106 +65,95 @@ class Users {
     }
   }
 
-  // sign upالتحقق من إدخال البيانات
   bool checkInfo_signup(
-      BuildContext context,
-      String first_name,
-      String last_name,
-      String phone,
-      String email,
-      bool verify,
-      String password,
-      String confirmationpassword) {
+    BuildContext context,
+    String first_name,
+    String last_name,
+    String phone,
+    String email,
+    bool verify,
+    String password,
+    String confirmationpassword,
+  ) {
     if (email.isEmpty ||
         password.isEmpty ||
         first_name.isEmpty ||
         last_name.isEmpty ||
         phone.isEmpty) {
-      showErrorDialog(context, 'الرجاء إدخال جميع المعلومات.');
+      showErrorDialog(context, S.of(context).please_enter_all_info);
       return false;
     }
 
     if (!isEmailValid(email)) {
-      showErrorDialog(context, 'صيغة البريد الإلكتروني غير صحيحة.');
+      showErrorDialog(context, S.of(context).invalid_email_format);
       return false;
     }
     if (!isPhoneValid(phone)) {
-      showErrorDialog(context, 'صيغة رقم الهاتف غير صحيحة.');
+      showErrorDialog(context, S.of(context).invalid_phone_format);
       return false;
     }
 
     if (!isPasswordValid(password)) {
-      showErrorDialog(context, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.');
+      showErrorDialog(context, S.of(context).password_min_length);
       return false;
     }
     if (password != confirmationpassword) {
-      showErrorDialog(context, 'كلمة المرور غير متطابقة.');
+      showErrorDialog(context, S.of(context).passwords_do_not_match);
       return false;
     }
 
     return true;
   }
 
-  // sign in التحقق من إدخال البيانات
   bool checkInfo_login(BuildContext context, String email, String password) {
     if (email.isEmpty || password.isEmpty) {
-      showErrorDialog(context, 'الرجاء إدخال جميع المعلومات.');
+      showErrorDialog(context, S.of(context).please_enter_all_info);
       return false;
     }
     if (!isEmailValid(email)) {
-      showErrorDialog(context, 'صيغة البريد الإلكتروني غير صحيحة.');
+      showErrorDialog(context, S.of(context).invalid_email_format);
       return false;
     }
     if (!isPasswordValid(password)) {
-      showErrorDialog(context, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.');
+      showErrorDialog(context, S.of(context).password_min_length);
       return false;
     }
 
     return true;
   }
 
-  // User class method for email verification and Firestore update
   static Future<bool> checkEmailVerification(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // Check if email is not verified
       if (!user.emailVerified) {
         await user.sendEmailVerification();
 
-        // Show a dialog telling the user to verify their email
         await AwesomeDialog(
           context: context,
           dialogType: DialogType.info,
           animType: AnimType.scale,
-          title: 'Almost There!',
+          title: S.of(context).verify_email_title,
           desc:
-              'Please verify your email by clicking the link sent to ${user.email}.',
-          btnOkOnPress: () {
-            // Actions when the user presses OK
-          },
-          btnOkText: 'OK',
+              '${S.of(context).verify_email_desc} ${user.email}', // email not in arb
+          btnOkOnPress: () {},
+          btnOkText: S.of(context).ok,
           btnOkColor: Colors.blue,
         ).show();
 
-        // Log out the user after sending the verification email
         FirebaseAuth.instance.signOut();
-
-        return false; // Prevent proceeding until the email is verified
+        return false;
       }
 
-      // If the email is verified, update Firestore with 'Verify' status
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(user.uid)
-          .update({
-        'Verify': true, // Mark the user as verified
-      });
+          .update({'Verify': true});
 
-      return true; // Allow the user to proceed
+      return true;
     }
 
-    return false; // If there is no logged-in user
+    return false;
   }
 
 // عرض مؤشر التحميل
@@ -176,14 +166,15 @@ class Users {
           backgroundColor: Colors.white, // لون الخلفية
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10)), // تدوير الحواف
-          child: const Padding(
-            padding: EdgeInsets.all(20.0),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(width: 20),
-                Text("جاري تسجيل الدخول...", style: TextStyle(fontSize: 16)),
+                const CircularProgressIndicator(),
+                const SizedBox(width: 20),
+                Text(S.of(context).logging_in,
+                    style: const TextStyle(fontSize: 18)),
               ],
             ),
           ),
@@ -246,19 +237,18 @@ class Users {
         MaterialPageRoute(builder: (context) => homePage),
       );
     } on FirebaseAuthException catch (e) {
+      Navigator.popUntil(context, (route) => route.isFirst);
+
       if (!await checkIfEmailExists(email)) {
-        Navigator.popUntil(context, (route) => route.isFirst);
-        showErrorDialog(context, '❌ لا يوجد مستخدم بهذا البريد الإلكتروني.');
+        showErrorDialog(context, S.of(context).error_no_user_found);
       } else if (e.code == 'wrong-password') {
-        Navigator.popUntil(context, (route) => route.isFirst);
-        showErrorDialog(context, '🔑 كلمة المرور غير صحيحة.');
+        showErrorDialog(context, S.of(context).error_wrong_password);
       } else {
-        Navigator.popUntil(context, (route) => route.isFirst);
-        showErrorDialog(context, '⚠️ حدث خطأ أثناء تسجيل الدخول.');
+        showErrorDialog(context, S.of(context).error_login_failed);
       }
     } catch (e) {
       Navigator.popUntil(context, (route) => route.isFirst);
-      showErrorDialog(context, '⚠️ حدث خطأ غير متوقع.');
+      showErrorDialog(context, S.of(context).error_unexpected);
     }
   }
 
@@ -287,9 +277,9 @@ class Users {
 
       if (await checkIfEmailExists(email)) {
         // User exists
-        print("User with email $email exists in Firestore.");
+        print("User with email already exists in Firestore.");
         Navigator.pop(context);
-        showErrorDialog(context, 'البريد الإلكتروني مسجل مسبقًا.');
+        showErrorDialog(context, S.of(context).error_email_already_used);
         return;
       } else {
         // ✅ Delete anonymous user before creating a new one
@@ -302,12 +292,12 @@ class Users {
             print("⚠️ Failed to delete anonymous user: $e");
           }
         }
+
         // Step 1: Create user in Firebase Authentication
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
         // Do NOT send verification email here. Already handled in ProfilePicturePage
-
         String uid = userCredential.user!.uid;
 
         // Step 2: Add user details to Firestore
@@ -339,16 +329,15 @@ class Users {
         );
       }
     } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
       if (e.code == 'email-already-in-use') {
-        Navigator.pop(context);
-        showErrorDialog(context, 'البريد الإلكتروني مسجل مسبقًا.');
+        showErrorDialog(context, S.of(context).error_email_already_used);
       } else {
-        Navigator.pop(context);
-        showErrorDialog(context, 'حدث خطأ غير متوقع أثناء إنشاء الحساب.');
+        showErrorDialog(context, S.of(context).error_signup_unexpected);
       }
     } catch (e) {
       Navigator.pop(context);
-      showErrorDialog(context, 'حدث خطأ غير متوقع.');
+      showErrorDialog(context, S.of(context).error_generic_unexpected);
     }
   }
 
@@ -359,154 +348,155 @@ class Users {
     required String email,
   }) async {
     if (email.isEmpty) {
-      showErrorDialog(context, "❌ يرجى إدخال البريد الإلكتروني.");
+      showErrorDialog(context, S.of(context).error_enter_email);
       return;
     }
 
     if (!await checkIfEmailExists(email)) {
-      // ✅ تم تصحيح الشرط
-      showErrorDialog(context, "❌ لا يوجد حساب مرتبط بهذا البريد الإلكتروني.");
+      showErrorDialog(context, S.of(context).error_no_account_for_email);
       return;
     }
+
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       AwesomeDialog(
         context: context,
         dialogType: DialogType.success,
         animType: AnimType.scale,
-        title: "🔑 إعادة تعيين كلمة المرور",
-        desc: "📩 تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.",
+        title: S.of(context).password_reset_title,
+        desc: S.of(context).password_reset_success_desc,
         btnOkOnPress: () {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => const LoginPage(frompage: 'ProfilPicture',)), // 🔥 تحسين إضافي
+              builder: (context) => const LoginPage(frompage: 'ProfilPicture'),
+            ),
           );
         },
       ).show();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        showErrorDialog(
-            context, "❌ لا يوجد حساب مرتبط بهذا البريد الإلكتروني.");
+        showErrorDialog(context, S.of(context).error_no_account_for_email);
       } else {
-        showErrorDialog(
-            context, "⚠️ حدث خطأ أثناء إرسال طلب إعادة تعيين كلمة المرور.");
+        showErrorDialog(context, S.of(context).error_reset_password_failed);
       }
     } catch (e) {
-      showErrorDialog(context, "⚠️ حدث خطأ غير متوقع.");
+      showErrorDialog(context, S.of(context).error_generic_unexpected);
     }
   }
 
 //sign in with google
 
- Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
-  try {
-    showLoadingDialog(context); // Show loading indicator
+  Future<void> signInWithGoogle(BuildContext context, Widget homePage) async {
+    try {
+      showLoadingDialog(context); // Show loading indicator
 
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    // Ensure user is logged out before trying to sign in
-    await googleSignIn.signOut();
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      // Ensure user is logged out before trying to sign in
+      await googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleUser == null) {
-      Navigator.pop(context); // Close loading indicator
-      print("❌ User canceled the sign-in");
-      return;
-    }
-
-    print("✅ Google Sign-In successful: ${googleUser.email}");
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Check if the current user is anonymous and delete if so
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null && currentUser.isAnonymous) {
-      try {
-        await currentUser.delete();
-        print("✅ Anonymous user deleted before Google sign-in.");
-      } catch (e) {
-        print("⚠️ Failed to delete anonymous user: $e");
+      if (googleUser == null) {
+        Navigator.pop(context); // Close loading indicator
+        print("❌ User canceled the sign-in");
+        return;
       }
-    }
 
-    // Sign in to Firebase with Google credentials
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(googleCredential);
-    User? firebaseUser = userCredential.user;
+      print("✅ Google Sign-In successful: ${googleUser.email}");
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-    if (firebaseUser != null) {
-      // Reference to Firestore
-      final userRef = FirebaseFirestore.instance
-          .collection("Users")
-          .doc(firebaseUser.uid);
+      final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-      // Check if the user already exists
-      final doc = await userRef.get();
+      // Check if the current user is anonymous and delete if so
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null && currentUser.isAnonymous) {
+        try {
+          await currentUser.delete();
+          print("✅ Anonymous user deleted before Google sign-in.");
+        } catch (e) {
+          print("⚠️ Failed to delete anonymous user: $e");
+        }
+      }
 
-      if (!doc.exists) {
-        // Split name into first and last name
-        List<String> nameParts = googleUser.displayName?.split(" ") ?? ["", ""];
-        String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
-        String lastName =
-            nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+      // Sign in to Firebase with Google credentials
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      User? firebaseUser = userCredential.user;
 
-        // Save new user data if not already present
-        await userRef.set({
-          "email": firebaseUser.email,
-          "Verify": false,
-          "first_name": firstName,
-          "last_name": lastName,
-          "phone": firebaseUser.phoneNumber ?? "",
-          "password": "signed with Google",
-          "photo": firebaseUser.photoURL ?? "",
-          "userType": {},
-          'activeType': 'Client',
-          "following": [],
-          "followers": [],
-          "wilaya": '',
-          "daira": '',
-          "created_at": FieldValue.serverTimestamp(),
-        });
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EditProfilePage(frompage: 'login')),
-        );
-      } else {
-        print("User already exists: ${doc.get('Verify')}");
-        if (doc.get('Verify') == false) {
+      if (firebaseUser != null) {
+        // Reference to Firestore
+        final userRef = FirebaseFirestore.instance
+            .collection("Users")
+            .doc(firebaseUser.uid);
+
+        // Check if the user already exists
+        final doc = await userRef.get();
+
+        if (!doc.exists) {
+          // Split name into first and last name
+          List<String> nameParts =
+              googleUser.displayName?.split(" ") ?? ["", ""];
+          String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+          String lastName =
+              nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+
+          // Save new user data if not already present
+          await userRef.set({
+            "email": firebaseUser.email,
+            "Verify": false,
+            "first_name": firstName,
+            "last_name": lastName,
+            "phone": firebaseUser.phoneNumber ?? "",
+            "password": "signed with Google",
+            "photo": firebaseUser.photoURL ?? "",
+            "userType": {},
+            'activeType': 'Client',
+            "following": [],
+            "followers": [],
+            "wilaya": '',
+            "daira": '',
+            "created_at": FieldValue.serverTimestamp(),
+          });
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EditProfilePage(frompage: 'login')),
+                builder: (context) => const EditProfilePage(frompage: 'login')),
           );
         } else {
-          Navigator.pop(context); // Close loading indicator
+          print("User already exists: ${doc.get('Verify')}");
+          if (doc.get('Verify') == false) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const EditProfilePage(frompage: 'login')),
+            );
+          } else {
+            Navigator.pop(context); // Close loading indicator
 
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setInt('lastPageIndex', 0);
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('lastPageIndex', 0);
 
-          // Navigate to home page
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => homePage),
-          );
+            // Navigate to home page
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => homePage),
+            );
+          }
         }
       }
+    } catch (e) {
+      Navigator.pop(
+          context); // Ensure the loading indicator is closed before showing the error
+      print("⚠️ Error during Google sign-in: $e");
+      showErrorDialog(context, S.of(context).error_google_signin);
     }
-  } catch (e) {
-    Navigator.pop(context); // Ensure the loading indicator is closed before showing the error
-    print("⚠️ Error during Google sign-in: $e");
-    showErrorDialog(context, "⚠️ Error during Google sign-in.");
   }
-}
-
 
   Future<List<Product>> searchProducts(String query) async {
     try {
@@ -794,14 +784,17 @@ class Users {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("تأكيد الحذف"),
-          content: const Text("هل أنت متأكد أنك تريد حذف هذا التعليق؟"),
+          title: Text(S.of(context).confirm_delete_title), // Localized title
+          content:
+              Text(S.of(context).confirm_delete_message), // Localized message
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("إلغاء", style: TextStyle(color: Colors.grey)),
+              child: Text(S.of(context).cancel,
+                  style: const TextStyle(
+                      color: Colors.grey)), // Localized "Cancel"
             ),
             TextButton(
               onPressed: () {
@@ -813,7 +806,9 @@ class Users {
                 );
                 Navigator.of(context).pop();
               },
-              child: const Text("حذف", style: TextStyle(color: Colors.red)),
+              child: Text(S.of(context).delete,
+                  style:
+                      const TextStyle(color: Colors.red)), // Localized "Delete"
             ),
           ],
         );

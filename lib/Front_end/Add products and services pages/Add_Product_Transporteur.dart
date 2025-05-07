@@ -49,17 +49,17 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
 
   Future<void> _submitForm() async {
     setState(() => _isLoading = true);
-    
- if (_selectedImages.isEmpty) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text("📸 يُفضل إضافة صورة لتوضيح الخدمة، لكن يمكنك المتابعة بدونها.")),
-  );
-  // لا ترجع هنا، خليه يكمل عادي
-}
+
+    if (_selectedImages.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                "📸 يُفضل إضافة صورة لتوضيح الخدمة، لكن يمكنك المتابعة بدونها.")),
+      );
+      // لا ترجع هنا، خليه يكمل عادي
+    }
 
     if (_formKey.currentState!.validate()) {
-      
-
       TransportService newService = TransportService(
         id: "", // سيتم تعيينه تلقائيًا في Firestore
         typeService: "Transportation",
@@ -114,7 +114,6 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
       setState(() {
         _selectedImages = images;
       });
- 
 
       // رفع الصور إلى Firebase Storage
       for (var image in _selectedImages) {
@@ -196,13 +195,22 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
               const SizedBox(height: 15),
 
               //moyen de transport
-              ProductData.buildDropdown(selectedValue: selectedMoyenDeTransport, items: moyensDeTransport, label: 'moyen De Transport', onChanged: (value) =>
-                    setState(() => selectedMoyenDeTransport = value)),
-             
+              ProductData.buildDropdown(
+                  context: context,
+                  selectedValue: selectedMoyenDeTransport,
+                  items: moyensDeTransport,
+                  label: 'moyen De Transport',
+                  onChanged: (value) =>
+                      setState(() => selectedMoyenDeTransport = value)),
 
               //type de transport
-              ProductData.buildDropdown(selectedValue: selectedCategorie, items: categories, label: 'type de transport', onChanged:  (value) => setState(() => selectedCategorie = value)),
-             
+              ProductData.buildDropdown(
+                  context: context,
+                  selectedValue: selectedCategorie,
+                  items: categories,
+                  label: 'type de transport',
+                  onChanged: (value) =>
+                      setState(() => selectedCategorie = value)),
 
               //prix
               ProductData.buildTextField(
@@ -212,18 +220,27 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
                 keyboardType: TextInputType.number,
                 validator: (value) => null,
               ),
-           
 
               //wilaya
-              ProductData.buildDropdown(selectedValue: selectedWilaya, items: ProductData.wilayas.keys.toList(), label: "Wilaya", onChanged: (value) => setState(() {
-                  selectedWilaya = value;
-                  selectedDaira = null;
-                })),
-         
+              ProductData.buildDropdown(
+                  context: context,
+                  selectedValue: selectedWilaya,
+                  items: ProductData.wilayas(context).keys.toList(),
+                  label: "Wilaya",
+                  onChanged: (value) => setState(() {
+                        selectedWilaya = value;
+                        selectedDaira = null;
+                      })),
 
               //daaira
-              if (selectedWilaya != null)ProductData.buildDropdown(selectedValue: selectedDaira, items:ProductData.wilayas[selectedWilaya]!, label: "Daira", onChanged: (value) => setState(() => selectedDaira = value),),
-         
+              if (selectedWilaya != null)
+                ProductData.buildDropdown(
+                  context: context,
+                  selectedValue: selectedDaira,
+                  items: ProductData.wilayas(context)[selectedWilaya]!,
+                  label: "Daira",
+                  onChanged: (value) => setState(() => selectedDaira = value),
+                ),
 
               //description
               ProductData.buildTextField(
@@ -233,7 +250,6 @@ class _AddProductTransporteurState extends State<AddProductTransporteur> {
                 maxLines: 4,
                 validator: (value) => null,
               ),
-          
 
               SizedBox(
                 width: double.infinity,

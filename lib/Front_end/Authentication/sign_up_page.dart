@@ -43,7 +43,7 @@ class _SignUpPageState extends State<SignUpPage> {
   List<String> availableDairas = [];
   void updateDairaList(String wilaya) {
     setState(() {
-      availableDairas = ProductData.wilayas[wilaya] ?? [];
+      availableDairas = ProductData.wilayas(context)[wilaya] ?? [];
     });
   }
 
@@ -214,7 +214,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   }
                                 },
                                 selectedItemBuilder: (BuildContext context) {
-                                  return ProductData.wilayas.keys.map((wilaya) {
+                                  return ProductData.wilayas(context).keys.map((wilaya) {
                                     return Row(
                                       children: [
                                         Icon(
@@ -237,7 +237,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     );
                                   }).toList();
                                 },
-                                items: ProductData.wilayas.keys
+                                items: ProductData.wilayas(context).keys
                                     .map<DropdownMenuItem<String>>((wilaya) {
                                   return DropdownMenuItem<String>(
                                     value: wilaya,

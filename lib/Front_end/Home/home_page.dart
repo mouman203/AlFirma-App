@@ -8,6 +8,7 @@ import 'package:agriplant/Front_end/Home/explore_page.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
 import 'package:agriplant/Front_end/Profile/profile_page.dart';
 import 'package:agriplant/Front_end/ServicesF/services_page.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -151,7 +152,7 @@ class _HomePageState extends State<HomePage> {
     return "Client"; // Default fallback
   }
 
-  void navigateToUserPage(BuildContext context) async {
+void navigateToUserPage(BuildContext context) async {
     String? selectedType = await getActiveTypeFromFirestore();
 
     if (selectedType == null) {
@@ -193,23 +194,27 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
+
   void showMessagePopup(String? value) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("⚠️ Access Restricted"),
-          content: Text("$value cannot add products."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(S.of(context).accessRestricted),
+        content: Text(
+          "${value ?? ''} ${S.of(context).cannotAddProducts}",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(S.of(context).ok),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -236,29 +241,29 @@ class _HomePageState extends State<HomePage> {
             children: [
               if (Users.isGuestUser()) ...[
                 Text(
-                  "Welcome 👋🏼",
+                   S.of(context).welcomeMessage,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  "Enjoy exploring our app 🔍",
+                  S.of(context).guestSubtitle,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ] else ...[
                 isLoading
                     ? Text(
-                        "⏳ Loading...",
+                        S.of(context).loading,
                         style: Theme.of(context).textTheme.titleMedium,
                       )
                     : Text(
                         userName != null
-                            ? "Hi ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
-                            : "Welcome 👋🏼",
+                            ? "${S.of(context).hi} ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
+                            : S.of(context).welcomeMessage,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                 Text(
                   selectedType!= null
-                    ? "The $selectedType"
-                    : "Enjoy exploring our app 🔍",
+                    ? "${S.of(context).the}$selectedType"
+                    : S.of(context).guestSubtitle,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -279,18 +284,18 @@ class _HomePageState extends State<HomePage> {
                       ),
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                           SnackBar(
                             content: Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.error_outline,
                                   color: Colors.black,
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    "Guest access is limited. Please log in to continue.",
-                                    style: TextStyle(
+                                   S.of(context).guestAccessLimited,
+                                    style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
                                     ),
@@ -298,14 +303,14 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ],
                             ),
-                            backgroundColor: Color.fromARGB(255, 247, 234, 117),
+                            backgroundColor: const Color.fromARGB(255, 247, 234, 117),
                           ),
                         );
                       },
-                      child: const Center(
+                      child:  Center(
                         child: Text(
-                          "Become",
-                          style: TextStyle(
+                          S.of(context).become,
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -318,18 +323,18 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   if (Users.isGuestUser()) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                       SnackBar(
                         content: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.error_outline,
                               color: Colors.black,
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                "Guest access is limited. Please log in to continue.",
-                                style: TextStyle(
+                               S.of(context).guestAccessLimited,
+                                style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,
                                 ),
@@ -337,7 +342,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        backgroundColor: Color.fromARGB(255, 247, 234, 117),
+                        backgroundColor: const Color.fromARGB(255, 247, 234, 117),
                       ),
                     );
                   } else {
@@ -363,17 +368,17 @@ class _HomePageState extends State<HomePage> {
           // Block guest users from accessing "Add"  and "messages" and  "Profile"
           if (Users.isGuestUser() && (index == 2 || index == 3 || index == 4)) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+               SnackBar(
                 content: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.error_outline,
                       color: Colors.black,
                     ),
                     Expanded(
                       child: Text(
-                        "Guest access is limited. Please log in to continue.",
-                        style: TextStyle(
+                        S.of(context).guestAccessLimited,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 18,
                         ),
@@ -381,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                backgroundColor: Color.fromARGB(255, 247, 234, 117),
+                backgroundColor: const Color.fromARGB(255, 247, 234, 117),
               ),
             );
             return;
@@ -391,13 +396,13 @@ class _HomePageState extends State<HomePage> {
             // If "Add" icon is clicked
             String? activeType = (await getActiveTypeFromFirestore());
 
-            if (activeType == "Client" ||
+       if (activeType == "Client" ||
                 activeType == "Vétérinaire" ||
                 activeType == "Entreprise") {
               showMessagePopup(
                   activeType); // Show popup if the user is a client
             } else {
-              navigateToUserPage(context);
+             // navigateToUserPage(context);
             }
           } else {
             setState(() {

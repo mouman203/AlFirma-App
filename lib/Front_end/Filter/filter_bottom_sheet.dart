@@ -131,10 +131,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   @override
   Widget build(BuildContext context) {
     List<String> mainCategories =
-        ProductData.getMainCategories(selectedProductType);
-    List<String> wilayas = ProductData.getWilaya();
+        ProductData.getMainCategories(selectedProductType,context);
+    List<String> wilayas = ProductData.getWilaya(context);
     List<String> subCategories =
-        ProductData.getSubCategories(selectedProductType, selectedMainCategory);
+        ProductData.getSubCategories(selectedProductType, selectedMainCategory,context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -192,7 +192,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   buildDropdown(
                     value: selectedFinalItem,
                     items:
-                        ProductData.agriSubCategories[selectedSubCategory!] ??
+                        ProductData.agriSubCategories(context)[selectedSubCategory!] ??
                             [],
                     hint: "اختر منتوج",
                     onChanged: (val) {
@@ -206,7 +206,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   buildDropdown(
                     value: selectedFinalItem,
                     items:
-                        ProductData.equipmentCategories[selectedSubCategory!] ??
+                        ProductData.equipmentCategories(context)[selectedSubCategory!] ??
                             [],
                     hint: "اختر المعدة",
                     onChanged: (val) {
@@ -236,7 +236,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 if (selectedWilaya != null)
                   buildDropdown(
                     value: selectedDaira,
-                    items: ProductData.wilayas[selectedWilaya!] ?? [],
+                    items: ProductData.wilayas(context)[selectedWilaya!] ?? [],
                     hint: 'Select Daira',
                     onChanged: (value) {
                       setState(() {

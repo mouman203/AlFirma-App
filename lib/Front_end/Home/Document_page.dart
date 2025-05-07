@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:agriplant/Front_end/Home/user_type_handler.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,8 +33,8 @@ class _DocumentFormState extends State<DocumentForm> {
   // Store picked images in a Map
   final Map<String, XFile?> _pickedImages = {};
 
-  // Define required document labels for each user type
-  final Map<String, List<String>> requiredDocuments = {
+
+   final Map<String, List<String>> requiredDocuments = {
     'Transporteur': [
       'بطاقة الهوية (الوجه)',
       'بطاقة الهوية (الظهر)',
@@ -50,23 +51,30 @@ class _DocumentFormState extends State<DocumentForm> {
     'Entreprise': ['شهادة'],
     'Commerçant': ['شهادة'],
   };
-
   void updateUserType(String activeType) {
     setActiveType(activeType); // Calling the function
   }
 
   Future<void> _pickImage(String label) async {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (_) => SafeArea(
         child: AlertDialog(
-          title: const Text('اختيار صورة'),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title:  Text(S.of(context).choose_picture,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('اختيار من المعرض'),
+                leading: Icon(Icons.photo_library,
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C)),
+                title: Text(S.of(context).select_from_gallery),
                 onTap: () async {
                   final picked =
                       await _picker.pickImage(source: ImageSource.gallery);
@@ -79,8 +87,11 @@ class _DocumentFormState extends State<DocumentForm> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('التقاط صورة بالكاميرا'),
+                leading: Icon(Icons.camera_alt,
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C)),
+                title:  Text(S.of(context).capture_with_camera),
                 onTap: () async {
                   final picked =
                       await _picker.pickImage(source: ImageSource.camera);
@@ -141,7 +152,8 @@ class _DocumentFormState extends State<DocumentForm> {
       for (String doc in userDocs) {
         final pickedImage = _pickedImages[doc];
         if (pickedImage == null) {
-          throw Exception("الوثيقة '$doc' غير مرفقة");
+         throw Exception('$doc ${S.of(context).document_not_attached}');
+
         }
 
         // Generate a unique file name for the document
@@ -204,7 +216,7 @@ class _DocumentFormState extends State<DocumentForm> {
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ تم إرسال الوثائق بنجاح')),
+         SnackBar(content: Text(S.of(context).documents_sent_successfully)),
       );
       // 🔥 Wait for 1 second, then go back
       Future.delayed(const Duration(seconds: 1), () {
@@ -214,7 +226,7 @@ class _DocumentFormState extends State<DocumentForm> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("❌ خطأ: $e")),
+        SnackBar(content: Text("${S.of(context).error}: $e")),
       );
     } finally {
       setState(() => isLoading = false);
@@ -232,7 +244,8 @@ class _DocumentFormState extends State<DocumentForm> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text('توثيق ${widget.userType}'),
+          title: Text('${S.of(context).document_title} ${widget.userType}'),
+
           backgroundColor:
               isDarkMode ? colorScheme.surface : colorScheme.surface),
       body: SingleChildScrollView(
@@ -241,7 +254,7 @@ class _DocumentFormState extends State<DocumentForm> {
           children: [
             for (var doc in documents) buildImageBox(doc),
             const SizedBox(height: 20),
-            Container(
+            SizedBox(
               width: double.infinity, // Make the button full width
               height: 50, // Match the height of text fields
               child: isLoading
@@ -259,14 +272,15 @@ class _DocumentFormState extends State<DocumentForm> {
                           _submitDocuments();
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Error: $e")),
+                            SnackBar(
+                                content: Text("${S.of(context).error}: $e")),
                           );
                         }
                       },
                       icon: const Icon(Icons.upload, color: Colors.white),
-                      label: const Text(
-                        "إرسال الوثائق",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      label:  Text(
+                        S.of(context).submitDocuments,
+                        style: const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
             )

@@ -5,6 +5,7 @@ import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
 import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -193,7 +194,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     Text("$followersCount",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text("Followers",
+                    Text(S.of(context).followers,
+
                         style: Theme.of(context).textTheme.titleMedium),
                   ],
                 ),
@@ -203,7 +205,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     Text("$followingCount",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text("Following",
+                    Text(S.of(context).following,
                         style: Theme.of(context).textTheme.titleMedium),
                   ],
                 ),
@@ -232,7 +234,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           ),
                         ),
                         child: Text(
-                          isFollowing ? "Unfollow" : "Follow",
+                          isFollowing ? S.of(context).unfollow : S.of(context).follow,
                           style: TextStyle(
                               color: isDarkMode ? Colors.black : Colors.white,
                               fontSize: 18),
@@ -308,7 +310,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   child: CircularProgressIndicator());
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(child: Text("No items yet."));
+                              return  Center(child: Text(S.of(context).noItemsYet));
                             }
 
                             final itemList = snapshot.data!;

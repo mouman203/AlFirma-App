@@ -1,3 +1,4 @@
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,9 @@ class _SecurityPageState extends State<SecurityPage> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Text(
-            val == "Email" ? "Update Email" : "Update Phone Number",
+            val == "Email"
+                ? S.of(context).updateEmail
+                : S.of(context).updatePhoneNumber,
             style: TextStyle(
                 color: isDarkMode
                     ? const Color(0xFF90D5AE)
@@ -59,8 +62,9 @@ class _SecurityPageState extends State<SecurityPage> {
           ),
           content: TextField(
             controller: emailController,
-            decoration: customDecoration(
-                val == "Email" ? "Enter new email" : "Enter new Phone number"),
+            decoration: customDecoration(val == "Email"
+                ? S.of(context).enterNewEmail
+                : S.of(context).enterNewPhoneNumber),
           ),
           actions: [
             TextButton(
@@ -76,7 +80,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 ),
               ),
               child: Text(
-                "Cancel",
+                S.of(context).cancel,
                 style: TextStyle(
                     color:
                         isDarkMode ? Colors.red.shade900 : Colors.red.shade100,
@@ -97,7 +101,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 ),
               ),
               child: Text(
-                "Submit",
+                S.of(context).submit,
                 style: TextStyle(
                     color: isDarkMode ? Colors.black : Colors.white,
                     fontSize: 16),
@@ -124,7 +128,9 @@ class _SecurityPageState extends State<SecurityPage> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Text(
-            val == "Email" ? "Email Options" : "Phone Number Options",
+            val =="Email"
+                ? S.of(context).emailOptions
+                : S.of(context).phoneOptions,
             style: TextStyle(
               color: isDarkMode
                   ? const Color(0xFF90D5AE)
@@ -142,7 +148,9 @@ class _SecurityPageState extends State<SecurityPage> {
                       : const Color(0xFF256C4C),
                 ),
                 title: Text(
-                  val == "Email" ? "Change Email" : "Change Phone Number",
+                  val == "Email"
+                      ? S.of(context).changeEmail
+                      : S.of(context).changePhoneNumber,
                   style: TextStyle(
                     color: isDarkMode
                         ? const Color(0xFF90D5AE)
@@ -157,7 +165,6 @@ class _SecurityPageState extends State<SecurityPage> {
                   val == "Email"
                       ? Email_PhoneUpdateDialog("Email", context)
                       : Email_PhoneUpdateDialog("Phone", context);
-                  print("hello");
                 },
               ),
               const SizedBox(height: 5),
@@ -167,7 +174,9 @@ class _SecurityPageState extends State<SecurityPage> {
                   color: Color.fromARGB(255, 255, 17, 0),
                 ),
                 title: Text(
-                  val == "Email" ? "Delete Email" : "Delete Phone Number",
+                  val == S.of(context).email
+                      ? S.of(context).deleteEmail
+                      : S.of(context).deletePhoneNumber,
                   style: const TextStyle(
                     color: Color.fromARGB(255, 155, 10, 0),
                   ),
@@ -227,7 +236,7 @@ class _SecurityPageState extends State<SecurityPage> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Text(
-            "Change Password",
+            S.of(context).changePassword,
             style: TextStyle(
                 color: isDarkMode
                     ? const Color(0xFF90D5AE)
@@ -238,17 +247,17 @@ class _SecurityPageState extends State<SecurityPage> {
             children: [
               TextField(
                 obscureText: true,
-                decoration: customDecoration("Old Password"),
+                decoration: customDecoration(S.of(context).oldPassword),
               ),
               const SizedBox(height: 10), // Add space between the text fields
               TextField(
                 obscureText: true,
-                decoration: customDecoration("New Password"),
+                decoration: customDecoration(S.of(context).newPassword),
               ),
               const SizedBox(height: 10), // Add space between the text fields
               TextField(
                 obscureText: true,
-                decoration: customDecoration("New Password"),
+                decoration: customDecoration(S.of(context).newPassword),
               ),
             ],
           ),
@@ -263,7 +272,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 ),
               ),
               child: Text(
-                "Cancel",
+                S.of(context).cancel,
                 style: TextStyle(
                     color:
                         isDarkMode ? Colors.red.shade900 : Colors.red.shade100,
@@ -284,7 +293,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 ),
               ),
               child: Text(
-                "Submit",
+                S.of(context).submit,
                 style: TextStyle(
                     color: isDarkMode ? Colors.black : Colors.white,
                     fontSize: 16),
@@ -310,18 +319,18 @@ class _SecurityPageState extends State<SecurityPage> {
               isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            'Attention ⚠️',
-            style: TextStyle(
+          title:  Text(
+            S.of(context).attention,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.red,
             ),
           ),
           content: Text(
-            val == "Account"
-                ? 'Are you sure you want to delete this account?'
-                : 'Are you sure you want to delete the $val ?',
+            val == S.of(context).account
+                ? S.of(context).confirmDeleteAccount
+                :'${S.of(context).confirmDeleteItem} $val?',
             style: TextStyle(
               fontSize: 16,
               color: isDarkMode ? Colors.white : Colors.black,
@@ -338,7 +347,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 ),
               ),
               child: Text(
-                "Cancel",
+                S.of(context).cancel,
                 style: TextStyle(
                   color: isDarkMode ? Colors.red.shade900 : Colors.red.shade100,
                   fontSize: 16,
@@ -359,7 +368,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 ),
               ),
               child: Text(
-                "Submit",
+                	S.of(context).submit,
                 style: TextStyle(
                   color: isDarkMode ? Colors.black : Colors.white,
                   fontSize: 16,
@@ -399,7 +408,7 @@ class _SecurityPageState extends State<SecurityPage> {
     final scheme = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Privacy & Security"),
+        title:  Text(S.of(context).privacySecurity),
         elevation: 5,
       ),
       body: ListView(
@@ -434,7 +443,7 @@ class _SecurityPageState extends State<SecurityPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Enable multiple authentication options to boost your account security",
+                              S.of(context).securityMessage2,
                               style: TextStyle(
                                 color: isDarkMode ? Colors.white : Colors.black,
                                 fontSize: 16,
@@ -454,7 +463,7 @@ class _SecurityPageState extends State<SecurityPage> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 12),
                                 child: Text(
-                                  "Medium Security",
+                                  	S.of(context).mediumSecurity,
                                   style: TextStyle(
                                     color: isDarkMode
                                         ? Colors.orange.shade900
@@ -480,7 +489,7 @@ class _SecurityPageState extends State<SecurityPage> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(
-                  "Contact Information",
+                 S.of(context).contactInfo,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -506,7 +515,7 @@ class _SecurityPageState extends State<SecurityPage> {
                         : const Color(0xFF256C4C),
                   ),
                   title: Text(
-                    "Email",
+                    	S.of(context).email,
                     style: TextStyle(
                       fontSize: 16,
                       color: isDarkMode
@@ -548,7 +557,7 @@ class _SecurityPageState extends State<SecurityPage> {
                         : const Color(0xFF256C4C),
                   ),
                   title: Text(
-                    "Phone",
+                    S.of(context).phoneNumber,
                     style: TextStyle(
                       fontSize: 16,
                       color: isDarkMode
@@ -569,7 +578,7 @@ class _SecurityPageState extends State<SecurityPage> {
                         ? const Color(0xFF90D5AE)
                         : const Color(0xFF256C4C),
                   ),
-                  onTap: () => Email_PhoneOptions("Phone"),
+                  onTap: () => Email_PhoneOptions("Phone Number"),
                 ),
               ),
             ],
@@ -584,7 +593,7 @@ class _SecurityPageState extends State<SecurityPage> {
             padding:
                 const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Text(
-              "Security Card",
+              S.of(context).securityCard,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -608,7 +617,7 @@ class _SecurityPageState extends State<SecurityPage> {
                         : const Color(0xFF256C4C),
                   ),
                   title: Text(
-                    "Change Password",
+                    S.of(context).changePassword,
                     style: TextStyle(
                         color: isDarkMode
                             ? const Color(0xFF90D5AE)
@@ -635,7 +644,7 @@ class _SecurityPageState extends State<SecurityPage> {
             padding:
                 const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Text(
-              "Account Management",
+              S.of(context).accountManagement,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -654,8 +663,8 @@ class _SecurityPageState extends State<SecurityPage> {
                 ListTile(
                   leading: const Icon(Icons.delete,
                       color: Color.fromARGB(255, 255, 30, 0)),
-                  title: const Text("Delete Account",
-                      style: TextStyle(
+                  title: Text(S.of(context).deleteAccount,
+                      style: const TextStyle(
                         fontSize: 18,
                         color: Color.fromARGB(255, 255, 17, 0),
                       )),
@@ -663,7 +672,7 @@ class _SecurityPageState extends State<SecurityPage> {
                     Icons.arrow_forward_ios,
                     color: Color.fromARGB(255, 255, 17, 0),
                   ),
-                  onTap: () => _showDeletingAccMsg("Account"),
+                  onTap: () => _showDeletingAccMsg(S.of(context).account),
                 ),
               ],
             ),

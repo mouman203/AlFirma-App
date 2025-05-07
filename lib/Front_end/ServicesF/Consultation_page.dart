@@ -1,4 +1,5 @@
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,8 @@ class ConsultationPage extends StatefulWidget {
 class _ConsultationPageState extends State<ConsultationPage> {
   List<Map<String, dynamic>> allVeterinarians = [];
   List<Map<String, dynamic>> filteredVeterinarians = [];
-  String? _selectedWilaya = 'All Wilayas';
-  String? _selectedDaira = 'All Dairas';
+  String? selectedWilaya;
+  String? selectedDaira;
   bool isLoading = true;
 
   @override
@@ -43,19 +44,19 @@ class _ConsultationPageState extends State<ConsultationPage> {
   }
 
   void _applyFilter() {
-    if (_selectedWilaya == 'All Wilayas') {
+    if (selectedWilaya == S.of(context).all_wilayas) {
       filteredVeterinarians = List.from(allVeterinarians);
     } else {
       filteredVeterinarians = allVeterinarians.where((vet) {
         final vetWilaya = vet['wilaya']?.toString().toLowerCase();
-        return vetWilaya == _selectedWilaya!.toLowerCase();
+        return vetWilaya == selectedWilaya!.toLowerCase();
       }).toList();
     }
 
-    if (_selectedDaira != 'All Dairas' && _selectedDaira != null) {
+    if (selectedDaira != S.of(context).all_dairas && selectedDaira != null) {
       filteredVeterinarians = filteredVeterinarians.where((vet) {
         final vetDaira = vet['daira']?.toString().toLowerCase();
-        return vetDaira == _selectedDaira!.toLowerCase();
+        return vetDaira == selectedDaira!.toLowerCase();
       }).toList();
     }
 
@@ -63,15 +64,17 @@ class _ConsultationPageState extends State<ConsultationPage> {
   }
 
   List<String> getAvailableDairas(String wilaya) {
-    return ProductData.wilayas[wilaya] ?? [];
+    return ProductData.wilayas(context)[wilaya] ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
+    selectedWilaya ??= S.of(context).all_wilayas;
+    selectedDaira ??= S.of(context).all_dairas;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Consultation'),
+        title: Text(S.of(context).consultation), // Localized title
         elevation: 5,
       ),
       body: isLoading
@@ -83,109 +86,168 @@ class _ConsultationPageState extends State<ConsultationPage> {
                 // Wilaya + Daira Filter Row
                 Row(
                   children: [
-                    // Wilaya Dropdown
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: DropdownButton2<String>(
-                          iconStyleData: IconStyleData(
-                            iconEnabledColor: isDarkMode
-                                ? Colors.white
-                                : const Color(0xFF256C4C),
-                            iconDisabledColor: isDarkMode
-                                ? Colors.white
-                                : const Color(0xFF256C4C),
+                      child: DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        value: selectedWilaya,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedWilaya = newValue!;
+                            selectedDaira = S.of(context).all_dairas;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          // Custom border
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : const Color(0xFF256C4C),
+                              width: 1,
+                            ),
                           ),
-                          isExpanded: true,
-                          value: _selectedWilaya,
-                          onChanged: (newValue) {
-                            setState(() {
-                              _selectedWilaya = newValue;
-                              _selectedDaira = 'All Dairas';
-                            });
-                            _applyFilter();
-                          },
-                          items: ['All Wilayas', ...ProductData.wilayas.keys]
-                              .map((wilaya) {
-                            return DropdownMenuItem<String>(
-                              value: wilaya,
-                              child: Text(
-                                wilaya,
-                                style: TextStyle(
-                                  color: isDarkMode
-                                      ? Colors.white
-                                      : const Color(0xFF256C4C),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          selectedItemBuilder: (context) {
-                            return ['All Wilayas', ...ProductData.wilayas.keys]
-                                .map((wilaya) {
-                              return Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  wilaya == 'All Wilayas'
-                                      ? wilaya
-                                      : getWilayaName(wilaya),
-                                  style: TextStyle(
-                                    color: isDarkMode
-                                        ? Colors.white
-                                        : const Color(0xFF256C4C),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              );
-                            }).toList();
-                          },
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : const Color(0xFF256C4C),
+                              width: 1,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
                         ),
+                        iconStyleData: IconStyleData(
+                          iconEnabledColor: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF256C4C),
+                        ),
+                        items: [
+                          S.of(context).all_wilayas,
+                          ...ProductData.wilayas(context).keys
+                        ]
+                            .map((wilaya) => DropdownMenuItem<String>(
+                                  value: wilaya,
+                                  child: Text(
+                                    wilaya == S.of(context).all_wilayas
+                                        ? wilaya
+                                        : wilaya,
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : const Color(0xFF256C4C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        selectedItemBuilder: (context) {
+                          return [
+                            S.of(context).all_wilayas,
+                            ...ProductData.wilayas(context).keys
+                          ]
+                              .map((wilaya) => Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      wilaya == S.of(context).all_wilayas
+                                          ? wilaya
+                                          : getWilayaName(wilaya),
+                                      style: TextStyle(
+                                        color: isDarkMode
+                                            ? Colors.white
+                                            : const Color(0xFF256C4C),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ))
+                              .toList();
+                        },
                       ),
                     ),
-                    // Daira Dropdown (always shown)
+                    const SizedBox(width: 20),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: DropdownButton2<String>(
-                          iconStyleData: IconStyleData(
-                            iconEnabledColor: isDarkMode
-                                ? Colors.white
-                                : const Color(0xFF256C4C),
-                            iconDisabledColor: isDarkMode
-                                ? Colors.white
-                                : const Color(0xFF256C4C),
+                      child: DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        value: selectedDaira,
+                        items: selectedWilaya == S.of(context).all_wilayas
+                            ? [
+                                DropdownMenuItem<String>(
+                                  value: S.of(context).all_dairas,
+                                  child: Text(
+                                    S.of(context).all_dairas,
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : const Color(0xFF256C4C),
+                                    ),
+                                  ),
+                                ),
+                              ]
+                            : [
+                                  DropdownMenuItem<String>(
+                                    value: S.of(context).all_dairas,
+                                    child: Text(
+                                      S.of(context).all_dairas,
+                                      style: TextStyle(
+                                        color: isDarkMode
+                                            ? Colors.white
+                                            : const Color(0xFF256C4C),
+                                      ),
+                                    ),
+                                  ),
+                                ] +
+                                (ProductData.wilayas(context)[selectedWilaya] ??
+                                        [])
+                                    .map((daira) => DropdownMenuItem<String>(
+                                          value: daira,
+                                          child: Text(
+                                            daira,
+                                            style: TextStyle(
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : const Color(0xFF256C4C),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            selectedDaira = val!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          // Custom border for second dropdown, same as the first one
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : const Color(0xFF256C4C),
+                              width: 1,
+                            ),
                           ),
-                          isExpanded: true,
-                          value: _selectedDaira,
-                          onChanged: (newValue) {
-                            setState(() {
-                              _selectedDaira = newValue;
-                            });
-                            _applyFilter();
-                          },
-                          items: [
-                            'All Dairas',
-                            ...(_selectedWilaya != null &&
-                                    _selectedWilaya != 'All Wilayas'
-                                ? getAvailableDairas(_selectedWilaya!)
-                                : ProductData.wilayas.values
-                                    .expand((dairas) => dairas)
-                                    .toSet()
-                                    .toList())
-                          ]
-                              .map((daira) => DropdownMenuItem<String>(
-                                    value: daira,
-                                    child: Text(daira, style: TextStyle(
-                                  color: isDarkMode
-                                      ? Colors.white
-                                      : const Color(0xFF256C4C),
-                                ),),
-                                  ))
-                              .toList(),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : const Color(0xFF256C4C),
+                              width: 1,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                        ),
+                        iconStyleData: IconStyleData(
+                          iconEnabledColor: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF256C4C),
                         ),
                       ),
                     ),
@@ -197,7 +259,10 @@ class _ConsultationPageState extends State<ConsultationPage> {
                 // Veterinarian List
                 Expanded(
                   child: filteredVeterinarians.isEmpty
-                      ? const Center(child: Text('No veterinarians found.'))
+                      ? Center(
+                          child: Text(S
+                              .of(context)
+                              .no_veterinarians_found)) // Localized text
                       : ListView.builder(
                           itemCount: filteredVeterinarians.length,
                           itemBuilder: (context, index) {
@@ -224,8 +289,11 @@ class _ConsultationPageState extends State<ConsultationPage> {
                                         radius: 45,
                                         backgroundImage: profileImage != null
                                             ? NetworkImage(profileImage)
-                                            : const AssetImage(
-                                                    'assets/anonyme.png')
+                                            : (isDarkMode
+                                                    ? const AssetImage(
+                                                        "assets/anonymeD.png")
+                                                    : const AssetImage(
+                                                        "assets/anonyme.png"))
                                                 as ImageProvider,
                                       ),
                                       const SizedBox(width: 16),
@@ -242,9 +310,12 @@ class _ConsultationPageState extends State<ConsultationPage> {
                                               ),
                                             ),
                                             const SizedBox(height: 4),
-                                            const Text(
-                                              'Vétérinaire',
-                                              style: TextStyle(fontSize: 16),
+                                            Text(
+                                              S
+                                                  .of(context)
+                                                  .veterinaire, // Localized text
+                                              style:
+                                                  const TextStyle(fontSize: 16),
                                             ),
                                             const SizedBox(height: 8),
                                             Row(

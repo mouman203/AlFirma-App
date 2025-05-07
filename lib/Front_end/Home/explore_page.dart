@@ -5,6 +5,7 @@ import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Filter/filter_bottom_sheet.dart';
 import 'package:agriplant/Search/SearchHistoryManager%20.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -257,10 +258,10 @@ class _ExplorePageState extends State<ExplorePage> {
                   width: double.infinity,
                   color: const Color.fromARGB(255, 247, 234, 117),
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Login',
-                      style: TextStyle(
+                      S.of(context).login,
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -309,7 +310,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       focusNode: _focusNode,
                       controller: _controller,
                       decoration: InputDecoration(
-                        hintText: "Search here",
+                        hintText: S.of(context).searchHere,
                         hintStyle: TextStyle(
                             color: isDarkMode
                                 ? const Color(0xFF90D5AE)
@@ -400,19 +401,15 @@ class _ExplorePageState extends State<ExplorePage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 25),
                     child: SizedBox(
-                      height: 170,
+                      height: 180,
                       child: Card(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color.fromARGB(
-                                255, 39, 57, 48) // Dark green for dark mode
-                            : Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer, // Light green for light mode
+                            ? const Color.fromARGB(255, 39, 57, 48)
+                            : Theme.of(context).colorScheme.secondaryContainer,
                         elevation: 0.1,
                         shadowColor: Theme.of(context).brightness ==
                                 Brightness.dark
-                            ? const Color.fromARGB(
-                                255, 39, 57, 48) // Match shadow to dark green
+                            ? const Color.fromARGB(255, 39, 57, 48)
                             : Theme.of(context).colorScheme.secondaryContainer,
                         child: Padding(
                           padding: const EdgeInsets.all(12),
@@ -425,9 +422,9 @@ class _ExplorePageState extends State<ExplorePage> {
                                       MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      "AI Scanner",
-                                      style: TextStyle(
+                                    Text(
+                                      S.of(context).aiScanner,
+                                      style: const TextStyle(
                                           fontSize: 21,
                                           color:
                                               Color.fromARGB(255, 47, 114, 38),
@@ -435,26 +432,27 @@ class _ExplorePageState extends State<ExplorePage> {
                                               .bold // Black in light mode
                                           ),
                                     ),
-                                    const Text(
-                                        "Get free Look from our AI Plant Disease Detector",
-                                        style: TextStyle(fontSize: 14)),
+                                    Text(S.of(context).aiDescription,
+                                        style: const TextStyle(fontSize: 14)),
                                     FilledButton(
                                       onPressed: () {
                                         if (Users.isGuestUser()) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
-                                            const SnackBar(
+                                            SnackBar(
                                               content: Row(
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.error_outline,
                                                     color: Colors.black,
                                                   ),
-                                                  SizedBox(width: 8),
+                                                  const SizedBox(width: 8),
                                                   Expanded(
                                                     child: Text(
-                                                      "To use the AI scanner, please sign in to your account.",
-                                                      style: TextStyle(
+                                                      S
+                                                          .of(context)
+                                                          .aiScannerSignInMessage,
+                                                      style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 18,
                                                       ),
@@ -462,13 +460,14 @@ class _ExplorePageState extends State<ExplorePage> {
                                                   ),
                                                 ],
                                               ),
-                                              backgroundColor: Color.fromARGB(
-                                                  255, 247, 234, 117),
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 247, 234, 117),
                                             ),
                                           );
                                         } else {}
                                       },
-                                      child: Text("Check it out",
+                                      child: Text(S.of(context).checkItOut,
                                           style: TextStyle(
                                               color: isDarkMode
                                                   ? const Color.fromARGB(
@@ -494,21 +493,19 @@ class _ExplorePageState extends State<ExplorePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Featured Products",
+                        S.of(context).featuredProducts,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       TextButton(
                         onPressed: () {},
-                        child: const Text("See all"),
+                        child: Text(S.of(context).seeAll),
                       ),
                     ],
                   ),
                   productList.isEmpty
                       ? showLoader
                           ? const Center(child: CircularProgressIndicator())
-                          : const Center(
-                              child:
-                                  Text("There is not a product with this name"))
+                          : Center(child: Text(S.of(context).noProductWithName))
                       : Expanded(
                           child: GridView.builder(
                             itemCount: productList.length,

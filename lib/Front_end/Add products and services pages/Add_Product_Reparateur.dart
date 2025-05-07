@@ -199,6 +199,7 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
 
               //category
               ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedCategorie,
                   items: categories,
                   label: "category",
@@ -207,7 +208,6 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
                       selectedCategorie = value;
                     });
                   }),
-           
 
               //prix
               ProductData.buildTextField(
@@ -219,11 +219,12 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
                   return null;
                 },
               ),
-           
+
               //wilaya selection
               ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedWilaya,
-                  items: ProductData.wilayas.keys.toList(),
+                  items: ProductData.wilayas(context).keys.toList(),
                   label: "Wilaya",
                   onChanged: (value) {
                     setState(() {
@@ -231,12 +232,12 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
                       selectedDaira = null;
                     });
                   }),
-          
 
               if (selectedWilaya != null)
                 ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedDaira,
-                  items: ProductData.wilayas[selectedWilaya]!,
+                  items: ProductData.wilayas(context)[selectedWilaya]!,
                   label: "Daira",
                   onChanged: (value) {
                     setState(() {
@@ -244,7 +245,7 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
                     });
                   },
                 ),
-         
+
               ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
@@ -254,7 +255,7 @@ class _AddProductReparateurState extends State<AddProductReparateur> {
                   return null;
                 },
               ),
-            
+
               SizedBox(
                 width: double.infinity, // Make the button full width
                 height: 50, // Match the height of text fields

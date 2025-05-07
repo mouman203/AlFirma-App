@@ -195,8 +195,9 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
 
               //category
               ProductData.buildDropdown(
+                  context: context,
                   selectedValue: selectedCategory,
-                  items: ProductData.produitsElevages.keys.toList(),
+                  items: ProductData.produitsElevages(context).keys.toList(),
                   label: "Category",
                   onChanged: (value) {
                     setState(() {
@@ -208,8 +209,9 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
               //Produit
               if (selectedCategory != null)
                 ProductData.buildDropdown(
+                    context: context,
                     selectedValue: selectedproduct,
-                    items: ProductData.produitsElevages[selectedCategory]!,
+                    items: ProductData.produitsElevages(context)[selectedCategory]!,
                     label: 'product',
                     onChanged: (value) {
                       setState(() {
@@ -241,8 +243,9 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
 
               //wilaya selection
               ProductData.buildDropdown(
+                context: context,
                 selectedValue: selectedWilaya,
-                items: ProductData.wilayas.keys.toList(),
+                items: ProductData.wilayas(context).keys.toList(),
                 label: "Wilaya",
                 onChanged: (value) {
                   setState(() {
@@ -254,8 +257,9 @@ class _AddProductEleveurState extends State<AddProductEleveur> {
 
               if (selectedWilaya != null)
                 ProductData.buildDropdown(
+                    context: context,
                     selectedValue: selectedDaira,
-                    items: ProductData.wilayas[selectedWilaya]!,
+                    items: ProductData.wilayas(context)[selectedWilaya]!,
                     label: "Daïra",
                     onChanged: (value) {
                       setState(() {

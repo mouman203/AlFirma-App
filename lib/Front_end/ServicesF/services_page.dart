@@ -5,6 +5,7 @@ import 'package:agriplant/Front_end/ServicesF/Hire_worker_page.dart';
 import 'package:agriplant/Front_end/ServicesF/Rent_page.dart';
 import 'package:agriplant/Front_end/ServicesF/Repairs_page.dart';
 import 'package:agriplant/Front_end/ServicesF/Transportation_page.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 // Service model
@@ -14,29 +15,36 @@ class PService {
   const PService({required this.name, required this.image});
 }
 
-// List of services
-final List<PService> services = [
-  const PService(name: "Rent", image: "assets/services/Rent.png"),
-  const PService(name: "Repairs", image: "assets/services/Repairs.png"),
-  const PService(
-      name: "Consultation", image: "assets/services/Consultation.png"),
-  const PService(name: "Hire Worker", image: "assets/services/Workers.png"),
-  const PService(
-      name: "Transportation", image: "assets/services/Transportation.png"),
-  const PService(name: "Expertise", image: "assets/services/Expertise.png"),
-];
-
 class ServicesPage extends StatelessWidget {
   const ServicesPage({super.key});
 
+  List<PService> getServices(BuildContext context) {
+    return [
+      PService(name: S.of(context).rent, image: "assets/services/Rent.png"),
+      PService(
+          name: S.of(context).repairs, image: "assets/services/Repairs.png"),
+      PService(
+          name: S.of(context).consultation,
+          image: "assets/services/Consultation.png"),
+      PService(
+          name: S.of(context).hireWorker, image: "assets/services/Workers.png"),
+      PService(
+          name: S.of(context).transportation,
+          image: "assets/services/Transportation.png"),
+      PService(
+          name: S.of(context).expertise,
+          image: "assets/services/Expertise.png"),
+    ];
+  }
+
   void navigateToService(BuildContext context, String name) {
     final pageMap = {
-      "Rent": const RentPage(),
-      "Repairs": const RepairsPage(),
-      "Consultation": const ConsultationPage(),
-      "Hire Worker": const HireWorkerPage(),
-      "Transportation": const TransportationPage(),
-      "Expertise": const ExpertisePage(),
+      S.of(context).rent: const RentPage(),
+      S.of(context).repairs: const RepairsPage(),
+      S.of(context).consultation: const ConsultationPage(),
+      S.of(context).hireWorker: const HireWorkerPage(),
+      S.of(context).transportation: const TransportationPage(),
+      S.of(context).expertise: const ExpertisePage(),
     };
 
     final Widget? page = pageMap[name];
@@ -45,13 +53,15 @@ class ServicesPage extends StatelessWidget {
       Navigator.push(context, MaterialPageRoute(builder: (_) => page));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Page not found')),
+        SnackBar(content: Text(S.of(context).pageNotFound)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final services = getServices(context);
+
     return Scaffold(
       body: GridView.builder(
         itemCount: services.length,

@@ -1,4 +1,3 @@
-import 'package:agriplant/Back_end/User.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,28 +10,20 @@ class ThemeProvider with ChangeNotifier {
     loadTheme();
   }
 
-  // Method to toggle between light and dark mode
+  // Toggle between light and dark mode, and save it
   void toggleTheme(bool isDark) async {
     _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
 
-    // Only save theme preference if the user is logged in (not anonymous)
-    if (!Users.isGuestUser()) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isDarkMode', isDark);
-    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', isDark);
   }
 
-  // Load theme preference if the user is logged in
+  // Load saved theme preference or fallback to system
   Future<void> loadTheme() async {
-    if (Users.isGuestUser()) {
-      _themeMode = ThemeMode.system;  // Use system default for anonymous users
-    } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool? isDarkMode = prefs.getBool('isDarkMode');
-      _themeMode = (isDarkMode ?? false) ? ThemeMode.dark : ThemeMode.light;
-    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isDarkMode = prefs.getBool('isDarkMode');
+    _themeMode = (isDarkMode ?? false) ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
   }
-
 }

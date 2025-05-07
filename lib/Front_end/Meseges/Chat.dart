@@ -1,4 +1,5 @@
 import 'package:agriplant/Front_end/Profile/userprofilepage.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,7 @@ class _ChatPageState extends State<ChatPage> {
         "receiverId": widget.receiverId,
         "message": message,
         "timestamp": FieldValue.serverTimestamp(),
+        "isSeen": false,
       });
     } catch (e) {
       print("❌ Error sending message: $e");
@@ -71,20 +73,28 @@ class _ChatPageState extends State<ChatPage> {
   String _formatTimestamp(dynamic timestamp) {
     if (timestamp == null) return '';
     DateTime dateTime = timestamp.toDate();
-    return DateFormat.jm().format(dateTime); // Example: 2:43 AM
+    return DateFormat.Hm().format(dateTime);
+  }
+
+  Future<void> _markMessagesAsSeen(QuerySnapshot snapshot) async {
+    for (var doc in snapshot.docs) {
+      var msg = doc.data() as Map<String, dynamic>;
+      if (msg["receiverId"] == currentUserId &&
+          msg["senderId"] == widget.receiverId &&
+          msg["isSeen"] == false) {
+        await doc.reference.update({"isSeen": true});
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: theme.brightness == Brightness.dark
-            ? scheme.surface
-            : scheme.surface,
+        backgroundColor: scheme.surface,
         elevation: 5,
         title: GestureDetector(
           onTap: _goToProfile,
@@ -110,9 +120,11 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/background_chats.png"),
+            image: AssetImage(
+              isDarkMode ? 'assets/background2.png' : 'assets/background1.png',
+            ),
             repeat: ImageRepeat.repeat,
             fit: BoxFit.cover,
           ),
@@ -125,11 +137,14 @@ class _ChatPageState extends State<ChatPage> {
                     .collection("Messages")
                     .where(
                       Filter.or(
-                        Filter.and(Filter("senderId", isEqualTo: currentUserId),
-                            Filter("receiverId", isEqualTo: widget.receiverId)),
                         Filter.and(
-                            Filter("senderId", isEqualTo: widget.receiverId),
-                            Filter("receiverId", isEqualTo: currentUserId)),
+                          Filter("senderId", isEqualTo: currentUserId),
+                          Filter("receiverId", isEqualTo: widget.receiverId),
+                        ),
+                        Filter.and(
+                          Filter("senderId", isEqualTo: widget.receiverId),
+                          Filter("receiverId", isEqualTo: currentUserId),
+                        ),
                       ),
                     )
                     .orderBy("timestamp", descending: true)
@@ -138,85 +153,110 @@ class _ChatPageState extends State<ChatPage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
+
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text("No messages yet"));
+                    return Center(
+                        child:
+                            Text(S.of(context).noMessages)); // localized text
                   }
+
+                  _markMessagesAsSeen(snapshot.data!);
 
                   var messages = snapshot.data!.docs;
 
                   return ListView.builder(
-                    itemCount: messages.length,
                     reverse: true,
+                    itemCount: messages.length,
                     padding: const EdgeInsets.all(10),
                     itemBuilder: (context, index) {
                       var msg = messages[index].data() as Map<String, dynamic>;
                       bool isMe = msg["senderId"] == currentUserId;
 
                       return Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: isMe
                             ? MainAxisAlignment.end
                             : MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           if (!isMe)
-                            GestureDetector(
-                              onTap: _goToProfile,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 6.0, bottom: 6),
-                                child: CircleAvatar(
-                                  backgroundImage: receiverPhotoUrl.isNotEmpty
-                                      ? NetworkImage(receiverPhotoUrl)
-                                      : (isDarkMode
-                                              ? const AssetImage(
-                                                  "assets/anonymeD.png")
-                                              : const AssetImage(
-                                                  "assets/anonyme.png"))
-                                          as ImageProvider,
-                                  radius: 18,
-                                ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 4.0, bottom: 4),
+                              child: CircleAvatar(
+                                radius: 16,
+                                backgroundImage: receiverPhotoUrl.isNotEmpty
+                                    ? NetworkImage(receiverPhotoUrl)
+                                    : (isDarkMode
+                                            ? const AssetImage(
+                                                "assets/anonymeD.png")
+                                            : const AssetImage(
+                                                "assets/anonyme.png"))
+                                        as ImageProvider,
                               ),
                             ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 8),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 14),
-                            decoration: BoxDecoration(
-                              color: isMe
-                                  ? (isDarkMode
-                                      ? const Color(0xFF90D5AE)
-                                      : const Color(0xFF256C4C))
-                                  : (isDarkMode
-                                      ? const Color.fromARGB(255, 178, 178, 178)
-                                      : const Color.fromARGB(255, 95, 94, 94)),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.7),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  msg["message"],
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: isDarkMode
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
+                          Flexible(
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 14),
+                              decoration: BoxDecoration(
+                                color: isMe
+                                    ? (isDarkMode
+                                        ? const Color(0xFF90D5AE)
+                                        : const Color(0xFF256C4C))
+                                    : (isDarkMode
+                                        ? const Color(0xFFE6E6E6)
+                                        : const Color(0xFF3A3A3A)),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: const Radius.circular(16),
+                                  topRight: const Radius.circular(16),
+                                  bottomLeft: Radius.circular(isMe ? 16 : 0),
+                                  bottomRight: Radius.circular(isMe ? 0 : 16),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _formatTimestamp(msg["timestamp"]),
-                                  style: TextStyle(
-                                      fontSize: 12,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    msg["message"],
+                                    style: TextStyle(
+                                      fontSize: 18,
                                       color: isDarkMode
-                                          ? Colors.black54
-                                          : Colors.white70),
-                                ),
-                              ],
+                                          ? Colors.black
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (isMe)
+                                        Icon(
+                                          Icons.done_all,
+                                          size: 18,
+                                          color: msg["isSeen"]
+                                              ? (isDarkMode
+                                                  ? const Color(0xFF1B503A)
+                                                  : const Color(0xFF64B58B))
+                                              : (isDarkMode
+                                                  ? Colors.black54
+                                                  : Colors.white70),
+                                        ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        _formatTimestamp(msg["timestamp"]),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: isDarkMode
+                                              ? Colors.black54
+                                              : Colors.white70,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -241,7 +281,7 @@ class _ChatPageState extends State<ChatPage> {
                       child: TextField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          hintText: "Message...",
+                          hintText: S.of(context).messageHint, // localized hint
                           hintStyle: TextStyle(
                               color: isDarkMode ? Colors.white : Colors.black,
                               fontSize: 19),

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Home/home_page.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,8 +33,8 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
       builder: (_) => AlertDialog(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('📸 Choose a Picture',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title:  Text(S.of(context).choose_picture,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -42,7 +43,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                   color: isDarkMode
                       ? const Color(0xFF90D5AE)
                       : const Color(0xFF256C4C)),
-              title: const Text('Select from Gallery'),
+              title:  Text(S.of(context).select_from_gallery),
               onTap: () async {
                 final picked =
                     await _picker.pickImage(source: ImageSource.gallery);
@@ -60,7 +61,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                   color: isDarkMode
                       ? const Color(0xFF90D5AE)
                       : const Color(0xFF256C4C)),
-              title: const Text('Capture with Camera'),
+              title:  Text(S.of(context).capture_with_camera),
               onTap: () async {
                 final picked =
                     await _picker.pickImage(source: ImageSource.camera);
@@ -112,10 +113,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
   }
 
   Future<void> onProceed() async {
-    // Ensure that the user uploads the picture before proceeding (if applicable)
-    // Example: await uploadProfilePicture();
-
-    // Call the checkEmailVerification method and await the result
+ 
     bool isVerified = await Users.checkEmailVerification(context);
 
     if (!isVerified) {

@@ -1,4 +1,5 @@
 import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -77,9 +78,9 @@ class _ContactUsPageState extends State<Contact_us_page> {
     if (response.statusCode == 200) {
       print("✅ Success: Email sent successfully!");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("Email sent successfully! ✅"),
-            duration: Duration(seconds: 2)),
+         SnackBar(
+            content: Text(S.of(context).emailSentSuccess),
+            duration: const Duration(seconds: 2)),
       );
       await Future.delayed(const Duration(seconds: 1));
       Navigator.pushReplacement(context,
@@ -87,7 +88,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
     } else {
       print("❌ Error: Failed to send email - ${response.body}");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error sending email ❌")),
+         SnackBar(content: Text(S.of(context).emailSendError)),
       );
     }
   }
@@ -100,9 +101,9 @@ class _ContactUsPageState extends State<Contact_us_page> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Report Your Problem"),
+        title:  Text(S.of(context).reportYourProblem),
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
-        elevation: 20,
+        elevation: 5,
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
@@ -119,7 +120,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
               controller: _emailController,
               readOnly: true, // Make email field non-editable
               decoration: InputDecoration(
-                labelText: "Your Email",
+                labelText: S.of(context).yourEmail,
                 labelStyle: TextStyle(
                   color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
@@ -151,7 +152,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
               controller: _nameController,
               readOnly: true,
               decoration: InputDecoration(
-                labelText: "Your Name",
+                labelText: S.of(context).yourName,
                 labelStyle: TextStyle(
                   color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
@@ -181,7 +182,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
               ),
               controller: _subjectController,
               decoration: InputDecoration(
-                labelText: "Subject",
+                labelText: S.of(context).subject,
                 labelStyle: TextStyle(
                   color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
@@ -212,7 +213,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
               controller: _reportController,
               maxLines: 10,
               decoration: InputDecoration(
-                labelText: "Describe your problem",
+                labelText: S.of(context).describeProblem,
                 labelStyle: TextStyle(
                   color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
                 ),
@@ -248,7 +249,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
                       : const Color(0xFF256C4C),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: Text("Send Report",
+                child: Text(S.of(context).sendReport,
                     style: TextStyle(
                         fontSize: 22,
                         color: isDarkMode ? Colors.black : Colors.white)),

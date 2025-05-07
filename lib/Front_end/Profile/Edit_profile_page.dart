@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Home/home_page.dart';
 import 'package:agriplant/data/ProductData.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,7 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   List<String> availableDairas = [];
   void updateDairaList(String wilaya) {
     setState(() {
-      availableDairas = ProductData.wilayas[wilaya] ?? [];
+      availableDairas = ProductData.wilayas(context)[wilaya] ?? [];
     });
   }
 
@@ -125,7 +126,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text("Error"),
+          title:  Text(S.of(context).error),
           content: Text(e.toString()),
         ),
       );
@@ -157,7 +158,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           .update({'Verify': true});
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully ')),
+         SnackBar(content: Text(S.of(context).profile_updated)),
       );
       Navigator.push(
         context,
@@ -165,30 +166,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No changes detected')),
+         SnackBar(content: Text(S.of(context).no_changes_detected),),
       );
     }
   }
 
   Future<void> showPopUp() async {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (_) => SafeArea(
         child: AlertDialog(
-          title: const Text('اختيار صورة'),
+           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title:  Text(S.of(context).choose_picture,
+        style: const TextStyle(fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('اختيار من المعرض'),
+              
+            ListTile(
+              leading: Icon(Icons.photo_library,
+                  color: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C)),
+              title:  Text(S.of(context).select_from_gallery),
                 onTap: () async {
                   pickImageGallery();
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('التقاط صورة بالكاميرا'),
+              leading: Icon(Icons.camera_alt,
+                  color: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C)),
+              title:  Text(S.of(context).capture_with_camera),
                 onTap: () async {
                   pickImageCamera();
                 },
@@ -223,7 +236,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               )
             : AppBar(
-                title: Text('Edit Profile'),
+                title: Text(S.of(context).edit_profile),
                 backgroundColor:
                     isDarkMode ? colorScheme.surface : colorScheme.surface,
                 elevation: 5,
@@ -284,7 +297,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               _buildTextField(
                 controller: _firstNameController,
                 icon: Icons.person,
-                hintText: "First Name",
+                hintText: S.of(context).firstName, 
                 errorText: firstNameError,
               ),
 
@@ -294,7 +307,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               _buildTextField(
                 controller: _lastNameController,
                 icon: Icons.person,
-                hintText: "Last Name",
+                hintText: S.of(context).lastName,
                 errorText: lastNameError,
               ),
 
@@ -304,7 +317,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               _buildTextField(
                 controller: _PhoneNumController,
                 icon: Icons.phone,
-                hintText: "Phone Number",
+                hintText: S.of(context).phoneNumber,
                 errorText: phoneNumError,
               ),
 
@@ -332,7 +345,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         child: DropdownButton2<String>(
                           isExpanded: true,
                           value:
-                              ProductData.wilayas.keys.contains(selectedWilaya)
+                              ProductData.wilayas(context).keys.contains(selectedWilaya)
                                   ? selectedWilaya
                                   : null,
                           hint: Row(
@@ -346,7 +359,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                "Select Wilaya",
+                                S.of(context).selectWilaya,
                                 style: TextStyle(
                                   color: isDarkMode
                                       ? Colors.white
@@ -382,7 +395,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           onChanged: (newValue) {
                             if (newValue != null &&
-                                ProductData.wilayas.containsKey(newValue)) {
+                                ProductData.wilayas(context).containsKey(newValue)) {
                               setState(() {
                                 selectedWilaya = newValue;
                                 selectedDaira = null;
@@ -393,7 +406,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             }
                           },
                           selectedItemBuilder: (BuildContext context) {
-                            return ProductData.wilayas.keys.map((wilaya) {
+                            return ProductData.wilayas(context).keys.map((wilaya) {
                               return Row(
                                 children: [
                                   Icon(
@@ -416,7 +429,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               );
                             }).toList();
                           },
-                          items: ProductData.wilayas.keys
+                          items: ProductData.wilayas(context).keys
                               .map<DropdownMenuItem<String>>((wilaya) {
                             return DropdownMenuItem<String>(
                               value: wilaya,
@@ -485,7 +498,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                "Select Daira",
+                                S.of(context).selectDaira,
                                 style: TextStyle(
                                   color: isDarkMode
                                       ? Colors.white
@@ -600,22 +613,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             selectedWilaya == '' ||
                             selectedDaira == '') {
                           if (_firstNameController.text.isEmpty) {
-                            firstNameError = "يرجى إدخال الاسم";
+                            firstNameError = S.of(context).firstNameError;
                           }
                           if (_lastNameController.text.isEmpty) {
-                            lastNameError = "يرجى إدخال اللقب";
+                            lastNameError = S.of(context).lastNameError;
                           }
                           if (_PhoneNumController.text.isEmpty) {
-                            phoneNumError = "يرجى إدخال رقم الهاتف";
+                            phoneNumError = S.of(context).phoneNumError;
                           }
                           if (_PhoneNumController.text.length != 10) {
-                            phoneNumError = "يرجى ادخال 10 ارقام";
+                            phoneNumError = S.of(context).phoneNumLengthError;
                           }
                           if (selectedDaira == '') {
-                            dairaError = "يرجى ادخال الدائرة";
+                            dairaError = S.of(context).dairaError;
                           }
                           if (selectedWilaya == '') {
-                            wilayaError = "يرجى ادخال الولاية";
+                            wilayaError = S.of(context).wilayaError;
                           }
                           //rani dyr validation f onchanged f drop down
                         } else {
@@ -632,7 +645,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),
-                    child: Text("Submit",
+                    child: Text(S.of(context).submit,
                         style: GoogleFonts.roboto(
                             fontSize: 18,
                             color: isDarkMode ? Colors.black : Colors.white)),
@@ -682,13 +695,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Expanded(
                     child: TextField(
                       controller: controller,
-                      inputFormatters: hintText == "Phone Number"
+                      inputFormatters: hintText == S.of(context).phoneNumber
                           ? [
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(10),
                             ]
                           : null,
-                      keyboardType: hintText == "Phone Number"
+                      keyboardType: hintText == S.of(context).phoneNumber
                           ? TextInputType.number
                           : TextInputType.name,
                       style: TextStyle(
