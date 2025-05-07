@@ -1,44 +1,111 @@
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
+import 'dart:io';
+
 import 'package:agriplant/data/ProductData.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:agriplant/Back_end/Product.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
-class AddProductAgriculteur extends StatefulWidget {
-  const AddProductAgriculteur({Key? key}) : super(key: key);
+class AddProducts extends StatefulWidget {
+  const AddProducts({super.key});
 
   @override
-  State<AddProductAgriculteur> createState() => _AddProductAgriculteurState();
+  State<AddProducts> createState() => _AddProductsState();
 }
 
-class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
+class _AddProductsState extends State<AddProducts> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   // Controllers for input fields
   final TextEditingController quantiteController = TextEditingController();
   final TextEditingController surfaceController = TextEditingController();
   final TextEditingController prixController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
+  List<XFile> selectedImages = [];
+  List<String> uploadedPhotos = [];
+
   List<String>? Category;
   List<String>? subCategory;
-  List<String>? Products;
+  List<String>? Product;
+  List<String>? Unit;
 
   String? selectedCategory;
   String? selectedsubCategory;
   String? selectedproduct;
+  String? selectedUnit;
+  String? selectedTypeService;
   String? selectedWilaya;
   String? selectedDaira;
+  String? typeItem;
+
+  String? userType;
+
+  Future<void> fetchUserType() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final docSnapshot =
+          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+      print('${docSnapshot.data()?['activeType']}');
+      if (docSnapshot.exists) {
+        setState(() {
+          userType = docSnapshot.data()?['activeType'];
+          print("$userType");
+          switch (userType) {
+            case 'Agriculteur':
+              typeItem = "Agricole Product";
+              Category = ProductData.getMainCategories(typeItem, context);
+
+              break;
+            case 'Éleveur':
+              typeItem = "Animalier";
+              Category = ProductData.getMainCategories(typeItem, context);
+              break;
+            case 'Commerçant':
+              typeItem = "Commercant Product";
+              Category = ProductData.getMainCategories(typeItem, context);
+              break;
+            case 'Expert Agri':
+              typeItem = "Expertise";
+              //ma7abtch temchi ki 3ayatlha man productData mfhmtch 3leh
+              Category = [
+                "استشارات الزراعة",
+                "خدمات التوعية والتدريب",
+                "التكنولوجيا الزراعية",
+                "خدمات توجيهية للمزارعين",
+                "مراقبة صحة النباتات والحيوانات",
+                "الاستشارات المالية والإدارية",
+              ];
+              break;
+            case 'Transporteur':
+              typeItem = "Transportation";
+              //ma7abtch temchi ki 3ayatlha man productData mfhmtch 3leh
+              Category = ["نقل المواشي", "نقل المحاصيل", "نقل عام"];
+              print(Category);
+              break;
+            case 'Réparateur':
+              typeItem = "Reaparation";
+              Category = ProductData.ReparationType;
+              break;
+            default:
+              print("🚨 Unknown userType: $userType");
+              return;
+          }
+        });
+        print('User type: $userType');
+      } else {
+        print('No such user document found.');
+      }
+    } else {
+      print('User not logged in.');
+    }
+  }
+
   void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    setState(() {
-      Category = ProductData.getMainCategories("AgricolProduct", context);
-      subCategory = ProductData.getSubCategories("AgricolProduct", selectedCategory, context);
-      Products = ProductData.getProduct("AgricolProduct", selectedsubCategory, context);
-    });
-  });
-}
+    super.initState();
+    fetchUserType();
+  }
 
   bool _isLoading = false; // To show a loading indicator
 
@@ -49,12 +116,12 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
     prixController.clear();
     descriptionController.clear();
     setState(() {
+      selectedCategory = null;
       selectedsubCategory = null;
+      selectedproduct = null;
       selectedWilaya = null;
       selectedDaira = null;
-      selectedproduct = null;
-      selectedCategory = null;
-      _selectedImages.clear(); // Reset dropdown value
+      selectedImages.clear(); // Reset dropdown value
     });
   }
 
@@ -73,29 +140,37 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
         _isLoading = true;
       });
 
-      Productagri newProduct = Productagri(
+      Products newProduct = Products(
         id: "", // سيتم تعيينه تلقائيًا في Firestore
-        name: selectedproduct ?? '',
-        typeProduct: "AgricolProduct",
+        ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
+        typeItem: typeItem ?? '', /////////
+        category: selectedCategory,
+        subCategory: selectedsubCategory,
+        product: selectedproduct ?? '',
+        quantity: quantiteController.text.isNotEmpty
+            ? double.tryParse(quantiteController.text)
+            : null,
+        surface: surfaceController.text.isNotEmpty
+            ? double.tryParse(quantiteController.text)
+            : null,
+        unit: selectedUnit ?? '',
+        service: selectedTypeService ?? '',
         price: prixController.text.isNotEmpty
             ? double.tryParse(prixController.text)!
-            : 0.0,
+            : 0,
         description: descriptionController.text,
-        rate: 0,
-        ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
         comments: [],
-        unite: selectedUnite ?? '',
         photos: uploadedPhotos, // ✅ استخدام رابط الصورة هنا
         liked: [],
         disliked: [],
         date_of_add: DateTime.now(),
-        category: selectedCategory,
-        subcategory: selectedsubCategory,
-        quantite: quantiteController.text.isNotEmpty
-            ? double.tryParse(quantiteController.text)
-            : null,
         wilaya: selectedWilaya!,
         daira: selectedDaira!,
+        SP: typeItem == "EleveurProduct" ||
+                typeItem == "CommercantProduct" ||
+                typeItem == "AgricolProduct"
+            ? "Product"
+            : "Service",
       );
 
       await newProduct.addProduct(newProduct);
@@ -128,7 +203,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
   Future<void> uploadSelectedImages() async {
     uploadedPhotos.clear(); // تنظيف القديم
 
-    for (var image in _selectedImages) {
+    for (var image in selectedImages) {
       final file = File(image.path);
       final url = await uploadImageToFirebase(file);
       if (url != null) {
@@ -137,14 +212,11 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
     }
   }
 
-  List<XFile> _selectedImages = [];
-  List<String> uploadedPhotos = [];
-
   Future<void> _pickImages() async {
     final List<XFile> images = await ImagePicker().pickMultiImage();
     if (images.isNotEmpty) {
       setState(() {
-        _selectedImages = images;
+        selectedImages = images;
       });
     }
   }
@@ -154,8 +226,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
     "أراضي": ["م²", "هكتار"],
     "معدات": ["قطعة", "مجموعة"]
   };
-
-  String? selectedUnite;
+  List<String> serviceTypes = ["بيع", "كراء"];
 
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -178,13 +249,6 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Produit Agricole 🌿"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context), // Back button functionality
-        ),
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -202,7 +266,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                     border: Border.all(color: Colors.green),
                     color: Colors.green.shade50,
                   ),
-                  child: _selectedImages.isEmpty
+                  child: selectedImages.isEmpty
                       ? const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -217,14 +281,14 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                         )
                       : ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: _selectedImages.length,
+                          itemCount: selectedImages.length,
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Stack(
                                 children: [
                                   Image.file(
-                                    File(_selectedImages[index].path),
+                                    File(selectedImages[index].path),
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,
@@ -236,7 +300,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                                       onTap: () {
                                         // 👇 هذا التعديل يتم بأمان داخل setState وخارج التكرار
                                         setState(() {
-                                          _selectedImages.removeAt(index);
+                                          selectedImages.removeAt(index);
                                           if (uploadedPhotos.length > index) {
                                             uploadedPhotos.removeAt(index);
                                           }
@@ -262,55 +326,61 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
 
               const SizedBox(height: 15),
 
+// ==========================CATEGORY================================
+              //category
               ProductData.buildDropdown(
                   context: context,
                   selectedValue: selectedCategory,
-                  items: Category!,
-                  label: 'type',
+                  items: Category ?? [],
+                  label: 'category',
                   onChanged: (value) {
                     setState(() {
                       selectedCategory = value;
                       selectedsubCategory = null;
                       selectedproduct = null;
+                      print(selectedCategory);
                     });
                   }),
-              if (selectedCategory == "منتوجات فلاحية")
-                Column(
-                  children: [
-                    ProductData.buildDropdown(
-                      context: context,
-                      selectedValue: selectedsubCategory,
-                      items: (ProductData.agriCategories(context)[selectedCategory])!,
-                      label: 'category',
-                      onChanged: (value) {
-                        setState(() {
-                          selectedsubCategory = value;
-                          selectedproduct = null;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              if ((selectedCategory == "منتوجات فلاحية") &&
-                  selectedsubCategory != null)
-                Column(
-                  children: [
-                    ProductData.buildDropdown(
-                      context: context,
-                      selectedValue: selectedproduct,
-                      items: (ProductData
-                          .agriSubCategories(context)[selectedsubCategory!])!,
-                      label: 'Produit',
-                      onChanged: (value) {
-                        setState(() {
-                          selectedproduct = value;
-                        });
-                      },
-                    ),
-                  ],
+
+//============================SUB CATEGORIES==============================
+
+              if (userType == 'Agriculteur' || userType == 'Commerçant')
+                ProductData.buildDropdown(
+                  context: context,
+                  selectedValue: selectedsubCategory,
+                  items: ProductData.getSubCategories(
+                      typeItem, selectedCategory, context),
+                  label: 'sub category',
+                  onChanged: (value) {
+                    setState(() {
+                      selectedsubCategory = value;
+                      selectedproduct = null;
+                    });
+                  },
                 ),
 
-              if (selectedCategory == "منتوجات فلاحية")
+//=============================PRODUCTS=========================================
+              if (userType != 'Réparateur' && selectedCategory != null)
+                ProductData.buildDropdown(
+                    context: context,
+                    selectedValue: selectedproduct,
+                    items: userType == 'Transporteur'
+                        ? ProductData.moyensDeTransport
+                        : (selectedsubCategory != null
+                            ? ProductData.getProduct(
+                                typeItem, selectedsubCategory!, context)
+                            : ProductData.getProduct(
+                                typeItem, selectedCategory!, context)),
+                    label: 'product',
+                    onChanged: (value) {
+                      setState(() {
+                        selectedproduct = value;
+                      });
+                    }),
+
+//===========================Quantity===================================
+
+              if (userType == "Agriculteur" || userType == "Éleveur") ...[
                 ProductData.buildTextField(
                     controller: quantiteController,
                     hintText: "الكمية",
@@ -322,7 +392,22 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                       }
                       return null;
                     }),
+              ],
+//=======================SERVICES TYPE======================================
+              if (userType == "Commerçant" && selectedCategory != null)
+                ProductData.buildDropdown(
+                  context: context,
+                  selectedValue: selectedTypeService,
+                  items: serviceTypes,
+                  label: 'Rent / Sell',
+                  onChanged: (value) {
+                    setState(() {
+                      selectedTypeService = value;
+                    });
+                  },
+                ),
 
+//=========================SURFACES====================================
               if (selectedCategory == "أراضي")
                 ProductData.buildTextField(
                     controller: surfaceController,
@@ -335,35 +420,34 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                       }
                       return null;
                     }),
-              if (selectedCategory == "منتوجات فلاحية" ||
-                  selectedCategory == "أراضي")
-                ProductData.buildTextField(
-                    controller: prixController,
-                    hintText: "السعر",
-                    icon: Icons.attach_money,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please fill the feild';
-                      }
-                      return null;
-                    }),
-
+//===============================PRICE====================================
+              ProductData.buildTextField(
+                  controller: prixController,
+                  hintText: "السعر",
+                  icon: Icons.attach_money,
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please fill the feild';
+                    }
+                    return null;
+                  }),
+//==============================UNITS================================
               if (selectedCategory != null &&
                   unitsByCategory.containsKey(selectedCategory!))
                 ProductData.buildDropdown(
                   context: context,
-                  selectedValue: selectedUnite,
+                  selectedValue: selectedUnit,
                   items: unitsByCategory[selectedCategory]!,
                   label: 'Unit',
                   onChanged: (value) {
                     setState(() {
-                      selectedUnite = value;
+                      selectedUnit = value;
                     });
                   },
                 ),
 
-              //wilaya selection
+//==============================WILAYA================================
               ProductData.buildDropdown(
                 context: context,
                 selectedValue: selectedWilaya,
@@ -377,7 +461,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                 },
               ),
 
-              //Daira selection
+//==============================DAIRA================================
               if (selectedWilaya != null)
                 ProductData.buildDropdown(
                     context: context,
@@ -390,6 +474,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                       });
                     }),
 
+//==============================DESCRIPTION================================
               ProductData.buildTextField(
                 controller: descriptionController,
                 hintText: "Description",
@@ -399,6 +484,8 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                   return null;
                 },
               ),
+
+//==============================SHARE BUTTON================================
 
               SizedBox(
                 width: double.infinity, // Make the button full width
@@ -434,6 +521,7 @@ class _AddProductAgriculteurState extends State<AddProductAgriculteur> {
                         ),
                       ),
               ),
+//==============================FIN================================
             ],
           ),
         ),

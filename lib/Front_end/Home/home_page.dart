@@ -1,8 +1,5 @@
 import 'package:agriplant/Back_end/User.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Agriculteur.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Client.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Commercant.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Expert.dart';
+import 'package:agriplant/Front_end/Add_Product.dart';
 import 'package:agriplant/Front_end/Home/Sidebar.dart';
 import 'package:agriplant/Front_end/Home/explore_page.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
@@ -14,9 +11,6 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Eleveur.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Reparateur.dart';
-import 'package:agriplant/Front_end/Add%20products%20and%20services%20pages/Add_Product_Transporteur.dart';
 import 'package:agriplant/Front_end/Home/user_type_handler.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   final pages = [
     const ExplorePage(),
     const ServicesPage(),
-    const AddProductClient(),
+    const AddProducts(),
     const MessagesPage(),
     const ProfilePage(),
   ];
@@ -152,69 +146,34 @@ class _HomePageState extends State<HomePage> {
     return "Client"; // Default fallback
   }
 
-void navigateToUserPage(BuildContext context) async {
+  void navigateToUserPage(BuildContext context) async {
     String? selectedType = await getActiveTypeFromFirestore();
 
     if (selectedType == null) {
       print("🚨 User type not found!");
       return;
     }
-
-    Widget page;
-    switch (selectedType) {
-      case 'Agriculteur':
-        page = const AddProductAgriculteur();
-        print("im $selectedType");
-        break;
-      case 'Éleveur':
-        page = const AddProductEleveur();
-        print("im $selectedType");
-        break;
-      case 'Commerçant':
-        page = const AddProductCommercant();
-        print("im $selectedType");
-        break;
-      case 'Expert Agri':
-        page = const AddProductExpert();
-        print("im $selectedType");
-        break;
-      case 'Transporteur':
-        page = const AddProductTransporteur();
-        print("im $selectedType");
-        break;
-      case 'Réparateur':
-        page = const AddProductReparateur();
-        print("im $selectedType");
-        break;
-      default:
-        print("🚨 Unknown userType: $selectedType");
-        return;
-    }
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-
   void showMessagePopup(String? value) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(S.of(context).accessRestricted),
-        content: Text(
-          "${value ?? ''} ${S.of(context).cannotAddProducts}",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(S.of(context).ok),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(S.of(context).accessRestricted),
+          content: Text(
+            "${value ?? ''} ${S.of(context).cannotAddProducts}",
           ),
-        ],
-      );
-    },
-  );
-}
-
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(S.of(context).ok),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -241,7 +200,7 @@ void navigateToUserPage(BuildContext context) async {
             children: [
               if (Users.isGuestUser()) ...[
                 Text(
-                   S.of(context).welcomeMessage,
+                  S.of(context).welcomeMessage,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
@@ -261,9 +220,9 @@ void navigateToUserPage(BuildContext context) async {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                 Text(
-                  selectedType!= null
-                    ? "${S.of(context).the}$selectedType"
-                    : S.of(context).guestSubtitle,
+                  selectedType != null
+                      ? "${S.of(context).the}$selectedType"
+                      : S.of(context).guestSubtitle,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -284,7 +243,7 @@ void navigateToUserPage(BuildContext context) async {
                       ),
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                           SnackBar(
+                          SnackBar(
                             content: Row(
                               children: [
                                 const Icon(
@@ -294,7 +253,7 @@ void navigateToUserPage(BuildContext context) async {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                   S.of(context).guestAccessLimited,
+                                    S.of(context).guestAccessLimited,
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -303,11 +262,12 @@ void navigateToUserPage(BuildContext context) async {
                                 ),
                               ],
                             ),
-                            backgroundColor: const Color.fromARGB(255, 247, 234, 117),
+                            backgroundColor:
+                                const Color.fromARGB(255, 247, 234, 117),
                           ),
                         );
                       },
-                      child:  Center(
+                      child: Center(
                         child: Text(
                           S.of(context).become,
                           style: const TextStyle(
@@ -323,7 +283,7 @@ void navigateToUserPage(BuildContext context) async {
                 onPressed: () {
                   if (Users.isGuestUser()) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(
+                      SnackBar(
                         content: Row(
                           children: [
                             const Icon(
@@ -333,7 +293,7 @@ void navigateToUserPage(BuildContext context) async {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                               S.of(context).guestAccessLimited,
+                                S.of(context).guestAccessLimited,
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,
@@ -342,7 +302,8 @@ void navigateToUserPage(BuildContext context) async {
                             ),
                           ],
                         ),
-                        backgroundColor: const Color.fromARGB(255, 247, 234, 117),
+                        backgroundColor:
+                            const Color.fromARGB(255, 247, 234, 117),
                       ),
                     );
                   } else {
@@ -368,7 +329,7 @@ void navigateToUserPage(BuildContext context) async {
           // Block guest users from accessing "Add"  and "messages" and  "Profile"
           if (Users.isGuestUser() && (index == 2 || index == 3 || index == 4)) {
             ScaffoldMessenger.of(context).showSnackBar(
-               SnackBar(
+              SnackBar(
                 content: Row(
                   children: [
                     const Icon(
@@ -392,23 +353,11 @@ void navigateToUserPage(BuildContext context) async {
             return;
           }
 
-          if (index == 2) {
-            // If "Add" icon is clicked
-            String? activeType = (await getActiveTypeFromFirestore());
-
-       if (activeType == "Client" ||
-                activeType == "Vétérinaire" ||
-                activeType == "Entreprise") {
-              showMessagePopup(
-                  activeType); // Show popup if the user is a client
-            } else {
-             // navigateToUserPage(context);
-            }
-          } else {
+          
             setState(() {
               currentPageIndex = index;
             });
-          }
+          
           _saveLastSelectedPage(index);
         },
         items: const [
