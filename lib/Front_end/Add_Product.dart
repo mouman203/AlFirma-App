@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:agriplant/data/ProductData.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -41,85 +42,289 @@ class _AddProductsState extends State<AddProducts> {
   String? typeItem;
 
   String? userType;
+  
+  // Maps for translation
+  Map<String, String> categoryTranslations = {};
+  Map<String, String> subCategoryTranslations = {};
+  Map<String, String> productTranslations = {};
+  Map<String, String> unitTranslations = {};
+  Map<String, String> serviceTypeTranslations = {};
+  Map<String, String> wilayaTranslations = {};
+  Map<String, String> dairaTranslations = {};
 
-bool _isFormEmpty() {
-  return quantiteController.text.trim().isEmpty &&
-      surfaceController.text.trim().isEmpty &&
-      prixController.text.trim().isEmpty &&
-      descriptionController.text.trim().isEmpty &&
-      (selectedImages.isEmpty) &&
-      (selectedCategory == null || selectedCategory!.isEmpty) &&
-      (selectedsubCategory == null || selectedsubCategory!.isEmpty) &&
-      (selectedTypeService == null || selectedTypeService!.isEmpty) &&
-      (selectedWilaya == null || selectedWilaya!.isEmpty) &&
-      (selectedDaira == null || selectedDaira!.isEmpty) &&
-      (selectedproduct == null || selectedproduct!.isEmpty) &&
-      (selectedUnit == null || selectedUnit!.isEmpty);
-}
+  bool _isFormEmpty() {
+    return quantiteController.text.trim().isEmpty &&
+        surfaceController.text.trim().isEmpty &&
+        prixController.text.trim().isEmpty &&
+        descriptionController.text.trim().isEmpty &&
+        (selectedImages.isEmpty) &&
+        (selectedCategory == null || selectedCategory!.isEmpty) &&
+        (selectedsubCategory == null || selectedsubCategory!.isEmpty) &&
+        (selectedTypeService == null || selectedTypeService!.isEmpty) &&
+        (selectedWilaya == null || selectedWilaya!.isEmpty) &&
+        (selectedDaira == null || selectedDaira!.isEmpty) &&
+        (selectedproduct == null || selectedproduct!.isEmpty) &&
+        (selectedUnit == null || selectedUnit!.isEmpty);
+  }
 
+  // Helper function to convert from localized to Arabic value
+  String getArabicValue(Map<String, String> translationMap, String localizedValue) {
+    final entry = translationMap.entries.firstWhere(
+      (entry) => entry.value == localizedValue,
+      orElse: () => MapEntry(localizedValue, localizedValue),
+    );
+    return entry.key;
+  }
 
-  Future<void> fetchUserType() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null) {
-      final docSnapshot =
-          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-      print('${docSnapshot.data()?['activeType']}');
-      if (docSnapshot.exists) {
-        setState(() {
-          userType = docSnapshot.data()?['activeType'];
-          print("$userType");
-          switch (userType) {
-            case 'Agriculteur':
-              print('222222$Category');
-
-              typeItem = "Agricultural Product";
-              Category = ProductData.getMainCategories(typeItem, context);
-              print('111111$Category');
-
-              break;
-            case 'Éleveur':
-              typeItem = "Animal Product";
-              Category = ProductData.getMainCategories(typeItem, context);
-              break;
-            case 'Commerçant':
-              typeItem = "Commercial Product";
-              Category = ProductData.getMainCategories(typeItem, context);
-              break;
-            case 'Expert Agri':
-              typeItem = "Expertise";
-              //ma7abtch temchi ki 3ayatlha man productData mfhmtch 3leh
-              Category = [
-                "استشارات الزراعة",
-                "خدمات التوعية والتدريب",
-                "التكنولوجيا الزراعية",
-                "خدمات توجيهية للمزارعين",
-                "مراقبة صحة النباتات والحيوانات",
-                "الاستشارات المالية والإدارية",
-              ];
-              break;
-            case 'Transporteur':
-              typeItem = "Transportation";
-              //ma7abtch temchi ki 3ayatlha man productData mfhmtch 3leh
-              Category = ["نقل المواشي", "نقل المحاصيل", "نقل عام"];
-              print(Category);
-              break;
-            case 'Réparateur':
-              typeItem = "Repairs";
-              Category = ProductData.ReparationType;
-              break;
-            default:
-              print("🚨 Unknown userType: $userType");
-              return;
-          }
-        });
-        print('User type: $userType');
-      } else {
-        print('No such user document found.');
+  // Initialize translation maps
+  void _initTranslationMaps() {
+    // Initialize category translations
+    if (typeItem != null) {
+      switch (typeItem) {
+        case "Agricultural Product":
+          _initAgriCategoryTranslations();
+          break;
+        case "Animal Product":
+          _initAnimalProductTranslations();
+          break;
+        case "Commercial Product":
+          _initCommercialProductTranslations();
+          break;
+        case "Expertise":
+          _initExpertiseTranslations();
+          break;
+        case "Transportation":
+          _initTransportationTranslations();
+          break;
+        case "Repairs":
+          _initRepairTranslations();
+          break;
       }
-    } else {
-      print('User not logged in.');
+    }
+
+    // Initialize service types translations
+    serviceTypeTranslations = {
+      "بيع": S.of(context).sell,
+      "كراء": S.of(context).rent,
+    };
+
+    // Initialize units translations
+    unitTranslations = {
+      "كلغ": S.of(context).kg,
+      "طن": S.of(context).ton,
+      "لتر": S.of(context).liter,
+      "صندوق": S.of(context).box,
+      "م²": S.of(context).squareMeter,
+      "هكتار": S.of(context).hectare,
+      "قطعة": S.of(context).piece,
+      "مجموعة": S.of(context).set,
+    };
+
+    // Initialize wilaya and daira translations
+    _initWilayaAndDairaTranslations();
+  }
+
+  void _initAgriCategoryTranslations() {
+    // Map for main agricultural categories
+    final arabicMap = ProductData.agriCategories;
+    final localizedMap = ProductData.agriCategoriesT(context);
+    
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+    
+    // Map for subcategories
+    final arabicSubMap = ProductData.agriSubCategories;
+    final localizedSubMap = ProductData.agriSubCategoriesT(context);
+    
+    _mapTranslations(arabicSubMap, localizedSubMap, subCategoryTranslations);
+  }
+
+  void _initAnimalProductTranslations() {
+    final arabicMap = ProductData.produitsElevages;
+    final localizedMap = ProductData.produitsElevagesT(context);
+    
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+    
+    // Animal products don't have separate subcategories in the provided code
+    // So we'll use the same mapping for products
+    _mapTranslations(arabicMap, localizedMap, subCategoryTranslations);
+  }
+
+  void _initCommercialProductTranslations() {
+    final arabicMap = ProductData.commercantCategories;
+    final localizedMap = ProductData.commercantCategoriesT(context);
+    
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+    
+    // Map for equipment subcategories
+    final arabicEquipMap = ProductData.equipmentCategories;
+    final localizedEquipMap = ProductData.equipmentCategoriesT(context);
+    
+    _mapTranslations(arabicEquipMap, localizedEquipMap, subCategoryTranslations);
+  }
+
+  void _initExpertiseTranslations() {
+    final arabicMap = ProductData.ExpertProducts;
+    final localizedMap = ProductData.expertProductsT(context);
+    
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+  }
+
+  void _initTransportationTranslations() {
+    // Transportation has simple lists, not maps
+    final transportCategories = ["نقل المواشي", "نقل المحاصيل", "نقل عام"];
+    final localizedTransportCategories = [
+      S.of(context).livestockTransport,
+      S.of(context).cropTransport,
+      S.of(context).generalTransport,
+    ];
+    
+    for (int i = 0; i < transportCategories.length; i++) {
+      if (i < localizedTransportCategories.length) {
+        categoryTranslations[transportCategories[i]] = localizedTransportCategories[i];
+      }
+    }
+    
+    // For transport product types
+    final arabicTransport = ProductData.moyensDeTransport;
+    final localizedTransport = ProductData.moyensDeTransportT(context);
+    
+    for (int i = 0; i < arabicTransport.length; i++) {
+      if (i < localizedTransport.length) {
+        productTranslations[arabicTransport[i]] = localizedTransport[i];
+      }
     }
   }
+
+  void _initRepairTranslations() {
+    final arabicRepair = ProductData.ReparationType;
+    final localizedRepair = ProductData.reparationTypeT(context);
+    
+    for (int i = 0; i < arabicRepair.length; i++) {
+      if (i < localizedRepair.length) {
+        categoryTranslations[arabicRepair[i]] = localizedRepair[i];
+      }
+    }
+  }
+
+  void _initWilayaAndDairaTranslations() {
+    final arabicMap = ProductData.wilayas;
+    final localizedMap = ProductData.wilayasT(context);
+    
+    final arabicWilayasList = arabicMap.keys.toList();
+    final localizedWilayasList = localizedMap.keys.toList();
+    
+    for (int i = 0; i < arabicWilayasList.length; i++) {
+      final arabicWilaya = arabicWilayasList[i];
+      if (i >= localizedWilayasList.length) continue; // safeguard
+      final localizedWilaya = localizedWilayasList[i];
+      
+      wilayaTranslations[arabicWilaya] = localizedWilaya;
+      wilayaTranslations[localizedWilaya] = arabicWilaya; // Bidirectional mapping
+      
+      final arabicDairas = arabicMap[arabicWilaya]!;
+      final localizedDairas = localizedMap[localizedWilaya]!;
+      
+      for (int j = 0; j < arabicDairas.length; j++) {
+        if (j >= localizedDairas.length) continue;
+        dairaTranslations[arabicDairas[j]] = localizedDairas[j];
+        dairaTranslations[localizedDairas[j]] = arabicDairas[j]; // Bidirectional mapping
+      }
+    }
+  }
+
+  void _mapTranslations(Map<String, List<String>> arabicMap, 
+                        Map<String, List<String>> localizedMap,
+                        Map<String, String> targetMap) {
+    // Map main categories
+    arabicMap.forEach((arabicKey, arabicValues) {
+      // Find the matching localized key
+      String? localizedKey = localizedMap.keys.firstWhere(
+        (key) => localizedMap[key]!.length == arabicValues.length,
+        orElse: () => arabicKey,
+      );
+      
+      // Add to translation map
+      targetMap[arabicKey] = localizedKey;
+      targetMap[localizedKey] = arabicKey; // Add reverse mapping
+      
+      // Map values (products)
+      List<String> localizedValues = localizedMap[localizedKey] ?? [];
+      for (int i = 0; i < arabicValues.length; i++) {
+        if (i < localizedValues.length) {
+          productTranslations[arabicValues[i]] = localizedValues[i];
+          productTranslations[localizedValues[i]] = arabicValues[i]; // Add reverse mapping
+        }
+      }
+    });
+  }
+
+  Future<void> fetchUserType() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid != null) {
+    final docSnapshot =
+        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+
+    if (docSnapshot.exists) {
+      final fetchedType = docSnapshot.data()?['activeType'];
+      print('Fetched userType: $fetchedType');
+
+      if (!mounted) return; // 👈 Check if widget is still mounted
+
+      setState(() {
+        userType = fetchedType;
+        print("userType set to: $userType");
+
+        switch (userType) {
+          case 'Agriculteur':
+            typeItem = "Agricultural Product";
+            Category = ProductData.getMainCategories(typeItem, context);
+            break;
+          case 'Éleveur':
+            typeItem = "Animal Product";
+            Category = ProductData.getMainCategories(typeItem, context);
+            break;
+          case 'Commerçant':
+            typeItem = "Commercial Product";
+            Category = ProductData.getMainCategories(typeItem, context);
+            break;
+          case 'Expert Agri':
+            typeItem = "Expertise";
+            Category = [
+              S.of(context).agricultureConsulting,
+              S.of(context).trainingServices,
+              S.of(context).agriTech,
+              S.of(context).farmerGuidance,
+              S.of(context).plantAnimalHealth,
+              S.of(context).financeAdminConsulting,
+            ];
+            break;
+          case 'Transporteur':
+            typeItem = "Transportation";
+            Category = [
+              S.of(context).livestockTransport,
+              S.of(context).cropTransport,
+              S.of(context).generalTransport,
+            ];
+            break;
+          case 'Réparateur':
+            typeItem = "Repairs";
+            Category = ProductData.reparationTypeT(context);
+            break;
+          default:
+            print("🚨 Unknown userType: $userType");
+            return;
+        }
+
+        _initTranslationMaps();
+      });
+
+    } else {
+      print('No such user document found.');
+    }
+  } else {
+    print('User not logged in.');
+  }
+}
 
   void initState() {
     super.initState();
@@ -140,7 +345,9 @@ bool _isFormEmpty() {
       selectedproduct = null;
       selectedWilaya = null;
       selectedDaira = null;
-      selectedImages.clear(); // Reset dropdown value
+      selectedUnit = null;
+      selectedTypeService = null;
+      selectedImages.clear();
     });
   }
 
@@ -159,21 +366,50 @@ bool _isFormEmpty() {
         _isLoading = true;
       });
 
+      // Convert from localized values to Arabic values for storage
+      String? arabicCategory = selectedCategory != null 
+          ? getArabicValue(categoryTranslations, selectedCategory!)
+          : null;
+          
+      String? arabicSubCategory = selectedsubCategory != null 
+          ? getArabicValue(subCategoryTranslations, selectedsubCategory!)
+          : null;
+          
+      String? arabicProduct = selectedproduct != null 
+          ? getArabicValue(productTranslations, selectedproduct!)
+          : null;
+          
+      String? arabicUnit = selectedUnit != null 
+          ? getArabicValue(unitTranslations, selectedUnit!)
+          : null;
+          
+      String? arabicService = selectedTypeService != null 
+          ? getArabicValue(serviceTypeTranslations, selectedTypeService!)
+          : null;
+          
+      String? arabicWilaya = selectedWilaya != null 
+          ? getArabicValue(wilayaTranslations, selectedWilaya!)
+          : null;
+          
+      String? arabicDaira = selectedDaira != null 
+          ? getArabicValue(dairaTranslations, selectedDaira!)
+          : null;
+          
       Products newProduct = Products(
         id: "", // سيتم تعيينه تلقائيًا في Firestore
         ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
         typeItem: typeItem ?? '', /////////
-        category: selectedCategory,
-        subCategory: selectedsubCategory,
-        product: selectedproduct ?? '',
+         category: arabicCategory,
+        subCategory: arabicSubCategory,
+        product: arabicProduct ?? '',
         quantity: quantiteController.text.isNotEmpty
             ? double.tryParse(quantiteController.text)
             : null,
         surface: surfaceController.text.isNotEmpty
             ? double.tryParse(quantiteController.text)
             : null,
-        unit: selectedUnit ?? '',
-        service: selectedTypeService ?? '',
+        unit: arabicUnit,
+        service: arabicService,
         price: prixController.text.isNotEmpty
             ? double.tryParse(prixController.text)!
             : 0,
@@ -183,8 +419,8 @@ bool _isFormEmpty() {
         liked: [],
         disliked: [],
         date_of_add: DateTime.now(),
-        wilaya: selectedWilaya!,
-        daira: selectedDaira!,
+        wilaya: arabicWilaya,
+        daira: arabicDaira,
         SP: typeItem == "EleveurProduct" ||
                 typeItem == "CommercantProduct" ||
                 typeItem == "AgricolProduct"
@@ -264,9 +500,32 @@ bool _isFormEmpty() {
       },
     );
   }
-
+  Map<String, List<String>> getLocalizedUnitsByCategory() {
+    return {
+      S.of(context).agriculturalProducts: [
+        S.of(context).kg, 
+        S.of(context).ton, 
+        S.of(context).liter, 
+        S.of(context).box
+      ],
+      S.of(context).lands: [
+        S.of(context).squareMeter, 
+        S.of(context).hectare
+      ],
+      S.of(context).equipment: [
+        S.of(context).piece, 
+        S.of(context).set
+      ]
+    };
+  }
+  
+  List<String> getLocalizedServiceTypes() {
+    return [S.of(context).sell, S.of(context).rent];
+  }
   @override
   Widget build(BuildContext context) {
+      final localizedUnitsByCategory = getLocalizedUnitsByCategory();
+    final localizedServiceTypes = getLocalizedServiceTypes();
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -417,7 +676,7 @@ bool _isFormEmpty() {
                 ProductData.buildDropdown(
                   context: context,
                   selectedValue: selectedTypeService,
-                  items: serviceTypes,
+                  items: localizedServiceTypes,
                   label: 'Rent / Sell',
                   onChanged: (value) {
                     setState(() {
@@ -452,12 +711,13 @@ bool _isFormEmpty() {
                     return null;
                   }),
 //==============================UNITS================================
-              if (selectedCategory != null &&
-                  unitsByCategory.containsKey(selectedCategory!))
+
+               if (selectedCategory != null &&
+                  localizedUnitsByCategory.containsKey(selectedCategory!))
                 ProductData.buildDropdown(
                   context: context,
                   selectedValue: selectedUnit,
-                  items: unitsByCategory[selectedCategory]!,
+                  items: localizedUnitsByCategory[selectedCategory!]!,
                   label: 'Unit',
                   onChanged: (value) {
                     setState(() {
@@ -470,7 +730,7 @@ bool _isFormEmpty() {
               ProductData.buildDropdown(
                 context: context,
                 selectedValue: selectedWilaya,
-                items: ProductData.wilayas(context).keys.toList(),
+                items: ProductData.wilayasT(context).keys.toList(),
                 label: 'Wilaya',
                 onChanged: (value) {
                   setState(() {
@@ -485,7 +745,7 @@ bool _isFormEmpty() {
                 ProductData.buildDropdown(
                     context: context,
                     selectedValue: selectedDaira,
-                    items: ProductData.wilayas(context)[selectedWilaya]!,
+                    items: ProductData.wilayasT(context)[selectedWilaya]!,
                     label: 'Daira',
                     onChanged: (value) {
                       setState(() {

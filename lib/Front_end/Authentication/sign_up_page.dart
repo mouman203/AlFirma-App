@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
+import 'package:agriplant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,14 +40,47 @@ class _SignUpPageState extends State<SignUpPage> {
   String? _selectedWilaya;
   String? _selectedDaira;
 
+  // Variables to store Arabic versions
+  String? _selectedWilayaArabic;
+  String? _selectedDairaArabic;
+
+  // Translation map for conversion between localized and Arabic names
+  late Map<String, String> _translationMap;
+  late Map<String, String> _reverseTranslationMap;
+
   // List to store Dairas based on selected Wilaya
   List<String> availableDairas = [];
-  void updateDairaList(String wilaya) {
-    setState(() {
-      availableDairas = ProductData.wilayas(context)[wilaya] ?? [];
+
+  @override
+  void initState() {
+    super.initState();
+    // We'll initialize the translation maps when the widget is inserted in the tree
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initTranslationMaps();
     });
   }
 
+  void _initTranslationMaps() {
+    // Build the translation map from Arabic to localized
+    _translationMap = ProductData.buildDairaTranslationMap(context);
+
+    // Build reverse translation map from localized to Arabic
+    _reverseTranslationMap = {};
+    _translationMap.forEach((arabic, localized) {
+      _reverseTranslationMap[localized] = arabic;
+    });
+  }
+
+  void updateDairaList(String wilaya) {
+    setState(() {
+      availableDairas = ProductData.wilayasT(context)[wilaya] ?? [];
+
+      // Store the Arabic version of the selected wilaya
+      _selectedWilayaArabic = _reverseTranslationMap[wilaya];
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -80,14 +114,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 10), // Space for the back button
-                    Text("WELCOME",
+                    Text(S.of(context).welcome,
                         style: GoogleFonts.roboto(
                             fontSize: 40, fontWeight: FontWeight.bold)),
-                    Text("Join our platform and get started",
+                    Text(S.of(context).joinOurPlatform,
                         style: GoogleFonts.roboto(
                           fontSize: 18,
                         )),
-
                     const SizedBox(height: 46),
 
                     // First Name field
@@ -95,7 +128,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: _firstNameController,
                       keyType: TextInputType.name,
                       icon: Icons.person,
-                      hintText: "First Name",
+                      hintText: S.of(context).firstName,
                       errorText: firstNameError,
                     ),
 
@@ -105,7 +138,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: _lastNameController,
                       keyType: TextInputType.name,
                       icon: Icons.person,
-                      hintText: "Last Name",
+                      hintText: S.of(context).lastName,
                       errorText: lastNameError,
                     ),
                     const SizedBox(height: 20),
@@ -115,7 +148,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: _emailController,
                       keyType: TextInputType.emailAddress,
                       icon: Icons.email,
-                      hintText: "Email",
+                      hintText: S.of(context).email,
                       errorText: emailError,
                     ),
                     const SizedBox(height: 20),
@@ -125,7 +158,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: _phoneController,
                       keyType: TextInputType.number,
                       icon: Icons.phone,
-                      hintText: "Phone Number",
+                      hintText: S.of(context).phoneNumber,
                       errorText: phoneError,
                     ),
                     const SizedBox(height: 20),
@@ -166,7 +199,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      "Select Wilaya",
+                                      S.of(context).selectWilaya,
                                       style: TextStyle(
                                         color: isDarkMode
                                             ? Colors.white
@@ -208,13 +241,19 @@ class _SignUpPageState extends State<SignUpPage> {
                                     _selectedDaira = null;
                                     wilayaError = null;
                                     dairaError = null;
+
+                                    // Store the Arabic name when selecting wilaya
+                                    _selectedWilayaArabic =
+                                        _reverseTranslationMap[newValue];
                                   });
                                   if (newValue != null) {
                                     updateDairaList(newValue);
                                   }
                                 },
                                 selectedItemBuilder: (BuildContext context) {
-                                  return ProductData.wilayas(context).keys.map((wilaya) {
+                                  return ProductData.wilayasT(context)
+                                      .keys
+                                      .map((wilaya) {
                                     return Row(
                                       children: [
                                         Icon(
@@ -237,7 +276,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     );
                                   }).toList();
                                 },
-                                items: ProductData.wilayas(context).keys
+                                items: ProductData.wilayasT(context)
+                                    .keys
                                     .map<DropdownMenuItem<String>>((wilaya) {
                                   return DropdownMenuItem<String>(
                                     value: wilaya,
@@ -306,7 +346,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      "Select Daira",
+                                      S.of(context).selectDaira,
                                       style: TextStyle(
                                         color: isDarkMode
                                             ? Colors.white
@@ -346,6 +386,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                   setState(() {
                                     _selectedDaira = newValue;
                                     dairaError = null;
+
+                                    // Store the Arabic name when selecting daira
+                                    _selectedDairaArabic =
+                                        _reverseTranslationMap[newValue];
                                   });
                                 },
                                 selectedItemBuilder: (BuildContext context) {
@@ -402,14 +446,13 @@ class _SignUpPageState extends State<SignUpPage> {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 20),
 
                     // Password field
                     _buildPasswordField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
-                      hintText: "Password",
+                      hintText: S.of(context).passwordHint,
                       errorText: passwordError,
                       toggleObscure: () {
                         setState(() {
@@ -423,7 +466,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     _buildPasswordField(
                       controller: _confirmPasswordController,
                       obscureText: _obscureConfirmPassword,
-                      hintText: "Confirm Password",
+                      hintText: S.of(context).confirmPassword,
                       errorText: confirmPasswordError,
                       toggleObscure: () {
                         setState(() {
@@ -452,28 +495,29 @@ class _SignUpPageState extends State<SignUpPage> {
                               dairaError = null;
 
                               if (_firstNameController.text.isEmpty) {
-                                firstNameError = "يرجى إدخال الاسم";
+                                firstNameError = S.of(context).firstNameError;
                               }
                               if (_lastNameController.text.isEmpty) {
-                                lastNameError = "يرجى إدخال اللقب";
+                                lastNameError = S.of(context).lastNameError;
                               }
                               if (_emailController.text.isEmpty) {
-                                emailError = "يرجى إدخال البريد الإلكتروني";
+                                emailError = S.of(context).emailError;
                               }
                               if (_phoneController.text.isEmpty) {
-                                phoneError = "يرجى إدخال رقم الهاتف";
+                                phoneError = S.of(context).phoneNumError;
                               }
                               if (_passwordController.text.isEmpty) {
-                                passwordError = "يرجى إدخال كلمة المرور";
+                                passwordError = S.of(context).passwordError;
                               }
                               if (_confirmPasswordController.text.isEmpty) {
-                                confirmPasswordError = "يرجى تأكيد كلمة المرور";
+                                confirmPasswordError =
+                                    S.of(context).confirmPasswordError;
                               }
                               if (_selectedWilaya == null) {
-                                wilayaError = "يرجى اختيار الولاية";
+                                wilayaError = S.of(context).wilayaError;
                               }
                               if (_selectedDaira == null) {
-                                dairaError = "يرجى اختيار الدائرة";
+                                dairaError = S.of(context).dairaError;
                               }
 
                               // Validation failed
@@ -487,19 +531,25 @@ class _SignUpPageState extends State<SignUpPage> {
                                   dairaError != null) return;
 
                               if (!user.isEmailValid(_emailController.text)) {
-                                emailError = "البريد الإلكتروني غير صالح";
+                                emailError = S.of(context).invalidEmailError;
                               } else if (!user
                                   .isPasswordValid(_passwordController.text)) {
                                 passwordError =
-                                    "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل";
+                                    S.of(context).password_min_length;
                               } else if (_passwordController.text !=
                                   _confirmPasswordController.text) {
                                 confirmPasswordError =
-                                    "كلمة المرور غير متطابقة";
+                                    S.of(context).passwords_do_not_match;
                               } else if (!user
                                   .isPhoneValid(_phoneController.text)) {
-                                phoneError = "رقم الهاتف غير صالح";
+                                phoneError = S.of(context).invalidPhoneError;
                               } else {
+                                // Use the Arabic versions for storage in Firestore
+                                // If no Arabic version is found, fallback to the selected (localized) value
+                                final wilayaToStore =
+                                    _selectedWilayaArabic ?? _selectedWilaya!;
+                                final dairaToStore =
+                                    _selectedDairaArabic ?? _selectedDaira!;
                                 user.signUp(
                                   context: context,
                                   email: _emailController.text,
@@ -507,11 +557,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                   confirmationpassword:
                                       _confirmPasswordController.text,
                                   phone: _phoneController.text,
-                                  wilaya: _selectedWilaya ?? '',
+                                  wilaya: wilayaToStore,
                                   first_name: _firstNameController.text,
                                   last_name: _lastNameController.text,
                                   verify: false,
-                                  daira: _selectedDaira ?? '',
+                                  daira: dairaToStore,
                                 );
                               }
                             });
@@ -525,7 +575,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 15),
                           ),
-                          child: Text("Sign Up",
+                          child: Text(S.of(context).signup,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: isDarkMode
@@ -585,7 +635,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               ? Colors.white
                               : const Color(0xFF256C4C)),
                       controller: controller,
-                      inputFormatters: hintText == "Phone Number"
+                      inputFormatters: hintText == S.of(context).phoneNumber
                           ? [
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(10),

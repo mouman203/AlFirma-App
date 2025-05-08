@@ -192,7 +192,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   buildDropdown(
                     value: selectedFinalItem,
                     items:
-                        ProductData.agriSubCategories(context)[selectedSubCategory!] ??
+                        ProductData.agriSubCategoriesT(context)[selectedSubCategory!] ??
                             [],
                     hint: "اختر منتوج",
                     onChanged: (val) {
@@ -206,7 +206,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   buildDropdown(
                     value: selectedFinalItem,
                     items:
-                        ProductData.equipmentCategories(context)[selectedSubCategory!] ??
+                        ProductData.equipmentCategoriesT(context)[selectedSubCategory!] ??
                             [],
                     hint: "اختر المعدة",
                     onChanged: (val) {
@@ -236,7 +236,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 if (selectedWilaya != null)
                   buildDropdown(
                     value: selectedDaira,
-                    items: ProductData.wilayas(context)[selectedWilaya!] ?? [],
+                    items: ProductData.wilayasT(context)[selectedWilaya!] ?? [],
                     hint: 'Select Daira',
                     onChanged: (value) {
                       setState(() {

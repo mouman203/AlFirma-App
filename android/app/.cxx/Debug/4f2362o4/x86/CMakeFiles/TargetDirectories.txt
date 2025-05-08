@@ -1,0 +1,2 @@
+C:/Users/SURFACE/Desktop/Start-up-2/android/app/.cxx/Debug/4f2362o4/x86/CMakeFiles/edit_cache.dir
+C:/Users/SURFACE/Desktop/Start-up-2/android/app/.cxx/Debug/4f2362o4/x86/CMakeFiles/rebuild_cache.dir

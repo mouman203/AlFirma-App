@@ -1025,20 +1025,20 @@ class S {
     return Intl.message('من نحن', name: 'aboutUs', desc: '', args: []);
   }
 
-  /// `👋🏼مرحبًا `
+  /// `مرحبًا👋🏼`
   String get welcomeMessage {
     return Intl.message(
-      '👋🏼مرحبًا ',
+      'مرحبًا👋🏼',
       name: 'welcomeMessage',
       desc: '',
       args: [],
     );
   }
 
-  /// ` 🔍 استمتع بتصفح التطبيق `
+  /// `🔍استمتع بتصفح التطبيق `
   String get guestSubtitle {
     return Intl.message(
-      ' 🔍 استمتع بتصفح التطبيق ',
+      '🔍استمتع بتصفح التطبيق ',
       name: 'guestSubtitle',
       desc: '',
       args: [],
@@ -5410,6 +5410,751 @@ class S {
     return Intl.message(
       'هذا النوع غير مفعل من طرف الإدارة',
       name: 'alertContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `01 - أدرار`
+  String get wilaya01 {
+    return Intl.message('01 - أدرار', name: 'wilaya01', desc: '', args: []);
+  }
+
+  /// `02 - الشلف`
+  String get wilaya02 {
+    return Intl.message('02 - الشلف', name: 'wilaya02', desc: '', args: []);
+  }
+
+  /// `03 - الأغواط`
+  String get wilaya03 {
+    return Intl.message('03 - الأغواط', name: 'wilaya03', desc: '', args: []);
+  }
+
+  /// `04 - أم البواقي`
+  String get wilaya04 {
+    return Intl.message(
+      '04 - أم البواقي',
+      name: 'wilaya04',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `05 - باتنة`
+  String get wilaya05 {
+    return Intl.message('05 - باتنة', name: 'wilaya05', desc: '', args: []);
+  }
+
+  /// `06 - بجاية`
+  String get wilaya06 {
+    return Intl.message('06 - بجاية', name: 'wilaya06', desc: '', args: []);
+  }
+
+  /// `07 - بسكرة`
+  String get wilaya07 {
+    return Intl.message('07 - بسكرة', name: 'wilaya07', desc: '', args: []);
+  }
+
+  /// `08 - بشار`
+  String get wilaya08 {
+    return Intl.message('08 - بشار', name: 'wilaya08', desc: '', args: []);
+  }
+
+  /// `09 - البليدة`
+  String get wilaya09 {
+    return Intl.message('09 - البليدة', name: 'wilaya09', desc: '', args: []);
+  }
+
+  /// `10 - البويرة`
+  String get wilaya10 {
+    return Intl.message('10 - البويرة', name: 'wilaya10', desc: '', args: []);
+  }
+
+  /// `11 - تمنراست`
+  String get wilaya11 {
+    return Intl.message('11 - تمنراست', name: 'wilaya11', desc: '', args: []);
+  }
+
+  /// `12 - تبسة`
+  String get wilaya12 {
+    return Intl.message('12 - تبسة', name: 'wilaya12', desc: '', args: []);
+  }
+
+  /// `13 - تلمسان`
+  String get wilaya13 {
+    return Intl.message('13 - تلمسان', name: 'wilaya13', desc: '', args: []);
+  }
+
+  /// `14 - تيارت`
+  String get wilaya14 {
+    return Intl.message('14 - تيارت', name: 'wilaya14', desc: '', args: []);
+  }
+
+  /// `15 - تيزي وزو`
+  String get wilaya15 {
+    return Intl.message('15 - تيزي وزو', name: 'wilaya15', desc: '', args: []);
+  }
+
+  /// `16 - الجزائر`
+  String get wilaya16 {
+    return Intl.message('16 - الجزائر', name: 'wilaya16', desc: '', args: []);
+  }
+
+  /// `17 - الجلفة`
+  String get wilaya17 {
+    return Intl.message('17 - الجلفة', name: 'wilaya17', desc: '', args: []);
+  }
+
+  /// `18 - جيجل`
+  String get wilaya18 {
+    return Intl.message('18 - جيجل', name: 'wilaya18', desc: '', args: []);
+  }
+
+  /// `19 - سطيف`
+  String get wilaya19 {
+    return Intl.message('19 - سطيف', name: 'wilaya19', desc: '', args: []);
+  }
+
+  /// `20 - سعيدة`
+  String get wilaya20 {
+    return Intl.message('20 - سعيدة', name: 'wilaya20', desc: '', args: []);
+  }
+
+  /// `21 - سكيكدة`
+  String get wilaya21 {
+    return Intl.message('21 - سكيكدة', name: 'wilaya21', desc: '', args: []);
+  }
+
+  /// `22 - سيدي بلعباس`
+  String get wilaya22 {
+    return Intl.message(
+      '22 - سيدي بلعباس',
+      name: 'wilaya22',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `23 - عنابة`
+  String get wilaya23 {
+    return Intl.message('23 - عنابة', name: 'wilaya23', desc: '', args: []);
+  }
+
+  /// `24 - قالمة`
+  String get wilaya24 {
+    return Intl.message('24 - قالمة', name: 'wilaya24', desc: '', args: []);
+  }
+
+  /// `25 - قسنطينة`
+  String get wilaya25 {
+    return Intl.message('25 - قسنطينة', name: 'wilaya25', desc: '', args: []);
+  }
+
+  /// `26 - المدية`
+  String get wilaya26 {
+    return Intl.message('26 - المدية', name: 'wilaya26', desc: '', args: []);
+  }
+
+  /// `27 - مستغانم`
+  String get wilaya27 {
+    return Intl.message('27 - مستغانم', name: 'wilaya27', desc: '', args: []);
+  }
+
+  /// `28 - المسيلة`
+  String get wilaya28 {
+    return Intl.message('28 - المسيلة', name: 'wilaya28', desc: '', args: []);
+  }
+
+  /// `29 - معسكر`
+  String get wilaya29 {
+    return Intl.message('29 - معسكر', name: 'wilaya29', desc: '', args: []);
+  }
+
+  /// `30 - ورقلة`
+  String get wilaya30 {
+    return Intl.message('30 - ورقلة', name: 'wilaya30', desc: '', args: []);
+  }
+
+  /// `31 - وهران`
+  String get wilaya31 {
+    return Intl.message('31 - وهران', name: 'wilaya31', desc: '', args: []);
+  }
+
+  /// `32 - البيض`
+  String get wilaya32 {
+    return Intl.message('32 - البيض', name: 'wilaya32', desc: '', args: []);
+  }
+
+  /// `33 - إليزي`
+  String get wilaya33 {
+    return Intl.message('33 - إليزي', name: 'wilaya33', desc: '', args: []);
+  }
+
+  /// `34 - برج بوعريريج`
+  String get wilaya34 {
+    return Intl.message(
+      '34 - برج بوعريريج',
+      name: 'wilaya34',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `35 - بومرداس`
+  String get wilaya35 {
+    return Intl.message('35 - بومرداس', name: 'wilaya35', desc: '', args: []);
+  }
+
+  /// `36 - الطارف`
+  String get wilaya36 {
+    return Intl.message('36 - الطارف', name: 'wilaya36', desc: '', args: []);
+  }
+
+  /// `37 - تندوف`
+  String get wilaya37 {
+    return Intl.message('37 - تندوف', name: 'wilaya37', desc: '', args: []);
+  }
+
+  /// `38 - تيسمسيلت`
+  String get wilaya38 {
+    return Intl.message('38 - تيسمسيلت', name: 'wilaya38', desc: '', args: []);
+  }
+
+  /// `39 - الوادي`
+  String get wilaya39 {
+    return Intl.message('39 - الوادي', name: 'wilaya39', desc: '', args: []);
+  }
+
+  /// `40 - خنشلة`
+  String get wilaya40 {
+    return Intl.message('40 - خنشلة', name: 'wilaya40', desc: '', args: []);
+  }
+
+  /// `41 - سوق أهراس`
+  String get wilaya41 {
+    return Intl.message('41 - سوق أهراس', name: 'wilaya41', desc: '', args: []);
+  }
+
+  /// `42 - تيبازة`
+  String get wilaya42 {
+    return Intl.message('42 - تيبازة', name: 'wilaya42', desc: '', args: []);
+  }
+
+  /// `43 - ميلة`
+  String get wilaya43 {
+    return Intl.message('43 - ميلة', name: 'wilaya43', desc: '', args: []);
+  }
+
+  /// `44 - عين الدفلى`
+  String get wilaya44 {
+    return Intl.message(
+      '44 - عين الدفلى',
+      name: 'wilaya44',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `45 - النعامة`
+  String get wilaya45 {
+    return Intl.message('45 - النعامة', name: 'wilaya45', desc: '', args: []);
+  }
+
+  /// `46 - عين تموشنت`
+  String get wilaya46 {
+    return Intl.message(
+      '46 - عين تموشنت',
+      name: 'wilaya46',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `47 - غرداية`
+  String get wilaya47 {
+    return Intl.message('47 - غرداية', name: 'wilaya47', desc: '', args: []);
+  }
+
+  /// `48 - غليزان`
+  String get wilaya48 {
+    return Intl.message('48 - غليزان', name: 'wilaya48', desc: '', args: []);
+  }
+
+  /// `49 - تميمون`
+  String get wilaya49 {
+    return Intl.message('49 - تميمون', name: 'wilaya49', desc: '', args: []);
+  }
+
+  /// `50 - برج باجي مختار`
+  String get wilaya50 {
+    return Intl.message(
+      '50 - برج باجي مختار',
+      name: 'wilaya50',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `51 - أولاد جلال`
+  String get wilaya51 {
+    return Intl.message(
+      '51 - أولاد جلال',
+      name: 'wilaya51',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `52 - بني عباس`
+  String get wilaya52 {
+    return Intl.message('52 - بني عباس', name: 'wilaya52', desc: '', args: []);
+  }
+
+  /// `53 - عين صالح`
+  String get wilaya53 {
+    return Intl.message('53 - عين صالح', name: 'wilaya53', desc: '', args: []);
+  }
+
+  /// `54 - عين قزام`
+  String get wilaya54 {
+    return Intl.message('54 - عين قزام', name: 'wilaya54', desc: '', args: []);
+  }
+
+  /// `55 - تقرت`
+  String get wilaya55 {
+    return Intl.message('55 - تقرت', name: 'wilaya55', desc: '', args: []);
+  }
+
+  /// `56 - جانت`
+  String get wilaya56 {
+    return Intl.message('56 - جانت', name: 'wilaya56', desc: '', args: []);
+  }
+
+  /// `57 - المغير`
+  String get wilaya57 {
+    return Intl.message('57 - المغير', name: 'wilaya57', desc: '', args: []);
+  }
+
+  /// `58 - المنيعة`
+  String get wilaya58 {
+    return Intl.message('58 - المنيعة', name: 'wilaya58', desc: '', args: []);
+  }
+
+  /// `مرحبًا`
+  String get welcome {
+    return Intl.message('مرحبًا', name: 'welcome', desc: '', args: []);
+  }
+
+  /// `انضم إلى منصتنا وابدأ الآن`
+  String get joinOurPlatform {
+    return Intl.message(
+      'انضم إلى منصتنا وابدأ الآن',
+      name: 'joinOurPlatform',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تأكيد كلمة المرور`
+  String get confirmPassword {
+    return Intl.message(
+      'تأكيد كلمة المرور',
+      name: 'confirmPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `يرجى إدخال البريد الإلكتروني`
+  String get emailError {
+    return Intl.message(
+      'يرجى إدخال البريد الإلكتروني',
+      name: 'emailError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `يرجى إدخال كلمة المرور`
+  String get passwordError {
+    return Intl.message(
+      'يرجى إدخال كلمة المرور',
+      name: 'passwordError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `يرجى تأكيد كلمة المرور`
+  String get confirmPasswordError {
+    return Intl.message(
+      'يرجى تأكيد كلمة المرور',
+      name: 'confirmPasswordError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `البريد الإلكتروني غير صالح`
+  String get invalidEmailError {
+    return Intl.message(
+      'البريد الإلكتروني غير صالح',
+      name: 'invalidEmailError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `رقم الهاتف غير صالح`
+  String get invalidPhoneError {
+    return Intl.message(
+      'رقم الهاتف غير صالح',
+      name: 'invalidPhoneError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استشارات الزراعة`
+  String get agricultureConsulting {
+    return Intl.message(
+      'استشارات الزراعة',
+      name: 'agricultureConsulting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استشارات في الزراعة العضوية`
+  String get organicFarmingConsulting {
+    return Intl.message(
+      'استشارات في الزراعة العضوية',
+      name: 'organicFarmingConsulting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استشارات في الزراعة المستدامة`
+  String get sustainableFarmingConsulting {
+    return Intl.message(
+      'استشارات في الزراعة المستدامة',
+      name: 'sustainableFarmingConsulting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تحليل التربة`
+  String get soilAnalysis {
+    return Intl.message(
+      'تحليل التربة',
+      name: 'soilAnalysis',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تحليل المياه`
+  String get waterAnalysis {
+    return Intl.message(
+      'تحليل المياه',
+      name: 'waterAnalysis',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `خدمات التوعية والتدريب`
+  String get trainingServices {
+    return Intl.message(
+      'خدمات التوعية والتدريب',
+      name: 'trainingServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حول تقنيات الزراعة الحديثة`
+  String get modernFarmingTechniques {
+    return Intl.message(
+      'حول تقنيات الزراعة الحديثة',
+      name: 'modernFarmingTechniques',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ورش العمل الزراعية`
+  String get agricultureWorkshops {
+    return Intl.message(
+      'ورش العمل الزراعية',
+      name: 'agricultureWorkshops',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `التكنولوجيا الزراعية`
+  String get agriTech {
+    return Intl.message(
+      'التكنولوجيا الزراعية',
+      name: 'agriTech',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استشارات في استخدام التكنولوجيا الزراعية`
+  String get agriTechConsulting {
+    return Intl.message(
+      'استشارات في استخدام التكنولوجيا الزراعية',
+      name: 'agriTechConsulting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تطبيقات الزراعة الذكية`
+  String get smartFarmingApps {
+    return Intl.message(
+      'تطبيقات الزراعة الذكية',
+      name: 'smartFarmingApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `خدمات توجيهية للمزارعين`
+  String get farmerGuidance {
+    return Intl.message(
+      'خدمات توجيهية للمزارعين',
+      name: 'farmerGuidance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `خطط الزراعة الخاصة بالمزارع`
+  String get personalFarmingPlans {
+    return Intl.message(
+      'خطط الزراعة الخاصة بالمزارع',
+      name: 'personalFarmingPlans',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إدارة المحاصيل بشكل فعال`
+  String get cropManagement {
+    return Intl.message(
+      'إدارة المحاصيل بشكل فعال',
+      name: 'cropManagement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مراقبة صحة النباتات والحيوانات`
+  String get plantAnimalHealth {
+    return Intl.message(
+      'مراقبة صحة النباتات والحيوانات',
+      name: 'plantAnimalHealth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مراقبة الأمراض والآفات الزراعية`
+  String get diseasePestMonitoring {
+    return Intl.message(
+      'مراقبة الأمراض والآفات الزراعية',
+      name: 'diseasePestMonitoring',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الوقاية والتغذية المناسبة للمحاصيل`
+  String get cropProtection {
+    return Intl.message(
+      'الوقاية والتغذية المناسبة للمحاصيل',
+      name: 'cropProtection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الاستشارات المالية والإدارية`
+  String get financeAdminConsulting {
+    return Intl.message(
+      'الاستشارات المالية والإدارية',
+      name: 'financeAdminConsulting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استشارات في التمويل الزراعي`
+  String get agriFinanceConsulting {
+    return Intl.message(
+      'استشارات في التمويل الزراعي',
+      name: 'agriFinanceConsulting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استشارات في إدارة المزارع`
+  String get farmManagementConsulting {
+    return Intl.message(
+      'استشارات في إدارة المزارع',
+      name: 'farmManagementConsulting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إصلاح المعدات الزراعية`
+  String get agriEquipmentRepair {
+    return Intl.message(
+      'إصلاح المعدات الزراعية',
+      name: 'agriEquipmentRepair',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إصلاح الآلات الثقيلة`
+  String get heavyMachineryRepair {
+    return Intl.message(
+      'إصلاح الآلات الثقيلة',
+      name: 'heavyMachineryRepair',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إصلاح أنظمة الري`
+  String get irrigationSystemRepair {
+    return Intl.message(
+      'إصلاح أنظمة الري',
+      name: 'irrigationSystemRepair',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `صيانة المنشآت`
+  String get facilityMaintenance {
+    return Intl.message(
+      'صيانة المنشآت',
+      name: 'facilityMaintenance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إصلاح المعدات الكهربائية`
+  String get electricalEquipmentRepair {
+    return Intl.message(
+      'إصلاح المعدات الكهربائية',
+      name: 'electricalEquipmentRepair',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `شاحنة صغيرة`
+  String get smallTruck {
+    return Intl.message('شاحنة صغيرة', name: 'smallTruck', desc: '', args: []);
+  }
+
+  /// `شاحنة كبيرة`
+  String get largeTruck {
+    return Intl.message('شاحنة كبيرة', name: 'largeTruck', desc: '', args: []);
+  }
+
+  /// `شاحنة مبردة`
+  String get refrigeratedTruck {
+    return Intl.message(
+      'شاحنة مبردة',
+      name: 'refrigeratedTruck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `بيع`
+  String get sell {
+    return Intl.message('بيع', name: 'sell', desc: '', args: []);
+  }
+
+  /// `كلغ`
+  String get kg {
+    return Intl.message('كلغ', name: 'kg', desc: '', args: []);
+  }
+
+  /// `طن`
+  String get ton {
+    return Intl.message('طن', name: 'ton', desc: '', args: []);
+  }
+
+  /// `لتر`
+  String get liter {
+    return Intl.message('لتر', name: 'liter', desc: '', args: []);
+  }
+
+  /// `صندوق`
+  String get box {
+    return Intl.message('صندوق', name: 'box', desc: '', args: []);
+  }
+
+  /// `م²`
+  String get squareMeter {
+    return Intl.message('م²', name: 'squareMeter', desc: '', args: []);
+  }
+
+  /// `هكتار`
+  String get hectare {
+    return Intl.message('هكتار', name: 'hectare', desc: '', args: []);
+  }
+
+  /// `قطعة`
+  String get piece {
+    return Intl.message('قطعة', name: 'piece', desc: '', args: []);
+  }
+
+  /// `مجموعة`
+  String get set {
+    return Intl.message('مجموعة', name: 'set', desc: '', args: []);
+  }
+
+  /// `نقل المواشي`
+  String get livestockTransport {
+    return Intl.message(
+      'نقل المواشي',
+      name: 'livestockTransport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نقل المحاصيل`
+  String get cropTransport {
+    return Intl.message(
+      'نقل المحاصيل',
+      name: 'cropTransport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نقل عام`
+  String get generalTransport {
+    return Intl.message(
+      'نقل عام',
+      name: 'generalTransport',
       desc: '',
       args: [],
     );

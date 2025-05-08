@@ -2,7 +2,18 @@ import 'package:agriplant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ProductData {
-  static  Map<String, List<String>> agriCategories(BuildContext context)=>{
+    static final Map<String, List<String>> agriCategories = {
+    "منتوجات فلاحية": [
+      "الفواكه",
+      "الخضروات ",
+      "الحبوب ",
+      "المحاصيل الزيتية ",
+      "البقوليات ",
+      "النباتات العطرية و الطبية ",
+      "الأعلاف ",
+    ],
+  };
+  static  Map<String, List<String>> agriCategoriesT(BuildContext context)=>{
     S.of(context).agriculturalProducts: [
       S.of(context).fruits,
       S.of(context).vegetables,
@@ -13,8 +24,92 @@ class ProductData {
       S.of(context).fodder,
     ],
   };
-
-  static  Map<String, List<String>> agriSubCategories(BuildContext context) =>{
+ static final Map<String, List<String>> agriSubCategories = {
+    "الفواكه": [
+      "تفاح ",
+      "برتقال ",
+      "موز ",
+      "عنب ",
+      "فراولة ",
+      "مانجو ",
+      "كمثرى ",
+      "كرز ",
+      "بطيخ ",
+      "شمام ",
+      "كيوي ",
+      "أناناس ",
+      "رمان ",
+      "تين ",
+      "تمر ",
+    ],
+    "الخضروات ": [
+      "طماطم ",
+      "جزر ",
+      "بطاطا ",
+      "فلفل ",
+      "بصل ",
+      "ثوم ",
+      "خس ",
+      "خيار ",
+      "باذنجان ",
+      "سبانخ",
+      "ملفوف ",
+      "فجل ",
+      "شمندر ",
+      "فاصوليا خضراء ",
+      "كرفس ",
+    ],
+    "الحبوب ": [
+      "قمح ",
+      "شعير ",
+      "ذرة ",
+      "أرز ",
+      "سورغم ",
+      "شوفان ",
+      "جاودار ",
+      "دخن ",
+      "كينوا ",
+    ],
+    "المحاصيل الزيتية ": [
+      "زيتون ",
+      "لوز ",
+      "بندق ",
+      "جوز ",
+      "بذور عباد الشمس ",
+      "بذور السمسم ",
+      "بذور الكتان ",
+      "بذور اللفت ",
+      "فول سوداني ",
+    ],
+    "البقوليات ": [
+      "عدس ",
+      "حمص ",
+      "فاصوليا بيضاء ",
+      "فول ",
+      "بازلاء مجففة ",
+      "فاصوليا حمراء ",
+      "فول الصويا ",
+    ],
+    "النباتات العطرية و الطبية ": [
+      "نعناع ",
+      "ريحان ",
+      "زعتر ",
+      "إكليل الجبل ",
+      "بابونج ",
+      "لافندر ",
+      "مريمية ",
+      "بقدونس ",
+      "كزبرة ",
+    ],
+    "الأعلاف ": [
+      "برسيم ",
+      "تبن ",
+      "نفل ",
+      "سيلاج الذرة ",
+      "سورغم العلفي ",
+    ],
+  };
+  static  Map<String, List<String>> agriSubCategoriesT(BuildContext context) =>{
     S.of(context).fruits: [
       S.of(context).apple,
       S.of(context).orange,
@@ -99,16 +194,39 @@ class ProductData {
       S.of(context).fodderSorghum,
     ],
   };
+ static final Map<String, List<String>> commercantCategories = {
+    "معدات": [
+      "المعدات الزراعية ",
+      "معدات الري ",
+    ],
+    "أراضي": [],
+  };
 
-  static  Map<String, List<String>> commercantCategories(BuildContext context) => {
+  static  Map<String, List<String>> commercantCategoriesT(BuildContext context) => {
     S.of(context).equipment: [
       S.of(context).agriculturalEquipment,
       S.of(context).irrigationEquipment,
     ],
     S.of(context).lands: [],
   };
-
-  static  Map<String, List<String>> equipmentCategories(BuildContext context) => {
+  static final Map<String, List<String>> equipmentCategories = {
+    "المعدات الزراعية": [
+      "جرار زراعي",
+      "آلة الحرث",
+      "آلة الحصاد",
+      "آلة البذر",
+      "رشاش مبيدات",
+      "محراث",
+      "آلة جمع الأعلاف",
+      "خزان ماء متنقل",
+      "مضخة مياه",
+      "آلة التسميد",
+      "غربال حبوب",
+      "مقطورة زراعية"
+    ],
+    "معدات الري ": ["أنابيب الري ", "رشاشات مياه "],
+  };
+  static  Map<String, List<String>> equipmentCategoriesT(BuildContext context) => {
     S.of(context).agriculturalEquipment: [
       S.of(context).tractor,
       S.of(context).plowMachine,
@@ -128,8 +246,44 @@ class ProductData {
       S.of(context).waterSprinklers,
     ],
   };
-
-  static  Map<String, List<String>> produitsElevages(BuildContext context) => {
+ static final Map<String, List<String>> produitsElevages = {
+    "الحيوانات الحية": [
+      "أبقار حلوب",
+      "أبقار للتسمين",
+      "عجول",
+      "أغنام (خراف، نعاج)",
+      "ماعز (جديان، إناث ماعز)",
+      "جمال",
+      "خيول",
+      "دواجن (دجاج، بط، ديك رومي)",
+      "أرانب",
+    ],
+    "منتجات الألبان ومشتقاتها": [
+      "الحليب الطازج (بقري، ماعز، غنم)",
+      "الجبن (بلدي، موزاريلا، شيدر)",
+      "الزبدة الطبيعية",
+      "الياغورت الطبيعي",
+      "القشطة",
+      "اللبن الرائب",
+    ],
+    "المنتجات المشتقة من الحيوانات": [
+      "الصوف الخام",
+      "الجلود الطبيعية (بقر، غنم، ماعز)",
+      "العسل الطبيعي",
+      "شمع النحل",
+      "البيض (بلدي، مزارع)",
+      "السماد الطبيعي العضوي",
+    ],
+    "معدات وأدوات تربية المواشي": [
+      "أقفاص وحظائر متنقلة",
+      "معالف ومشارب أوتوماتيكية",
+      "أجهزة الحلب اليدوية والكهربائية",
+      "أدوات القص والتقليم (للحوافر والصوف)",
+      "مستلزمات تدفئة الحظائر",
+      "أنظمة تهوية وتحكم في الحرارة",
+    ],
+  };
+static  Map<String, List<String>> produitsElevagesT(BuildContext context) => {
     S.of(context).liveAnimals: [
       S.of(context).dairyCows,
       S.of(context).beefCattle,
@@ -195,7 +349,34 @@ class ProductData {
       "استشارات في إدارة المزارع",
     ],
   };
-
+static Map<String, List<String>> expertProductsT(BuildContext context) => {
+  S.of(context).agricultureConsulting: [
+    S.of(context).organicFarmingConsulting,
+    S.of(context).sustainableFarmingConsulting,
+    S.of(context).soilAnalysis,
+    S.of(context).waterAnalysis,
+  ],
+  S.of(context).trainingServices: [
+    S.of(context).modernFarmingTechniques,
+    S.of(context).agricultureWorkshops,
+  ],
+  S.of(context).agriTech: [
+    S.of(context).agriTechConsulting,
+    S.of(context).smartFarmingApps,
+  ],
+  S.of(context).farmerGuidance: [
+    S.of(context).personalFarmingPlans,
+    S.of(context).cropManagement,
+  ],
+  S.of(context).plantAnimalHealth: [
+    S.of(context).diseasePestMonitoring,
+    S.of(context).cropProtection,
+  ],
+  S.of(context).financeAdminConsulting: [
+    S.of(context).agriFinanceConsulting,
+    S.of(context).farmManagementConsulting,
+  ],
+};
 
   static final List<String> ReparationType = [
     "إصلاح المعدات الزراعية",
@@ -204,35 +385,715 @@ class ProductData {
     "صيانة المنشآت",
     "إصلاح المعدات الكهربائية"
   ];
+  static List<String> reparationTypeT(BuildContext context) => [
+  S.of(context).agriEquipmentRepair,
+  S.of(context).heavyMachineryRepair,
+  S.of(context).irrigationSystemRepair,
+  S.of(context).facilityMaintenance,
+  S.of(context).electricalEquipmentRepair,
+];
   static final List<String> moyensDeTransport = [
     "شاحنة صغيرة",
     "شاحنة كبيرة",
     "شاحنة مبردة",
   ];
-
+static List<String> moyensDeTransportT(BuildContext context) => [
+  S.of(context).smallTruck,
+  S.of(context).largeTruck,
+  S.of(context).refrigeratedTruck,
+];
  
 
 static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext context) {
   return {
-    "Agricultural Product": agriCategories(context),
-    "Animal Product": produitsElevages(context),
-    "Commercial Product": commercantCategories(context),
+    "Agricultural Product": agriCategoriesT(context),
+    "Animal Product": produitsElevagesT(context),
+    "Commercial Product": commercantCategoriesT(context),
   };
 }
 
 
   static  Map<String, Map<String, List<String>>> subCategoryDetails(BuildContext context) => {
     "Agricultural Product": {
-      ...agriSubCategories(context),
+      ...agriSubCategoriesT(context),
     },
     "Commercial Product": {
-      ...equipmentCategories(context),
+      ...equipmentCategoriesT(context),
     },
-    "Animal Product": {...produitsElevages(context)},
+    "Animal Product": {...produitsElevagesT(context)},
   };
-
-  static  Map<String, List<String>> wilayas(BuildContext context) => {
-    "01 - ${S.of(context).adrar}": [
+static final Map<String, List<String>> wilayas = {
+    "01 - أدرار": [
+      "أدرار",
+      "أولف",
+      "أوقروت",
+      "برج باجي مختار",
+      "شروين",
+      "فنوغيل",
+      "رقان",
+      "تيميمون",
+      "تينركوك",
+      "تسابيت",
+      "زاوية كنتة"
+    ],
+    "02 - الشلف": [
+      "أبو الحسن",
+      "عين مران",
+      "بني حواء",
+      "بوقادير",
+      "الشلف",
+      "الكريمية",
+      "المرسى",
+      "وادي الفضة",
+      "أولاد بن عبد القادر",
+      "أولاد فارس",
+      "تاوقريت",
+      "تنس",
+      "الزبوجة",
+    ],
+    "03 - الأغواط": [
+      "آفلو",
+      "عين ماضي",
+      "بريدة",
+      "الغيشة",
+      "قلتة سيدي سعد",
+      "حاسي الرمل",
+      "قصر الحيران",
+      "الأغواط",
+      "وادي مرة",
+      "سيدي مخلوف"
+    ],
+    "04 - أم البواقي": [
+      "أم البواقي",
+      "عين بابوش",
+      "قصر الصباحي",
+      "عين البيضاء",
+      "فكيرينة",
+      "عين مليلة",
+      "سوق نعمان",
+      "عين فكرون",
+      "سيقوس",
+      "عين كرشة",
+      "مسكيانة",
+      "الضلعة",
+    ],
+    "05 - باتنة": [
+      "عين جاسر",
+      "عين التوتة",
+      "أريس",
+      "بريكة",
+      "باتنة",
+      "بوزينة",
+      "الشمرة",
+      "الجزار",
+      "المعذر",
+      "إشمول",
+      "منعة",
+      "مروانة",
+      "نقاوس",
+      "أولاد سي سليمان",
+      "رأس العيون",
+      "سقانة",
+      "سريانة",
+      "تازولت",
+      "ثنية العابد",
+      "تيمقاد",
+      "تكوت"
+    ],
+    "06 - بجاية": [
+      "أدكار",
+      "أقبو",
+      "أميزور",
+      "أوقاس",
+      "برباشة",
+      "بجاية",
+      "بني معوش",
+      "شميني",
+      "درقينة",
+      "القصر",
+      "إغيل علي",
+      "خراطة",
+      "أوزلاقن",
+      "صدوق",
+      "سيدي عيش",
+      "سوق الإثنين",
+      "تازمالت",
+      "تيشي",
+      "تيمزريت"
+    ],
+    "07 - بسكرة": [
+      "بسكرة",
+      "جمورة",
+      "القنطرة",
+      "مشونش",
+      "سيدي عقبة",
+      "زريبة الوادي",
+      "أورلال",
+      "طولقة",
+      "أولاد جلال",
+      "سيدي خالد",
+      "فوغالة",
+      "الوطاية"
+    ],
+    "08 - بشار": [
+      "بشار",
+      "بني ونيف",
+      "لحمر",
+      "القنادسة",
+      "تاغيت",
+      "العبادلة",
+      "تبلبالة",
+      "إقلي",
+      "بني عباس",
+      "الواتة",
+      "كرزاز",
+      "أولاد خضير"
+    ],
+    "09 - البليدة": [
+      "البليدة",
+      "بوفاريك",
+      "بوقرة",
+      "بوعينان",
+      "العفرون",
+      "الأربعاء",
+      "مفتاح",
+      "موزاية",
+      "وادي العلايق",
+      "أولاد يعيش"
+    ],
+    "10 - البويرة": [
+      "البويرة",
+      "حيزر",
+      "بشلول",
+      "الأسنام",
+      "القادرية",
+      "الأخضرية",
+      "بئر غبالو",
+      "عين بسام",
+      "سوق الخميس",
+      "الهاشمية",
+      "سور الغزلان",
+      "برج أوخريص"
+    ],
+    "11 - تمنراست": [
+      "أبلسة",
+      "إن غار",
+      "إن قزام",
+      "عين صالح",
+      "تمنراست",
+      "تازروك",
+      "تين زواتين"
+    ],
+    "12 - تبسة": [
+      "تبسة",
+      "الكويف",
+      "مرسط",
+      "الماء الأبيض",
+      "العوينات",
+      "الونزة",
+      "بئر مقدم",
+      "بئر العاتر",
+      "العقلة",
+      "أم علي",
+      "نقرين",
+      "الشريعة"
+    ],
+    "13 - تلمسان": [
+      "عين تالوت",
+      "باب العسة",
+      "بني بوسعيد",
+      "بني سنوس",
+      "بن سكران",
+      "شتوان",
+      "العريشة",
+      "فلاوسن",
+      "الغزوات",
+      "الحناية",
+      "هنين",
+      "مغنية",
+      "منصورة",
+      "مرسى بن مهيدي",
+      "ندرومة",
+      "أولاد ميمون",
+      "الرمشي",
+      "صبرة",
+      "سبدو",
+      "سيدي الجيلالي",
+      "تلمسان"
+    ],
+    "14 - تيارت": [
+      "تيارت",
+      "السوقر",
+      "عين الذهب",
+      "عين كرمس",
+      "فرندة",
+      "دحموني",
+      "مهدية",
+      "حمادية",
+      "قصر الشلالة",
+      "مدروسة",
+      "مشرع الصفاء",
+      "الرحوية",
+      "واد ليلي",
+      "مغيلة"
+    ],
+    "15 - تيزي وزو": [
+      "عين الحمام",
+      "عزازقة",
+      "أزفون",
+      "بني دوالة",
+      "بني يني",
+      "بوغني",
+      "بوزقن",
+      "ذراع بن خدة",
+      "ذراع الميزان",
+      "إفرحونن",
+      "الأربعاء ناث إيراثن",
+      "ماكودة",
+      "معاتقة",
+      "مقلع",
+      "واسيف",
+      "واضية",
+      "واقنون",
+      "تيقزيرت",
+      "تيزي غنيف",
+      "تيزي وزو",
+      "تيزي راشد"
+    ],
+    "16 - الجزائر": [
+      "زرالدة",
+      "الشراقة",
+      "الدرارية",
+      "بئر مراد رايس",
+      "بئر توتة",
+      "بوزريعة",
+      "باب الوادي",
+      "سيدي امحمد",
+      "حسين داي",
+      "الحراش",
+      "براقي",
+      "الدار البيضاء",
+      "الرويبة"
+    ],
+    "17 - الجلفة": [
+      "عين الإبل",
+      "عين وسارة",
+      "بيرين",
+      "الشارف",
+      "دار الشيوخ",
+      "الجلفة",
+      "الإدريسية",
+      "فيض البطمة",
+      "حد الصحاري",
+      "حاسي بحبح",
+      "سيدي لعجال",
+      "مسعد"
+    ],
+    "18 - جيجل": [
+      "الشقفة",
+      "جيملة",
+      "العنصر",
+      "العوانة",
+      "الميلية",
+      "جيجل",
+      "السطارة",
+      "سيدي معروف",
+      "الطاهير",
+      "تكسنة",
+      "زيامة منصورية"
+    ],
+    "19 - سطيف": [
+      "عين أرنات",
+      "عين آزال",
+      "عين الكبيرة",
+      "عين ولمان",
+      "عموشة",
+      "بابور",
+      "بني عزيز",
+      "بني ورتيلان",
+      "بئر العرش",
+      "بوعنداس",
+      "بوقاعة",
+      "جميلة",
+      "العلمة",
+      "قجال",
+      "قنزات",
+      "حمام قرقور",
+      "حمام السخنة",
+      "ماوكلان",
+      "صالح باي",
+      "سطيف"
+    ],
+    "20 - سعيدة": [
+      "سعيدة",
+      "عين الحجر",
+      "سيدي بوبكر",
+      "الحساسنة",
+      "أولاد إبراهيم",
+      "يوب",
+    ],
+    "21 - سكيكدة": [
+      "عزابة",
+      "عين قشرة",
+      "بن عزوز",
+      "القل",
+      "الحدائق",
+      "الحروش",
+      "أولاد عطية",
+      "أم الطوب",
+      "رمضان جمال",
+      "سيدي مزغيش",
+      "سكيكدة",
+      "تمالوس",
+      "الزيتونة"
+    ],
+    "22 - سيدي بلعباس": [
+      "سيدي بلعباس",
+      "عين البرد",
+      "بن باديس",
+      "مرحوم",
+      "مرين",
+      "مصطفى بن إبراهيم",
+      "مولاي سليسن",
+      "رأس الماء",
+      "سفيزف",
+      "سيدي علي بن يوب",
+      "سيدي علي بوسيدي",
+      "سيدي لحسن",
+      "تلاغ",
+      "تنيرة",
+      "تسالة"
+    ],
+    "23 - عنابة": [
+      "عنابة",
+      "عين الباردة",
+      "الحجار",
+      "برحال",
+      "شطايبي",
+      "البوني",
+    ],
+    "24 - قالمة": [
+      "عين مخلوف",
+      "بوشقوف",
+      "قلعة بوصبع",
+      "قالمة",
+      "حمام دباغ",
+      "حمام النبايل",
+      "هيليوبوليس",
+      "هواري بومدين",
+      "خزارة",
+      "وادي الزناتي"
+    ],
+    "25 - قسنطينة": [
+      "قسنطينة",
+      "الخروب",
+      "عين عبيد",
+      "زيغود يوسف",
+      "حامة بوزيان",
+      "ابن زياد"
+    ],
+    "26 - المدية": [
+      "عين بوسيف",
+      "عزيز",
+      "بني سليمان",
+      "البرواقية",
+      "شهبونية",
+      "شلالة العذاورة",
+      "العزيزية",
+      "القلب الكبير",
+      "العمارية",
+      "قصر البخاري",
+      "المدية",
+      "وامري",
+      "أولاد عنتر",
+      "وزرة",
+      "سغوان",
+      "سيدي نعمان",
+      "سي المحجوب",
+      "السواقي",
+      "تابلاط"
+    ],
+    "27 - مستغانم": [
+      "عشعاشة",
+      "عين النويصي",
+      "عين تادلس",
+      "بوقيراط",
+      "حاسي ماماش",
+      "خير الدين",
+      "ماسرة",
+      "مستغانم",
+      "سيدي علي",
+      "سيدي لخضر"
+    ],
+    "28 - المسيلة": [
+      "المسيلة",
+      "حمام الضلعة",
+      "أولاد دراج",
+      "سيدي عيسى",
+      "عين الملح",
+      "بن سرور",
+      "بوسعادة",
+      "أولاد سيدي إبراهيم",
+      "سيدي عامر",
+      "مقرة",
+      "شلال",
+      "خبانة",
+      "مجدل",
+      "عين الحجل",
+      "جبل مساعد"
+    ],
+    "29 - معسكر": [
+      "عين فارس",
+      "عين فكان",
+      "عوف",
+      "بوحنيفية",
+      "البرج",
+      "غريس",
+      "الهاشم",
+      "معسكر",
+      "المحمدية",
+      "عقاز",
+      "وادي الأبطال",
+      "وادي التاغية",
+      "سيق",
+      "تيغنيف",
+      "تيزي",
+      "زهانة",
+    ],
+    "30 - ورقلة": [
+      "البرمة",
+      "الحجيرة",
+      "حاسي مسعود",
+      "المقارين",
+      "نقوسة",
+      "ورقلة",
+      "سيدي خويلد",
+      "الطيبات",
+      "تماسين",
+      "تقرت",
+    ],
+    "31 - وهران": [
+      "وهران",
+      "عين الترك",
+      "أرزيو",
+      "بطيوة",
+      "السانية",
+      "بئر الجير",
+      "بوتليليس",
+      "وادي تليلات",
+      "قديل"
+    ],
+    "32 - البيض": [
+      "البيض",
+      "رقاصة",
+      "بريزينة",
+      "الأبيض سيدي الشيخ",
+      "بوقطب",
+      "شلالة",
+      "بوسمغون",
+      "بوعلام"
+    ],
+    "33 - إليزي": ["إليزي", "جانت", "إن أميناس"],
+    "34 - برج بوعريريج": [
+      "برج بوعريريج",
+      "عين تاغروت",
+      "رأس الوادي",
+      "برج الغدير",
+      "بئر قاصد علي",
+      "الحمادية",
+      "منصورة",
+      "مجانة",
+      "برج زمورة",
+      "جعافرة"
+    ],
+    "35 - بومرداس": [
+      "بغلية",
+      "بودواو",
+      "برج منايل",
+      "بومرداس",
+      "دلس",
+      "خميس الخشنة",
+      "يسر",
+      "الناصرية",
+      "الثنية"
+    ],
+    "36 - الطارف": [
+      "الطارف",
+      "القالة",
+      "بن مهيدي",
+      "بسباس",
+      "الذرعان",
+      "بوحجار",
+      "بوثلجة",
+    ],
+    "37 - تندوف": ["تندوف"],
+    "38 - تيسمسيلت": [
+      "عماري",
+      "برج بونعامة",
+      "برج الأمير عبد القادر",
+      "خميستي",
+      "لرجام",
+      "الأزهرية",
+      "ثنية الحد",
+      "تيسمسيلت",
+    ],
+    "39 - الوادي": [
+      "البياضة",
+      "الدبيلة",
+      "الوادي",
+      "قمار",
+      "حاسي خليفة",
+      "المقرن",
+      "اميه ونسة",
+      "الرقيبة",
+      "الرباح",
+      "الطالب العربي"
+    ],
+    "40 - خنشلة": [
+      "خنشلة",
+      "بابار",
+      "بوحمامة",
+      "ششار",
+      "الحامة",
+      "قايس",
+      "أولاد رشاش",
+      "عين الطويلة",
+    ],
+    "41 - سوق أهراس": [
+      "بئر بوحوش",
+      "الحدادة",
+      "مداوروش",
+      "مشروحة",
+      "المراهنة",
+      "أولاد إدريس",
+      "أم العظايم",
+      "سدراتة",
+      "سوق أهراس",
+      "تاورة"
+    ],
+    "42 - تيبازة": [
+      "أحمر العين",
+      "بواسماعيل",
+      "شرشال",
+      "الداموس",
+      "فوكة",
+      "قوراية",
+      "حجوط",
+      "القليعة",
+      "سيدي عمر",
+      "تيبازة",
+    ],
+    "43 - ميلة": [
+      "ميلة",
+      "شلغوم العيد",
+      "فرجيوة",
+      "قرارم قوقة",
+      "وادي النجاء",
+      "الرواشد",
+      "ترعي باينان",
+      "تسدان حدادة",
+      "عين البيضاء أحريش",
+      "سيدي مروان",
+      "تلاغمة",
+      "بوحاتم",
+      "تاجنانت"
+    ],
+    "44 - عين الدفلى": [
+      "عين الدفلى",
+      "عين الشيخ",
+      "بطحية",
+      "برج الأمير خالد",
+      "بومدفع",
+      "جليدة",
+      "جندل",
+      "العبادية",
+      "العامرة",
+      "العطاف",
+      "حمام ريغة",
+      "خميس مليانة",
+      "مليانة",
+      "روينة"
+    ],
+    "45 - النعامة": [
+      "النعامة",
+      "عين الصفراء",
+      "عسلة",
+      "مكمن بن عمار",
+      "المشرية",
+      "مغرار",
+      "صفيصيفة",
+    ],
+    "46 - عين تموشنت": [
+      "عين الأربعاء",
+      "عين الكيحل",
+      "عين تموشنت",
+      "بني صاف",
+      "العامرية",
+      "المالح",
+      "حمام بوحجر",
+      "ولهاصة الغرابة"
+    ],
+    "47 - غرداية": [
+      "غرداية",
+      "المنيعة",
+      "متليلي",
+      "بريان",
+      "ضاية بن ضحوة",
+      "منصورة",
+      "زلفانة",
+      "القرارة",
+      "بونورة"
+    ],
+    "48 - غليزان": [
+      "عين طارق",
+      "عمي موسى",
+      "جديوية",
+      "الحمادنة",
+      "المطمر",
+      "مازونة",
+      "منداس",
+      "وادي رهيو",
+      "رمكة",
+      "غليزان",
+      "سيدي محمد بن علي",
+      "يلل",
+      "زمورة"
+    ],
+    "49 - تيميمون": [
+      "تيميمون",
+      "أوقروت",
+      "تينركوك",
+      "شروين",
+    ],
+    "50 - برج باجي مختار": ["برج باجي مختار"],
+    "51 - أولاد جلال": [
+      "أولاد جلال",
+      "سيدي خالد",
+    ],
+    "52 - بني عباس": [
+      "بني عباس",
+      "كرزاز",
+      "الواتة",
+      "تبلبالة",
+      "إقلي",
+      "أولاد خضير",
+      "تيمودي",
+    ],
+    "53 - عين صالح": ["عين صالح", "إن غار"],
+    "54 - إن قزام": ["إن قزام", "تين زواتين"],
+    "55 - تقرت": [
+      "الحجيرة",
+      "المقارين",
+      "الطيبات",
+      "تماسين",
+      "تقرت"
+    ],
+    "56 - جانت": ["جانت"],
+    "57 - المغير": ["المغير", "جامعة"],
+    "58 - المنيعة": ["المنيعة"]
+  };
+  static  Map<String, List<String>> wilayasT(BuildContext context) => {
+    S.of(context).wilaya01: [
       S.of(context).adrar,
       S.of(context).aoulef,
       S.of(context).aougrout,
@@ -245,7 +1106,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tsabit,
       S.of(context).zaouietKounta,
     ],
-    "02 - ${S.of(context).chlef}": [
+    S.of(context).wilaya02: [
       S.of(context).abouElHassan,
       S.of(context).ainMerane,
       S.of(context).beniHaoua,
@@ -260,7 +1121,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tenes,
       S.of(context).zeboudja,
     ],
-    "03 - ${S.of(context).laghouat}": [
+    S.of(context).wilaya03: [
       S.of(context).aflou,
       S.of(context).ainMadhi,
       S.of(context).brida,
@@ -272,7 +1133,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ouedMorra,
       S.of(context).sidiMakhlouf,
     ],
-    "04 - ${S.of(context).oumElBouaghi}": [
+    S.of(context).wilaya04: [
       S.of(context).oumElBouaghi,
       S.of(context).ainBabouche,
       S.of(context).ksarSbahi,
@@ -286,7 +1147,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).meskiana,
       S.of(context).dhalaa,
     ],
-    "05 - ${S.of(context).batna}": [
+    S.of(context).wilaya05: [
       S.of(context).ainDjasser,
       S.of(context).ainTouta,
       S.of(context).arris,
@@ -309,7 +1170,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).timgad,
       S.of(context).tkout,
     ],
-    "06 - ${S.of(context).bejaia}": [
+    S.of(context).wilaya06: [
       S.of(context).adekar,
       S.of(context).akbou,
       S.of(context).amizour,
@@ -330,7 +1191,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tichy,
       S.of(context).timezrit,
     ],
-    "07 - ${S.of(context).biskra}": [
+    S.of(context).wilaya07: [
       S.of(context).biskra,
       S.of(context).djemorah,
       S.of(context).elKantara,
@@ -344,7 +1205,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).foughala,
       S.of(context).elOutaya,
     ],
-    "08 - ${S.of(context).bechar}": [
+    S.of(context).wilaya08: [
       S.of(context).bechar,
       S.of(context).beniOunif,
       S.of(context).lahmar,
@@ -358,7 +1219,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).kerzaz,
       S.of(context).ouledKhoudir,
     ],
-    "09 - ${S.of(context).blida}": [
+    S.of(context).wilaya09: [
       S.of(context).blida,
       S.of(context).boufarik,
       S.of(context).bougara,
@@ -370,7 +1231,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ouedAlleug,
       S.of(context).ouledYaich,
     ],
-    "10 - ${S.of(context).bouira}": [
+    S.of(context).wilaya10: [
       S.of(context).bouira,
       S.of(context).haizer,
       S.of(context).bechloul,
@@ -384,7 +1245,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).sourElGhozlane,
       S.of(context).bordjOkhriss,
     ],
-    "11 - ${S.of(context).tamanrasset}": [
+    S.of(context).wilaya11: [
       S.of(context).abalessa,
       S.of(context).inGhar,
       S.of(context).inGuezzam,
@@ -393,7 +1254,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tazrouk,
       S.of(context).tinzaouten,
     ],
-    "12 - ${S.of(context).tebessa}": [
+    S.of(context).wilaya12: [
       S.of(context).tebessa,
       S.of(context).elKouif,
       S.of(context).morsott,
@@ -407,7 +1268,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).negrine,
       S.of(context).cheria,
     ],
-    "13 - ${S.of(context).tlemcen}": [
+    S.of(context).wilaya13: [
       S.of(context).ainTallout,
       S.of(context).babElAssa,
       S.of(context).beniBoussaid,
@@ -430,7 +1291,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).sidiDjillali,
       S.of(context).tlemcen,
     ],
-    "14 - ${S.of(context).tiaret}": [
+    S.of(context).wilaya14: [
       S.of(context).tiaret,
       S.of(context).sougueur,
       S.of(context).ainDeheb,
@@ -446,7 +1307,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ouedLilli,
       S.of(context).meghila,
     ],
-    "15 - ${S.of(context).tiziOuzou}": [
+    S.of(context).wilaya15: [
       S.of(context).ainElHammam,
       S.of(context).azazga,
       S.of(context).azeffoun,
@@ -469,7 +1330,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tiziOuzou,
       S.of(context).tiziRached,
     ],
-    "16 - ${S.of(context).alger}": [
+    S.of(context).wilaya16: [
       S.of(context).zeralda,
       S.of(context).cheraga,
       S.of(context).draria,
@@ -484,7 +1345,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).darElBeida,
       S.of(context).rouiba,
     ],
-    "17 - ${S.of(context).djelfa}": [
+    S.of(context).wilaya17: [
       S.of(context).ainElIbel,
       S.of(context).ainOussara,
       S.of(context).birine,
@@ -498,7 +1359,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).sidiLadjel,
       S.of(context).messaad,
     ],
-    "18 - ${S.of(context).jijel}": [
+    S.of(context).wilaya18: [
       S.of(context).chekfa,
       S.of(context).djimla,
       S.of(context).elAncer,
@@ -511,7 +1372,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).texenna,
       S.of(context).ziamaMansouriah,
     ],
-    "19 - ${S.of(context).setif}": [
+    S.of(context).wilaya19: [
       S.of(context).ainArnat,
       S.of(context).ainAzel,
       S.of(context).ainElKebira,
@@ -533,7 +1394,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).salahBey,
       S.of(context).setif,
     ],
-    "20 - ${S.of(context).saida}": [
+    S.of(context).wilaya20: [
       S.of(context).saida,
       S.of(context).ainElHadjar,
       S.of(context).sidiBoubekeur,
@@ -541,7 +1402,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ouledBrahim,
       S.of(context).youb,
     ],
-    "21 - ${S.of(context).skikda}": [
+    S.of(context).wilaya21: [
       S.of(context).azzaba,
       S.of(context).ainKechra,
       S.of(context).benAzzouz,
@@ -556,7 +1417,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tamalous,
       S.of(context).zitouna,
     ],
-    "22 - ${S.of(context).sidiBelAbbes}": [
+    S.of(context).wilaya22: [
       S.of(context).sidiBelAbbes,
       S.of(context).ainElBerd,
       S.of(context).benBadis,
@@ -573,7 +1434,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tenira,
       S.of(context).tessala,
     ],
-    "23 - ${S.of(context).annaba}": [
+    S.of(context).wilaya23: [
       S.of(context).annaba,
       S.of(context).ainBerda,
       S.of(context).elHadjar,
@@ -581,7 +1442,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).chetaibi,
       S.of(context).elBouni,
     ],
-    "24 - ${S.of(context).guelma}": [
+    S.of(context).wilaya24: [
       S.of(context).ainMakhlouf,
       S.of(context).bouchegouf,
       S.of(context).guelaatBouSbaa,
@@ -593,7 +1454,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).khezarra,
       S.of(context).ouedZenati,
     ],
-    "25 - ${S.of(context).constantine}": [
+    S.of(context).wilaya25: [
       S.of(context).constantine,
       S.of(context).elKhroub,
       S.of(context).ainAbid,
@@ -601,7 +1462,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).hammaBouziane,
       S.of(context).ibnZiad,
     ],
-    "26 - ${S.of(context).medea}": [
+    S.of(context).wilaya26: [
       S.of(context).ainBoucif,
       S.of(context).aziz,
       S.of(context).beniSlimane,
@@ -622,7 +1483,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).souagui,
       S.of(context).tablat,
     ],
-    "27 - ${S.of(context).mostaganem}": [
+    S.of(context).wilaya27: [
       S.of(context).achaacha,
       S.of(context).ainNouissi,
       S.of(context).ainTadles,
@@ -634,7 +1495,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).sidiAli,
       S.of(context).sidiLakhdar,
     ],
-    "28 - ${S.of(context).mSila}": [
+    S.of(context).wilaya28: [
       S.of(context).mSila,
       S.of(context).hammamDalaa,
       S.of(context).ouledDerradj,
@@ -651,7 +1512,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ainElHadjel,
       S.of(context).djebelMessaad,
     ],
-    "29 - ${S.of(context).mascara}": [
+    S.of(context).wilaya29: [
       S.of(context).ainFares,
       S.of(context).ainFekan,
       S.of(context).aouf,
@@ -669,7 +1530,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tizi,
       S.of(context).zahana,
     ],
-    "30 - ${S.of(context).ouargla}": [
+    S.of(context).wilaya30: [
       S.of(context).elBorma,
       S.of(context).elHadjira,
       S.of(context).hassiMessaoud,
@@ -681,7 +1542,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).tamacine,
       S.of(context).touggourt,
     ],
-    "31 - ${S.of(context).oran}": [
+    S.of(context).wilaya31: [
       S.of(context).oran,
       S.of(context).ainElTurk,
       S.of(context).arzew,
@@ -692,7 +1553,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ouedTlelat,
       S.of(context).gdyel,
     ],
-    "32 - ${S.of(context).elBayadh}": [
+    S.of(context).wilaya32: [
       S.of(context).elBayadh,
       S.of(context).rogassa,
       S.of(context).brezina,
@@ -702,12 +1563,12 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).boussemghoun,
       S.of(context).boualem,
     ],
-    "33 - ${S.of(context).illizi}": [
+    S.of(context).wilaya33: [
       S.of(context).illizi,
       S.of(context).djanet,
       S.of(context).inAmenas,
     ],
-    "34 - ${S.of(context).bordjBouArreridj}": [
+    S.of(context).wilaya34: [
       S.of(context).bordjBouArreridj,
       S.of(context).ainTaghrout,
       S.of(context).rasElOued,
@@ -719,7 +1580,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).bordjZemoura,
       S.of(context).djaafra,
     ],
-    "35 - ${S.of(context).boumerdes}": [
+    S.of(context).wilaya35: [
       S.of(context).baghlia,
       S.of(context).boudouaou,
       S.of(context).bordjMenaiel,
@@ -730,7 +1591,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).naciria,
       S.of(context).thenia,
     ],
-    "36 - ${S.of(context).elTarf}": [
+    S.of(context).wilaya36: [
       S.of(context).elTarf,
       S.of(context).elKala,
       S.of(context).benMhidi,
@@ -739,10 +1600,10 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).bouhadjar,
       S.of(context).bouteldja,
     ],
-    "37 - ${S.of(context).tindouf}": [
+    S.of(context).wilaya37: [
       S.of(context).tindouf,
     ],
-    "38 - ${S.of(context).tissemsilt}": [
+    S.of(context).wilaya38: [
       S.of(context).ammari,
       S.of(context).bordjBouNaama,
       S.of(context).bordjElEmirAbdelkader,
@@ -752,7 +1613,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).thenietElHad,
       S.of(context).tissemsilt,
     ],
-    "39 - ${S.of(context).elOued}": [
+    S.of(context).wilaya39: [
       S.of(context).bayadha,
       S.of(context).debila,
       S.of(context).elOued,
@@ -764,7 +1625,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).robbah,
       S.of(context).talebLarbi,
     ],
-    "40 - ${S.of(context).khenchela}": [
+    S.of(context).wilaya40: [
       S.of(context).khenchela,
       S.of(context).babar,
       S.of(context).bouhmama,
@@ -774,7 +1635,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ouledRechache,
       S.of(context).ainTouila,
     ],
-    "41 - ${S.of(context).soukAhras}": [
+    S.of(context).wilaya41: [
       S.of(context).birBouHaouch,
       S.of(context).heddada,
       S.of(context).mdaourouch,
@@ -786,7 +1647,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).soukAhras,
       S.of(context).taoura,
     ],
-    "42 - ${S.of(context).tipaza}": [
+    S.of(context).wilaya42: [
       S.of(context).ahmarElAin,
       S.of(context).bouIsmail,
       S.of(context).cherchell,
@@ -798,7 +1659,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).sidiAmar,
       S.of(context).tipaza,
     ],
-    "43 - ${S.of(context).mila}": [
+    S.of(context).wilaya43: [
       S.of(context).mila,
       S.of(context).chelghoumLaid,
       S.of(context).ferdjioua,
@@ -813,7 +1674,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).bouhatem,
       S.of(context).tadjenanet,
     ],
-    "44 - ${S.of(context).ainDefla}": [
+    S.of(context).wilaya44: [
       S.of(context).ainDefla,
       S.of(context).ainLechiekh,
       S.of(context).bathia,
@@ -829,7 +1690,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).miliana,
       S.of(context).rouina,
     ],
-    "45 - ${S.of(context).naama}": [
+    S.of(context).wilaya45: [
       S.of(context).naama,
       S.of(context).ainSefra,
       S.of(context).assela,
@@ -838,7 +1699,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).moghrar,
       S.of(context).sfissifa,
     ],
-    "46 - ${S.of(context).ainTemouchent}": [
+    S.of(context).wilaya46: [
       S.of(context).ainElArbaa,
       S.of(context).ainKihal,
       S.of(context).ainTemouchent,
@@ -848,7 +1709,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).hammamBouHadjar,
       S.of(context).oulhacaElGheraba,
     ],
-    "47 - ${S.of(context).ghardaia}": [
+    S.of(context).wilaya47: [
       S.of(context).ghardaia,
       S.of(context).elMeniaa,
       S.of(context).metlili,
@@ -859,7 +1720,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).guerrara,
       S.of(context).bounoura,
     ],
-    "48 - ${S.of(context).relizane}": [
+    S.of(context).wilaya48: [
       S.of(context).ainTarek,
       S.of(context).ammiMoussa,
       S.of(context).djidioua,
@@ -874,20 +1735,20 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).yellel,
       S.of(context).zemmora,
     ],
-    "49 - ${S.of(context).timimoun}": [
+    S.of(context).wilaya49: [
       S.of(context).timimoun,
       S.of(context).aougrout,
       S.of(context).tinerkouk,
       S.of(context).charouine,
     ],
-    "50 - ${S.of(context).bordjBadjiMokhtar}": [
+    S.of(context).wilaya50: [
       S.of(context).bordjBadjiMokhtar,
     ],
-    "51 - ${S.of(context).ouledDjellal}": [
+    S.of(context).wilaya51: [
       S.of(context).ouledDjellal,
       S.of(context).sidiKhaled,
     ],
-    "52 - ${S.of(context).beniAbbes}": [
+    S.of(context).wilaya52: [
       S.of(context).beniAbbes,
       S.of(context).kerzaz,
       S.of(context).elOuata,
@@ -896,32 +1757,60 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       S.of(context).ouledKhoudir,
       S.of(context).timoudi,
     ],
-    "53 - ${S.of(context).inSalah}": [
+    S.of(context).wilaya53: [
       S.of(context).inSalah,
       S.of(context).inGhar,
     ],
-    "54 - ${S.of(context).inGuezzam}": [
+    S.of(context).wilaya54: [
       S.of(context).inGuezzam,
       S.of(context).tinZaouatine,
     ],
-    "55 - ${S.of(context).touggourt}": [
+    S.of(context).wilaya55: [
       S.of(context).elHadjira,
       S.of(context).megarine,
       S.of(context).taibet,
       S.of(context).tamacine,
       S.of(context).touggourt,
     ],
-    "56 - ${S.of(context).djanet}": [
+    S.of(context).wilaya56: [
       S.of(context).djanet,
     ],
-    "57 - ${S.of(context).elMGhair}": [
+    S.of(context).wilaya57: [
       S.of(context).elMGhair,
       S.of(context).djamaa,
     ],
-    "58 - ${S.of(context).elMeniaa}": [
+    S.of(context).wilaya58: [
       S.of(context).elMeniaa,
     ],
-  };
+};
+static Map<String, String> buildDairaTranslationMap(BuildContext context) {
+  final arabicMap = wilayas; // Arabic names
+  final localizedMap = wilayasT(context); // Translated names
+
+  final Map<String, String> translations = {};
+
+  final arabicWilayasList = arabicMap.keys.toList();
+  final localizedWilayasList = localizedMap.keys.toList();
+
+  for (int i = 0; i < arabicWilayasList.length; i++) {
+    final arabicWilaya = arabicWilayasList[i];
+    if (i >= localizedWilayasList.length) continue; // safeguard
+    final localizedWilaya = localizedWilayasList[i];
+
+    translations[arabicWilaya] = localizedWilaya;
+
+    final arabicDairas = arabicMap[arabicWilaya]!;
+    final localizedDairas = localizedMap[localizedWilaya]!;
+
+    for (int j = 0; j < arabicDairas.length; j++) {
+      if (j >= localizedDairas.length) continue;
+      translations[arabicDairas[j]] = localizedDairas[j];
+    }
+  }
+
+  return translations;
+}
+
 static List<String> getMainCategories(String? productType, BuildContext context) {
   return productType != null
       ? ProductData.productTypeCategories(context)[productType]?.keys.toList() ?? []
@@ -943,7 +1832,7 @@ static List<String> getProduct(String? productType, String? subCategory, BuildCo
 }
 
 static List<String> getWilaya(BuildContext context) {
-  return ProductData.wilayas(context).keys.toList();
+  return ProductData.wilayasT(context).keys.toList();
 }
 
   //widgets :

@@ -37,6 +37,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "adekar": MessageLookupByLibrary.simpleMessage("Adekar"),
     "adrar": MessageLookupByLibrary.simpleMessage("Adrar"),
     "aflou": MessageLookupByLibrary.simpleMessage("Aflou"),
+    "agriEquipmentRepair": MessageLookupByLibrary.simpleMessage(
+      "Agricultural Equipment Repair",
+    ),
+    "agriFinanceConsulting": MessageLookupByLibrary.simpleMessage(
+      "Agricultural Finance Consulting",
+    ),
+    "agriTech": MessageLookupByLibrary.simpleMessage("AgriTech"),
+    "agriTechConsulting": MessageLookupByLibrary.simpleMessage(
+      "AgriTech Consulting",
+    ),
     "agriculteur": MessageLookupByLibrary.simpleMessage("Farmer"),
     "agriculturalEquipment": MessageLookupByLibrary.simpleMessage(
       "Agricultural Equipment",
@@ -46,6 +56,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "agriculturalTrailer": MessageLookupByLibrary.simpleMessage(
       "Agricultural Trailer",
+    ),
+    "agricultureConsulting": MessageLookupByLibrary.simpleMessage(
+      "Agriculture Consulting",
+    ),
+    "agricultureWorkshops": MessageLookupByLibrary.simpleMessage(
+      "Agricultural Workshops",
     ),
     "ahmarElAin": MessageLookupByLibrary.simpleMessage("Ahmar El Ain"),
     "aiDescription": MessageLookupByLibrary.simpleMessage(
@@ -243,6 +259,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "bouzareah": MessageLookupByLibrary.simpleMessage("Bouzareah"),
     "bouzguen": MessageLookupByLibrary.simpleMessage("Bouzguen"),
     "bouzina": MessageLookupByLibrary.simpleMessage("Bouzina"),
+    "box": MessageLookupByLibrary.simpleMessage("Box"),
     "brezina": MessageLookupByLibrary.simpleMessage("Brezina"),
     "brida": MessageLookupByLibrary.simpleMessage("Brida"),
     "broadBeans": MessageLookupByLibrary.simpleMessage("Broad Beans"),
@@ -311,6 +328,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmLogout": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to log out?",
     ),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
+    "confirmPasswordError": MessageLookupByLibrary.simpleMessage(
+      "Please confirm your password",
+    ),
     "confirm_delete_message": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete this comment?",
     ),
@@ -328,6 +349,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "corn": MessageLookupByLibrary.simpleMessage("Corn"),
     "cornSilage": MessageLookupByLibrary.simpleMessage("Corn Silage"),
     "cream": MessageLookupByLibrary.simpleMessage("Cream"),
+    "cropManagement": MessageLookupByLibrary.simpleMessage(
+      "Effective Crop Management",
+    ),
+    "cropProtection": MessageLookupByLibrary.simpleMessage(
+      "Crop Protection and Nutrition",
+    ),
+    "cropTransport": MessageLookupByLibrary.simpleMessage("Crop Transport"),
     "cucumber": MessageLookupByLibrary.simpleMessage("Cucumber"),
     "dahmouni": MessageLookupByLibrary.simpleMessage("Dahmouni"),
     "daiaBenDahoua": MessageLookupByLibrary.simpleMessage("Daia Ben Dahoua"),
@@ -354,6 +382,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Describe your problem",
     ),
     "dhalaa": MessageLookupByLibrary.simpleMessage("Dhalaa"),
+    "diseasePestMonitoring": MessageLookupByLibrary.simpleMessage(
+      "Disease and Pest Monitoring",
+    ),
     "djaafra": MessageLookupByLibrary.simpleMessage("Djaafra"),
     "djamaa": MessageLookupByLibrary.simpleMessage("Djamaa"),
     "djanet": MessageLookupByLibrary.simpleMessage("Djanet"),
@@ -433,8 +464,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "elOued": MessageLookupByLibrary.simpleMessage("El Oued"),
     "elOutaya": MessageLookupByLibrary.simpleMessage("El Outaya"),
     "elTarf": MessageLookupByLibrary.simpleMessage("El Tarf"),
+    "electricalEquipmentRepair": MessageLookupByLibrary.simpleMessage(
+      "Electrical Equipment Repair",
+    ),
     "eleveur": MessageLookupByLibrary.simpleMessage("Breeder"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "emailError": MessageLookupByLibrary.simpleMessage(
+      "Please enter your email",
+    ),
     "emailOptions": MessageLookupByLibrary.simpleMessage("Email Options"),
     "emailSendError": MessageLookupByLibrary.simpleMessage(
       "Error sending email ❌",
@@ -494,7 +531,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "expertise_services": MessageLookupByLibrary.simpleMessage(
       "Expertise Services",
     ),
+    "facilityMaintenance": MessageLookupByLibrary.simpleMessage(
+      "Facility Maintenance",
+    ),
     "faidhElBotma": MessageLookupByLibrary.simpleMessage("Faidh El Botma"),
+    "farmManagementConsulting": MessageLookupByLibrary.simpleMessage(
+      "Farm Management Consulting",
+    ),
+    "farmerGuidance": MessageLookupByLibrary.simpleMessage(
+      "Farmer Guidance Services",
+    ),
     "featuredProducts": MessageLookupByLibrary.simpleMessage(
       "Featured Products",
     ),
@@ -513,6 +559,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fertilizer Spreader",
     ),
     "fig": MessageLookupByLibrary.simpleMessage("Fig"),
+    "financeAdminConsulting": MessageLookupByLibrary.simpleMessage(
+      "Financial & Administrative Consulting",
+    ),
     "firstName": MessageLookupByLibrary.simpleMessage("First Name"),
     "firstNameError": MessageLookupByLibrary.simpleMessage(
       "Please enter your first name",
@@ -535,6 +584,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fruits": MessageLookupByLibrary.simpleMessage("Fruits"),
     "garlic": MessageLookupByLibrary.simpleMessage("Garlic"),
     "gdyel": MessageLookupByLibrary.simpleMessage("Gdyel"),
+    "generalTransport": MessageLookupByLibrary.simpleMessage(
+      "General Transport",
+    ),
     "ghardaia": MessageLookupByLibrary.simpleMessage("Ghardaia"),
     "ghazaouet": MessageLookupByLibrary.simpleMessage("Ghazaouet"),
     "ghriss": MessageLookupByLibrary.simpleMessage("Ghriss"),
@@ -582,6 +634,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "hassiMessaoud": MessageLookupByLibrary.simpleMessage("Hassi Messaoud"),
     "hassiRMel": MessageLookupByLibrary.simpleMessage("Hassi R\'Mel"),
     "hazelnut": MessageLookupByLibrary.simpleMessage("Hazelnut"),
+    "heavyMachineryRepair": MessageLookupByLibrary.simpleMessage(
+      "Heavy Machinery Repair",
+    ),
+    "hectare": MessageLookupByLibrary.simpleMessage("Hectare"),
     "heddada": MessageLookupByLibrary.simpleMessage("Heddada"),
     "heliopolis": MessageLookupByLibrary.simpleMessage("Heliopolis"),
     "hennaya": MessageLookupByLibrary.simpleMessage("Hennaya"),
@@ -609,6 +665,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "inGhar": MessageLookupByLibrary.simpleMessage("In Ghar"),
     "inGuezzam": MessageLookupByLibrary.simpleMessage("In Guezzam"),
     "inSalah": MessageLookupByLibrary.simpleMessage("In Salah"),
+    "invalidEmailError": MessageLookupByLibrary.simpleMessage(
+      "Invalid email address",
+    ),
+    "invalidPhoneError": MessageLookupByLibrary.simpleMessage(
+      "Invalid phone number",
+    ),
     "invalid_email_format": MessageLookupByLibrary.simpleMessage(
       "Invalid email format",
     ),
@@ -619,12 +681,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Irrigation Equipment",
     ),
     "irrigationPipes": MessageLookupByLibrary.simpleMessage("Irrigation Pipes"),
+    "irrigationSystemRepair": MessageLookupByLibrary.simpleMessage(
+      "Irrigation System Repair",
+    ),
     "isser": MessageLookupByLibrary.simpleMessage("Isser"),
     "jijel": MessageLookupByLibrary.simpleMessage("Jijel"),
+    "joinOurPlatform": MessageLookupByLibrary.simpleMessage(
+      "Join our platform and get started",
+    ),
     "kadiria": MessageLookupByLibrary.simpleMessage("Kadiria"),
     "kais": MessageLookupByLibrary.simpleMessage("Kais"),
     "kenadsa": MessageLookupByLibrary.simpleMessage("Kenadsa"),
     "kerzaz": MessageLookupByLibrary.simpleMessage("Kerzaz"),
+    "kg": MessageLookupByLibrary.simpleMessage("Kg"),
     "kheireddine": MessageLookupByLibrary.simpleMessage("Kheireddine"),
     "khemisElKechna": MessageLookupByLibrary.simpleMessage("Khemis El Kechna"),
     "khemisMiliana": MessageLookupByLibrary.simpleMessage("Khemis Miliana"),
@@ -653,6 +722,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Larbaa Nath Irathen",
     ),
     "lardjem": MessageLookupByLibrary.simpleMessage("Lardjem"),
+    "largeTruck": MessageLookupByLibrary.simpleMessage("Large Truck"),
     "lastName": MessageLookupByLibrary.simpleMessage("Last Name"),
     "lastNameError": MessageLookupByLibrary.simpleMessage(
       "Please enter your last name",
@@ -663,9 +733,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "lentil": MessageLookupByLibrary.simpleMessage("Lentil"),
     "lettuce": MessageLookupByLibrary.simpleMessage("Lettuce"),
     "lightMode": MessageLookupByLibrary.simpleMessage("Light Mode"),
+    "liter": MessageLookupByLibrary.simpleMessage("Liter"),
     "liveAnimals": MessageLookupByLibrary.simpleMessage("Live Animals"),
     "livestockTools": MessageLookupByLibrary.simpleMessage(
       "Livestock Tools and Equipment",
+    ),
+    "livestockTransport": MessageLookupByLibrary.simpleMessage(
+      "Livestock Transport",
     ),
     "loading": MessageLookupByLibrary.simpleMessage(" Loading...⏳"),
     "logging_in": MessageLookupByLibrary.simpleMessage("Logging in...⏳"),
@@ -730,6 +804,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "mobileWaterTank": MessageLookupByLibrary.simpleMessage(
       "Mobile Water Tank",
     ),
+    "modernFarmingTechniques": MessageLookupByLibrary.simpleMessage(
+      "Modern Farming Techniques",
+    ),
     "moghrar": MessageLookupByLibrary.simpleMessage("Moghrar"),
     "mohammadia": MessageLookupByLibrary.simpleMessage("Mohammadia"),
     "morsott": MessageLookupByLibrary.simpleMessage("Morsott"),
@@ -787,6 +864,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "onion": MessageLookupByLibrary.simpleMessage("Onion"),
     "oran": MessageLookupByLibrary.simpleMessage("Oran"),
     "orange": MessageLookupByLibrary.simpleMessage("Orange"),
+    "organicFarmingConsulting": MessageLookupByLibrary.simpleMessage(
+      "Organic Farming Consulting",
+    ),
     "organicFertilizer": MessageLookupByLibrary.simpleMessage(
       "Organic Fertilizer",
     ),
@@ -836,6 +916,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ouzera": MessageLookupByLibrary.simpleMessage("Ouzera"),
     "pageNotFound": MessageLookupByLibrary.simpleMessage("Page not found"),
     "parsley": MessageLookupByLibrary.simpleMessage("Parsley"),
+    "passwordError": MessageLookupByLibrary.simpleMessage(
+      "Please enter your password",
+    ),
     "passwordHint": MessageLookupByLibrary.simpleMessage("Password"),
     "password_min_length": MessageLookupByLibrary.simpleMessage(
       "Password must be at least 6 characters",
@@ -852,6 +935,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "peanut": MessageLookupByLibrary.simpleMessage("Peanut"),
     "pear": MessageLookupByLibrary.simpleMessage("Pear"),
     "pepper": MessageLookupByLibrary.simpleMessage("Pepper"),
+    "personalFarmingPlans": MessageLookupByLibrary.simpleMessage(
+      "Personal Farming Plans",
+    ),
     "pesticideSprayer": MessageLookupByLibrary.simpleMessage(
       "Pesticide Sprayer",
     ),
@@ -865,7 +951,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "phoneOptions": MessageLookupByLibrary.simpleMessage(
       "Phone Number Options",
     ),
+    "piece": MessageLookupByLibrary.simpleMessage("Piece"),
     "pineapple": MessageLookupByLibrary.simpleMessage("Pineapple"),
+    "plantAnimalHealth": MessageLookupByLibrary.simpleMessage(
+      "Plant & Animal Health Monitoring",
+    ),
     "pleaseSelectLabel": MessageLookupByLibrary.simpleMessage(
       "Please select a ",
     ),
@@ -900,6 +990,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "rasElOued": MessageLookupByLibrary.simpleMessage("Ras El Oued"),
     "rawWool": MessageLookupByLibrary.simpleMessage("Raw Wool"),
     "redBeans": MessageLookupByLibrary.simpleMessage("Red Beans"),
+    "refrigeratedTruck": MessageLookupByLibrary.simpleMessage(
+      "Refrigerated Truck",
+    ),
     "reggane": MessageLookupByLibrary.simpleMessage("Reggane"),
     "reguiba": MessageLookupByLibrary.simpleMessage("Reguiba"),
     "relizane": MessageLookupByLibrary.simpleMessage("Relizane"),
@@ -945,9 +1038,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "select_from_gallery": MessageLookupByLibrary.simpleMessage(
       "Select from Gallery",
     ),
+    "sell": MessageLookupByLibrary.simpleMessage("Sell"),
     "sendReport": MessageLookupByLibrary.simpleMessage("Send Report"),
     "seriana": MessageLookupByLibrary.simpleMessage("Seriana"),
     "sesameSeeds": MessageLookupByLibrary.simpleMessage("Sesame Seeds"),
+    "set": MessageLookupByLibrary.simpleMessage("Set"),
     "setif": MessageLookupByLibrary.simpleMessage("Setif"),
     "settara": MessageLookupByLibrary.simpleMessage("Settara"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
@@ -987,6 +1082,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "signup": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "sigus": MessageLookupByLibrary.simpleMessage("Sigus"),
     "skikda": MessageLookupByLibrary.simpleMessage("Skikda"),
+    "smallTruck": MessageLookupByLibrary.simpleMessage("Small Truck"),
+    "smartFarmingApps": MessageLookupByLibrary.simpleMessage(
+      "Smart Farming Apps",
+    ),
+    "soilAnalysis": MessageLookupByLibrary.simpleMessage("Soil Analysis"),
     "sorghum": MessageLookupByLibrary.simpleMessage("Sorghum"),
     "souagui": MessageLookupByLibrary.simpleMessage("Souagui"),
     "sougueur": MessageLookupByLibrary.simpleMessage("Sougueur"),
@@ -997,6 +1097,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sourElGhozlane": MessageLookupByLibrary.simpleMessage("Sour El Ghozlane"),
     "soybean": MessageLookupByLibrary.simpleMessage("Soybean"),
     "spinach": MessageLookupByLibrary.simpleMessage("Spinach"),
+    "squareMeter": MessageLookupByLibrary.simpleMessage("Square meter"),
     "straw": MessageLookupByLibrary.simpleMessage("Straw"),
     "strawberry": MessageLookupByLibrary.simpleMessage("Strawberry"),
     "subject": MessageLookupByLibrary.simpleMessage("Subject"),
@@ -1006,6 +1107,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Yeeey! You are now a",
     ),
     "sunflowerSeeds": MessageLookupByLibrary.simpleMessage("Sunflower Seeds"),
+    "sustainableFarmingConsulting": MessageLookupByLibrary.simpleMessage(
+      "Sustainable Farming Consulting",
+    ),
     "switchActiveProfile": MessageLookupByLibrary.simpleMessage(
       "Switch Active Profile",
     ),
@@ -1062,8 +1166,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tlemcen": MessageLookupByLibrary.simpleMessage("Tlemcen"),
     "tolga": MessageLookupByLibrary.simpleMessage("Tolga"),
     "tomato": MessageLookupByLibrary.simpleMessage("Tomato"),
+    "ton": MessageLookupByLibrary.simpleMessage("Ton"),
     "touggourt": MessageLookupByLibrary.simpleMessage("Touggourt"),
     "tractor": MessageLookupByLibrary.simpleMessage("Tractor"),
+    "trainingServices": MessageLookupByLibrary.simpleMessage(
+      "Training & Awareness Services",
+    ),
     "transport_service": MessageLookupByLibrary.simpleMessage(
       "Transport Service",
     ),
@@ -1088,15 +1196,77 @@ class MessageLookup extends MessageLookupByLibrary {
       "Veterinary Certificate",
     ),
     "walnut": MessageLookupByLibrary.simpleMessage("Walnut"),
+    "waterAnalysis": MessageLookupByLibrary.simpleMessage("Water Analysis"),
     "waterPump": MessageLookupByLibrary.simpleMessage("Water Pump"),
     "waterSprinklers": MessageLookupByLibrary.simpleMessage("Water Sprinklers"),
     "watermelon": MessageLookupByLibrary.simpleMessage("Watermelon"),
+    "welcome": MessageLookupByLibrary.simpleMessage("WELCOME"),
     "welcomeMessage": MessageLookupByLibrary.simpleMessage("Welcome 👋🏼"),
     "welcomeMessage2": MessageLookupByLibrary.simpleMessage(
       "Welcome to our platform",
     ),
     "wheat": MessageLookupByLibrary.simpleMessage("Wheat"),
     "whiteBeans": MessageLookupByLibrary.simpleMessage("White Beans"),
+    "wilaya01": MessageLookupByLibrary.simpleMessage("01 - Adrar"),
+    "wilaya02": MessageLookupByLibrary.simpleMessage("02 - Chlef"),
+    "wilaya03": MessageLookupByLibrary.simpleMessage("03 - Laghouat"),
+    "wilaya04": MessageLookupByLibrary.simpleMessage("04 - Oum El Bouaghi"),
+    "wilaya05": MessageLookupByLibrary.simpleMessage("05 - Batna"),
+    "wilaya06": MessageLookupByLibrary.simpleMessage("06 - Béjaïa"),
+    "wilaya07": MessageLookupByLibrary.simpleMessage("07 - Biskra"),
+    "wilaya08": MessageLookupByLibrary.simpleMessage("08 - Béchar"),
+    "wilaya09": MessageLookupByLibrary.simpleMessage("09 - Blida"),
+    "wilaya10": MessageLookupByLibrary.simpleMessage("10 - Bouira"),
+    "wilaya11": MessageLookupByLibrary.simpleMessage("11 - Tamanrasset"),
+    "wilaya12": MessageLookupByLibrary.simpleMessage("12 - Tébessa"),
+    "wilaya13": MessageLookupByLibrary.simpleMessage("13 - Tlemcen"),
+    "wilaya14": MessageLookupByLibrary.simpleMessage("14 - Tiaret"),
+    "wilaya15": MessageLookupByLibrary.simpleMessage("15 - Tizi Ouzou"),
+    "wilaya16": MessageLookupByLibrary.simpleMessage("16 - Algiers"),
+    "wilaya17": MessageLookupByLibrary.simpleMessage("17 - Djelfa"),
+    "wilaya18": MessageLookupByLibrary.simpleMessage("18 - Jijel"),
+    "wilaya19": MessageLookupByLibrary.simpleMessage("19 - Sétif"),
+    "wilaya20": MessageLookupByLibrary.simpleMessage("20 - Saïda"),
+    "wilaya21": MessageLookupByLibrary.simpleMessage("21 - Skikda"),
+    "wilaya22": MessageLookupByLibrary.simpleMessage("22 - Sidi Bel Abbès"),
+    "wilaya23": MessageLookupByLibrary.simpleMessage("23 - Annaba"),
+    "wilaya24": MessageLookupByLibrary.simpleMessage("24 - Guelma"),
+    "wilaya25": MessageLookupByLibrary.simpleMessage("25 - Constantine"),
+    "wilaya26": MessageLookupByLibrary.simpleMessage("26 - Médéa"),
+    "wilaya27": MessageLookupByLibrary.simpleMessage("27 - Mostaganem"),
+    "wilaya28": MessageLookupByLibrary.simpleMessage("28 - M\'Sila"),
+    "wilaya29": MessageLookupByLibrary.simpleMessage("29 - Mascara"),
+    "wilaya30": MessageLookupByLibrary.simpleMessage("30 - Ouargla"),
+    "wilaya31": MessageLookupByLibrary.simpleMessage("31 - Oran"),
+    "wilaya32": MessageLookupByLibrary.simpleMessage("32 - El Bayadh"),
+    "wilaya33": MessageLookupByLibrary.simpleMessage("33 - Illizi"),
+    "wilaya34": MessageLookupByLibrary.simpleMessage("34 - Bordj Bou Arréridj"),
+    "wilaya35": MessageLookupByLibrary.simpleMessage("35 - Boumerdès"),
+    "wilaya36": MessageLookupByLibrary.simpleMessage("36 - El Tarf"),
+    "wilaya37": MessageLookupByLibrary.simpleMessage("37 - Tindouf"),
+    "wilaya38": MessageLookupByLibrary.simpleMessage("38 - Tissemsilt"),
+    "wilaya39": MessageLookupByLibrary.simpleMessage("39 - El Oued"),
+    "wilaya40": MessageLookupByLibrary.simpleMessage("40 - Khenchela"),
+    "wilaya41": MessageLookupByLibrary.simpleMessage("41 - Souk Ahras"),
+    "wilaya42": MessageLookupByLibrary.simpleMessage("42 - Tipaza"),
+    "wilaya43": MessageLookupByLibrary.simpleMessage("43 - Mila"),
+    "wilaya44": MessageLookupByLibrary.simpleMessage("44 - Aïn Defla"),
+    "wilaya45": MessageLookupByLibrary.simpleMessage("45 - Naâma"),
+    "wilaya46": MessageLookupByLibrary.simpleMessage("46 - Aïn Témouchent"),
+    "wilaya47": MessageLookupByLibrary.simpleMessage("47 - Ghardaïa"),
+    "wilaya48": MessageLookupByLibrary.simpleMessage("48 - Relizane"),
+    "wilaya49": MessageLookupByLibrary.simpleMessage("49 - Timimoun"),
+    "wilaya50": MessageLookupByLibrary.simpleMessage(
+      "50 - Bordj Badji Mokhtar",
+    ),
+    "wilaya51": MessageLookupByLibrary.simpleMessage("51 - Ouled Djellal"),
+    "wilaya52": MessageLookupByLibrary.simpleMessage("52 - Béni Abbès"),
+    "wilaya53": MessageLookupByLibrary.simpleMessage("53 - In Salah"),
+    "wilaya54": MessageLookupByLibrary.simpleMessage("54 - In Guezzam"),
+    "wilaya55": MessageLookupByLibrary.simpleMessage("55 - Touggourt"),
+    "wilaya56": MessageLookupByLibrary.simpleMessage("56 - Djanet"),
+    "wilaya57": MessageLookupByLibrary.simpleMessage("57 - El Mghair"),
+    "wilaya58": MessageLookupByLibrary.simpleMessage("58 - El Meniaa"),
     "wilayaError": MessageLookupByLibrary.simpleMessage(
       "Please select a Wilaya",
     ),

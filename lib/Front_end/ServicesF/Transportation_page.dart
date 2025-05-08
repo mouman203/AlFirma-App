@@ -76,7 +76,7 @@ class _TransportationPageState extends State<TransportationPage> {
                       ),
                       items: [
                         S.of(context).all_wilayas,
-                        ...ProductData.wilayas(context).keys
+                        ...ProductData.wilayasT(context).keys
                       ]
                           .map((wilaya) => DropdownMenuItem<String>(
                                 value: wilaya,
@@ -98,7 +98,7 @@ class _TransportationPageState extends State<TransportationPage> {
                       selectedItemBuilder: (context) {
                         return [
                           S.of(context).all_wilayas,
-                          ...ProductData.wilayas(context).keys
+                          ...ProductData.wilayasT(context).keys
                         ]
                             .map((wilaya) => Align(
                                   alignment: Alignment.centerLeft,
@@ -152,7 +152,7 @@ class _TransportationPageState extends State<TransportationPage> {
                                   ),
                                 ),
                               ] +
-                              (ProductData.wilayas(context)[selectedWilaya] ??
+                              (ProductData.wilayasT(context)[selectedWilaya] ??
                                       [])
                                   .map((daira) => DropdownMenuItem<String>(
                                         value: daira,

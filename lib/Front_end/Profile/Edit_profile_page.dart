@@ -28,32 +28,62 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _PhoneNumController = TextEditingController();
 
+  
   String? firstNameError;
   String? lastNameError;
   String? phoneNumError;
   String? wilayaError;
   String? dairaError;
-// List to store Dairas based on selected Wilaya
+  
+  // List to store Dairas based on selected Wilaya
   List<String> availableDairas = [];
-  void updateDairaList(String wilaya) {
-    setState(() {
-      availableDairas = ProductData.wilayas(context)[wilaya] ?? [];
-    });
-  }
-
-  String? selectedWilaya;
-  String? selectedDaira;
+  
+  // Variables to store display (localized) and storage (Arabic) versions
+  String? selectedWilaya; // Display version (localized)
+  String? selectedDaira; // Display version (localized)
+  String? selectedWilayaArabic; // Storage version (Arabic)
+  String? selectedDairaArabic; // Storage version (Arabic)
+  
+  // Translation maps
+  late Map<String, String> _translationMap; // Arabic to localized
+  late Map<String, String> _reverseTranslationMap; // localized to Arabic
 
   String? _currentFirstName;
   String? _currentLastName;
   String? _currentPhoneNum;
-  String? _currentWilaya;
-  String? _currentDaira;
+  String? _currentWilaya; // This will be in Arabic from Firestore
+  String? _currentDaira; // This will be in Arabic from Firestore
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    
+    // We'll initialize the translation maps when the widget is inserted in the tree
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initTranslationMaps();
+      _loadUserData();
+    });
+  }
+  
+
+    void _initTranslationMaps() {
+    // Build the translation map from Arabic to localized
+    _translationMap = ProductData.buildDairaTranslationMap(context);
+    
+    // Build reverse translation map from localized to Arabic
+    _reverseTranslationMap = {};
+    _translationMap.forEach((arabic, localized) {
+      _reverseTranslationMap[localized] = arabic;
+    });
+  }
+
+  void updateDairaList(String wilaya) {
+    setState(() {
+      availableDairas = ProductData.wilayasT(context)[wilaya] ?? [];
+      
+      // Store the Arabic version when selecting wilaya
+      selectedWilayaArabic = _reverseTranslationMap[wilaya];
+    });
   }
 
   Future<void> _loadUserData() async {
@@ -65,20 +95,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         _currentFirstName = userDoc["first_name"] ?? '';
         _currentLastName = userDoc["last_name"] ?? '';
-        _currentWilaya = userDoc["wilaya"] ?? '';
-        _currentDaira = userDoc["daira"] ?? '';
         _currentPhoneNum = userDoc["phone"] ?? '';
         _currentImage = userDoc["photo"] ?? '';
-
+        
+        // Get the Arabic versions from Firestore
+        _currentWilaya = userDoc["wilaya"] ?? '';
+        _currentDaira = userDoc["daira"] ?? '';
+        
+        // Translate Arabic to localized versions for display
+        String? localizedWilaya = _translationMap[_currentWilaya] ?? _currentWilaya;
+        String? localizedDaira = _translationMap[_currentDaira] ?? _currentDaira;
+        
         _firstNameController.text = _currentFirstName!;
         _lastNameController.text = _currentLastName!;
         _PhoneNumController.text = _currentPhoneNum!;
-        selectedWilaya = _currentWilaya;
-        selectedDaira = _currentDaira;
+        
+        // Set the localized versions for display
+        selectedWilaya = localizedWilaya;
+        selectedDaira = localizedDaira;
+        
+        // Store the Arabic versions for database updates
+        selectedWilayaArabic = _currentWilaya;
+        selectedDairaArabic = _currentDaira;
+        
+        // Update available dairas based on the selected wilaya
+        if (selectedWilaya != null) {
+          updateDairaList(selectedWilaya!);
+        }
       });
     }
   }
-
   File? _selectedImageFile;
   String? _currentImage;
   bool isLoading = false;
@@ -133,20 +179,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  Future<void> _updateProfile() async {
+ Future<void> _updateProfile() async {
+    // Get the Arabic versions for storage
+    final wilayaToStore = selectedWilayaArabic ?? selectedWilaya!;
+    final dairaToStore = selectedDairaArabic ?? selectedDaira!;
+    
     if (_firstNameController.text != _currentFirstName ||
         _lastNameController.text != _currentLastName ||
         _PhoneNumController.text != _currentPhoneNum ||
-        selectedWilaya != _currentWilaya ||
-        selectedDaira != _currentDaira ||
+        wilayaToStore != _currentWilaya ||
+        dairaToStore != _currentDaira ||
         _selectedImageFile != null) {
       // Only update if there are changes
       await FirebaseFirestore.instance.collection('Users').doc(userId).update({
         'first_name': _firstNameController.text,
         'last_name': _lastNameController.text,
         'phone': _PhoneNumController.text,
-        'wilaya': selectedWilaya,
-        'daira': selectedDaira
+        'wilaya': wilayaToStore,
+        'daira': dairaToStore
       });
       if (_selectedImageFile != null) {
         uploadImage(_selectedImageFile!);
@@ -322,7 +372,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
 
               const SizedBox(height: 13),
-// Wilaya Dropdown
+  // Wilaya Dropdown
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Column(
@@ -344,10 +394,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
-                          value:
-                              ProductData.wilayas(context).keys.contains(selectedWilaya)
-                                  ? selectedWilaya
-                                  : null,
+                          value: ProductData.wilayasT(context).keys.contains(selectedWilaya)
+                                ? selectedWilaya
+                                : null,
                           hint: Row(
                             children: [
                               Icon(
@@ -395,18 +444,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           onChanged: (newValue) {
                             if (newValue != null &&
-                                ProductData.wilayas(context).containsKey(newValue)) {
+                                ProductData.wilayasT(context).containsKey(newValue)) {
                               setState(() {
                                 selectedWilaya = newValue;
                                 selectedDaira = null;
+                                selectedDairaArabic = null;
                                 wilayaError = null;
                                 dairaError = null;
+                                
+                                // Store the Arabic version when selecting wilaya
+                                selectedWilayaArabic = _reverseTranslationMap[newValue];
+                                
                                 updateDairaList(newValue);
                               });
                             }
                           },
                           selectedItemBuilder: (BuildContext context) {
-                            return ProductData.wilayas(context).keys.map((wilaya) {
+                            return ProductData.wilayasT(context).keys.map((wilaya) {
                               return Row(
                                 children: [
                                   Icon(
@@ -429,7 +483,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               );
                             }).toList();
                           },
-                          items: ProductData.wilayas(context).keys
+                          items: ProductData.wilayasT(context).keys
                               .map<DropdownMenuItem<String>>((wilaya) {
                             return DropdownMenuItem<String>(
                               value: wilaya,
@@ -462,7 +516,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
               const SizedBox(height: 13),
 
-               // Daira Dropdown
+              // Daira Dropdown
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Column(
@@ -538,6 +592,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               setState(() {
                                 selectedDaira = newValue;
                                 dairaError = null;
+                                
+                                // Store the Arabic version when selecting daira
+                                selectedDairaArabic = _reverseTranslationMap[newValue];
                               });
                             }
                           },
@@ -595,6 +652,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ],
                 ),
               ),
+
 
               const SizedBox(height: 50),
 
