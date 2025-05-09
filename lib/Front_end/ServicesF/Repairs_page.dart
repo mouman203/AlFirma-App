@@ -1,9 +1,10 @@
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/generated/l10n.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
-import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
 
 class RepairsPage extends StatefulWidget {
   const RepairsPage({super.key});
@@ -15,6 +16,20 @@ class RepairsPage extends StatefulWidget {
 class _RepairsPageState extends State<RepairsPage> {
   String? selectedWilaya;
   String? selectedDaira;
+
+static Future<List<Products>> getrepairsServicesOnce() async {
+      final snapshot = await FirebaseFirestore.instance
+            .collection('item')
+            .doc('Products')
+            .collection('Products')
+            .where('typeItem', isEqualTo: "Repairs")
+            .get();
+
+        return snapshot.docs.map(Products.fromFirestore).toList();
+ }
+
+
+
   @override
   Widget build(BuildContext context) {
     selectedWilaya ??= S.of(context).all_wilayas;
@@ -222,8 +237,8 @@ class _RepairsPageState extends State<RepairsPage> {
               ),
             ),
             const SizedBox(height: 6),
-            FutureBuilder<List<RepairService>>(
-              future: RepairService.getRepairServicesOnce(),
+            FutureBuilder<List<Products>>(
+              future: getrepairsServicesOnce(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

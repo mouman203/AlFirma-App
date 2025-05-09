@@ -1,12 +1,11 @@
 import 'dart:io';
-
 import 'package:agriplant/data/ProductData.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:agriplant/Back_end/Product.dart';
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProducts extends StatefulWidget {
@@ -330,6 +329,7 @@ class _AddProductsState extends State<AddProducts> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
     fetchUserType();
@@ -671,6 +671,7 @@ class _AddProductsState extends State<AddProducts> {
                       return null;
                     }),
               ],
+
 //=======================SERVICES TYPE======================================
               if (userType == "Commerçant" && selectedCategory != null)
                 ProductData.buildDropdown(

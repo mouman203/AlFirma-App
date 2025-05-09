@@ -52,7 +52,7 @@ class Products {
       "ownerId": ownerId,
       "typeItem": typeItem,
       "category": category,
-      "sub category": subCategory,
+      "sub_category": subCategory,
       "product": product,
       "quantite": quantity,
       "surface": surface,
@@ -112,7 +112,7 @@ class Products {
               ? 'Products'
               : 'Services')
           .doc();
-      ; // توليد وثيقة جديدة أو تحديد وثيقة
+// توليد وثيقة جديدة أو تحديد وثيقة
       product.id = docRef.id;
       await docRef.set(product.toJson());
       print("✅ Product added successfully!");
@@ -120,6 +120,9 @@ class Products {
       print("❌ Error adding product: $e");
     }
   }
+
+
+
 /*
   /// 2**Update an existing product**
   Future<void> updateInFirestore() async {

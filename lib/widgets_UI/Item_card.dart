@@ -1,9 +1,5 @@
-import 'package:agriplant/Back_end/Products/Product.dart';
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
-import 'package:agriplant/Back_end/Products/ProductElev.dart';
-import 'package:agriplant/Back_end/ServicesB/Service.dart';
-import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
-import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
+
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Item%20detaille/product_details_page.dart';
 import 'package:agriplant/Front_end/Item%20detaille/service_details_page.dart';
@@ -13,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
 class ItemCard extends StatefulWidget {
-  final dynamic item; // Can be Product or Service
+  final Products item; // Can be Product or Service
   final Users user = Users();
   final VoidCallback? onUnsave; // Parent callback to update state when unsaved
 
@@ -84,14 +80,14 @@ class _ItemCardState extends State<ItemCard> {
 
     return GestureDetector(
       onTap: () {
-        if (item is Service) {
+        if (item.SP=="Service") {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ServiceDetailsPage(service: item),
             ),
           );
-        } else if (item is Product) {
+        } else if (item.SP=="Product") {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -122,8 +118,8 @@ class _ItemCardState extends State<ItemCard> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: item.photos.isNotEmpty
-                        ? NetworkImage(item.photos[0])
+                    image: item.photos!.isNotEmpty
+                        ? NetworkImage(item.photos![0])
                         : const AssetImage('assets/nophoto.png')
                             as ImageProvider,
                     fit: BoxFit.cover,
@@ -155,50 +151,54 @@ class _ItemCardState extends State<ItemCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item is Service
-                        ? item.categorie
-                        : item is Productagri
-                            ? item.name.isNotEmpty
-                                ? item.name
+                    item.SP=="Servise"
+                        ? item.category!
+                        : item.typeItem=="Agricultural Product"
+                            ? item.product!.isNotEmpty
+                                ? item.product!
                                 : item.category?.isNotEmpty ?? false
                                     ? item.category!
-                                    : item.subcategory ?? ''
-                            : item is ProductElev
-                                ? item.name.isNotEmpty
-                                    ? item.name
+                                    : item.subCategory ?? ''
+                            : item.typeItem=="Animal Product"
+                                ? item.product!.isNotEmpty
+                                    ? item.product!
                                     : item.category ?? ''
-                                : '',
+                                : item.typeItem=="Commercial Product"
+                                ? item.product!.isNotEmpty
+                                    ? item.product!
+                                    : item.category ?? ''
+                                :'',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
                   const SizedBox(height: 5),
                   Text(
-                    item is TransportService
-                        ? (item.moyenDeTransport ?? 'No Transport Available')
-                        : item is ExpertiseService
-                            ? (item.TypeC ?? 'No Expertise Type')
-                            : item is Productagri
-                                ? '${item.quantite?.toString()} ${item.unite ?? ''}'
+                    item.typeItem=="Transportation" 
+                        ? ('No Transport Available')
+                        : item.typeItem=="Expertise"
+                            ? ( 'No Expertise Type')
+                            : item.typeItem=="Agricultural Product"
+                                ? '${item.quantity?.toString()} ${item.unit ?? ''}'
                                 : '',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
                   const SizedBox(height: 5),
                   // Display price
-                  if (item is Product)
+                  if (item.SP=="Product")
                     // If Product, show price and unit (if Productagri)
                     Row(
                       children: [
                         Text("دج${item.price}",
                             style: Theme.of(context).textTheme.bodyLarge),
-                        if (item is Productagri)
+                        if (item.typeItem=="Agricultural Product")
                           Text(
-                            "/${(item).unite}",
+                            "/${(item).unit}",
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                       ],
                     ),
-                  if (item is Service)
+                  if (item.SP=="Service")
                     // If Service, show only price
                     Text("دج${item.price}",
                         style: Theme.of(context).textTheme.bodyLarge),
@@ -207,17 +207,13 @@ class _ItemCardState extends State<ItemCard> {
                   // Reactions for Service and Product
                   StreamBuilder<DocumentSnapshot>(
                     stream: FirebaseFirestore.instance
-                        .collection(item is Service ? 'Services' : 'Products')
-                        .doc(item is Service
-                            ? item.typeService
-                            : item.typeProduct == "AgricolProduct"
-                                ? "Agricol_products"
-                                : "Eleveur_products")
-                        .collection(item is Service
-                            ? item.typeService
-                            : item.typeProduct == "AgricolProduct"
-                                ? "Agricol_products"
-                                : "Eleveur_products")
+                        .collection("item")
+                        .doc(item.SP=="Service"
+                            ? "Services"
+                            : "Products")
+                        .collection(item.SP=="Service"
+                            ? "Services"
+                            : "Products")
                         .doc(item.id)
                         .snapshots(),
                     builder: (context, snapshot) {
@@ -280,7 +276,7 @@ class _ItemCardState extends State<ItemCard> {
                             count: comments.length,
                             color: Colors.grey,
                             onTap: () {
-                              if (item is Service) {
+                              if (item.SP=="Service") {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -288,7 +284,7 @@ class _ItemCardState extends State<ItemCard> {
                                         ServiceDetailsPage(service: item),
                                   ),
                                 );
-                              } else if (item is Product) {
+                              } else if (item.SP=="Product") {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

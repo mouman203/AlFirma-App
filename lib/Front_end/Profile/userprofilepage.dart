@@ -1,8 +1,5 @@
-import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
-import 'package:agriplant/Back_end/Products/ProductElev.dart';
-import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
-import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
+
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Services/Notification_services.dart';
@@ -92,58 +89,38 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
-  Future<List<Object>> fetchAllUserItems(String userId) async {
-    final firestore = FirebaseFirestore.instance;
+  Future<List<Products>> fetchAllUserItems(String userId) async {
+      final firestore = FirebaseFirestore.instance;
 
-    final agriSnap = await firestore
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final agriProducts = agriSnap.docs.map(Productagri.fromFirestore).toList();
+// ===================================Fetching products===================================
 
-    final elevSnap = await firestore
-        .collection('Products')
-        .doc('Eleveur_products')
-        .collection('Eleveur_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final elevProducts = elevSnap.docs.map(ProductElev.fromFirestore).toList();
+    final productSnap = await firestore
+      .collection('item')
+      .doc('Products')
+      .collection('Products')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+      final products = productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList();
 
-    final expertiseSnap = await firestore
+    
+// ===================================Fetching services===================================
+    
+    final serviceSnap = await firestore
+        .collection('item')
+        .doc('Services')
         .collection('Services')
-        .doc('Expertise')
-        .collection('Expertise')
         .where('ownerId', isEqualTo: userId)
+        .where('typeService', isEqualTo: "Traansport service")
         .get();
-    final expertiseServices =
-        expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
+    final services = serviceSnap.docs.map(Products.fromFirestore).toList();
 
-    final repairSnap = await firestore
-        .collection('Services')
-        .doc('Repairs')
-        .collection('Repairs')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final repairServices =
-        repairSnap.docs.map(RepairService.fromFirestore).toList();
 
-    final transportSnap = await firestore
-        .collection('Services')
-        .doc('Transportation')
-        .collection('Transportation')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final transportServices =
-        transportSnap.docs.map(TransportService.fromFirestore).toList();
 
+    // Combine all items into one list
     return [
-      ...agriProducts,
-      ...elevProducts,
-      ...expertiseServices,
-      ...repairServices,
-      ...transportServices,
+      ...products,
+      ...services,
+
     ];
   }
 
@@ -306,7 +283,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     height: 500,
                     child: TabBarView(
                       children: [
-                        FutureBuilder<List<Object>>(
+                        FutureBuilder<List<Products>>(
                           future: fetchAllUserItems(widget.userId),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==

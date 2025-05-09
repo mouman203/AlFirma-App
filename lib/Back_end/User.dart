@@ -1,7 +1,5 @@
-import 'package:agriplant/Back_end/Products/Product.dart';
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
-import 'package:agriplant/Back_end/Products/ProductElev.dart';
-import 'package:agriplant/Back_end/ServicesB/Service.dart';
+
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Authentication/ProfilePicturePage.dart';
 import 'package:agriplant/Front_end/Profile/Edit_profile_page.dart';
@@ -498,39 +496,25 @@ class Users {
     }
   }
 
-  Future<List<Product>> searchProducts(String query) async {
+  Future<List<Products>> searchProducts(String query) async {
     try {
-      List<Product> allProducts = [];
+      List<Products> allProducts = [];
 
       // جلب منتجات الزراعة
-      QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('item')
+          .doc('Products')
           .collection('Products')
-          .doc('Agricol_products')
-          .collection('Agricol_products')
           .get();
 
-      List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
-        return Productagri.fromFirestore(doc);
+      List<Products> agricolProducts = productSnapshot.docs.map((doc) {
+        return Products.fromFirestore(doc);
       }).toList();
       allProducts.addAll(agricolProducts);
-
-      // جلب منتجات المربين
-      QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
-          .collection('Products')
-          .doc('Eleveur_products')
-          .collection('Eleveur_products')
-          .get();
-
-      List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
-        return ProductElev.fromFirestore(doc);
-      }).toList();
-
-      allProducts.addAll(eleveurProducts);
-
       // تصفية المنتجات بناءً على الاسم
-      List<Product> matchedProducts = allProducts
+      List<Products> matchedProducts = allProducts
           .where((product) =>
-              product.name.toLowerCase().contains(query.toLowerCase()))
+              product.product!.toLowerCase().contains(query.toLowerCase()))
           .toList();
 
       return matchedProducts;
@@ -540,19 +524,14 @@ class Users {
     }
   }
 
-  void likeItem(dynamic item) async {
+  void likeItem(Products item) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
 
-    String collection;
     String docPath;
 
-    if (item is Product) {
-      collection = item.typeProduct == "AgricolProduct"
-          ? "Agricol_products"
-          : "Eleveur_products";
+    if (item.SP == "Product") {
       docPath = "Products";
-    } else if (item is Service) {
-      collection = item.typeService;
+    } else if (item.SP == "Service") {
       docPath = "Services";
     } else {
       print("❌ Unknown item type");
@@ -560,9 +539,9 @@ class Users {
     }
 
     DocumentReference ref = FirebaseFirestore.instance
+        .collection("item")
+        .doc(docPath)
         .collection(docPath)
-        .doc(collection)
-        .collection(collection)
         .doc(item.id);
 
     try {
@@ -588,19 +567,14 @@ class Users {
     }
   }
 
-  void dislikeItem(dynamic item) async {
+  void dislikeItem(Products item) async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
 
-    String collection;
     String docPath;
 
-    if (item is Product) {
-      collection = item.typeProduct == "AgricolProduct"
-          ? "Agricol_products"
-          : "Eleveur_products";
+    if (item.SP == "Product") {
       docPath = "Products";
-    } else if (item is Service) {
-      collection = item.typeService;
+    } else if (item.SP == "Service") {
       docPath = "Services";
     } else {
       print("❌ Unknown item type");
@@ -608,9 +582,9 @@ class Users {
     }
 
     DocumentReference ref = FirebaseFirestore.instance
+        .collection("item")
+        .doc(docPath)
         .collection(docPath)
-        .doc(collection)
-        .collection(collection)
         .doc(item.id);
 
     try {
@@ -640,39 +614,18 @@ class Users {
     String itemId,
     String userId,
     String text,
-    dynamic item, // Product or Service
+    Products item, // Product or Service
   ) async {
     try {
       String docPath;
       String rootCollection;
 
       // Determine whether it's a Product or a Service
-      if (item is Product) {
-        switch (item.typeProduct) {
-          case "AgricolProduct":
-            docPath = "Agricol_products";
-            break;
-          case "EleveurProduct":
-            docPath = "Eleveur_products";
-            break;
-          default:
-            throw Exception("❌ Unknown product type: ${item.typeProduct}");
-        }
+      if (item.SP =="Product") {
+        docPath="Products";
         rootCollection = "Products";
-      } else if (item is Service) {
-        switch (item.typeService) {
-          case "Transportation":
-            docPath = "Transportation";
-            break;
-          case "Expertise":
-            docPath = "Expertise";
-            break;
-          case "Repairs":
-            docPath = "Repairs";
-            break;
-          default:
-            throw Exception("❌ Unknown service type: ${item.typeService}");
-        }
+      } else if (item.SP =="Service") {
+        docPath="Services";
         rootCollection = "Services";
       } else {
         throw Exception("❌ Unknown item type!");
@@ -721,38 +674,18 @@ class Users {
     dynamic item, // Product or Service
   ) async {
     try {
-      String docPath;
+     String docPath;
       String rootCollection;
 
-      if (item is Product) {
-        switch (item.typeProduct) {
-          case "AgricolProduct":
-            docPath = "Agricol_products";
-            break;
-          case "EleveurProduct":
-            docPath = "Eleveur_products";
-            break;
-          default:
-            throw Exception("❌ نوع منتوج غير معروف: ${item.typeProduct}");
-        }
+      // Determine whether it's a Product or a Service
+      if (item.SP =="Product") {
+        docPath="Products";
         rootCollection = "Products";
-      } else if (item is Service) {
-        switch (item.typeService) {
-          case "Transportation":
-            docPath = "Transportation";
-            break;
-          case "Expertise":
-            docPath = "Expertise";
-            break;
-          case "Repairs":
-            docPath = "Repairs";
-            break;
-          default:
-            throw Exception("❌ نوع الخدمة غير معروف: ${item.typeService}");
-        }
+      } else if (item.SP =="Service") {
+        docPath="Services";
         rootCollection = "Services";
       } else {
-        throw Exception("❌ العنصر غير معروف!");
+        throw Exception("❌ Unknown item type!");
       }
 
       DocumentReference ref = FirebaseFirestore.instance
@@ -778,7 +711,7 @@ class Users {
     required String itemId,
     required String userId,
     required String text,
-    required dynamic item, // Product or Service
+    required Products item, // Product or Service
   }) {
     showDialog(
       context: context,

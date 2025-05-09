@@ -1,6 +1,5 @@
-import 'package:agriplant/Back_end/Products/Product.dart';
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
-import 'package:agriplant/Back_end/Products/ProductElev.dart';
+
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Filter/filter_bottom_sheet.dart';
@@ -20,7 +19,7 @@ class ExplorePage extends StatefulWidget {
 
 class _ExplorePageState extends State<ExplorePage> {
   Users user = Users();
-  List<Product> productList = [];
+  List<Products> productList = [];
   List<String> filteredNames = []; // أسماء المنتجات المصفاة حسب البحث
   List<String> productNames = []; // جميع أسماء المنتجات
   final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
@@ -58,33 +57,21 @@ class _ExplorePageState extends State<ExplorePage> {
   // يستخدم هذا الدالة لجلب المنتجات من Firestore
   Future<void> fetchAllProducts() async {
     try {
-      List<Product> allProducts = [];
+      List<Products> allProducts = [];
 
       // جلب منتجات الزراعة
-      QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('item')
+          .doc('Products')
           .collection('Products')
-          .doc('Agricol_products')
-          .collection('Agricol_products')
           .get();
 
-      List<Product> agricolProducts = agricolSnapshot.docs.map((doc) {
-        return Productagri.fromFirestore(doc);
+      List<Products> agricolProducts = productSnapshot.docs.map((doc) {
+        return Products.fromFirestore(doc);
       }).toList();
 
       allProducts.addAll(agricolProducts);
 
-      // جلب منتجات المربين
-      QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
-          .collection('Products')
-          .doc('Eleveur_products')
-          .collection('Eleveur_products')
-          .get();
-
-      List<Product> eleveurProducts = eleveurSnapshot.docs.map((doc) {
-        return ProductElev.fromFirestore(doc);
-      }).toList();
-
-      allProducts.addAll(eleveurProducts);
 
       // تحديث حالة الواجهة
       if (mounted) {
@@ -102,25 +89,17 @@ class _ExplorePageState extends State<ExplorePage> {
   Future<void> fetchProductNames() async {
     try {
       // جلب منتجات Agricol
-      QuerySnapshot agricolSnapshot = await FirebaseFirestore.instance
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('item')
+          .doc('Products')
           .collection('Products')
-          .doc('Agricol_products')
-          .collection('Agricol_products')
-          .get();
-
-      // جلب منتجات Eleveur
-      QuerySnapshot eleveurSnapshot = await FirebaseFirestore.instance
-          .collection('Products')
-          .doc('Eleveur_products')
-          .collection('Eleveur_products')
           .get();
 
       // استخراج الأسماء من المجموعتين
       List<String> names = [
-        ...agricolSnapshot.docs.map(
-            (doc) => (doc.data() as Map<String, dynamic>)['name'] as String),
-        ...eleveurSnapshot.docs.map(
-            (doc) => (doc.data() as Map<String, dynamic>)['name'] as String),
+        ...productSnapshot.docs.map(
+            (doc) => (doc.data() as Map<String, dynamic>)['product'] as String),
+
       ];
 
       if (mounted) {
@@ -155,7 +134,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       _focusNode.unfocus();
                       await searchManager.addSearch(word);
                       loadSearchHistory();
-                      List<Product> results = await user.searchProducts(word);
+                      List<Products> results = await user.searchProducts(word);
                       setState(() {
                         productList = results;
                         filteredNames = [];
@@ -194,7 +173,7 @@ class _ExplorePageState extends State<ExplorePage> {
                   await searchManager.addSearch(filteredNames[index]);
                   loadSearchHistory();
                   _controller.text = filteredNames[index];
-                  List<Product> results =
+                  List<Products> results =
                       await user.searchProducts(filteredNames[index]);
                   setState(() {
                     productList = results;
@@ -347,7 +326,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       onPressed: () async {
                         // فتح الـ bottom sheet وعند الرجوع نلتقط النتيجة
                         final result =
-                            await showModalBottomSheet<List<Product>>(
+                            await showModalBottomSheet<List<Products>>(
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,

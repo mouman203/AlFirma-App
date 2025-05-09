@@ -8,14 +8,14 @@ class NotificationService {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher'); // Make sure this icon exists in your android/app/src/main/res/drawable folder
 
-    final DarwinInitializationSettings initializationSettingsIOS =
+    const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
-    final InitializationSettings initializationSettings = InitializationSettings(
+    const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
@@ -51,7 +51,7 @@ class NotificationService {
       id,
       title,
       body,
-      await notificationDetails(),
+      notificationDetails(),
       payload: payLoad,
     );
   }

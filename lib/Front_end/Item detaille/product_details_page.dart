@@ -1,6 +1,5 @@
-import 'package:agriplant/Back_end/Products/Product.dart';
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
-import 'package:agriplant/Back_end/Products/ProductElev.dart';
+
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Front_end/Item%20detaille/fullscreanimage.dart';
@@ -15,7 +14,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailsPage extends StatefulWidget {
-  final Product product;
+  final Products product;
   final VoidCallback? onUnsave;
   const ProductDetailsPage({super.key, required this.product, this.onUnsave});
 
@@ -33,7 +32,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
   bool showMore = false;
   Users user = Users();
-  List<Product> products = List.empty();
+  List<Products> products = List.empty();
   final TextEditingController controller = TextEditingController();
 
   bool isSaved = false;
@@ -51,11 +50,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     });
     _pageController = PageController();
     final product = widget.product;
-    if (product is Productagri) {
-      category = product.category;
-    } else if (product is ProductElev) {
-      category = product.category;
-    }
+    category = product.category;
     _checkIfSaved();
   }
 
@@ -151,7 +146,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   String reportText = selectedOption == 'Other'
                       ? otherController.text
                       : selectedOption;
-                  signaler(widget.product.typeProduct, selectedOption);
+                  signaler(widget.product.typeItem, selectedOption);
                   print('Reported Problem: $reportText');
                   Navigator.pop(context);
                 },
@@ -339,7 +334,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ]
               ],
             ),
+            
+            
             body: ListView(padding: const EdgeInsets.all(8), children: [
+              
+              // صورة المنتج
+              
               SizedBox(
                 height: 250,
                 width: double.infinity,
@@ -348,7 +348,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   children: [
                     PageView.builder(
                       controller: _pageController,
-                      itemCount: widget.product.photos.length,
+                      itemCount: widget.product.photos!.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
@@ -356,7 +356,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => FullScreenImageViewer(
-                                  photos: widget.product.photos,
+                                  photos: widget.product.photos!,
                                   initialIndex: index,
                                 ),
                               ),
@@ -367,7 +367,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image:
-                                    NetworkImage(widget.product.photos[index]),
+                                    NetworkImage(widget.product.photos![index]),
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: BorderRadius.circular(10),
@@ -381,7 +381,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           bottom: 12), // ✅ مسافة بسيطة من الأسفل
                       child: SmoothPageIndicator(
                         controller: _pageController,
-                        count: widget.product.photos.length,
+                        count: widget.product.photos!.length,
                         effect: const WormEffect(
                           dotColor:
                               Colors.white70, // ✅ أفضل لون للنقاط فوق الصورة
@@ -463,8 +463,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                           if (snapshot.hasData &&
                                               snapshot.data!.exists) {
                                             photoURL =
-                                                snapshot.data!.get('photo') ??
-                                                    null;
+                                                snapshot.data!.get('photo');
                                           }
 
                                           return CircleAvatar(
@@ -507,7 +506,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: Text(
-                            timeago.format(widget.product.date_of_add.toLocal(),
+                            timeago.format(widget.product.date_of_add!.toLocal(),
                                 locale: 'ar'),
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -523,17 +522,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Name : ${widget.product.name}",
+                            "Name : ${widget.product.product}",
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Type : ${widget.product.typeProduct}",
+                            "Type : ${widget.product.typeItem}",
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Category : ${category}",
+                            "Category : $category",
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 10),
@@ -566,8 +565,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 TextSpan(
                                   text: showMore
                                       ? widget.product.description
-                                      : (widget.product.description.length > 100
-                                          ? '${widget.product.description.substring(0, 100)}...'
+                                      : (widget.product.description!.length > 100
+                                          ? '${widget.product.description!.substring(0, 100)}...'
                                           : widget.product.description),
                                 ),
                                 TextSpan(
@@ -599,7 +598,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: "\DA${widget.product.price}",
+                                    text: "DA${widget.product.price}",
                                     style:
                                         Theme.of(context).textTheme.titleLarge,
                                   ),
@@ -610,15 +609,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             // إضافة التفاعل مع الإعجابات والتعليقات
                             StreamBuilder<DocumentSnapshot>(
                               stream: FirebaseFirestore.instance
-                                  .collection('Products') // اسم المجموعة
-                                  .doc(widget.product.typeProduct ==
-                                          "AgricolProduct"
-                                      ? "Agricol_products"
-                                      : "Eleveur_products")
-                                  .collection(widget.product.typeProduct ==
-                                          "AgricolProduct"
-                                      ? "Agricol_products"
-                                      : "Eleveur_products")
+                                  .collection('item') // اسم المجموعة
+                                  .doc("Products")
+                                  .collection("Products")
                                   .doc(widget.product.id)
                                   .snapshots(),
                               builder: (context, snapshot) {
@@ -686,7 +679,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                               } else {
                                                 user.likeItem(widget.product);
                                               }
-                                              ;
                                             }),
                                         Text(
                                           "${liked.length}",
@@ -944,7 +936,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           }
                           // حالة التسجيل العادي + صورة من Firestore
                           else if (snapshot.hasData && snapshot.data!.exists) {
-                            photoURL = snapshot.data!.get('photo') ?? null;
+                            photoURL = snapshot.data!.get('photo');
                           }
 
                           return CircleAvatar(
@@ -994,7 +986,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 context, "You can't add an empty comment.");
                           } else {
                             user.addComment(
-                              widget.product.id,
+                              widget.product.id!,
                               FirebaseAuth.instance.currentUser?.uid ?? "guest",
                               controller.text,
                               widget.product,
@@ -1035,11 +1027,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     StreamBuilder<DocumentSnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('Products')
-                          .doc(widget.product.typeProduct == "AgricolProduct"
+                          .doc(widget.product.typeItem == "AgricolProduct"
                               ? "Agricol_products"
                               : "Eleveur_products")
                           .collection(
-                              widget.product.typeProduct == "AgricolProduct"
+                              widget.product.typeItem == "AgricolProduct"
                                   ? "Agricol_products"
                                   : "Eleveur_products")
                           .doc(widget.product.id)
@@ -1148,7 +1140,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                               // Assuming `user.showDeleteConfirmationDialog` exists
                                               user.showDeleteConfirmationDialog(
                                                 context,
-                                                itemId: widget.product.id,
+                                                itemId: widget.product.id!,
                                                 userId: currentUserId,
                                                 text: comment['text'],
                                                 item: widget.product,

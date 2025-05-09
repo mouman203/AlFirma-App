@@ -1,7 +1,8 @@
-import 'package:agriplant/Back_end/Products/ProductCommer%C3%A7ant.dart';
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,17 @@ class _RentPageState extends State<RentPage> {
   String? selectedWilaya;
   String? selectedDaira;
 
+
+  static Future<List<Products>> getrentServicesOnce() async {
+ final snapshot = await FirebaseFirestore.instance
+      .collection('item')
+      .doc('Products')
+      .collection('Products')
+      .where('service', isEqualTo: "rent")
+      .get();
+
+  return snapshot.docs.map(Products.fromFirestore).toList();
+ }
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -229,8 +241,8 @@ class _RentPageState extends State<RentPage> {
               ),
             ),
             const SizedBox(height: 6),
-            FutureBuilder<List<ProductCommercant>>(
-              future: ProductCommercant.getRentservicesOnce(),
+            FutureBuilder<List<Products>>(
+              future: getrentServicesOnce(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

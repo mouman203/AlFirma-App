@@ -1,7 +1,8 @@
-import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/data/ProductData.dart'; // To access wilayas
 import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,19 @@ class _TransportationPageState extends State<TransportationPage> {
   String? selectedWilaya;
   String? selectedDaira;
 
+
+  static Future<List<Products>> getTransportservicesOnce() async {
+      final snapshot = await FirebaseFirestore.instance
+            .collection('item')
+            .doc('Products')
+            .collection('Products')
+            .where('typeItem', isEqualTo: "Transportation")
+            .get();
+
+        return snapshot.docs.map(Products.fromFirestore).toList();
+ }
+
+ 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -231,8 +245,8 @@ class _TransportationPageState extends State<TransportationPage> {
               ),
             ),
             const SizedBox(height: 6),
-            FutureBuilder<List<TransportService>>(
-              future: TransportService.getTransportservicesOnce(),
+            FutureBuilder<List<Products>>(
+              future: getTransportservicesOnce(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

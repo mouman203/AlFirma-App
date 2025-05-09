@@ -1,6 +1,5 @@
-import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
-import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
-import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
+
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Front_end/Item%20detaille/fullscreanimage.dart';
@@ -13,10 +12,9 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
-import '../../Back_end/ServicesB/Service.dart';
 
 class ServiceDetailsPage extends StatefulWidget {
-  final Service service;
+  final Products service;
   final VoidCallback? onUnsave;
   const ServiceDetailsPage({super.key, required this.service, this.onUnsave});
 
@@ -34,7 +32,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
   final FocusNode _focusNode = FocusNode(); // إنشاء كائن التركيز
   bool showMore = false;
   Users user = Users();
-  List<Service> services = List.empty();
+  List<Products> services = List.empty();
   final TextEditingController controller = TextEditingController();
 
   bool isSaved = false;
@@ -52,15 +50,11 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
     });
     _pageController = PageController();
     final service = widget.service;
-    if (service is TransportService) {
-      category = service.categorie;
+    if (service.typeItem == "Transportation") {
+      
     }
-    if (service is ExpertiseService) {
-      category = service.categorie;
-    } else if (service is RepairService) {
-      category = service.categorie;
-      _checkIfSaved();
-    }
+    category = service.category;
+    _checkIfSaved();
   }
 
   /// Check if the item is saved
@@ -94,8 +88,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
       DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
           .collection('Services')
           .doc(widget.service
-              .typeService) // 'Transportation' or 'Expertise'or'Repairs'
-          .collection(widget.service.typeService)
+              .typeItem) // 'Transportation' or 'Expertise'or'Repairs'
+          .collection(widget.service.typeItem)
           .doc(itemId) // The service ID
           .get();
 
@@ -203,7 +197,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                   String reportText = selectedOption == 'Other'
                       ? otherController.text
                       : selectedOption;
-                  signaler(widget.service.typeService, selectedOption);
+                  signaler(widget.service.typeItem, selectedOption);
                   print('Reported Problem: $reportText');
                   Navigator.pop(context);
                 },
@@ -348,7 +342,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                   children: [
                     PageView.builder(
                       controller: _pageController,
-                      itemCount: widget.service.photos.length,
+                      itemCount: widget.service.photos!.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
@@ -356,7 +350,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => FullScreenImageViewer(
-                                  photos: widget.service.photos,
+                                  photos: widget.service.photos!,
                                   initialIndex: index,
                                 ),
                               ),
@@ -367,7 +361,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image:
-                                    NetworkImage(widget.service.photos[index]),
+                                    NetworkImage(widget.service.photos![index]),
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: BorderRadius.circular(10),
@@ -381,7 +375,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                           bottom: 12), // ✅ مسافة بسيطة من الأسفل
                       child: SmoothPageIndicator(
                         controller: _pageController,
-                        count: widget.service.photos.length,
+                        count: widget.service.photos!.length,
                         effect: const WormEffect(
                           dotColor:
                               Colors.white70, // ✅ أفضل لون للنقاط فوق الصورة
@@ -475,8 +469,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                           else if (snapshot.hasData &&
                                               snapshot.data!.exists) {
                                             photoURL =
-                                                snapshot.data!.get('photo') ??
-                                                    null;
+                                                snapshot.data!.get('photo');
                                           }
 
                                           return CircleAvatar(
@@ -522,7 +515,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                         Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: Text(
-                            timeago.format(widget.service.date_of_add.toLocal(),
+                            timeago.format(widget.service.date_of_add!.toLocal(),
                                 locale: 'ar'),
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -538,57 +531,52 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.service.typeService,
+                            widget.service.typeItem,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Type : ${widget.service.categorie}",
+                            "Type : ${widget.service.category}",
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          if (widget.service is TransportService) ...[
+                          if (widget.service.typeItem =="Transportation") ... [
                             const SizedBox(height: 5),
                             Text(
-                              "Moyen de transport : ${(widget.service as TransportService).moyenDeTransport ?? 'غير محدد'}",
+                              "Moyen de transport :  غير محدد}",
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              "Wilaya : ${_getWilayaName((widget.service as TransportService).wilaya)}",
+                              "Wilaya : ${_getWilayaName((widget.service).wilaya)}",
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              "Daira : ${(widget.service as TransportService).daira ?? 'غير محددة'}",
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ],
-                          if (widget.service is ExpertiseService) ...[
-                            const SizedBox(height: 5),
-                            Text(
-                              "Type D'expertise : ${(widget.service as ExpertiseService).TypeC ?? 'غير محدد'}",
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              "Wilaya : ${_getWilayaName((widget.service as ExpertiseService).wilaya)}",
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              "Daira : ${(widget.service as ExpertiseService).daira ?? 'غير محددة'}",
+                              "Daira : ${(widget.service ).daira ?? 'غير محددة'}",
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ],
-                          if (widget.service is RepairService) ...[
+                          if (widget.service.typeItem=="Expertise") ...[
                             const SizedBox(height: 5),
                             Text(
-                              "Wilaya : ${_getWilayaName((widget.service as RepairService).wilaya)}",
+                              "Wilaya : ${_getWilayaName((widget.service ).wilaya)}",
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              "Daira : ${(widget.service as RepairService).daira ?? 'غير محددة'}",
+                              "Daira : ${(widget.service ).daira ?? 'غير محددة'}",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                          if (widget.service.typeItem=="Repairs") ...[
+                            const SizedBox(height: 5),
+                            Text(
+                              "Wilaya : ${_getWilayaName((widget.service ).wilaya)}",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Daira : ${(widget.service ).daira ?? 'غير محددة'}",
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ],
@@ -617,8 +605,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                 TextSpan(
                                   text: showMore
                                       ? widget.service.description
-                                      : (widget.service.description.length > 100
-                                          ? '${widget.service.description.substring(0, 100)}...'
+                                      : (widget.service.description!.length > 100
+                                          ? '${widget.service.description!.substring(0, 100)}...'
                                           : widget.service.description),
                                 ),
                                 TextSpan(
@@ -650,7 +638,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: "\DA${widget.service.price}",
+                                    text: "DA${widget.service.price}",
                                     style:
                                         Theme.of(context).textTheme.titleLarge,
                                   ),
@@ -663,8 +651,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                               stream: FirebaseFirestore.instance
                                   .collection('Services')
                                   .doc(widget.service
-                                      .typeService) // 'Transportation' or 'Expertise'or'Repairs'
-                                  .collection(widget.service.typeService)
+                                      .typeItem) // 'Transportation' or 'Expertise'or'Repairs'
+                                  .collection(widget.service.typeItem)
                                   .doc(widget.service.id)
                                   .snapshots(),
                               builder: (context, snapshot) {
@@ -732,7 +720,6 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                               } else {
                                                 user.likeItem(widget.service);
                                               }
-                                              ;
                                             }),
                                         Text(
                                           "${liked.length}",
@@ -990,7 +977,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                           }
                           // حالة التسجيل العادي + صورة من Firestore
                           else if (snapshot.hasData && snapshot.data!.exists) {
-                            photoURL = snapshot.data!.get('photo') ?? null;
+                            photoURL = snapshot.data!.get('photo');
                           }
 
                           return CircleAvatar(
@@ -1040,7 +1027,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                 context, "You can't add an empty comment.");
                           } else {
                             user.addComment(
-                              widget.service.id,
+                              widget.service.id!,
                               FirebaseAuth.instance.currentUser?.uid ?? "guest",
                               controller.text,
                               widget.service,
@@ -1083,8 +1070,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                       stream: FirebaseFirestore.instance
                           .collection('Services')
                           .doc(widget.service
-                              .typeService) // 'Transportation' or 'Expertise'or'Repairs'
-                          .collection(widget.service.typeService)
+                              .typeItem) // 'Transportation' or 'Expertise'or'Repairs'
+                          .collection(widget.service.typeItem)
                           .doc(widget.service.id)
                           .snapshots(),
                       builder: (context, snapshot) {
@@ -1191,7 +1178,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                                               // Assuming `user.showDeleteConfirmationDialog` exists
                                               user.showDeleteConfirmationDialog(
                                                 context,
-                                                itemId: widget.service.id,
+                                                itemId: widget.service.id!,
                                                 userId: currentUserId,
                                                 text: comment['text'],
                                                 item: widget.service,

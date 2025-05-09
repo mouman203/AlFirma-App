@@ -337,7 +337,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
           widget.onTypeChanged();
         });
       } else {
-        await getLabelForDoc(selectedType);
+        getLabelForDoc(selectedType);
 
         // 2. تحقق من حالة التفعيل
         final isValid = await getValidation(selectedType) ?? false;

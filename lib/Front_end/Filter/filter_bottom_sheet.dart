@@ -1,6 +1,5 @@
-import 'package:agriplant/Back_end/Products/Product.dart';
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
-import 'package:agriplant/Back_end/Products/ProductElev.dart';
+
+import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -52,78 +51,62 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     );
   }
 
-  Future<List<Product>> fetchFilteredProducts() async {
-    List<Product> allProducts = [];
-    print("typeProduct: $selectedProductType");
-    print("type: $selectedMainCategory");
-    print("category: $selectedSubCategory");
-    print("produit: $selectedFinalItem");
-    print("wilaya: $selectedWilaya");
-    print("daira: $selectedDaira");
+  Future<List<Products>> fetchFilteredProducts() async {
+    List<Products> allProducts = [];
+    print("typeProduct:$selectedProductType");
+    print("category:$selectedMainCategory");
+    print("sub category:$selectedSubCategory");
+    print("produit:$selectedFinalItem");
+    print("wilaya:$selectedWilaya");
+    print("daira:$selectedDaira");
 
     // بناء استعلام منتجات الفلاحين
-    Query agriQuery = FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products');
-
-    // بناء استعلام منتجات المربين
-    Query elevQuery = FirebaseFirestore.instance
-        .collection('Products')
-        .doc('Eleveur_products')
-        .collection('Eleveur_products');
+    Query productQuery = FirebaseFirestore.instance
+        .collection('item')
+        .doc('Products')
+        .collection('Products');
 
     // تطبيق الفلاتر
     if (selectedProductType != null && selectedProductType!.isNotEmpty) {
-      agriQuery =
-          agriQuery.where('typeProduct', isEqualTo: selectedProductType);
-      elevQuery =
-          elevQuery.where('typeProduct', isEqualTo: selectedProductType);
+      productQuery =
+          productQuery.where('typeItem', isEqualTo: selectedProductType);
+     
     }
 
     if (selectedMainCategory != null && selectedMainCategory!.isNotEmpty) {
-      agriQuery = agriQuery.where('category', isEqualTo: selectedMainCategory);
-      elevQuery = elevQuery.where('category', isEqualTo: selectedMainCategory);
+      productQuery = productQuery.where('category', isEqualTo: selectedMainCategory);
     }
 
     if (selectedSubCategory != null && selectedSubCategory!.isNotEmpty) {
-      agriQuery = agriQuery.where('category', isEqualTo: selectedSubCategory);
-      elevQuery = elevQuery.where('category', isEqualTo: selectedSubCategory);
+      productQuery = productQuery.where('sub_category', isEqualTo: selectedSubCategory);
     }
 
     if (selectedFinalItem != null && selectedFinalItem!.isNotEmpty) {
-      agriQuery = agriQuery.where('name', isEqualTo: selectedFinalItem);
-      elevQuery = elevQuery.where('name', isEqualTo: selectedFinalItem);
+      productQuery = productQuery.where('product', isEqualTo: selectedFinalItem);
     }
 
     if (selectedWilaya != null && selectedWilaya!.isNotEmpty) {
-      agriQuery = agriQuery.where('wilaya', isEqualTo: selectedWilaya);
-      elevQuery = elevQuery.where('wilaya', isEqualTo: selectedWilaya);
+      productQuery = productQuery.where('wilaya', isEqualTo: selectedWilaya);
     }
 
     if (selectedDaira != null && selectedDaira!.isNotEmpty) {
-      agriQuery = agriQuery.where('daira', isEqualTo: selectedDaira);
-      elevQuery = elevQuery.where('daira', isEqualTo: selectedDaira);
+      productQuery = productQuery.where('daira', isEqualTo: selectedDaira);
     }
 
     if (minPrice != null) {
-      agriQuery = agriQuery.where('price', isGreaterThanOrEqualTo: minPrice);
-      elevQuery = elevQuery.where('price', isGreaterThanOrEqualTo: minPrice);
+      productQuery = productQuery.where('price', isGreaterThanOrEqualTo: minPrice);
     }
 
     if (maxPrice != null) {
-      agriQuery = agriQuery.where('price', isLessThanOrEqualTo: maxPrice);
-      elevQuery = elevQuery.where('price', isLessThanOrEqualTo: maxPrice);
+      productQuery = productQuery.where('price', isLessThanOrEqualTo: maxPrice);
     }
 
     // تنفيذ الاستعلامات
-    QuerySnapshot agriSnapshot = await agriQuery.get();
-    QuerySnapshot elevSnapshot = await elevQuery.get();
+    QuerySnapshot agriSnapshot = await productQuery.get();
 
     allProducts
-        .addAll(agriSnapshot.docs.map((doc) => Productagri.fromFirestore(doc)));
-    allProducts
-        .addAll(elevSnapshot.docs.map((doc) => ProductElev.fromFirestore(doc)));
+        .addAll(agriSnapshot.docs.map((doc) => Products.fromFirestore(doc)));
+
 
     return allProducts;
   }
@@ -151,7 +134,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               children: [
                 buildDropdown(
                   value: selectedProductType,
-                  items: ["AgricolProduct", "EleveurProduct"],
+                  items: ["Agricultural Product", "Animal Product","Commercial Product"],
                   hint: "نوع المنتج",
                   onChanged: (val) {
                     setState(() {
@@ -264,7 +247,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
             ElevatedButton(
               onPressed: () async {
-                List<Product> allProducts = await fetchFilteredProducts();
+                List<Products> allProducts = await fetchFilteredProducts();
                 Navigator.pop(context, allProducts);
               },
               child: const Text("Apply"),

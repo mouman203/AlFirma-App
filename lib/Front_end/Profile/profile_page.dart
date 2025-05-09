@@ -1,8 +1,5 @@
-import 'package:agriplant/Back_end/ServicesB/ExpertiseService.dart';
-import 'package:agriplant/Back_end/Products/ProductAgri.dart';
-import 'package:agriplant/Back_end/Products/ProductElev.dart';
-import 'package:agriplant/Back_end/ServicesB/RepairService.dart';
-import 'package:agriplant/Back_end/ServicesB/TransportService.dart';
+import 'package:agriplant/Back_end/Products.dart';
+
 import 'package:agriplant/Front_end/Profile/Edit_profile_page.dart';
 import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
 import 'package:agriplant/generated/l10n.dart';
@@ -52,64 +49,38 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<List<Object>> fetchAllUserItems(String userId) async {
+  Future<List<Products>> fetchAllUserItems(String userId) async {
     final firestore = FirebaseFirestore.instance;
 
-    // Fetch Agricol Products
-    final agriSnap = await firestore
-        .collection('Products')
-        .doc('Agricol_products')
-        .collection('Agricol_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final agriProducts = agriSnap.docs.map(Productagri.fromFirestore).toList();
+// ===================================Fetching products===================================
 
-    // Fetch Eleveur Products
-    final elevSnap = await firestore
-        .collection('Products')
-        .doc('Eleveur_products')
-        .collection('Eleveur_products')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final elevProducts = elevSnap.docs.map(ProductElev.fromFirestore).toList();
+    final productSnap = await firestore
+      .collection('item')
+      .doc('Products')
+      .collection('Products')
+      .where('ownerId', isEqualTo: userId)
+      .get();
+      final products = productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList();
 
-    // Fetch Expertise Services
-    final expertiseSnap = await firestore
+    
+// ===================================Fetching services===================================
+    
+    final serviceSnap = await firestore
+        .collection('item')
+        .doc('Services')
         .collection('Services')
-        .doc('Expertise')
-        .collection('Expertise')
         .where('ownerId', isEqualTo: userId)
+        .where('typeService', isEqualTo: "Traansport service")
         .get();
-    final expertiseServices =
-        expertiseSnap.docs.map(ExpertiseService.fromFirestore).toList();
+    final services = serviceSnap.docs.map(Products.fromFirestore).toList();
 
-    // Fetch Repair Services
-    final repairSnap = await firestore
-        .collection('Services')
-        .doc('Repairs')
-        .collection('Repairs')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final repairServices =
-        repairSnap.docs.map(RepairService.fromFirestore).toList();
 
-    // Fetch Transport Services
-    final transportSnap = await firestore
-        .collection('Services')
-        .doc('Transportation')
-        .collection('Transportation')
-        .where('ownerId', isEqualTo: userId)
-        .get();
-    final transportServices =
-        transportSnap.docs.map(TransportService.fromFirestore).toList();
 
     // Combine all items into one list
     return [
-      ...agriProducts,
-      ...elevProducts,
-      ...expertiseServices,
-      ...repairServices,
-      ...transportServices,
+      ...products,
+      ...services,
+
     ];
   }
 
@@ -126,54 +97,41 @@ class _ProfilePageState extends State<ProfilePage> {
       return [];
     }
 
-    final savedItemIds = List<String>.from(userDoc['saved'] ?? []);
+    final savedItemIds = List<String>.from(userDoc['saved']);
     print("🎉 Loaded saved item IDs: $savedItemIds");
 
-    final List<dynamic> savedItems = [];
+    final List<dynamic> producsaved = [];
+    final List<dynamic> servicesaved = [];
 
-    for (var itemId in savedItemIds) {
-      try {
-        bool found = false;
+    for (String itemId in savedItemIds) {
+      // ===================================Fetching products===================================
 
-        final fetchPatterns = {
-          'Products/Agricol_products/Agricol_products':
-              (DocumentSnapshot snap) => Productagri.fromFirestore(snap),
-          'Products/Eleveur_products/Eleveur_products':
-              (DocumentSnapshot snap) => ProductElev.fromFirestore(snap),
-          'Services/Expertise/Expertise': (DocumentSnapshot snap) =>
-              ExpertiseService.fromFirestore(snap),
-          'Services/Repairs/Repairs': (DocumentSnapshot snap) =>
-              RepairService.fromFirestore(snap),
-          'Services/Transportation/Transportation': (DocumentSnapshot snap) =>
-              TransportService.fromFirestore(snap),
-        };
+    final productSnap = await firestore
+      .collection('item')
+      .doc('Products')
+      .collection('Products')
+      .where('id', isEqualTo: itemId)
+      .get();
+       producsaved.addAll(productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList()); 
 
-        for (final entry in fetchPatterns.entries) {
-          final pathParts = entry.key.split('/');
-          final snap = await firestore
-              .collection(pathParts[0])
-              .doc(pathParts[1])
-              .collection(pathParts[2])
-              .doc(itemId)
-              .get();
-
-          print("🧐 Checking ${entry.key} for ID $itemId");
-
-          if (snap.exists) {
-            savedItems.add(entry.value(snap));
-            print("✅ Found item in ${entry.key}");
-            found = true;
-            break;
-          }
-        }
-
-        if (!found) {
-          print("❌ ID $itemId not found in any structured collection.");
-        }
-      } catch (e) {
-        print('❌ Error loading item $itemId: $e');
-      }
+    
+// ===================================Fetching services===================================
+    
+    final serviceSnap = await firestore
+        .collection('item')
+        .doc('Services')
+        .collection('Services')
+        .where('id', isEqualTo: itemId)
+        .where('typeService', isEqualTo: "Traansport service")
+        .get();
+    final services = serviceSnap.docs.map(Products.fromFirestore).toList();
+    servicesaved.addAll(services);
     }
+    final savedItems = [
+      ...producsaved,
+      ...servicesaved,
+];
+    
 
     print("🎉 Finished loading saved items: ${savedItems.length} found.");
     return savedItems;
@@ -274,7 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Text("$followersCount",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16)),
-                         Text(S.of(context).followers),
+                        Text(S.of(context).followers),
                       ],
                     ),
                     const SizedBox(width: 20),
@@ -283,7 +241,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Text("$followingCount",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16)),
-                         Text(S.of(context).following),
+                        Text(S.of(context).following),
                       ],
                     ),
                   ],
@@ -329,7 +287,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     unselectedLabelColor: Theme.of(context)
                         .colorScheme
                         .onSurface
-                    
                         .withOpacity(0.6),
                   ),
                   const SizedBox(height: 15),
@@ -338,7 +295,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: TabBarView(
                       children: [
                         // User's posts
-                        FutureBuilder<List<Object>>(
+
+                        FutureBuilder<List<Products>>(
                           future: fetchAllUserItems(
                               FirebaseAuth.instance.currentUser!.uid),
                           builder: (context, snapshot) {
@@ -348,7 +306,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: CircularProgressIndicator());
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return  Center(child: Text(S.of(context).noItemsYet));
+                              return Center(
+                                  child: Text(S.of(context).noItemsYet));
                             }
 
                             final itemList = snapshot.data!;
@@ -370,6 +329,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                         ),
 
+                        // User's saved items
                         FutureBuilder<List<dynamic>>(
                           future: _loadSavedItems(),
                           builder: (context, snapshot) {
@@ -379,8 +339,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: CircularProgressIndicator());
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return  Center(
-                                  child:Text(S.of(context).noSavedItems));
+                              return Center(
+                                  child: Text(S.of(context).noSavedItems));
                             }
 
                             final savedItems = snapshot.data!;

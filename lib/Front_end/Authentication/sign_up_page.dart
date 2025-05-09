@@ -528,7 +528,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                   passwordError != null ||
                                   confirmPasswordError != null ||
                                   wilayaError != null ||
-                                  dairaError != null) return;
+                                  dairaError != null) {
+                                return;
+                              }
 
                               if (!user.isEmailValid(_emailController.text)) {
                                 emailError = S.of(context).invalidEmailError;
