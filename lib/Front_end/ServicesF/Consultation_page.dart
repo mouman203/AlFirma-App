@@ -29,9 +29,9 @@ class _ConsultationPageState extends State<ConsultationPage> {
   Future<void> _loadVeterinarians() async {
     setState(() => isLoading = true);
     final snapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .where('userType', arrayContains: 'Vétérinaire')
-        .get();
+    .collection('Users')
+    .where('userType.Vétérinaire.validation', isEqualTo: 'true')
+    .get();
 
     allVeterinarians = snapshot.docs.map((doc) {
       final data = doc.data();
@@ -271,7 +271,7 @@ class _ConsultationPageState extends State<ConsultationPage> {
                             final lastName = vet['last_name'] ?? '';
                             final phone = vet['phone'] ?? 'N/A';
                             final wilaya = vet['wilaya'] ?? 'N/A';
-                            final profileImage = vet['profileImage'];
+                            final profileImage = vet['photo'];
                             final vetId = vet['id'];
 
                             return Padding(

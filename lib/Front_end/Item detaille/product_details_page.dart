@@ -13,7 +13,10 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
+
+
 class ProductDetailsPage extends StatefulWidget {
+  
   final Products product;
   final VoidCallback? onUnsave;
   const ProductDetailsPage({super.key, required this.product, this.onUnsave});
@@ -25,7 +28,7 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   String? category;
   String? produit;
-
+  
   late PageController _pageController;
   late TapGestureRecognizer readMoreGestureRecognizer;
   final ScrollController _scrollController = ScrollController();
@@ -52,6 +55,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     final product = widget.product;
     category = product.category;
     _checkIfSaved();
+    timeago.setLocaleMessages('ar', timeago.ArMessages());
+
   }
 
   // Check if the item is saved
@@ -307,7 +312,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text("Details"),
+              title: const Text("التفاصيل"),
               backgroundColor:
                   isDarkMode ? colorScheme.surface : colorScheme.surface,
               elevation: 5,
@@ -522,22 +527,25 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Name : ${widget.product.product}",
+                            "المنتج : ${widget.product.product}",
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(height: 10),
+                         
                           Text(
-                            "Type : ${widget.product.typeItem}",
+                            "الفئة : $category",
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          const SizedBox(height: 10),
+                         const SizedBox(height: 10),
+                          if (widget.product.subCategory != "") ...[
+                            Text(
+                              "الفئة الفرعية : ${widget.product.subCategory}",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 10),
+                          ],
                           Text(
-                            "Category : $category",
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "Wilaya : ${_getWilayaName(widget.product.wilaya)}",
+                            "الموقع : ${_getWilayaName(widget.product.wilaya)} (${widget.product.daira})",
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ],
@@ -552,7 +560,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Description",
+                          Text("الوصف",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
@@ -598,7 +606,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: "DA${widget.product.price}",
+                                    text: "${widget.product.price}دج",
                                     style:
                                         Theme.of(context).textTheme.titleLarge,
                                   ),
@@ -803,7 +811,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               }
                             },
                             icon: const Icon(IconlyLight.message),
-                            label: const Text("Contact"),
+                            label: const Text("مراسلة"),
                           ),
                           const SizedBox(
                             width: 50,
@@ -881,7 +889,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               }
                             },
                             icon: const Icon(IconlyLight.call),
-                            label: const Text("Phone"),
+                            label: const Text("اتصال"),
                           ),
                         ],
                       ),
@@ -1019,21 +1027,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
                 child: Column(
                   children: [
-                    const Text("Comments",
+                    const Text("التعليقات",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         )),
                     StreamBuilder<DocumentSnapshot>(
                       stream: FirebaseFirestore.instance
-                          .collection('Products')
-                          .doc(widget.product.typeItem == "AgricolProduct"
-                              ? "Agricol_products"
-                              : "Eleveur_products")
-                          .collection(
-                              widget.product.typeItem == "AgricolProduct"
-                                  ? "Agricol_products"
-                                  : "Eleveur_products")
+                          .collection('item')
+                          .doc("Products")
+                          .collection("Products")
                           .doc(widget.product.id)
                           .snapshots(), // Ensure correct doc path here
                       builder: (context, snapshot) {

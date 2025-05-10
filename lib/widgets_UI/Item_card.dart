@@ -145,13 +145,14 @@ class _ItemCardState extends State<ItemCard> {
               ),
             ),
             // Texts
+            
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.SP=="Servise"
+                    item.SP=="Service"
                         ? item.category!
                         : item.typeItem=="Agricultural Product"
                             ? item.product!.isNotEmpty
@@ -173,13 +174,15 @@ class _ItemCardState extends State<ItemCard> {
 
                   const SizedBox(height: 5),
                   Text(
-                    item.typeItem=="Transportation" 
-                        ? ('No Transport Available')
-                        : item.typeItem=="Expertise"
-                            ? ( 'No Expertise Type')
-                            : item.typeItem=="Agricultural Product"
-                                ? '${item.quantity?.toString()} ${item.unit ?? ''}'
-                                : '',
+                    item.typeItem=="Transportation" || item.typeItem=="Expertise"|| item.typeItem=="Repairs" 
+                        ? ('متوفر')
+                            : item.typeItem=="Agricultural Product" || item.typeItem=="Animal Product"
+                                ? '${item.quantity?.toString()} ${item.unit ?? 'وحدة'}'
+                                :  item.typeItem=="Commercial Product" && item.category == "أراضي" ?
+                                    '${item.surface} ${item.unit ?? 'وحدة'}'
+                                    :item.typeItem=="Commercial Product" &&item.category=="معدات"?
+                                        '${item.service}'
+                                        : '',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
@@ -189,13 +192,14 @@ class _ItemCardState extends State<ItemCard> {
                     // If Product, show price and unit (if Productagri)
                     Row(
                       children: [
-                        Text("دج${item.price}",
+                        Text("${item.price}دج",
                             style: Theme.of(context).textTheme.bodyLarge),
-                        if (item.typeItem=="Agricultural Product")
+                        item.unit!=null?
                           Text(
                             "/${(item).unit}",
                             style: Theme.of(context).textTheme.bodySmall,
-                          ),
+                          )
+                          :SizedBox(),
                       ],
                     ),
                   if (item.SP=="Service")

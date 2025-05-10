@@ -618,22 +618,19 @@ class Users {
   ) async {
     try {
       String docPath;
-      String rootCollection;
 
       // Determine whether it's a Product or a Service
       if (item.SP =="Product") {
         docPath="Products";
-        rootCollection = "Products";
       } else if (item.SP =="Service") {
         docPath="Services";
-        rootCollection = "Services";
       } else {
         throw Exception("❌ Unknown item type!");
       }
 
       // Firestore document reference
       DocumentReference ref = FirebaseFirestore.instance
-          .collection(rootCollection)
+          .collection("item")
           .doc(docPath)
           .collection(docPath)
           .doc(itemId);
@@ -675,21 +672,18 @@ class Users {
   ) async {
     try {
      String docPath;
-      String rootCollection;
 
       // Determine whether it's a Product or a Service
       if (item.SP =="Product") {
         docPath="Products";
-        rootCollection = "Products";
       } else if (item.SP =="Service") {
         docPath="Services";
-        rootCollection = "Services";
       } else {
         throw Exception("❌ Unknown item type!");
       }
 
       DocumentReference ref = FirebaseFirestore.instance
-          .collection(rootCollection)
+          .collection("item")
           .doc(docPath)
           .collection(docPath)
           .doc(itemId);

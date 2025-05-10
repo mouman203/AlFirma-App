@@ -410,7 +410,7 @@ class _AddProductsState extends State<AddProducts> {
             ? double.tryParse(quantiteController.text)
             : null,
         surface: surfaceController.text.isNotEmpty
-            ? double.tryParse(quantiteController.text)
+            ? double.tryParse(surfaceController.text)
             : null,
         unit: arabicUnit,
         service: arabicService,
@@ -430,6 +430,7 @@ class _AddProductsState extends State<AddProducts> {
                 typeItem == "Agricultural Product"
             ? "Product"
             : "Service",
+        
       );
 
       await newProduct.addProduct(newProduct);
@@ -622,12 +623,11 @@ class _AddProductsState extends State<AddProducts> {
 
 //============================SUB CATEGORIES==============================
 
-              if (userType == 'Agriculteur' || userType == 'Commerçant')
+              if ( selectedCategory != "أراضي" &&(userType == 'Agriculteur' || userType == 'Commerçant') )
                 ProductData.buildDropdown(
                   context: context,
                   selectedValue: selectedsubCategory,
-                  items: ProductData.getSubCategories(
-                      typeItem, selectedCategory, context),
+                  items: ProductData.getSubCategories(typeItem, selectedCategory, context),
                   label: 'sub category',
                   onChanged: (value) {
                     setState(() {
@@ -638,7 +638,7 @@ class _AddProductsState extends State<AddProducts> {
                 ),
 
 //=============================PRODUCTS=========================================
-              if (userType != 'Réparateur' && selectedCategory != null)
+              if (userType != 'Réparateur' && selectedCategory != "أراضي"  && selectedCategory != null)
                 ProductData.buildDropdown(
                     context: context,
                     selectedValue: selectedproduct,

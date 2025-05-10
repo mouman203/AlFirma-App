@@ -14,7 +14,7 @@ class ProductData {
     ],
   };
   static  Map<String, List<String>> agriCategoriesT(BuildContext context)=>{
-    S.of(context).agriculturalProducts: [
+      S.of(context).agriculturalProducts: [
       S.of(context).fruits,
       S.of(context).vegetables,
       S.of(context).grains,
@@ -392,6 +392,7 @@ static Map<String, List<String>> expertProductsT(BuildContext context) => {
   S.of(context).facilityMaintenance,
   S.of(context).electricalEquipmentRepair,
 ];
+  
   static final List<String> moyensDeTransport = [
     "شاحنة صغيرة",
     "شاحنة كبيرة",
@@ -409,6 +410,7 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
     "Agricultural Product": agriCategoriesT(context),
     "Animal Product": produitsElevagesT(context),
     "Commercial Product": commercantCategoriesT(context),
+    
   };
 }
 
@@ -421,6 +423,8 @@ static Map<String, Map<String, List<String>>> productTypeCategories(BuildContext
       ...equipmentCategoriesT(context),
     },
     "Animal Product": {...produitsElevagesT(context)},
+    "Expertise":{ ...expertProductsT(context)},
+    //"Repairs": {... reparationTypeT(context)},
   };
 static final Map<String, List<String>> wilayas = {
     "01 - أدرار": [

@@ -21,8 +21,8 @@ class _TransportationPageState extends State<TransportationPage> {
   static Future<List<Products>> getTransportservicesOnce() async {
       final snapshot = await FirebaseFirestore.instance
             .collection('item')
-            .doc('Products')
-            .collection('Products')
+            .doc('Services')
+            .collection('Services')
             .where('typeItem', isEqualTo: "Transportation")
             .get();
 

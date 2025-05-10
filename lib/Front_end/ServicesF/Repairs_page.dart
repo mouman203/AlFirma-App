@@ -20,8 +20,8 @@ class _RepairsPageState extends State<RepairsPage> {
 static Future<List<Products>> getrepairsServicesOnce() async {
       final snapshot = await FirebaseFirestore.instance
             .collection('item')
-            .doc('Products')
-            .collection('Products')
+            .doc('Services')
+            .collection('Services')
             .where('typeItem', isEqualTo: "Repairs")
             .get();
 

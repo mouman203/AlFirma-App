@@ -23,7 +23,7 @@ class _RentPageState extends State<RentPage> {
       .collection('item')
       .doc('Products')
       .collection('Products')
-      .where('service', isEqualTo: "rent")
+      .where('Service', isEqualTo: "كراء")
       .get();
 
   return snapshot.docs.map(Products.fromFirestore).toList();

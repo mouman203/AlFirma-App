@@ -70,7 +70,6 @@ class _ProfilePageState extends State<ProfilePage> {
         .doc('Services')
         .collection('Services')
         .where('ownerId', isEqualTo: userId)
-        .where('typeService', isEqualTo: "Traansport service")
         .get();
     final services = serviceSnap.docs.map(Products.fromFirestore).toList();
 
@@ -122,7 +121,6 @@ class _ProfilePageState extends State<ProfilePage> {
         .doc('Services')
         .collection('Services')
         .where('id', isEqualTo: itemId)
-        .where('typeService', isEqualTo: "Traansport service")
         .get();
     final services = serviceSnap.docs.map(Products.fromFirestore).toList();
     servicesaved.addAll(services);
@@ -137,11 +135,13 @@ class _ProfilePageState extends State<ProfilePage> {
     return savedItems;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      body: ListView(
+ @override
+Widget build(BuildContext context) {
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  return Scaffold(
+    body: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Stack(
             children: [
@@ -191,7 +191,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Positioned(
                 top: 10,
-                right: 10, // المسافة المناسبة للأيقونة في أعلى اليمين
+                right: 10,
                 child: CircleAvatar(
                   backgroundColor:
                       Theme.of(context).colorScheme.secondaryContainer,
@@ -212,8 +212,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
 
-          //uername
-
           Center(
             child: Column(
               children: [
@@ -223,7 +221,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
 
-                //following and followers
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -251,6 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
 
           const SizedBox(height: 25),
+
           DefaultTabController(
             length: 2,
             child: Builder(builder: (context) {
@@ -290,12 +288,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         .withOpacity(0.6),
                   ),
                   const SizedBox(height: 15),
+                  // Remove Expanded here
                   SizedBox(
-                    height: 500, // Adjust as needed
+                    // Adding fixed height to prevent unbounded height error
+                    height: MediaQuery.of(context).size.height * 0.6, // Adjust as needed
                     child: TabBarView(
                       children: [
-                        // User's posts
-
                         FutureBuilder<List<Products>>(
                           future: fetchAllUserItems(
                               FirebaseAuth.instance.currentUser!.uid),
@@ -313,7 +311,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             final itemList = snapshot.data!;
                             return GridView.builder(
                               itemCount: itemList.length,
-                              shrinkWrap: true,
+                              shrinkWrap: true,  // Allow GridView to take space it needs
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
@@ -328,8 +326,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
                           },
                         ),
-
-                        // User's saved items
                         FutureBuilder<List<dynamic>>(
                           future: _loadSavedItems(),
                           builder: (context, snapshot) {
@@ -346,7 +342,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             final savedItems = snapshot.data!;
                             return GridView.builder(
                               itemCount: savedItems.length,
-                              shrinkWrap: true,
+                              shrinkWrap: true,  // Allow GridView to take space it needs
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
@@ -378,6 +374,8 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
