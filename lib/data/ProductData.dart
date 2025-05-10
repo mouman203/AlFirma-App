@@ -1913,18 +1913,23 @@ static List<String> getWilaya(BuildContext context) {
       ),
     );
   }
-  static Widget actionButton({
+  
+  
+static Widget actionButton({
   required String label,
-   Color backgroundColor = const Color(0xFF256C4C),
-  required bool isLoading,
+  Color backgroundColor = const Color(0xFF256C4C),
+  bool? isLoading,
   required VoidCallback? onPressed,
 }) {
+  // تعيين قيمة افتراضية لـ isLoading إذا كانت null
+  bool loading = isLoading ?? false; // إذا كانت null، ستكون القيمة الافتراضية false
+
   return Column(
     children: [
       SizedBox(
         width: double.infinity,
         height: 50,
-        child: isLoading
+        child: loading
             ? const Center(child: CircularProgressIndicator())
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -1940,10 +1945,11 @@ static List<String> getWilaya(BuildContext context) {
                 ),
               ),
       ),
-      const SizedBox(
-        height: 15,),
+      const SizedBox(height: 15),
     ],
   );
 }
+
+
 
 }

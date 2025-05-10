@@ -236,31 +236,41 @@ class _AddProductsState extends State<AddProducts> {
     }
   }
 
-  void _mapTranslations(Map<String, List<String>> arabicMap,
-      Map<String, List<String>> localizedMap, Map<String, String> targetMap) {
-    // Map main categories
-    arabicMap.forEach((arabicKey, arabicValues) {
-      // Find the matching localized key
-      String? localizedKey = localizedMap.keys.firstWhere(
-        (key) => localizedMap[key]!.length == arabicValues.length,
-        orElse: () => arabicKey,
-      );
-
-      // Add to translation map
-      targetMap[arabicKey] = localizedKey;
-      targetMap[localizedKey] = arabicKey; // Add reverse mapping
-
-      // Map values (products)
-      List<String> localizedValues = localizedMap[localizedKey] ?? [];
-      for (int i = 0; i < arabicValues.length; i++) {
-        if (i < localizedValues.length) {
-          productTranslations[arabicValues[i]] = localizedValues[i];
-          productTranslations[localizedValues[i]] =
-              arabicValues[i]; // Add reverse mapping
-        }
+void _mapTranslations(Map<String, List<String>> arabicMap,
+    Map<String, List<String>> localizedMap, Map<String, String> targetMap) {
+  // Map main categories
+  arabicMap.forEach((arabicKey, arabicValues) {
+  
+    String? localizedKey;
+    for (var key in localizedMap.keys) {
+      // Look for position-based match in translated categories
+      int keyIndex = arabicMap.keys.toList().indexOf(arabicKey);
+      int matchingLocalizedIndex = localizedMap.keys.toList().indexOf(key);
+      
+      if (keyIndex == matchingLocalizedIndex && keyIndex >= 0) {
+        localizedKey = key;
+        break;
       }
-    });
-  }
+    }
+    
+    // Fallback in case we couldn't find a positional match
+    localizedKey ??= arabicKey;
+
+    // Add to translation map
+    targetMap[arabicKey] = localizedKey;
+    targetMap[localizedKey] = arabicKey; // Add reverse mapping
+
+    // Map values (products)
+    List<String> localizedValues = localizedMap[localizedKey] ?? [];
+    for (int i = 0; i < arabicValues.length; i++) {
+      if (i < localizedValues.length) {
+        productTranslations[arabicValues[i]] = localizedValues[i];
+        productTranslations[localizedValues[i]] = arabicValues[i]; // Add reverse mapping
+      }
+    }
+  });
+}
+
 
   Future<void> fetchUserType() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -766,53 +776,55 @@ class _AddProductsState extends State<AddProducts> {
               ),
 
 //==============================RESET BUTTON======================================================
-              ProductData.actionButton(
-                label: "Reset",
-                backgroundColor: Colors.blueGrey.shade700,
-                isLoading: _isLoading,
-                onPressed: _isFormEmpty()
-                    ? () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "The form is empty",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            backgroundColor:
-                                const Color.fromARGB(255, 247, 234, 117),
-                          ),
-                        );
-                      }
-                    : () {
-                        try {
-                          _resetForm();
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Error: $e")),
-                          );
-                        }
-                      },
+ProductData.actionButton(
+  label: "Reset",
+  backgroundColor: Colors.blueGrey.shade700,
+  onPressed: _isFormEmpty()
+      ? () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "النموذج فارغ",
+                style: TextStyle(color: Colors.black),
               ),
+              backgroundColor: Color.fromARGB(255, 247, 234, 117),
+            ),
+          );
+        }
+      : () {
+          try {
+            _resetForm();
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Error: $e")),
+            );
+          }
+        },
+),
 
 //==============================SHARE BUTTON================================
-              ProductData.actionButton(
-                  label: "Share",
-                  isLoading: _isLoading,
-                  onPressed: () {
-                    try {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      _submitForm();
-                      setState(() {
-                        _isLoading = true;
-                      });
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Error: $e")),
-                      );
-                    }
-                  }),
+ProductData.actionButton(
+  label: "Share",
+  isLoading: _isLoading, // تأكد من أنه عند الضغط، يظل في حالة تحميل حتى تتم العملية
+  onPressed: () async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await _submitForm(); // استخدام await لضمان انتهاء العملية أولاً
+      setState(() {
+        _isLoading = false; // إيقاف حالة التحميل بعد الانتهاء
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false; // إيقاف حالة التحميل في حال حدوث خطأ
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  },
+),
 //==============================FIN================================
             ],
           ),
