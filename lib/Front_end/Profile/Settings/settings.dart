@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Profile/Settings/Security_page.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -29,8 +30,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            S.of(context).settings,style:TextStyle(fontWeight: FontWeight.bold)), // Use localized string for appBar title
+        title: Text(S.of(context).settings,
+            style: TextStyle(
+                fontWeight:
+                    FontWeight.bold)), // Use localized string for appBar title
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
         elevation: 5,
       ),
@@ -128,34 +131,116 @@ class _SettingsPageState extends State<SettingsPage> {
 
           // Language Selection
           ListTile(
-            leading: Icon(Icons.language,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C)),
-            title: Text(S.of(context).language), // Use localized string
-            trailing: DropdownButton<Locale>(
-              value: languageProvider.locale,
-              dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+            leading: Icon(
+              Icons.language,
+              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            ),
+            title: Text(
+              S.of(context).language, // localized "Language"
               style: TextStyle(
-                color: Theme.of(context).textTheme.bodyLarge?.color,
+                color: isDarkMode ? Colors.white : Colors.black,
               ),
-              onChanged: (newLocale) {
-                if (newLocale != null) {
-                  languageProvider.changeLanguage(newLocale);
-                }
-              },
-              items: [
-                DropdownMenuItem(
-                  value: const Locale('en'),
-                  child: Text(S.of(context).languageEnglish),
+            ),
+            trailing: Container(
+              width: 100, // adjust width as needed
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButtonFormField2<Locale>(
+                  dropdownStyleData: DropdownStyleData(
+                    offset: const Offset(0, 0),
+                    width: MediaQuery.of(context).size.width - 310,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  value: languageProvider.locale,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none, 
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  iconStyleData: IconStyleData(
+                    iconEnabledColor: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C),
+                    iconDisabledColor: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C),
+                  ),
+                  onChanged: (newLocale) {
+                    if (newLocale != null) {
+                      languageProvider.changeLanguage(newLocale);
+                    }
+                  },
+                  // Centers the selected item text
+                  selectedItemBuilder: (context) {
+                    return [
+                      const Locale('ar'),
+                      const Locale('fr'),
+                      const Locale('en'),
+                    ].map((locale) {
+                      String text;
+                      if (locale.languageCode == 'ar') {
+                        text = S.of(context).languageArabic;
+                      } else if (locale.languageCode == 'fr') {
+                        text = S.of(context).languageFrench;
+                      } else {
+                        text = S.of(context).languageEnglish;
+                      }
+                      return Center(
+                        child: Text(
+                          text,
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF256C4C),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    }).toList();
+                  },
+                  items: [
+                    DropdownMenuItem(
+                      value: const Locale('ar'),
+                      child: Text(
+                        S.of(context).languageArabic,
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF256C4C),
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: const Locale('fr'),
+                      child: Text(
+                        S.of(context).languageFrench,
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF256C4C),
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: const Locale('en'),
+                      child: Text(
+                        S.of(context).languageEnglish,
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF256C4C),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                DropdownMenuItem(
-                  value: const Locale('fr'),
-                  child: Text(S.of(context).languageFrench),
-                ),
-                DropdownMenuItem(
-                  value: const Locale('ar'),
-                  child: Text(S.of(context).languageArabic),
-                ),
-              ],
+              ),
             ),
           ),
 
