@@ -38,7 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add a profile photo so your friends recognize you",
     ),
     "addedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "Added Successfully! ✅",
+      "Added Successfully",
     ),
     "adekar": MessageLookupByLibrary.simpleMessage("Adekar"),
     "adrar": MessageLookupByLibrary.simpleMessage("Adrar"),
@@ -449,7 +449,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "document_title": MessageLookupByLibrary.simpleMessage("Documentation "),
     "documents_sent_successfully": MessageLookupByLibrary.simpleMessage(
-      "Documents sent successfully ✅",
+      "Documents sent successfully ",
     ),
     "done": MessageLookupByLibrary.simpleMessage("Done"),
     "draaBenKhedda": MessageLookupByLibrary.simpleMessage("Draa Ben Khedda"),
@@ -529,7 +529,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Error sending email ❌",
     ),
     "emailSentSuccess": MessageLookupByLibrary.simpleMessage(
-      "Email sent successfully! ✅",
+      "Email sent successfully",
     ),
     "enterNewEmail": MessageLookupByLibrary.simpleMessage("Enter new email"),
     "enterNewPhoneNumber": MessageLookupByLibrary.simpleMessage(

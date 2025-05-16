@@ -518,12 +518,50 @@ class _AddProductsState extends State<AddProducts> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(S.of(context).success),
-          content: Text(S.of(context).addedSuccessfully),
+          title: Center(
+            child: Text(
+              S.of(context).success,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF256C4C),
+              ),
+            ),
+          ),
+          content: Center(
+            heightFactor: 1,
+            child: Text(
+              S.of(context).addedSuccessfully,
+              style: TextStyle(
+                fontSize: 18,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(S.of(context).ok),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF256C4C),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              child: Text(
+                S.of(context).ok,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
+                ),
+              ),
             ),
           ],
         );

@@ -548,37 +548,47 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
           // service details
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (widget.service.product != "") ...[
                 Text(
-                  "${S.of(context).productLabel} ${widget.service.service}",
+                  widget.service.typeItem == S.of(context).transportation
+                      ? "${S.of(context).transport_means_label}: ${widget.service.product}"
+                      : widget.service.product ?? '',
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 12),
-                _buildInfoRow(
-                  isDarkMode,
-                  Icons.category_outlined,
-                  "${S.of(context).categoryLabel} $category",
-                ),
-                if (widget.service.subCategory != "") ...[
-                  const SizedBox(height: 8),
-                  _buildInfoRow(
-                    isDarkMode,
-                    Icons.tag_outlined,
-                    "${S.of(context).subCategoryLabel} ${widget.service.subCategory}",
-                  ),
-                ],
+              ],
+              _buildInfoRow(
+                isDarkMode,
+                Icons.category_outlined,
+                "${S.of(context).categoryLabel} $category",
+              ),
+              if (widget.service.subCategory != "") ...[
                 const SizedBox(height: 8),
                 _buildInfoRow(
                   isDarkMode,
-                  Icons.location_on_outlined,
-                  "${S.of(context).locationLabel} ${_getWilayaName(widget.service.wilaya)} (${widget.service.daira})",
+                  Icons.tag_outlined,
+                  "${S.of(context).subCategoryLabel} ${widget.service.subCategory}",
                 ),
               ],
-            ),
+              if (widget.service.service != "") ...[
+                const SizedBox(height: 8),
+                _buildInfoRow(
+                  isDarkMode,
+                  Icons.sell,
+                  "${S.of(context).categoryLabel} ${widget.service.service}",
+                ),
+              ],
+              const SizedBox(height: 8),
+              _buildInfoRow(
+                isDarkMode,
+                Icons.location_on_outlined,
+                "${S.of(context).locationLabel} ${_getWilayaName(widget.service.wilaya)} (${widget.service.daira})",
+              ),
+            ]),
           ),
 
           const Divider(height: 1, thickness: 1),
@@ -750,7 +760,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              "${widget.service.price}${S.of(context).dinar}",
+              "${widget.service.price}${S.of(context).dinar}/ ${widget.service.unit}",
               style: theme.textTheme.titleLarge?.copyWith(
                 color: isDarkMode
                     ? const Color(0xFF90D5AE)
@@ -1163,7 +1173,8 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                           SnackBar(
                             content: Text(
                               S.of(context).errorAddingComment,
-                              style: const TextStyle(fontSize: 18,color: Colors.black),
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.black),
                             ),
                             backgroundColor: Colors.red,
                             shape: RoundedRectangleBorder(

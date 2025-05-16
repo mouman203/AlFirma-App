@@ -635,10 +635,10 @@ class S {
     );
   }
 
-  /// `تم إرسال البريد الإلكتروني بنجاح ! ✅`
+  /// `تم إرسال البريد الإلكتروني بنجاح `
   String get emailSentSuccess {
     return Intl.message(
-      'تم إرسال البريد الإلكتروني بنجاح ! ✅',
+      'تم إرسال البريد الإلكتروني بنجاح ',
       name: 'emailSentSuccess',
       desc: '',
       args: [],
@@ -990,10 +990,10 @@ class S {
     );
   }
 
-  /// `تم إرسال الوثائق بنجاح ✅`
+  /// `تم إرسال الوثائق بنجاح `
   String get documents_sent_successfully {
     return Intl.message(
-      'تم إرسال الوثائق بنجاح ✅',
+      'تم إرسال الوثائق بنجاح ',
       name: 'documents_sent_successfully',
       desc: '',
       args: [],
@@ -6175,10 +6175,10 @@ class S {
     return Intl.message('نجاح', name: 'success', desc: '', args: []);
   }
 
-  /// `تمت الإضافة بنجاح! ✅`
+  /// `تمت الإضافة بنجاح `
   String get addedSuccessfully {
     return Intl.message(
-      'تمت الإضافة بنجاح! ✅',
+      'تمت الإضافة بنجاح ',
       name: 'addedSuccessfully',
       desc: '',
       args: [],

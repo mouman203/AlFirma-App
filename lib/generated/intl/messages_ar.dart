@@ -34,7 +34,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أضف صورة للملف الشخصي حتى يتمكن أصدقاؤك من التعرف عليك",
     ),
     "addedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "تمت الإضافة بنجاح! ✅",
+      "تمت الإضافة بنجاح ",
     ),
     "adekar": MessageLookupByLibrary.simpleMessage("أدكار"),
     "adrar": MessageLookupByLibrary.simpleMessage("أدرار"),
@@ -427,7 +427,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "document_not_attached": MessageLookupByLibrary.simpleMessage("غير مرفقة"),
     "document_title": MessageLookupByLibrary.simpleMessage("توثيق "),
     "documents_sent_successfully": MessageLookupByLibrary.simpleMessage(
-      "تم إرسال الوثائق بنجاح ✅",
+      "تم إرسال الوثائق بنجاح ",
     ),
     "done": MessageLookupByLibrary.simpleMessage("تم"),
     "draaBenKhedda": MessageLookupByLibrary.simpleMessage("ذراع بن خدة"),
@@ -509,7 +509,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "حدث خطأ أثناء إرسال البريد الإلكتروني ❌",
     ),
     "emailSentSuccess": MessageLookupByLibrary.simpleMessage(
-      "تم إرسال البريد الإلكتروني بنجاح ! ✅",
+      "تم إرسال البريد الإلكتروني بنجاح ",
     ),
     "enterNewEmail": MessageLookupByLibrary.simpleMessage(
       "أدخل بريدًا إلكترونيًا جديدًا",

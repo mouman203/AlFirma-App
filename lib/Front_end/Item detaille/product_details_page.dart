@@ -552,10 +552,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${S.of(context).productLabel} ${widget.product.product}",
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  widget.product.typeItem != S.of(context).commercialProduct
+                      ? "${S.of(context).productLabel} ${widget.product.product}"
+                      : widget.product.product ?? "",
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 const SizedBox(height: 12),
                 _buildInfoRow(
@@ -569,6 +571,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     isDarkMode,
                     Icons.tag_outlined,
                     "${S.of(context).subCategoryLabel} ${widget.product.subCategory}",
+                  ),
+                ],
+                if (widget.product.service != "") ...[
+                  const SizedBox(height: 8),
+                  _buildInfoRow(
+                    isDarkMode,
+                    Icons.sell,
+                    " ${widget.product.service}",
                   ),
                 ],
                 const SizedBox(height: 8),
@@ -750,7 +760,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              "${widget.product.price}${S.of(context).dinar}",
+              "${widget.product.price}${S.of(context).dinar}/ ${widget.product.unit}",
               style: theme.textTheme.titleLarge?.copyWith(
                 color: isDarkMode
                     ? const Color(0xFF90D5AE)
@@ -1163,7 +1173,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SnackBar(
                             content: Text(
                               S.of(context).errorAddingComment,
-                              style: const TextStyle(fontSize: 18,color: Colors.black),
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.black),
                             ),
                             backgroundColor: Colors.red,
                             shape: RoundedRectangleBorder(

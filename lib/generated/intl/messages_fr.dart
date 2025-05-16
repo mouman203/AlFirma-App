@@ -38,7 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ajoutez une photo de profil pour que vos amis vous reconnaissent",
     ),
     "addedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "Ajouté avec succès ! ✅",
+      "Ajouté avec succès ",
     ),
     "adekar": MessageLookupByLibrary.simpleMessage("Adekar"),
     "adrar": MessageLookupByLibrary.simpleMessage("Adrar"),
@@ -467,7 +467,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "document_title": MessageLookupByLibrary.simpleMessage("Documentation "),
     "documents_sent_successfully": MessageLookupByLibrary.simpleMessage(
-      " Documents envoyés avec succès ✅",
+      " Documents envoyés avec succès ",
     ),
     "done": MessageLookupByLibrary.simpleMessage("Terminé"),
     "draaBenKhedda": MessageLookupByLibrary.simpleMessage("Draa Ben Khedda"),
@@ -553,7 +553,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Erreur lors de l\'envoi de l\'email ❌",
     ),
     "emailSentSuccess": MessageLookupByLibrary.simpleMessage(
-      "Email envoyé avec succès ! ✅",
+      "Email envoyé avec succès ",
     ),
     "enterNewEmail": MessageLookupByLibrary.simpleMessage(
       "Entrez un nouvel e-mail",

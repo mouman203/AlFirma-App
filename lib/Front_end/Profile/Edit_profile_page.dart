@@ -454,7 +454,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ],
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight: 180,
+                            maxHeight: 140,
                             offset: const Offset(0, 0),
                             width: MediaQuery.of(context).size.width - 100,
                             decoration: BoxDecoration(
@@ -599,7 +599,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ],
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight: 180,
+                            maxHeight: 140,
                             offset: const Offset(0, 0),
                             width: MediaQuery.of(context).size.width - 100,
                             decoration: BoxDecoration(

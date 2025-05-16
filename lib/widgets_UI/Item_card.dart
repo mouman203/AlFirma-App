@@ -374,9 +374,9 @@ class _ItemCardState extends State<ItemCard> {
                     item.SP == "Service"
                         ? localizedCategory
                         : item.typeItem == "منتج زراعي"
-                            ? localizedProduct.isNotEmpty
+                            ? localizedProduct != ""
                                 ? localizedProduct
-                                : localizedCategory.isNotEmpty
+                                : localizedCategory != ""
                                     ? localizedCategory
                                     : localizedSubCategory
                             : item.typeItem == "منتج حيواني"
@@ -384,10 +384,8 @@ class _ItemCardState extends State<ItemCard> {
                                     ? localizedProduct
                                     : localizedCategory
                                 : item.typeItem == "منتج تجاري"
-                                    ? localizedProduct.isNotEmpty
-                                        ? localizedProduct
-                                        : localizedCategory
-                                    : '',
+                                    ? localizedProduct
+                                    : localizedCategory,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
@@ -413,22 +411,25 @@ class _ItemCardState extends State<ItemCard> {
                   const SizedBox(height: 5),
                   // Display price
                   if (item.SP == "Product")
-                    // If Product, show price and unit (if Productagri)
-                    Row(
-                      children: [
-                        Text("${item.price}${S.of(context).dinar}",
-                            style: Theme.of(context).textTheme.bodyLarge),
-                        if (item.unit != null)
-                          Text(
-                            "/${localizedUnit}",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                      ],
-                    ),
-                  if (item.SP == "Service")
-                    // If Service, show only price
-                    Text('${S.of(context).dinar} ${item.price}',
-                        style: Theme.of(context).textTheme.bodyLarge),
+                    Row(children: [
+                      Text(
+                        "${item.price}${S.of(context).dinar}/${localizedUnit}",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ]),
+                  (item.SP == "Service" && item.category == "أراضي")
+                      ? Row(
+                          children: [
+                            Text(
+                              "${item.price}${S.of(context).dinar}/${localizedUnit}",
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ],
+                        )
+                      : Text(
+                          '${S.of(context).dinar} ${item.price}',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
                   const SizedBox(height: 7),
 
                   // Reactions for Service and Product
