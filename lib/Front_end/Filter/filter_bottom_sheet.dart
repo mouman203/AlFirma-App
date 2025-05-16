@@ -115,6 +115,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       translations["products"]!,
     );
 
+    // Add land category to product translations
+    _addTwoWayTranslation(
+      translations["products"]!,
+      "أرض صالحة للزراعة",
+      S.of(context).landSuitableForAgriculture,
+    );
+
     // Wilayas and Dairas
     final wilayasArabic = ProductData.wilayas;
     final wilayasLocal = ProductData.wilayasT(context);
@@ -417,7 +424,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     return [];
   }
 
-// Helper to get final products based on selected category/subcategory
+  // Helper to get final products based on selected category/subcategory
   List<String> getFinalItems(
       String? productType, String? mainCategory, String? subCategory) {
     if (productType == null || mainCategory == null) return [];
@@ -429,12 +436,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
     // Special handling for animal products - directly return products for the category
     if (arabicType == "منتج حيواني") {
-      // Debug output to check what's happening
-      print("Getting animal products for category: $mainCategory");
-      final products =
-          ProductData.produitsElevagesT(context)[mainCategory] ?? [];
-      print("Found ${products.length} animal products");
-      return products;
+      return ProductData.produitsElevagesT(context)[mainCategory] ?? [];
+    }
+
+    // Special handling for lands - directly return land types
+    if (arabicType == "منتج تجاري" && arabicCategory == "أراضي") {
+      return ProductData.commercantCategoriesT(context)[mainCategory] ?? [];
     }
 
     // For products that require subcategories
@@ -451,6 +458,33 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     return [];
   }
 
+  // Get the appropriate hint for final items based on selection
+  String getFinalItemHint(String? productType, String? mainCategory) {
+    if (productType == null || mainCategory == null) {
+      return S.of(context).product;
+    }
+
+    String? arabicType = getArabicValue(productType, "productTypes");
+    String? arabicCategory = getArabicValue(mainCategory, "categories");
+
+    if (arabicType == null || arabicCategory == null) {
+      return S.of(context).product;
+    }
+
+    // For lands, change hint to "type"
+    if (arabicType == "منتج تجاري" && arabicCategory == "أراضي") {
+      return S.of(context).type_label;
+    }
+
+    // For equipment, change hint to "equipment"
+    if (arabicType == "منتج تجاري" && arabicCategory == "معدات") {
+      return S.of(context).equipment;
+    }
+
+    // Default hint
+    return S.of(context).product;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -460,26 +494,41 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     List<String> productTypes = getLocalizedProductTypes();
     List<String> mainCategories = getMainCategories(selectedProductType);
 
-    // Modified logic for subcategories and finalItems
-    List<String> subCategories =
-        getSubCategories(selectedProductType, selectedMainCategory);
+    // Check if the current selection should skip the subcategory step
+    bool isDirectFinalItemCategory = false;
 
-    // For animal products, we want to show products directly after selecting a category
-    bool showFinalItemsDirectly = selectedProductType != null &&
-        getArabicValue(selectedProductType, "productTypes") == "منتج حيواني" &&
-        selectedMainCategory != null;
+    if (selectedProductType != null && selectedMainCategory != null) {
+      String? arabicType = getArabicValue(selectedProductType, "productTypes");
+      String? arabicCategory =
+          getArabicValue(selectedMainCategory, "categories");
 
+      isDirectFinalItemCategory = (arabicType ==
+              "منتج حيواني") || // Animal products
+          (arabicType == "منتج تجاري" && arabicCategory == "أراضي"); // Lands
+    }
+
+    // Get subcategories if needed
+    List<String> subCategories = isDirectFinalItemCategory
+        ? []
+        : getSubCategories(selectedProductType, selectedMainCategory);
+
+    // Get final items based on selections
     List<String> finalItems = [];
-    if (showFinalItemsDirectly) {
-      // For animal products, get items directly from the selected category
+    if (isDirectFinalItemCategory) {
+      // For categories that directly show final items
       finalItems =
-          ProductData.produitsElevagesT(context)[selectedMainCategory] ?? [];
-    } else {
-      // For other products that use subcategories
+          getFinalItems(selectedProductType, selectedMainCategory, null);
+    } else if (selectedSubCategory != null) {
+      // For categories that require subcategories
       finalItems = getFinalItems(
           selectedProductType, selectedMainCategory, selectedSubCategory);
     }
 
+    // Get the appropriate hint for final items
+    String finalItemHint =
+        getFinalItemHint(selectedProductType, selectedMainCategory);
+
+    // Location data
     List<String> wilayas = ProductData.wilayasT(context).keys.toList();
     List<String> dairas = selectedWilaya != null
         ? (ProductData.wilayasT(context)[selectedWilaya!] ?? [])
@@ -528,10 +577,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 },
               ),
 
-            // Sub Category Dropdown - Don't show for animal products
+            // Sub Category Dropdown - Only show for categories that need it
             if (selectedMainCategory != null &&
-                subCategories.isNotEmpty &&
-                !showFinalItemsDirectly)
+                !isDirectFinalItemCategory &&
+                subCategories.isNotEmpty)
               buildDropdown(
                 context: context,
                 value: selectedSubCategory,
@@ -545,14 +594,14 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 },
               ),
 
-          
-            if ((showFinalItemsDirectly || selectedSubCategory != null) &&
+            // Final Item Dropdown
+            if ((isDirectFinalItemCategory || selectedSubCategory != null) &&
                 finalItems.isNotEmpty)
               buildDropdown(
                 context: context,
                 value: selectedFinalItem,
                 items: finalItems,
-                hint: S.of(context).product,
+                hint: finalItemHint,
                 onChanged: (val) {
                   setState(() {
                     selectedFinalItem = val;

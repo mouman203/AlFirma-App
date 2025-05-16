@@ -1062,5 +1062,6 @@
   "add_profile_picture_subtitle": "أضف صورة للملف الشخصي حتى يتمكن أصدقاؤك من التعرف عليك",
   "profile_picture": "صورة الملف الشخصي",
   "skip": "تخطي",
-  "profile_picture_updated_successfully": "تم تحديث صورة الملف الشخصي بنجاح"
+  "profile_picture_updated_successfully": "تم تحديث صورة الملف الشخصي بنجاح",
+  "landSuitableForAgriculture": "أرض صالحة للزراعة"
 }

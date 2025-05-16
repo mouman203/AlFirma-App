@@ -785,9 +785,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                           fontSize: 21,
                                           color:
                                               Color.fromARGB(255, 47, 114, 38),
-                                          fontWeight: FontWeight
-                                              .bold 
-                                          ),
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     Text(S.of(context).aiDescription,
                                         style: const TextStyle(fontSize: 14)),
@@ -829,9 +827,9 @@ class _ExplorePageState extends State<ExplorePage> {
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        backgroundColor:  isDarkMode
-                                ? const Color(0xFF90D5AE)
-                                : const Color(0xFF256C4C),
+                                        backgroundColor: isDarkMode
+                                            ? const Color(0xFF90D5AE)
+                                            : const Color(0xFF256C4C),
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 12, horizontal: 12),
                                       ),

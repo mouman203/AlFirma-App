@@ -203,7 +203,7 @@ class ProductData {
       "معدات التعبئة والتغليف",
       "معدات وأدوات تربية المواشي"
     ],
-    "أراضي": [],
+    "أراضي": ["أرض صالحة للزراعة"],
   };
 
   static Map<String, List<String>> commercantCategoriesT(
@@ -216,7 +216,7 @@ class ProductData {
           S.of(context).packagingEquipment,
           S.of(context).livestockTools
         ],
-        S.of(context).lands: [],
+        S.of(context).lands: [S.of(context).landSuitableForAgriculture],
       };
   static final Map<String, List<String>> equipmentCategories = {
     "المعدات الزراعية": [

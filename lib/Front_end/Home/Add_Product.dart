@@ -695,26 +695,31 @@ class _AddProductsState extends State<AddProducts> {
                     });
                   },
                 ),
-
 //=============================PRODUCTS=========================================
-              if (userType != 'مصلح' &&
-                  selectedCategory != S.of(context).lands &&
-                  selectedCategory != null)
+              if (userType != 'مصلح' && selectedCategory != null)
                 ProductData.buildDropdown2(
                   context: context,
                   selectedValue: selectedproduct,
                   items: userType == 'ناقل'
                       ? ProductData.moyensDeTransport
-                      : (selectedsubCategory != null
-                          ? ProductData.getProduct(
-                              typeItem, selectedsubCategory!, context)
-                          : ProductData.getProduct(
-                              typeItem, selectedCategory!, context)),
-                  label: userType == 'ناقل'
-                      ? S.of(context).transport_means_label
-                      : (userType == 'خبير زراعي'
-                          ? S.of(context).type_label
-                          : S.of(context).product),
+                      : (selectedCategory == S.of(context).lands
+                          ? [
+                              S.of(context).landSuitableForAgriculture
+                            ] // Show lands types directly in products
+                          : (selectedsubCategory != null
+                              ? ProductData.getProduct(
+                                  typeItem, selectedsubCategory!, context)
+                              : ProductData.getProduct(
+                                  typeItem, selectedCategory!, context))),
+                  label: selectedCategory == S.of(context).lands
+                      ? S
+                          .of(context)
+                          .type_label // Change label to "Type" for lands
+                      : (userType == 'ناقل'
+                          ? S.of(context).transport_means_label
+                          : (userType == 'خبير زراعي'
+                              ? S.of(context).type_label
+                              : S.of(context).product)),
                   onChanged: (value) {
                     setState(() {
                       selectedproduct = value;

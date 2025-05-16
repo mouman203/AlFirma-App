@@ -1062,5 +1062,6 @@
   "add_profile_picture_subtitle": "Add a profile photo so your friends recognize you",
   "profile_picture": "Profile Picture",
   "skip": "Skip",
-  "profile_picture_updated_successfully": "Profile picture updated successfully"
+  "profile_picture_updated_successfully": "Profile picture updated successfully",
+  "landSuitableForAgriculture": "Land Suitable for Agriculture"
 }

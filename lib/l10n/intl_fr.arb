@@ -1062,5 +1062,6 @@
   "add_profile_picture_subtitle": "Ajoutez une photo de profil pour que vos amis vous reconnaissent",
   "profile_picture": "Photo de profil",
   "skip": "Passer",
-  "profile_picture_updated_successfully": "Photo de profil mise à jour avec succès"
+  "profile_picture_updated_successfully": "Photo de profil mise à jour avec succès",
+  "landSuitableForAgriculture": "Terre Propice à l'Agriculture"
 }

@@ -6954,6 +6954,16 @@ class S {
       args: [],
     );
   }
+
+  /// `أرض صالحة للزراعة`
+  String get landSuitableForAgriculture {
+    return Intl.message(
+      'أرض صالحة للزراعة',
+      name: 'landSuitableForAgriculture',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

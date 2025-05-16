@@ -754,6 +754,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "lahmar": MessageLookupByLibrary.simpleMessage("لحمر"),
     "lakhdaria": MessageLookupByLibrary.simpleMessage("الأخضرية"),
     "landLeveler": MessageLookupByLibrary.simpleMessage("آلة تسوية الأرض"),
+    "landSuitableForAgriculture": MessageLookupByLibrary.simpleMessage(
+      "أرض صالحة للزراعة",
+    ),
     "lands": MessageLookupByLibrary.simpleMessage("أراضي"),
     "language": MessageLookupByLibrary.simpleMessage("اللغة"),
     "languageArabic": MessageLookupByLibrary.simpleMessage("العربية"),
