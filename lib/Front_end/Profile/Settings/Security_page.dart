@@ -126,7 +126,7 @@ class _SecurityPageState extends State<SecurityPage> {
           backgroundColor:
               isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Text(
             val =="Email"
                 ? S.of(context).emailOptions
@@ -234,7 +234,7 @@ class _SecurityPageState extends State<SecurityPage> {
           backgroundColor:
               isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Text(
             S.of(context).changePassword,
             style: TextStyle(
@@ -318,7 +318,7 @@ class _SecurityPageState extends State<SecurityPage> {
           backgroundColor:
               isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title:  Text(
             S.of(context).attention,
             style: const TextStyle(
@@ -408,7 +408,7 @@ class _SecurityPageState extends State<SecurityPage> {
     final scheme = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title:  Text(S.of(context).privacySecurity),
+        title:  Text(S.of(context).privacySecurity,style:TextStyle(fontWeight: FontWeight.bold) ),
         elevation: 5,
       ),
       body: ListView(
@@ -423,7 +423,7 @@ class _SecurityPageState extends State<SecurityPage> {
                     isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
                 margin: const EdgeInsets.all(10.0),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(12)),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
@@ -506,7 +506,7 @@ class _SecurityPageState extends State<SecurityPage> {
                     isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
                 margin: const EdgeInsets.symmetric(horizontal: 10.0),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
                   leading: Icon(
                     Icons.email,
@@ -548,7 +548,7 @@ class _SecurityPageState extends State<SecurityPage> {
                     isDarkMode ? scheme.onSecondary : scheme.secondaryContainer,
                 margin: const EdgeInsets.symmetric(horizontal: 10.0),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
                   leading: Icon(
                     Icons.phone,

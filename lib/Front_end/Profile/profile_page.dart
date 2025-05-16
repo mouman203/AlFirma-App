@@ -1,5 +1,4 @@
 import 'package:agriplant/Back_end/Products.dart';
-
 import 'package:agriplant/Front_end/Profile/Edit_profile_page.dart';
 import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
 import 'package:agriplant/generated/l10n.dart';
@@ -37,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
     DocumentSnapshot userDoc =
         await _firestore.collection("Users").doc(userId).get();
 
-    if (!mounted) return; // <- Prevent setState if widget is disposed
+    if (!mounted) return;
 
     if (userDoc.exists) {
       setState(() {
@@ -52,35 +51,25 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<List<Products>> fetchAllUserItems(String userId) async {
     final firestore = FirebaseFirestore.instance;
 
-// ===================================Fetching products===================================
-
     final productSnap = await firestore
-      .collection('item')
-      .doc('Products')
-      .collection('Products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-      final products = productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList();
+        .collection('item')
+        .doc('Products')
+        .collection('Products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final products =
+        productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList();
 
-    
-// ===================================Fetching services===================================
-    
     final serviceSnap = await firestore
         .collection('item')
         .doc('Services')
         .collection('Services')
         .where('ownerId', isEqualTo: userId)
         .get();
-    final services = serviceSnap.docs.map(Products.fromFirestore).toList();
+    final services =
+        serviceSnap.docs.map((doc) => Products.fromFirestore(doc)).toList();
 
-
-
-    // Combine all items into one list
-    return [
-      ...products,
-      ...services,
-
-    ];
+    return [...products, ...services];
   }
 
   Future<List<dynamic>> _loadSavedItems() async {
@@ -103,279 +92,295 @@ class _ProfilePageState extends State<ProfilePage> {
     final List<dynamic> servicesaved = [];
 
     for (String itemId in savedItemIds) {
-      // ===================================Fetching products===================================
+      final productSnap = await firestore
+          .collection('item')
+          .doc('Products')
+          .collection('Products')
+          .where('id', isEqualTo: itemId)
+          .get();
+      producsaved.addAll(
+          productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList());
 
-    final productSnap = await firestore
-      .collection('item')
-      .doc('Products')
-      .collection('Products')
-      .where('id', isEqualTo: itemId)
-      .get();
-       producsaved.addAll(productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList()); 
-
-    
-// ===================================Fetching services===================================
-    
-    final serviceSnap = await firestore
-        .collection('item')
-        .doc('Services')
-        .collection('Services')
-        .where('id', isEqualTo: itemId)
-        .get();
-    final services = serviceSnap.docs.map(Products.fromFirestore).toList();
-    servicesaved.addAll(services);
+      final serviceSnap = await firestore
+          .collection('item')
+          .doc('Services')
+          .collection('Services')
+          .where('id', isEqualTo: itemId)
+          .get();
+      servicesaved.addAll(
+          serviceSnap.docs.map((doc) => Products.fromFirestore(doc)).toList());
     }
-    final savedItems = [
-      ...producsaved,
-      ...servicesaved,
-];
-    
 
+    final savedItems = [...producsaved, ...servicesaved];
     print("🎉 Finished loading saved items: ${savedItems.length} found.");
     return savedItems;
   }
 
- @override
-Widget build(BuildContext context) {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-  return Scaffold(
-    body: SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 54, bottom: 16),
-                  child: CircleAvatar(
-                    radius: 93,
-                    backgroundColor: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C),
-                    child: CircleAvatar(
-                      radius: 90,
-                      backgroundImage:
-                          (profilePic != null && profilePic!.isNotEmpty)
-                              ? NetworkImage(profilePic!)
-                              : (isDarkMode
-                                      ? const AssetImage("assets/anonymeD.png")
-                                      : const AssetImage("assets/anonyme.png"))
-                                  as ImageProvider,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 54,
-                right: 100,
-                child: CircleAvatar(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.secondaryContainer,
-                  child: IconButton(
-                    icon: Icon(Icons.edit,
-                        color: isDarkMode
-                            ? Colors.white
-                            : const Color(0xFF256C4C)),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const EditProfilePage(frompage: "profile")),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: CircleAvatar(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.secondaryContainer,
-                  child: IconButton(
-                    icon: Icon(Icons.settings,
-                        color: isDarkMode
-                            ? Colors.white
-                            : const Color(0xFF256C4C)),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SettingsPage()));
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          Center(
-            child: Column(
-              children: [
-                Text(
-                  username, // ✅ عرض اسم المستخدم الفعلي
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Text("$followersCount",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        Text(S.of(context).followers),
-                      ],
-                    ),
-                    const SizedBox(width: 20),
-                    Column(
-                      children: [
-                        Text("$followingCount",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        Text(S.of(context).following),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 25),
-
-          DefaultTabController(
-            length: 2,
-            child: Builder(builder: (context) {
-              final tabController = DefaultTabController.of(context);
-              return Column(
-                children: [
-                  TabBar(
-                    controller: tabController,
-                    tabs: List.generate(2, (index) {
-                      final isSelected = tabController.index == index;
-                      return Tab(
-                        icon: Icon(
-                          index == 0
-                              ? (isSelected
-                                  ? IconlyBold.category
-                                  : IconlyLight.category)
-                              : (isSelected
-                                  ? IconlyBold.bookmark
-                                  : IconlyLight.bookmark),
-                          size: 32,
-                        ),
-                      );
-                    }),
-                    onTap: (_) => (context as Element).markNeedsBuild(),
-                    indicator: UnderlineTabIndicator(
-                      borderSide: BorderSide(
-                        width: 3.5,
-                        color: Theme.of(context).colorScheme.primary,
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      body: SafeArea(
+        child: DefaultTabController(
+          length: 2,
+          child: LayoutBuilder(builder: (context, constraints) {
+            final tabController = DefaultTabController.of(context);
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 54, bottom: 16),
+                              child: CircleAvatar(
+                                radius: 93,
+                                backgroundColor: isDarkMode
+                                    ? const Color(0xFF90D5AE)
+                                    : const Color(0xFF256C4C),
+                                child: CircleAvatar(
+                                  radius: 90,
+                                  backgroundImage: (profilePic != null &&
+                                          profilePic!.isNotEmpty)
+                                      ? NetworkImage(profilePic!)
+                                      : (isDarkMode
+                                              ? const AssetImage(
+                                                  "assets/anonymeD.png")
+                                              : const AssetImage(
+                                                  "assets/anonyme.png"))
+                                          as ImageProvider,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 54,
+                            right: 100,
+                            child: CircleAvatar(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                              child: IconButton(
+                                icon: Icon(Icons.edit,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF256C4C)),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EditProfilePage(
+                                              frompage: "profile"),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: CircleAvatar(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                              child: IconButton(
+                                icon: Icon(Icons.settings,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF256C4C)),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SettingsPage()),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      insets: const EdgeInsets.symmetric(horizontal: 50.0),
-                    ),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: Theme.of(context).colorScheme.primary,
-                    unselectedLabelColor: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.6),
-                  ),
-                  const SizedBox(height: 15),
-                  // Remove Expanded here
-                  SizedBox(
-                    // Adding fixed height to prevent unbounded height error
-                    height: MediaQuery.of(context).size.height * 0.6, // Adjust as needed
-                    child: TabBarView(
-                      children: [
-                        FutureBuilder<List<Products>>(
-                          future: fetchAllUserItems(
-                              FirebaseAuth.instance.currentUser!.uid),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return Center(
-                                  child: Text(S.of(context).noItemsYet));
-                            }
-
-                            final itemList = snapshot.data!;
-                            return GridView.builder(
-                              itemCount: itemList.length,
-                              shrinkWrap: true,  // Allow GridView to take space it needs
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.8,
-                                crossAxisSpacing: 9,
-                                mainAxisSpacing: 2,
-                              ),
-                              itemBuilder: (context, index) {
-                                return ItemCard(item: itemList[index]);
-                              },
-                            );
-                          },
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              username,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text("$followersCount",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16)),
+                                    Text(S.of(context).followers),
+                                  ],
+                                ),
+                                const SizedBox(width: 20),
+                                Column(
+                                  children: [
+                                    Text("$followingCount",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16)),
+                                    Text(S.of(context).following),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        FutureBuilder<List<dynamic>>(
-                          future: _loadSavedItems(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return Center(
-                                  child: Text(S.of(context).noSavedItems));
-                            }
+                      ),
+                      const SizedBox(height: 25),
+                      TabBar(
+                        controller: tabController,
+                        tabs: List.generate(2, (index) {
+                          final isSelected = tabController.index == index;
+                          return Tab(
+                            icon: Icon(
+                              index == 0
+                                  ? (isSelected
+                                      ? IconlyBold.category
+                                      : IconlyLight.category)
+                                  : (isSelected
+                                      ? IconlyBold.bookmark
+                                      : IconlyLight.bookmark),
+                              size: 32,
+                            ),
+                          );
+                        }),
+                        onTap: (_) => (context as Element).markNeedsBuild(),
+                        indicator: UnderlineTabIndicator(
+                          borderSide: BorderSide(
+                            width: 3.5,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          insets: const EdgeInsets.symmetric(horizontal: 50.0),
+                        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        labelColor: Theme.of(context).colorScheme.primary,
+                        unselectedLabelColor: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.6),
+                      ),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        height: 600, // <-- Set to large enough fixed height
+                        child: TabBarView(
+                          children: [
+                            FutureBuilder<List<Products>>(
+                              future: fetchAllUserItems(
+                                  FirebaseAuth.instance.currentUser!.uid),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 30.0),
+                                    child: Align(
+                                      alignment: Alignment.topCenter,
+                                      child: Text(
+                                        S.of(context).noItemsYet,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                    ),
+                                  );
+                                }
 
-                            final savedItems = snapshot.data!;
-                            return GridView.builder(
-                              itemCount: savedItems.length,
-                              shrinkWrap: true,  // Allow GridView to take space it needs
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.8,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 8,
-                              ),
-                              itemBuilder: (context, index) {
-                                final item = savedItems[index];
-                                return ItemCard(
-                                  item: item,
-                                  onUnsave: () {
-                                    setState(() {
-                                      savedItems.remove(item);
-                                    });
+                                final itemList = snapshot.data!;
+                                return GridView.builder(
+                                  itemCount: itemList.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 0.8,
+                                    crossAxisSpacing: 9,
+                                    mainAxisSpacing: 2,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return ItemCard(item: itemList[index]);
                                   },
                                 );
                               },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            }),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+                            ),
+                            FutureBuilder<List<dynamic>>(
+                              future: _loadSavedItems(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 30.0),
+                                    child: Align(
+                                      alignment: Alignment.topCenter,
+                                      child: Text(
+                                        S.of(context).noSavedItems,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                    ),
+                                  );
+                                }
 
+                                final savedItems = snapshot.data!;
+                                return GridView.builder(
+                                  itemCount: savedItems.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 0.8,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 8,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    final item = savedItems[index];
+                                    return ItemCard(
+                                      item: item,
+                                      onUnsave: () {
+                                        setState(() {
+                                          savedItems.remove(item);
+                                        });
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
 }

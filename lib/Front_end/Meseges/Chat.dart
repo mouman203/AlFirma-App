@@ -70,11 +70,11 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  String _formatTimestamp(dynamic timestamp) {
-    if (timestamp == null) return '';
-    DateTime dateTime = timestamp.toDate();
-    return DateFormat.Hm().format(dateTime);
-  }
+ String _formatTimestamp(dynamic timestamp) {
+  if (timestamp == null) return '';
+  DateTime dateTime = timestamp.toDate();
+  return DateFormat.Hm('en').format(dateTime); // Force English locale
+}
 
   Future<void> _markMessagesAsSeen(QuerySnapshot snapshot) async {
     for (var doc in snapshot.docs) {
@@ -207,7 +207,7 @@ class _ChatPageState extends State<ChatPage> {
                                         : const Color(0xFF256C4C))
                                     : (isDarkMode
                                         ? const Color(0xFFE6E6E6)
-                                        : const Color(0xFF3A3A3A)),
+                                        : const Color.fromARGB(255, 72, 72, 72)),
                                 borderRadius: BorderRadius.only(
                                   topLeft: const Radius.circular(16),
                                   topRight: const Radius.circular(16),

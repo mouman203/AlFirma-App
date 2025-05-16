@@ -28,22 +28,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _PhoneNumController = TextEditingController();
 
-  
   String? firstNameError;
   String? lastNameError;
   String? phoneNumError;
   String? wilayaError;
   String? dairaError;
-  
+
   // List to store Dairas based on selected Wilaya
   List<String> availableDairas = [];
-  
+
   // Variables to store display (localized) and storage (Arabic) versions
   String? selectedWilaya; // Display version (localized)
   String? selectedDaira; // Display version (localized)
   String? selectedWilayaArabic; // Storage version (Arabic)
   String? selectedDairaArabic; // Storage version (Arabic)
-  
+
   // Translation maps
   late Map<String, String> _translationMap; // Arabic to localized
   late Map<String, String> _reverseTranslationMap; // localized to Arabic
@@ -57,19 +56,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    
+
     // We'll initialize the translation maps when the widget is inserted in the tree
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initTranslationMaps();
       _loadUserData();
     });
   }
-  
 
-    void _initTranslationMaps() {
+  void _initTranslationMaps() {
     // Build the translation map from Arabic to localized
     _translationMap = ProductData.buildDairaTranslationMap(context);
-    
+
     // Build reverse translation map from localized to Arabic
     _reverseTranslationMap = {};
     _translationMap.forEach((arabic, localized) {
@@ -80,7 +78,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void updateDairaList(String wilaya) {
     setState(() {
       availableDairas = ProductData.wilayasT(context)[wilaya] ?? [];
-      
+
       // Store the Arabic version when selecting wilaya
       selectedWilayaArabic = _reverseTranslationMap[wilaya];
     });
@@ -97,27 +95,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _currentLastName = userDoc["last_name"] ?? '';
         _currentPhoneNum = userDoc["phone"] ?? '';
         _currentImage = userDoc["photo"] ?? '';
-        
+
         // Get the Arabic versions from Firestore
         _currentWilaya = userDoc["wilaya"] ?? '';
         _currentDaira = userDoc["daira"] ?? '';
-        
+
         // Translate Arabic to localized versions for display
-        String? localizedWilaya = _translationMap[_currentWilaya] ?? _currentWilaya;
-        String? localizedDaira = _translationMap[_currentDaira] ?? _currentDaira;
-        
+        String? localizedWilaya =
+            _translationMap[_currentWilaya] ?? _currentWilaya;
+        String? localizedDaira =
+            _translationMap[_currentDaira] ?? _currentDaira;
+
         _firstNameController.text = _currentFirstName!;
         _lastNameController.text = _currentLastName!;
         _PhoneNumController.text = _currentPhoneNum!;
-        
+
         // Set the localized versions for display
         selectedWilaya = localizedWilaya;
         selectedDaira = localizedDaira;
-        
+
         // Store the Arabic versions for database updates
         selectedWilayaArabic = _currentWilaya;
         selectedDairaArabic = _currentDaira;
-        
+
         // Update available dairas based on the selected wilaya
         if (selectedWilaya != null) {
           updateDairaList(selectedWilaya!);
@@ -125,6 +125,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
     }
   }
+
   File? _selectedImageFile;
   String? _currentImage;
   bool isLoading = false;
@@ -172,18 +173,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title:  Text(S.of(context).error),
+          title: Text(S.of(context).error),
           content: Text(e.toString()),
         ),
       );
     }
   }
 
- Future<void> _updateProfile() async {
+  Future<void> _updateProfile() async {
     // Get the Arabic versions for storage
     final wilayaToStore = selectedWilayaArabic ?? selectedWilaya!;
     final dairaToStore = selectedDairaArabic ?? selectedDaira!;
-    
+
     if (_firstNameController.text != _currentFirstName ||
         _lastNameController.text != _currentLastName ||
         _PhoneNumController.text != _currentPhoneNum ||
@@ -204,19 +205,54 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       await FirebaseFirestore.instance
           .collection('Users')
-          .doc(userId) // Using UID to access the document directly
+          .doc(userId)
           .update({'Verify': true});
 
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text(S.of(context).profile_updated)),
+        SnackBar(
+          backgroundColor: const Color(0xFF256C4C),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.black),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  S.of(context).profile_updated,
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
-    } else {
+
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text(S.of(context).no_changes_detected),),
+        SnackBar(
+          backgroundColor: const Color(0xFF256C4C),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle_outline, color: Colors.black),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  S.of(context).no_changes_detected,
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 1),
+        ),
       );
     }
   }
@@ -227,31 +263,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
       context: context,
       builder: (_) => SafeArea(
         child: AlertDialog(
-           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title:  Text(S.of(context).choose_picture,
-        style: const TextStyle(fontWeight: FontWeight.bold)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: Text(S.of(context).choose_picture,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              
-            ListTile(
-              leading: Icon(Icons.photo_library,
-                  color: isDarkMode
-                      ? const Color(0xFF90D5AE)
-                      : const Color(0xFF256C4C)),
-              title:  Text(S.of(context).select_from_gallery),
+              ListTile(
+                leading: Icon(Icons.photo_library,
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C)),
+                title: Text(S.of(context).select_from_gallery),
                 onTap: () async {
                   pickImageGallery();
                 },
               ),
               ListTile(
-              leading: Icon(Icons.camera_alt,
-                  color: isDarkMode
-                      ? const Color(0xFF90D5AE)
-                      : const Color(0xFF256C4C)),
-              title:  Text(S.of(context).capture_with_camera),
+                leading: Icon(Icons.camera_alt,
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C)),
+                title: Text(S.of(context).capture_with_camera),
                 onTap: () async {
                   pickImageCamera();
                 },
@@ -286,7 +321,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               )
             : AppBar(
-                title: Text(S.of(context).edit_profile),
+                title: Text(S.of(context).edit_profile,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 backgroundColor:
                     isDarkMode ? colorScheme.surface : colorScheme.surface,
                 elevation: 5,
@@ -347,7 +383,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               _buildTextField(
                 controller: _firstNameController,
                 icon: Icons.person,
-                hintText: S.of(context).firstName, 
+                hintText: S.of(context).firstName,
                 errorText: firstNameError,
               ),
 
@@ -372,7 +408,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
 
               const SizedBox(height: 13),
-  // Wilaya Dropdown
+              // Wilaya Dropdown
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Column(
@@ -380,9 +416,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: isDarkMode
-                            ? const Color.fromARGB(255, 39, 57, 48)
-                            : Theme.of(context).colorScheme.secondaryContainer,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: wilayaError != null
@@ -394,9 +428,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
-                          value: ProductData.wilayasT(context).keys.contains(selectedWilaya)
-                                ? selectedWilaya
-                                : null,
+                          value: ProductData.wilayasT(context)
+                                  .keys
+                                  .contains(selectedWilaya)
+                              ? selectedWilaya
+                              : null,
                           hint: Row(
                             children: [
                               Icon(
@@ -422,11 +458,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             offset: const Offset(0, 0),
                             width: MediaQuery.of(context).size.width - 100,
                             decoration: BoxDecoration(
-                              color: isDarkMode
-                                  ? const Color.fromARGB(255, 30, 45, 38)
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .secondaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -444,23 +478,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           onChanged: (newValue) {
                             if (newValue != null &&
-                                ProductData.wilayasT(context).containsKey(newValue)) {
+                                ProductData.wilayasT(context)
+                                    .containsKey(newValue)) {
                               setState(() {
                                 selectedWilaya = newValue;
                                 selectedDaira = null;
                                 selectedDairaArabic = null;
                                 wilayaError = null;
                                 dairaError = null;
-                                
+
                                 // Store the Arabic version when selecting wilaya
-                                selectedWilayaArabic = _reverseTranslationMap[newValue];
-                                
+                                selectedWilayaArabic =
+                                    _reverseTranslationMap[newValue];
+
                                 updateDairaList(newValue);
                               });
                             }
                           },
                           selectedItemBuilder: (BuildContext context) {
-                            return ProductData.wilayasT(context).keys.map((wilaya) {
+                            return ProductData.wilayasT(context)
+                                .keys
+                                .map((wilaya) {
                               return Row(
                                 children: [
                                   Icon(
@@ -483,7 +521,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               );
                             }).toList();
                           },
-                          items: ProductData.wilayasT(context).keys
+                          items: ProductData.wilayasT(context)
+                              .keys
                               .map<DropdownMenuItem<String>>((wilaya) {
                             return DropdownMenuItem<String>(
                               value: wilaya,
@@ -524,9 +563,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: isDarkMode
-                            ? const Color.fromARGB(255, 39, 57, 48)
-                            : Theme.of(context).colorScheme.secondaryContainer,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: dairaError != null
@@ -566,11 +603,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             offset: const Offset(0, 0),
                             width: MediaQuery.of(context).size.width - 100,
                             decoration: BoxDecoration(
-                              color: isDarkMode
-                                  ? const Color.fromARGB(255, 30, 45, 38)
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .secondaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -592,9 +627,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               setState(() {
                                 selectedDaira = newValue;
                                 dairaError = null;
-                                
+
                                 // Store the Arabic version when selecting daira
-                                selectedDairaArabic = _reverseTranslationMap[newValue];
+                                selectedDairaArabic =
+                                    _reverseTranslationMap[newValue];
                               });
                             }
                           },
@@ -652,7 +688,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ],
                 ),
               ),
-
 
               const SizedBox(height: 50),
 

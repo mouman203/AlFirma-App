@@ -1,9 +1,9 @@
-
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Filter/filter_bottom_sheet.dart';
 import 'package:agriplant/Search/SearchHistoryManager%20.dart';
+import 'package:agriplant/data/ProductData.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,12 +29,23 @@ class _ExplorePageState extends State<ExplorePage> {
   List<String> recentSearches = [];
   final SearchHistoryManager searchManager = SearchHistoryManager();
 
+  // Translation maps
+  Map<String, String> categoryTranslations = {};
+  Map<String, String> subCategoryTranslations = {};
+  Map<String, String> productTranslations = {};
+  Map<String, String> unitTranslations = {};
+  Map<String, String> serviceTypeTranslations = {};
+  Map<String, String> wilayaTranslations = {};
+  Map<String, String> dairaTranslations = {};
+
   get applyFilter => null;
 
   @override
   void initState() {
     super.initState();
     loadSearchHistory();
+
+    // Don't initialize translations in initState, defer to didChangeDependencies
     fetchAllProducts();
     fetchProductNames();
     _focusNode.addListener(() {
@@ -47,11 +58,226 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Initialize translations here instead of initState
+    _initTranslationMaps();
+  }
+
+  @override
   void dispose() {
     _focusNode
         .dispose(); // تدمير الـ FocusNode عند انتهاء الصفحة لتجنب استهلاك الذاكرة
     _controller.dispose();
     super.dispose();
+  }
+
+  // Initialize all translation maps
+  void _initTranslationMaps() {
+    // Initialize agricultural product translations
+    _initAgriCategoryTranslations();
+    _initAnimalProductTranslations();
+    _initCommercialProductTranslations();
+    _initExpertiseTranslations();
+    _initTransportationTranslations();
+    _initRepairTranslations();
+    _initWilayaAndDairaTranslations();
+
+    // Initialize units translations
+    unitTranslations = {
+      "كلغ": S.of(context).kg,
+      "طن": S.of(context).ton,
+      "لتر": S.of(context).liter,
+      "صندوق": S.of(context).box,
+      "م²": S.of(context).squareMeter,
+      "هكتار": S.of(context).hectare,
+      "قطعة": S.of(context).piece,
+      "مجموعة": S.of(context).set,
+      "رأس": S.of(context).head,
+      "عبوة": S.of(context).pack,
+      "وحدة": S.of(context).unit,
+    };
+
+    // Add reverse mapping
+    Map<String, String> reverseUnitMap = {};
+    unitTranslations.forEach((key, value) {
+      reverseUnitMap[value] = key;
+    });
+    unitTranslations.addAll(reverseUnitMap);
+
+    // Initialize service types translations
+    serviceTypeTranslations = {
+      "بيع": S.of(context).sell,
+      "الإيجار": S.of(context).rent,
+    };
+
+    // Add reverse mapping
+    serviceTypeTranslations[S.of(context).sell] = "بيع";
+    serviceTypeTranslations[S.of(context).rent] = "الإيجار";
+  }
+
+  void _initAgriCategoryTranslations() {
+    // Map for main agricultural categories
+    final arabicMap = ProductData.agriCategories;
+    final localizedMap = ProductData.agriCategoriesT(context);
+
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+
+    // Map for subcategories
+    final arabicSubMap = ProductData.agriSubCategories;
+    final localizedSubMap = ProductData.agriSubCategoriesT(context);
+
+    _mapTranslations(arabicSubMap, localizedSubMap, subCategoryTranslations);
+  }
+
+  void _initAnimalProductTranslations() {
+    final arabicMap = ProductData.produitsElevages;
+    final localizedMap = ProductData.produitsElevagesT(context);
+
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+
+    // Animal products don't have separate subcategories in the provided code
+    // So we'll use the same mapping for products
+    _mapTranslations(arabicMap, localizedMap, subCategoryTranslations);
+  }
+
+  void _initCommercialProductTranslations() {
+    final arabicMap = ProductData.commercantCategories;
+    final localizedMap = ProductData.commercantCategoriesT(context);
+
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+
+    // Map for equipment subcategories
+    final arabicEquipMap = ProductData.equipmentCategories;
+    final localizedEquipMap = ProductData.equipmentCategoriesT(context);
+
+    _mapTranslations(
+        arabicEquipMap, localizedEquipMap, subCategoryTranslations);
+  }
+
+  void _initExpertiseTranslations() {
+    final arabicMap = ProductData.ExpertProducts;
+    final localizedMap = ProductData.ExpertProductsT(context);
+
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+  }
+
+  void _initTransportationTranslations() {
+    // Transportation has simple lists, not maps
+    final transportCategories = ["نقل المواشي", "نقل المحاصيل", "نقل عام"];
+    final localizedTransportCategories = [
+      S.of(context).livestockTransport,
+      S.of(context).cropTransport,
+      S.of(context).generalTransport,
+    ];
+
+    for (int i = 0; i < transportCategories.length; i++) {
+      if (i < localizedTransportCategories.length) {
+        categoryTranslations[transportCategories[i]] =
+            localizedTransportCategories[i];
+        categoryTranslations[localizedTransportCategories[i]] =
+            transportCategories[i]; // Reverse mapping
+      }
+    }
+
+    // For transport product types
+    final arabicTransport = ProductData.moyensDeTransport;
+    final localizedTransport = ProductData.moyensDeTransportT(context);
+
+    for (int i = 0; i < arabicTransport.length; i++) {
+      if (i < localizedTransport.length) {
+        productTranslations[arabicTransport[i]] = localizedTransport[i];
+        productTranslations[localizedTransport[i]] =
+            arabicTransport[i]; // Reverse mapping
+      }
+    }
+  }
+
+  void _initRepairTranslations() {
+    final arabicRepair = ProductData.ReparationType;
+    final localizedRepair = ProductData.reparationTypeT(context);
+
+    for (int i = 0; i < arabicRepair.length; i++) {
+      if (i < localizedRepair.length) {
+        categoryTranslations[arabicRepair[i]] = localizedRepair[i];
+        categoryTranslations[localizedRepair[i]] =
+            arabicRepair[i]; // Reverse mapping
+      }
+    }
+  }
+
+  void _initWilayaAndDairaTranslations() {
+    final arabicMap = ProductData.wilayas;
+    final localizedMap = ProductData.wilayasT(context);
+
+    final arabicWilayasList = arabicMap.keys.toList();
+    final localizedWilayasList = localizedMap.keys.toList();
+
+    for (int i = 0; i < arabicWilayasList.length; i++) {
+      final arabicWilaya = arabicWilayasList[i];
+      if (i >= localizedWilayasList.length) continue; // safeguard
+      final localizedWilaya = localizedWilayasList[i];
+
+      wilayaTranslations[arabicWilaya] = localizedWilaya;
+      wilayaTranslations[localizedWilaya] =
+          arabicWilaya; // Bidirectional mapping
+
+      final arabicDairas = arabicMap[arabicWilaya]!;
+      final localizedDairas = localizedMap[localizedWilaya]!;
+
+      for (int j = 0; j < arabicDairas.length; j++) {
+        if (j >= localizedDairas.length) continue;
+        dairaTranslations[arabicDairas[j]] = localizedDairas[j];
+        dairaTranslations[localizedDairas[j]] =
+            arabicDairas[j]; // Bidirectional mapping
+      }
+    }
+  }
+
+  void _mapTranslations(Map<String, List<String>> arabicMap,
+      Map<String, List<String>> localizedMap, Map<String, String> targetMap) {
+    // Map main categories
+    arabicMap.forEach((arabicKey, arabicValues) {
+      String? localizedKey;
+      for (var key in localizedMap.keys) {
+        // Look for position-based match in translated categories
+        int keyIndex = arabicMap.keys.toList().indexOf(arabicKey);
+        int matchingLocalizedIndex = localizedMap.keys.toList().indexOf(key);
+
+        if (keyIndex == matchingLocalizedIndex && keyIndex >= 0) {
+          localizedKey = key;
+          break;
+        }
+      }
+
+      // Fallback in case we couldn't find a positional match
+      localizedKey ??= arabicKey;
+
+      // Add to translation map
+      targetMap[arabicKey] = localizedKey;
+      targetMap[localizedKey] = arabicKey; // Add reverse mapping
+
+      // Map values (products)
+      List<String> localizedValues = localizedMap[localizedKey] ?? [];
+      for (int i = 0; i < arabicValues.length; i++) {
+        if (i < localizedValues.length) {
+          productTranslations[arabicValues[i]] = localizedValues[i];
+          productTranslations[localizedValues[i]] =
+              arabicValues[i]; // Add reverse mapping
+        }
+      }
+    });
+  }
+
+  // Helper function to get localized value from Arabic value
+  String getLocalizedValue(
+      Map<String, String> translationMap, String arabicValue) {
+    return translationMap[arabicValue] ?? arabicValue;
+  }
+
+  // Get localized product name
+  String getLocalizedProductName(String arabicName) {
+    return productTranslations[arabicName] ?? arabicName;
   }
 
   // يستخدم هذا الدالة لجلب المنتجات من Firestore
@@ -67,22 +293,86 @@ class _ExplorePageState extends State<ExplorePage> {
           .get();
 
       List<Products> agricolProducts = productSnapshot.docs.map((doc) {
-        return Products.fromFirestore(doc);
+        // Create the base product from Firestore
+        Products product = Products.fromFirestore(doc);
+
+        // Apply localization - create a localized version of the product for display
+        // We'll localize later when translations are initialized
+        return product;
       }).toList();
 
       allProducts.addAll(agricolProducts);
-
 
       // تحديث حالة الواجهة
       if (mounted) {
         setState(() {
           productList = allProducts;
+          showLoader = false;
+          // We'll localize products in didChangeDependencies if needed
         });
       }
 
       print("✅ تم جلب جميع المنتجات بنجاح (${allProducts.length})");
     } catch (e) {
       print("❌ خطأ أثناء جلب المنتجات: $e");
+      if (mounted) {
+        setState(() {
+          showLoader = false;
+        });
+      }
+    }
+  }
+
+  // Function to localize a product
+  Products localizeProduct(Products product) {
+    // Create a new product with localized fields
+    Products localizedProduct = Products(
+      id: product.id,
+      ownerId: product.ownerId,
+      typeItem: product.typeItem,
+      category: product.category != null
+          ? getLocalizedValue(categoryTranslations, product.category!)
+          : null,
+      subCategory: product.subCategory != null
+          ? getLocalizedValue(subCategoryTranslations, product.subCategory!)
+          : null,
+      product: product.product != null
+          ? getLocalizedValue(productTranslations, product.product!)
+          : null,
+      quantity: product.quantity,
+      surface: product.surface,
+      unit: product.unit != null
+          ? getLocalizedValue(unitTranslations, product.unit!)
+          : null,
+      service: product.service != null
+          ? getLocalizedValue(serviceTypeTranslations, product.service!)
+          : null,
+      price: product.price,
+      description: product.description,
+      comments: product.comments,
+      photos: product.photos,
+      liked: product.liked,
+      disliked: product.disliked,
+      date_of_add: product.date_of_add,
+      wilaya: product.wilaya != null
+          ? getLocalizedValue(wilayaTranslations, product.wilaya!)
+          : null,
+      daira: product.daira != null
+          ? getLocalizedValue(dairaTranslations, product.daira!)
+          : null,
+      SP: product.SP,
+    );
+
+    return localizedProduct;
+  }
+
+  // Function to localize product list after translations are loaded
+  void localizeProductList() {
+    if (productList.isNotEmpty && categoryTranslations.isNotEmpty) {
+      setState(() {
+        productList =
+            productList.map((product) => localizeProduct(product)).toList();
+      });
     }
   }
 
@@ -96,22 +386,36 @@ class _ExplorePageState extends State<ExplorePage> {
           .get();
 
       // استخراج الأسماء من المجموعتين
-      List<String> names = [
+      List<String> arabicNames = [
         ...productSnapshot.docs.map(
             (doc) => (doc.data() as Map<String, dynamic>)['product'] as String),
-
       ];
 
       if (mounted) {
         setState(() {
-          productNames = names;
+          productNames = arabicNames; // We'll localize these later
           filteredNames = []; // لا نعرض اقتراحات في البداية
         });
       }
 
-      debugPrint("✅ تم جلب ${productNames.length} اسم منتج من كلا المجموعتين!");
+      debugPrint("✅ تم جلب ${productNames.length} اسم منتج!");
     } catch (e) {
       print("⚠️ خطأ أثناء جلب أسماء المنتجات: $e");
+    }
+  }
+
+  // Function to localize product names after translations are loaded
+  void localizeProductNames() {
+    if (productNames.isNotEmpty && productTranslations.isNotEmpty) {
+      List<String> localizedNames = productNames.map((arabicName) {
+        return getLocalizedProductName(arabicName);
+      }).toList();
+
+      setState(() {
+        productNames = localizedNames;
+      });
+
+      debugPrint("✅ تم ترجمة ${productNames.length} اسم منتج محلي!");
     }
   }
 
@@ -134,9 +438,27 @@ class _ExplorePageState extends State<ExplorePage> {
                       _focusNode.unfocus();
                       await searchManager.addSearch(word);
                       loadSearchHistory();
-                      List<Products> results = await user.searchProducts(word);
+
+                      // Search using the word (which could be localized)
+                      String searchTerm = word;
+                      // Convert localized term to Arabic if it exists in our translation maps
+                      String arabicTerm = productTranslations[searchTerm] ??
+                          categoryTranslations[searchTerm] ??
+                          subCategoryTranslations[searchTerm] ??
+                          productTranslations[searchTerm] ??
+                          searchTerm;
+
+                      // Execute the search using the Arabic term
+                      List<Products> results =
+                          await user.searchProducts(arabicTerm);
+
+                      // Localize the search results
+                      List<Products> localizedResults = results
+                          .map((product) => localizeProduct(product))
+                          .toList();
+
                       setState(() {
-                        productList = results;
+                        productList = localizedResults;
                         filteredNames = [];
                       });
                     },
@@ -170,13 +492,27 @@ class _ExplorePageState extends State<ExplorePage> {
               return ListTile(
                 title: Text(filteredNames[index]),
                 onTap: () async {
-                  await searchManager.addSearch(filteredNames[index]);
+                  String searchTerm = filteredNames[index];
+                  await searchManager.addSearch(searchTerm);
                   loadSearchHistory();
-                  _controller.text = filteredNames[index];
+                  _controller.text = searchTerm;
+
+                  // Convert to Arabic for search if it's in our translation maps
+                  String arabicTerm = productTranslations[searchTerm] ??
+                      categoryTranslations[searchTerm] ??
+                      subCategoryTranslations[searchTerm] ??
+                      searchTerm;
+
                   List<Products> results =
-                      await user.searchProducts(filteredNames[index]);
+                      await user.searchProducts(arabicTerm);
+
+                  // Localize the results
+                  List<Products> localizedResults = results
+                      .map((product) => localizeProduct(product))
+                      .toList();
+
                   setState(() {
-                    productList = results;
+                    productList = localizedResults;
                     filteredNames = [];
                     _focusNode.unfocus();
                     _controller.clear();
@@ -217,7 +553,16 @@ class _ExplorePageState extends State<ExplorePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // If translations are loaded and products are available but not localized yet
+    if (categoryTranslations.isNotEmpty && productList.isNotEmpty) {
+      // Localize products and product names after translations are loaded
+      localizeProductList();
+      localizeProductNames();
+    }
+
     return GestureDetector(
       onTap: () {
         _focusNode.unfocus(); // إلغاء التركيز عند الضغط خارج TextField
@@ -276,10 +621,22 @@ class _ExplorePageState extends State<ExplorePage> {
                           productList = [];
                         });
 
-                        final results = await user.searchProducts(value);
+                        // Convert to Arabic for search if possible
+                        String searchTerm = value;
+                        String arabicTerm = productTranslations[searchTerm] ??
+                            categoryTranslations[searchTerm] ??
+                            subCategoryTranslations[searchTerm] ??
+                            searchTerm;
+
+                        final results = await user.searchProducts(arabicTerm);
+
+                        // Localize the results
+                        List<Products> localizedResults = results
+                            .map((product) => localizeProduct(product))
+                            .toList();
 
                         setState(() {
-                          productList = results;
+                          productList = localizedResults;
                           showLoader = false;
                         });
 
@@ -291,22 +648,35 @@ class _ExplorePageState extends State<ExplorePage> {
                       decoration: InputDecoration(
                         hintText: S.of(context).searchHere,
                         hintStyle: TextStyle(
-                            color: isDarkMode
-                                ? const Color(0xFF90D5AE)
-                                : const Color(0xFF256C4C)),
+                          color: isDarkMode
+                              ? const Color(0xFF90D5AE)
+                              : const Color(0xFF256C4C),
+                          fontSize: 17,
+                        ),
                         isDense: true,
                         contentPadding: const EdgeInsets.all(12.0),
                         border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(99)),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
                         enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            width: 1.5,
+                          ),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: isDarkMode
                                 ? const Color(0xFF90D5AE)
                                 : const Color(0xFF256C4C),
+                            width: 2,
                           ),
                           borderRadius:
-                              const BorderRadius.all(Radius.circular(99)),
+                              const BorderRadius.all(Radius.circular(12)),
                         ),
                         prefixIcon: Icon(
                           IconlyLight.search,
@@ -339,9 +709,9 @@ class _ExplorePageState extends State<ExplorePage> {
                               minChildSize: 0.5,
                               builder: (context, scrollController) {
                                 return Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.vertical(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface,
+                                    borderRadius: const BorderRadius.vertical(
                                         top: Radius.circular(20)),
                                   ),
                                   padding: const EdgeInsets.all(16),
@@ -354,9 +724,14 @@ class _ExplorePageState extends State<ExplorePage> {
 
                         // إذا كانت النتيجة ليست null وقائمة المنتجات صالحة
                         if (result != null) {
+                          // Localize the filtered products
+                          List<Products> localizedFilteredProducts = result
+                              .map((product) => localizeProduct(product))
+                              .toList();
+
                           setState(() {
                             productList =
-                                result; // تحديث قائمة المنتجات بناءً على الفلاتر
+                                localizedFilteredProducts; // تحديث قائمة المنتجات بناءً على الفلاتر
                           });
                         }
                       },
@@ -368,11 +743,9 @@ class _ExplorePageState extends State<ExplorePage> {
             ),
 
             // ✅ عرض نتائج البحث أو سجل البحث
-
             buildSearchSuggestions(),
 
             // ✅ عرض المنتجات
-
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(16.0),
@@ -380,7 +753,12 @@ class _ExplorePageState extends State<ExplorePage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 25),
                     child: SizedBox(
-                      height: 180,
+                      height: [
+                        'ar',
+                        'fr'
+                      ].contains(Localizations.localeOf(context).languageCode)
+                          ? 210
+                          : 180,
                       child: Card(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? const Color.fromARGB(255, 39, 57, 48)
@@ -408,7 +786,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                           color:
                                               Color.fromARGB(255, 47, 114, 38),
                                           fontWeight: FontWeight
-                                              .bold // Black in light mode
+                                              .bold 
                                           ),
                                     ),
                                     Text(S.of(context).aiDescription,
@@ -446,21 +824,43 @@ class _ExplorePageState extends State<ExplorePage> {
                                           );
                                         } else {}
                                       },
-                                      child: Text(S.of(context).checkItOut,
-                                          style: TextStyle(
-                                              color: isDarkMode
-                                                  ? const Color.fromARGB(
-                                                      255, 0, 0, 0)
-                                                  : const Color.fromARGB(
-                                                      255, 255, 255, 255),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 17)),
+                                      style: FilledButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        backgroundColor:  isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 12),
+                                      ),
+                                      child: Text(
+                                        S.of(context).checkItOut,
+                                        style: TextStyle(
+                                          color: isDarkMode
+                                              ? const Color.fromARGB(
+                                                  255, 0, 0, 0)
+                                              : const Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Image.asset(
-                                'assets/Ai.png',
+                              Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.identity()
+                                  ..scale(
+                                      Directionality.of(context) ==
+                                              TextDirection.rtl
+                                          ? -1.0
+                                          : 1.0,
+                                      1.0),
+                                child: Image.asset('assets/Ai.png'),
                               )
                             ],
                           ),
@@ -473,19 +873,37 @@ class _ExplorePageState extends State<ExplorePage> {
                     children: [
                       Text(
                         S.of(context).featuredProducts,
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
+                      // Replace the current TextButton in your code with this implementation
                       TextButton(
-                        onPressed: () {},
-                        child: Text(S.of(context).seeAll),
+                        onPressed: () {
+                          // Reset the filter and search states
+                          setState(() {
+                            showLoader = true;
+                            _controller.clear(); // Clear the search field
+                            filteredNames =
+                                []; // Clear any filtered suggestions
+                            issearch = false; // Reset search state
+                          });
+
+                          // Fetch all products again without any filters
+                          fetchAllProducts();
+                        },
+                        child: Text(
+                          S.of(context).seeAll,
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
                     ],
                   ),
+                  SizedBox(height: 7),
                   productList.isEmpty
                       ? showLoader
                           ? const Center(child: CircularProgressIndicator())
                           : Center(child: Text(S.of(context).noProductWithName))
-                      : Expanded(
+                      : SizedBox(
+                          // Changed from Expanded to SizedBox
                           child: GridView.builder(
                             itemCount: productList.length,
                             shrinkWrap: true,

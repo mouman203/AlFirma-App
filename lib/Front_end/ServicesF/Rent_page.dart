@@ -17,26 +17,27 @@ class _RentPageState extends State<RentPage> {
   String? selectedWilaya;
   String? selectedDaira;
 
-
   static Future<List<Products>> getrentServicesOnce() async {
- final snapshot = await FirebaseFirestore.instance
-      .collection('item')
-      .doc('Products')
-      .collection('Products')
-      .where('Service', isEqualTo: "كراء")
-      .get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('item')
+        .doc('Services')
+        .collection('Services')
+        .where('Service', isEqualTo: "الإيجار")
+        .get();
 
-  return snapshot.docs.map(Products.fromFirestore).toList();
- }
+    return snapshot.docs.map(Products.fromFirestore).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     selectedWilaya ??= S.of(context).all_wilayas;
     selectedDaira ??= S.of(context).all_dairas;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).rent_services),
+        title: Text(S.of(context).rent_services,style:TextStyle(fontWeight: FontWeight.bold)),
         elevation: 5,
       ),
       body: SingleChildScrollView(
@@ -49,6 +50,15 @@ class _RentPageState extends State<RentPage> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField2<String>(
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 450,
+                        offset: const Offset(0, 0),
+                        width: MediaQuery.of(context).size.width - 220,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       isExpanded: true,
                       value: selectedWilaya,
                       onChanged: (newValue) {
@@ -58,14 +68,15 @@ class _RentPageState extends State<RentPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        // Custom border
+                        fillColor: colorScheme.secondaryContainer,
+                        filled: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -74,7 +85,7 @@ class _RentPageState extends State<RentPage> {
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
@@ -133,6 +144,15 @@ class _RentPageState extends State<RentPage> {
                   const SizedBox(width: 20),
                   Expanded(
                     child: DropdownButtonFormField2<String>(
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 450,
+                        offset: const Offset(0, 0),
+                        width: MediaQuery.of(context).size.width - 220,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       isExpanded: true,
                       value: selectedDaira,
                       items: selectedWilaya == S.of(context).all_wilayas
@@ -182,14 +202,15 @@ class _RentPageState extends State<RentPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        // Custom border for second dropdown, same as the first one
+                        fillColor: colorScheme.secondaryContainer,
+                        filled: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -198,7 +219,7 @@ class _RentPageState extends State<RentPage> {
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
@@ -253,11 +274,29 @@ class _RentPageState extends State<RentPage> {
                       child: Text(S.of(context).no_rent_services_found));
                 }
 
+                // إنشاء خريطة ترجمة معكوسة: من المعروض إلى العربي
+                final translationMap =
+                    ProductData.buildDairaTranslationMap(context);
+                Map<String, String> reverseTranslationMap(
+                    Map<String, String> translationMap) {
+                  return translationMap
+                      .map((key, value) => MapEntry(value, key));
+                }
+
+                final reversedTranslationMap =
+                    reverseTranslationMap(translationMap);
+
+                // ترجمة الاختيارات إلى العربية قبل الفلترة
+                final selectedWilayaArabic =
+                    reversedTranslationMap[selectedWilaya] ?? selectedWilaya;
+                final selectedDairaArabic =
+                    reversedTranslationMap[selectedDaira] ?? selectedDaira;
+
                 var filtered = snapshot.data!.where((s) {
                   return (selectedWilaya == S.of(context).all_wilayas ||
-                          s.wilaya == selectedWilaya) &&
+                          s.wilaya == selectedWilayaArabic) &&
                       (selectedDaira == S.of(context).all_dairas ||
-                          s.daira == selectedDaira);
+                          s.daira == selectedDairaArabic);
                 }).toList();
 
                 return GridView.builder(
@@ -276,7 +315,7 @@ class _RentPageState extends State<RentPage> {
                   physics: const NeverScrollableScrollPhysics(),
                 );
               },
-            ),
+            )
           ],
         ),
       ),

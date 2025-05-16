@@ -67,7 +67,7 @@ class Products {
       "wilaya": wilaya,
       "daira": daira,
       "date_of_add": Timestamp.fromDate(date_of_add!),
-      "SP":SP,
+      "SP": SP,
     };
     return data;
   }
@@ -96,7 +96,7 @@ class Products {
           (json['date_of_add'] as Timestamp?)?.toDate() ?? DateTime.now(),
       wilaya: json['wilaya'],
       daira: json['daira'],
-      SP:json['SP'],
+      SP: json['SP'],
     );
   }
 
@@ -105,12 +105,8 @@ class Products {
     try {
       final docRef = FirebaseFirestore.instance
           .collection('item')
-          .doc(SP=="Product"
-              ? 'Products'
-              : 'Services')
-          .collection(SP=="Product"
-              ? 'Products'
-              : 'Services')
+          .doc(SP == "Product" ? 'Products' : 'Services')
+          .collection(SP == "Product" ? 'Products' : 'Services')
           .doc();
 // توليد وثيقة جديدة أو تحديد وثيقة
       product.id = docRef.id;
@@ -120,8 +116,6 @@ class Products {
       print("❌ Error adding product: $e");
     }
   }
-
-
 
 /*
   /// 2**Update an existing product**

@@ -17,25 +17,26 @@ class _ExpertisePageState extends State<ExpertisePage> {
   String? selectedWilaya;
   String? selectedDaira;
   static Future<List<Products>> getExpertiseServicesOnce() async {
- final snapshot = await FirebaseFirestore.instance
-      .collection('item')
-      .doc('Services')
-      .collection('Services')
-      .where('typeItem', isEqualTo: "Expertise")
-      .get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('item')
+        .doc('Services')
+        .collection('Services')
+        .where('typeItem', isEqualTo: "الخبرة")
+        .get();
 
-  return snapshot.docs.map(Products.fromFirestore).toList();
- }
+    return snapshot.docs.map(Products.fromFirestore).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     selectedWilaya ??= S.of(context).all_wilayas;
     selectedDaira ??= S.of(context).all_dairas;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).expertise_services),
+        title: Text(S.of(context).expertise_services,style:TextStyle(fontWeight: FontWeight.bold)),
         elevation: 5,
       ),
       body: SingleChildScrollView(
@@ -48,6 +49,15 @@ class _ExpertisePageState extends State<ExpertisePage> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField2<String>(
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 450,
+                        offset: const Offset(0, 0),
+                        width: MediaQuery.of(context).size.width - 220,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       isExpanded: true,
                       value: selectedWilaya,
                       onChanged: (newValue) {
@@ -57,14 +67,15 @@ class _ExpertisePageState extends State<ExpertisePage> {
                         });
                       },
                       decoration: InputDecoration(
-                        // Custom border
+                        fillColor: colorScheme.secondaryContainer,
+                        filled: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -73,7 +84,7 @@ class _ExpertisePageState extends State<ExpertisePage> {
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
@@ -132,6 +143,15 @@ class _ExpertisePageState extends State<ExpertisePage> {
                   const SizedBox(width: 20),
                   Expanded(
                     child: DropdownButtonFormField2<String>(
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 450,
+                        offset: const Offset(0, 0),
+                        width: MediaQuery.of(context).size.width - 220,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       isExpanded: true,
                       value: selectedDaira,
                       items: selectedWilaya == S.of(context).all_wilayas
@@ -181,14 +201,15 @@ class _ExpertisePageState extends State<ExpertisePage> {
                         });
                       },
                       decoration: InputDecoration(
-                        // Custom border for second dropdown, same as the first one
+                        fillColor: colorScheme.secondaryContainer,
+                        filled: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -197,7 +218,7 @@ class _ExpertisePageState extends State<ExpertisePage> {
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
@@ -240,8 +261,6 @@ class _ExpertisePageState extends State<ExpertisePage> {
               ),
             ),
             const SizedBox(height: 6),
-
-
             FutureBuilder<List<Products>>(
               future: getExpertiseServicesOnce(),
               builder: (context, snapshot) {
@@ -253,12 +272,29 @@ class _ExpertisePageState extends State<ExpertisePage> {
                   return Center(child: Text(S.of(context).no_expertise_found));
                 }
 
-                // Filter the data based on the selected Wilaya and Daira
+               // إنشاء خريطة ترجمة معكوسة: من المعروض إلى العربي
+                final translationMap =
+                    ProductData.buildDairaTranslationMap(context);
+                Map<String, String> reverseTranslationMap(
+                    Map<String, String> translationMap) {
+                  return translationMap
+                      .map((key, value) => MapEntry(value, key));
+                }
+
+                final reversedTranslationMap =
+                    reverseTranslationMap(translationMap);
+
+                // ترجمة الاختيارات إلى العربية قبل الفلترة
+                final selectedWilayaArabic =
+                    reversedTranslationMap[selectedWilaya] ?? selectedWilaya;
+                final selectedDairaArabic =
+                    reversedTranslationMap[selectedDaira] ?? selectedDaira;
+
                 var filtered = snapshot.data!.where((s) {
                   return (selectedWilaya == S.of(context).all_wilayas ||
-                          s.wilaya == selectedWilaya) &&
+                          s.wilaya == selectedWilayaArabic) &&
                       (selectedDaira == S.of(context).all_dairas ||
-                          s.daira == selectedDaira);
+                          s.daira == selectedDairaArabic);
                 }).toList();
 
                 return GridView.builder(

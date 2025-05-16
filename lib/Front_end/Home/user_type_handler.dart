@@ -3,19 +3,60 @@ import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// List of all possible user types
-final Map<String, dynamic> UserTypes = {
-  'Agriculteur': {},
-  'Éleveur': {},
-  'Expert Agri': {},
-  'Vétérinaire': {},
-  'Entreprise': {},
-  'Transporteur': {},
-  'Réparateur': {},
-  'Commerçant': {}
+// List of all possible user types in Arabic - these are the keys stored in Firebase
+final Map<String, dynamic> userTypes = {
+  'فلاح': {},
+  'مربي الماشية': {},
+  'خبير زراعي': {},
+  'بيطري': {},
+  'شركة': {},
+  'ناقل': {},
+  'مصلح': {},
+  'تاجر': {},
 };
+
+// Emoji map using Arabic keys
+final emojiMap = {
+  'فلاح': '👨🏽‍🌾',
+  'مربي الماشية': '🐮',
+  'خبير زراعي': '🕵🏼',
+  'بيطري': '💉',
+  'شركة': '🏢',
+  'ناقل': '🛻',
+  'مصلح': '👨🏻‍🔧',
+  'تاجر': '🛍️',
+};
+
+// Map from localized strings to Arabic keys - for displaying the correct label but saving the Arabic key
+Map<String, String> TranslatedToArabicMap(BuildContext context) {
+  return {
+    S.of(context).agriculteur: 'فلاح',
+    S.of(context).eleveur: 'مربي الماشية',
+    S.of(context).expertAgri: 'خبير زراعي',
+    S.of(context).veterinaire: 'بيطري',
+    S.of(context).entreprise: 'شركة',
+    S.of(context).transporteur: 'ناقل',
+    S.of(context).reparateur: 'مصلح',
+    S.of(context).commercant: 'تاجر',
+  };
+}
+
+// Map from Arabic keys to localized strings - for displaying in the UI based on Arabic keys from Firebase
+Map<String, String> ArabicToTranslatedMap(BuildContext context) {
+  return {
+    'فلاح': S.of(context).agriculteur,
+    'مربي الماشية': S.of(context).eleveur,
+    'خبير زراعي': S.of(context).expertAgri,
+    'بيطري': S.of(context).veterinaire,
+    'شركة': S.of(context).entreprise,
+    'ناقل': S.of(context).transporteur,
+    'مصلح': S.of(context).reparateur,
+    'تاجر': S.of(context).commercant,
+  };
+}
 
 Future<void> addUserTypeNoDoc(String userType) async {
   try {
@@ -42,23 +83,46 @@ Future<void> addUserTypeNoDoc(String userType) async {
   }
 }
 
-// Success Popup to show when user type is added successfully
-void showSuccessPopup(BuildContext context, String? type) {
+void showSuccessPopup(BuildContext context, String translatedType) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.of(context).pop(); // Automatically close after 2 seconds
+        Navigator.of(context).pop();
       });
       return AlertDialog(
-        title: Text(S.of(context).congratulations),
-        content: Text("${S.of(context).successMessage} $type!"),
+        title: Text(
+          S.of(context).congratulations,
+          style: TextStyle(
+            fontSize: 20,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        content: Text(
+          "${S.of(context).successMessage} $translatedType!",
+          style: const TextStyle(fontSize: 18),
+        ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child:  Text(S.of(context).ok),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              S.of(context).ok,
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
           ),
         ],
       );
@@ -71,36 +135,46 @@ void showAlertsPopup(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       Future.delayed(const Duration(seconds: 3), () {
-        Navigator.of(context).pop(); // Automatically close after 2 seconds
+        Navigator.of(context).pop();
       });
       return AlertDialog(
-        title:  Text(S.of(context).alert),
-        content:  Text(
-           S.of(context).alertMessage),
+        title: Text(
+          S.of(context).alert,
+          style: const TextStyle(
+            fontSize: 20,
+            color: Colors.red,
+          ),
+        ),
+        content: Text(
+          S.of(context).alertMessage,
+          style: const TextStyle(fontSize: 18),
+        ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child:  Text(S.of(context).ok),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              S.of(context).ok,
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
           ),
         ],
       );
     },
   );
-}
-
-// Normalize the userType string for use as an ID or path
-String normalize(String name) {
-  return name
-      .toLowerCase()
-      .replaceAll(' ', '_')
-      .replaceAll(RegExp(r'[éèêë]'), 'e')
-      .replaceAll(RegExp(r'[àâä]'), 'a')
-      .replaceAll(RegExp(r'[îï]'), 'i')
-      .replaceAll(RegExp(r'[ôö]'), 'o')
-      .replaceAll(RegExp(r'[ùûü]'), 'u')
-      .replaceAll(RegExp(r'[ç]'), 'c');
 }
 
 Future<Map<String, dynamic>> fetchUserTypesAndActive() async {
@@ -110,7 +184,7 @@ Future<Map<String, dynamic>> fetchUserTypesAndActive() async {
 
   if (!docSnapshot.exists) {
     print("❌ User document not found.");
-    return {'userType': <String>[], 'activeType': ''};
+    return {'userType': <String>[], 'activeType': 'عميل'};
   }
 
   final data = docSnapshot.data()!;
@@ -119,15 +193,15 @@ Future<Map<String, dynamic>> fetchUserTypesAndActive() async {
   List<String> types = typesMap.keys.toList();
   String? type = data['activeType'];
 
+  if (types.isEmpty) {
+    type = 'عميل'; // Set only the activeType to 'عميل'
+    await docRef.update({'activeType': type});
+    print("⚠️ userType was empty. Set only activeType to 'عميل'");
+  }
+
   print("✅ Fetched from Firestore:");
   print("userType keys: $types");
   print("activeType: $type");
-
-  if (type == null || type.isEmpty) {
-    type = 'Client';
-    await docRef.update({'activeType': type});
-    print("⚠️ activeType was null, defaulted to 'Client'");
-  }
 
   return {'userType': types, 'activeType': type};
 }
@@ -156,6 +230,56 @@ Future<void> setActiveType(String activeType) async {
   }
 }
 
+Object getDocumentPageForType(BuildContext context, String arabicType) {
+  // Use Arabic keys directly for comparison rather than translated strings
+  switch (arabicType) {
+    case 'بيطري':
+      return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DocumentPage(userType: 'بيطري'),
+        ),
+      );
+    case 'خبير زراعي':
+      return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DocumentPage(userType: 'خبير زراعي'),
+        ),
+      );
+    case 'شركة':
+      return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DocumentPage(userType: 'شركة'),
+        ),
+      );
+    case 'ناقل':
+      return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DocumentPage(userType: 'ناقل'),
+        ),
+      );
+    case 'مصلح':
+      return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DocumentPage(userType: 'مصلح'),
+        ),
+      );
+    case 'تاجر':
+      return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DocumentPage(userType: 'تاجر'),
+        ),
+      );
+    default:
+      return Null;
+  }
+}
+
 class BecomeTypeAction extends StatefulWidget {
   final VoidCallback onTypeChanged;
 
@@ -167,8 +291,8 @@ class BecomeTypeAction extends StatefulWidget {
 }
 
 class _BecomeTypeActionState extends State<BecomeTypeAction> {
-  List<String> selectedTypes = [];
-  String? activeType;
+  List<String> selectedTypes = []; // These are Arabic keys from Firebase
+  String? activeType; // This is Arabic key from Firebase
 
   @override
   void initState() {
@@ -178,6 +302,8 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
   Future<void> _initializeUserData() async {
     final result = await fetchUserTypesAndActive();
+
+    if (!mounted) return; // Prevent setState after widget is disposed
 
     setState(() {
       selectedTypes = result['userType'];
@@ -194,57 +320,6 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
     await saveUserData(selectedTypes, activeType!);
   }
 
-  Object getLabelForDoc(selectedType) async {
-    switch (selectedType) {
-      case 'Vétérinaire':
-        return Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DocumentPage(userType: 'Vétérinaire'),
-          ),
-        );
-      case 'Expert Agri':
-        return Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DocumentPage(userType: 'Expert Agri'),
-          ),
-        );
-      case 'Entreprise':
-        return {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const DocumentPage(userType: 'Entreprise'),
-            ),
-          ),
-        };
-      case 'Transporteur':
-        return Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DocumentPage(userType: 'Transporteur'),
-          ),
-        );
-      case 'Réparateur':
-        return Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DocumentPage(userType: 'Réparateur'),
-          ),
-        );
-      case 'Commerçant':
-        return Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DocumentPage(userType: 'Commerçant'),
-          ),
-        );
-      default:
-        return Null;
-    }
-  }
-
   Future<void> deleteUserTypeKey(String keyToDelete) async {
     try {
       // Get the current user's UID
@@ -257,22 +332,35 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
       DocumentReference userDocRef =
           FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
-      // Update the user's document to delete the specific key from the userType map
+      // Delete the specific key from the userType map
       await userDocRef.update({
         'userType.$keyToDelete': FieldValue.delete(),
       });
 
       print("Key '$keyToDelete' successfully deleted from userType.");
-      bool isvalid = await getValidation(selectedTypes.first) ?? false;
 
-      if (selectedTypes.isEmpty || !isvalid) {
-        setActiveType('Client');
+      // Re-fetch updated user types
+      final updatedData = await userDocRef.get();
+      final typesMap = Map<String, dynamic>.from(updatedData['userType'] ?? {});
+      final updatedTypes = typesMap.keys.toList();
+
+      // Check for validity of first remaining type (if any)
+      final isValid = updatedTypes.isNotEmpty
+          ? await getValidation(updatedTypes.first) ?? false
+          : false;
+
+      // Update activeType logic
+      if (updatedTypes.isEmpty || !isValid) {
+        await setActiveType('عميل');
         widget.onTypeChanged();
       } else if (activeType == keyToDelete) {
-        setActiveType(selectedTypes.first);
+        await setActiveType(updatedTypes.first);
+        widget.onTypeChanged();
       }
-      widget.onTypeChanged();
-      print('selected : $selectedTypes');
+
+      widget.onTypeChanged(); // Always notify changes
+
+      print('Updated selectedTypes: $updatedTypes');
     } catch (e) {
       print("Error deleting key from userType: $e");
     }
@@ -281,21 +369,34 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
   Future<void> addTypeFlow(BuildContext context) async {
     print("selected types : $selectedTypes");
 
-    final String? selectedType = await showMenu<String>(
+    // Create list of user types that are not already selected
+    List<String> availableTypes = [];
+    Map<String, String> arabicMap = TranslatedToArabicMap(context);
+
+    arabicMap.forEach((translatedType, arabicType) {
+      if (!selectedTypes.contains(arabicType)) {
+        availableTypes.add(translatedType);
+      }
+    });
+
+    final String? selectedTranslatedType = await showMenu<String>(
       context: context,
-      position: const RelativeRect.fromLTRB(40, 103, 10, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      position: Directionality.of(context) == TextDirection.rtl
+          ? const RelativeRect.fromLTRB(0, 94, 40, 0) //ar
+          : const RelativeRect.fromLTRB(40, 94, 0, 0), //en,fr
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: Colors.transparent,
-      items: UserTypes.keys
-          .where((type) => !selectedTypes.contains(type))
-          .map((type) {
-        final imagePath = 'assets/become/${normalize(type)}.jpg';
+      items: availableTypes.map((translatedType) {
+        final arabicType = arabicMap[translatedType]!;
+        final emoji = emojiMap[arabicType] ?? '❓';
+        final imagePath = 'assets/become/$emoji.jpg';
+
         return PopupMenuItem<String>(
-          value: type,
+          value: translatedType,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: SizedBox(
-              height: 94,
+              height: 90,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -309,12 +410,12 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                     ),
                   ),
                   Container(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withOpacity(0.4),
                     alignment: Alignment.center,
                     child: Text(
-                      type,
+                      translatedType,
                       style: const TextStyle(
-                        fontSize: 22,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -328,34 +429,42 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
       }).toList(),
     );
 
-    if (selectedType != null) {
-      if (selectedType == 'Agriculteur' || selectedType == 'Éleveur') {
-        await addUserTypeNoDoc(selectedType);
+    if (selectedTranslatedType != null) {
+      // Convert the selected translated type to Arabic for storage
+      final arabicType = arabicMap[selectedTranslatedType]!;
+
+      if (selectedTranslatedType == S.of(context).agriculteur ||
+          selectedTranslatedType == S.of(context).eleveur) {
+        // If Agriculteur or Éleveur, add directly without document
+        await addUserTypeNoDoc(arabicType);
         setState(() {
-          selectedTypes.insert(0, selectedType);
-          activeType = selectedType;
+          selectedTypes.insert(0, arabicType);
+          activeType = arabicType;
           widget.onTypeChanged();
         });
       } else {
-        getLabelForDoc(selectedType);
+        // For other types, navigate to document page
+        await getDocumentPageForType(context, arabicType);
 
-        // 2. تحقق من حالة التفعيل
-        final isValid = await getValidation(selectedType) ?? false;
+        // Check validation status
+        final isValid = await getValidation(arabicType) ?? false;
 
-        // 3. إذا النوع غير مفعل، أظهر رسالة تحذير
+        // Don't add the type if not valid
         if (!isValid) {
-          return; // 🛑 لا تضيف النوع إذا غير مفعل
+          return;
         }
 
         setState(() {
-          activeType = selectedType;
+          activeType = arabicType;
           widget.onTypeChanged();
         });
 
         await saveUserData(selectedTypes, activeType!);
         widget.onTypeChanged();
-        if (activeType == 'Éleveur' || activeType == 'Agriculteur') {
-          showSuccessPopup(context, selectedType);
+
+        // Show appropriate popup
+        if (arabicType == 'مربي الماشية' || arabicType == 'فلاح') {
+          showSuccessPopup(context, arabicType);
         } else {
           showAlertsPopup(context);
         }
@@ -375,8 +484,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
 
       final data = doc.data();
       if (data != null) {
-        if (data['userType'] == 'Agriculteur' ||
-            data['userType'] == 'Éleveur') {
+        if (data['userType'] == 'فلاح' || data['userType'] == 'مربي الماشية') {
           return true;
         } else if (data['userType'] != null) {
           final userTypeMap = Map<String, dynamic>.from(data['userType']);
@@ -407,14 +515,14 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(12)),
                 fixedSize: const Size.fromHeight(40),
               ),
               onPressed: () => addTypeFlow(context),
-              child:  Center(
+              child: Center(
                 child: Text(S.of(context).become,
-                    style:
-                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             )
           : Row(
@@ -433,46 +541,41 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                         .map((entry) {
                       final index = selectedTypes.length - 1 - entry.key;
                       final type = entry.value;
-
-                      final emojiMap = {
-                        'Agriculteur': '👨🏽‍🌾',
-                        'Éleveur': '🐮',
-                        'Expert Agri': '🕵🏼',
-                        'Vétérinaire': '💉',
-                        'Entreprise': '🏢',
-                        'Transporteur': '🛻',
-                        'Réparateur': '👨🏻‍🔧',
-                        'Commerçant': '🛍️',
-                      };
-
                       final emoji = emojiMap[type] ?? '❓';
 
                       return Positioned(
-                        right: index * 12.0 - 28.0,
+                        left: Directionality.of(context) == TextDirection.rtl
+                            ? index * 8.0 - 28.0
+                            : null,
+                        right: Directionality.of(context) == TextDirection.rtl
+                            ? null
+                            : index * 8.0 - 28.0,
                         child: Container(
-                          width: 38,
-                          height: 38,
+                          width: 40,
+                          height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: type == activeType
                                 ? const Color.fromARGB(255, 53, 118, 55)
                                 : isDarkMode
-                                    ? const Color.fromARGB(255, 199, 197, 197)
+                                    ? const Color.fromARGB(255, 129, 129, 129)
                                     : const Color.fromARGB(255, 59, 58, 58),
-                            border: Border.all(color: Colors.white, width: 0.8),
+                            border: Border.all(color: Colors.white, width: 1.1),
                           ),
                           alignment: Alignment.center,
-                          child: Text(emoji,
-                              style: const TextStyle(
-                                fontSize: 25,
-                              )),
+                          child: Text(
+                            emoji,
+                            style: const TextStyle(fontSize: 25),
+                          ),
                         ),
                       );
                     }).toList(),
                   ),
                 ),
                 Transform.translate(
-                    offset: const Offset(15.0, 2),
+                    offset: Directionality.of(context) == TextDirection.rtl
+                        ? const Offset(-20.0, 2)
+                        : const Offset(20.0, 2),
                     child: IconButton(
                       icon: Icon(Icons.arrow_drop_down_outlined,
                           color: Theme.of(context).colorScheme.primary,
@@ -481,28 +584,36 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                       onPressed: () async {
                         final newActive = await showMenu<String>(
                           context: context,
-                          position: const RelativeRect.fromLTRB(40, 103, 40, 0),
+                          position: Directionality.of(context) ==
+                                  TextDirection.rtl
+                              ? const RelativeRect.fromLTRB(0, 94, 40, 0) //ar
+                              : const RelativeRect.fromLTRB(
+                                  40, 94, 0, 0), //en,fr
                           color: Colors.transparent,
-                          items:
-                              await Future.wait(selectedTypes.map((type) async {
-                            final isValid = await getValidation(type) ?? false;
-                            final imagePath =
-                                'assets/become/${normalize(type)}.jpg';
+                          items: await Future.wait(
+                              selectedTypes.map((arabicType) async {
+                            final isValid =
+                                await getValidation(arabicType) ?? false;
+                            widget.onTypeChanged();
+                            final emoji = emojiMap[arabicType] ?? '❓';
+                            final imagePath = 'assets/become/$emoji.jpg';
+                            // Get the translated name for display
+                            final translatedType =
+                                ArabicToTranslatedMap(context)[arabicType] ??
+                                    arabicType;
 
                             return PopupMenuItem<String>(
-                              enabled:
-                                  isValid, // Prevents selection if not valid
                               value: isValid
-                                  ? type
-                                  : null, // Returns the type only if it's valid
+                                  ? arabicType
+                                  : null, // Returns the Arabic type only if it's valid
                               padding: EdgeInsets.zero,
-                              height: 94,
+                              height: 90,
                               child: Stack(
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
                                     child: SizedBox(
-                                      height: 94,
+                                      height: 90,
                                       child: Stack(
                                         fit: StackFit.expand,
                                         children: [
@@ -519,25 +630,50 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                           ),
                                           Container(
                                             color:
-                                                Colors.black.withOpacity(0.3),
+                                                Colors.black.withOpacity(0.4),
                                             alignment: Alignment.center,
                                             child: Text(
-                                              type,
+                                              translatedType, // Display translated type
                                               style: const TextStyle(
-                                                fontSize: 22,
+                                                fontSize: 24,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
                                               ),
                                             ),
                                           ),
                                           if (!isValid)
-                                            Container(
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              child: const Center(
-                                                child: Icon(Icons.lock,
-                                                    color: Colors.white,
-                                                    size: 30),
+                                            Positioned.fill(
+                                              child: IgnorePointer(
+                                                // Prevents blocking touches if needed
+                                                child: Stack(
+                                                  fit: StackFit.expand,
+                                                  children: [
+                                                    // Dark semi-transparent overlay
+                                                    Container(
+                                                      color: Colors.black
+                                                          .withOpacity(0.6),
+                                                    ),
+
+                                                    // Lock icon on top (not affected by dark background)
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Icon(
+                                                        IconlyBold.lock,
+                                                        color: Colors.white,
+                                                        size: 40,
+                                                        shadows: [
+                                                          Shadow(
+                                                            color: Colors.white,
+                                                            offset:
+                                                                Offset(0, 2),
+                                                            blurRadius: 0,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                         ],
@@ -550,8 +686,8 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                     top: 8,
                                     child: GestureDetector(
                                       onTap: () async {
-                                        deleteUserTypeKey(type);
-                                        selectedTypes.remove(type);
+                                        deleteUserTypeKey(arabicType);
+                                        selectedTypes.remove(arabicType);
                                         widget.onTypeChanged();
                                         await saveUserData(
                                             selectedTypes, activeType!);
@@ -560,16 +696,22 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                         Navigator.pop(context);
                                       },
                                       child: Container(
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.red,
-                                        ),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.red),
                                         padding: const EdgeInsets.all(4),
-                                        child: const Icon(
-                                          Icons.delete_forever,
-                                          size: 22,
-                                          color: Colors.white,
-                                        ),
+                                        child: Icon(Icons.delete_forever,
+                                            size: 22,
+                                            color: Colors.white,
+                                            shadows: isValid
+                                                ? []
+                                                : [
+                                                    Shadow(
+                                                      color: Colors.white,
+                                                      offset: Offset(0, 2),
+                                                      blurRadius: 0,
+                                                    ),
+                                                  ]),
                                       ),
                                     ),
                                   ),
@@ -580,14 +722,43 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      title:  Text(S.of(context).alertTitle),
-                                      content:  Text(
-                                         S.of(context).alertContent),
+                                      title: Text(
+                                        S.of(context).alert,
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      content: Text(
+                                        S.of(context).alertContent,
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                      actionsAlignment:
+                                          MainAxisAlignment.center,
                                       actions: [
-                                        TextButton(
+                                        ElevatedButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
-                                          child:  Text(S.of(context).ok),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            S.of(context).ok,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.light
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -607,20 +778,22 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
                             activeType = newActive;
                           });
                           await saveUserData(selectedTypes, newActive);
-                          widget.onTypeChanged(); // 👈 Add this
+                          widget.onTypeChanged();
                         }
                       },
                     )),
-                if (selectedTypes.length < UserTypes.length)
+                if (selectedTypes.length < userTypes.length)
                   GestureDetector(
                     onTap: () => addTypeFlow(context),
                     child: Container(
                       width: 35,
                       height: 35,
-                      alignment: Alignment.center,
+                      alignment: Directionality.of(context) == TextDirection.rtl
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
                       child: Icon(
                         Icons.group_add,
-                        size: 24,
+                        size: 26,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),

@@ -1,5 +1,5 @@
 import 'package:agriplant/Back_end/User.dart';
-import 'package:agriplant/Front_end/Add_Product.dart';
+import 'package:agriplant/Front_end/Home/Add_Product.dart';
 import 'package:agriplant/Front_end/Home/Sidebar.dart';
 import 'package:agriplant/Front_end/Home/explore_page.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
@@ -43,18 +43,38 @@ class _HomePageState extends State<HomePage> {
     _loadSelectedType();
   }
 
+  // Map to translate Arabic type names to the current language
+  Map<String, String> arabicToTranslatedMap(BuildContext context) {
+    return {
+      'فلاح': S.of(context).agriculteur,
+      'مربي الماشية': S.of(context).eleveur,
+      'خبير زراعي': S.of(context).expertAgri,
+      'بيطري': S.of(context).veterinaire,
+      'شركة': S.of(context).entreprise,
+      'ناقل': S.of(context).transporteur,
+      'مصلح': S.of(context).reparateur,
+      'تاجر': S.of(context).commercant,
+      'عميل': S.of(context).client, // Adding "Client" translation
+    };
+  }
+
+  // Translate a single Arabic type to the current language
+  String translateType(String arabicType, BuildContext context) {
+    final translations = arabicToTranslatedMap(context);
+    return translations[arabicType] ?? arabicType;
+  }
+
   Future<void> _loadSelectedType() async {
-    final type = await getActiveTypeFromFirestore();
+    final arabicType = await getActiveTypeArabicOnly();
 
-    // Check if the widget is still mounted before calling setState
-    if (mounted) {
-      setState(() {
-        selectedType = type;
-      });
-    }
-    
-        currentPageIndex = 0;
+    if (!mounted) return;
 
+    setState(() {
+      selectedType = translateType(arabicType, context);
+      isLoading = false;
+    });
+
+    currentPageIndex = 0;
   }
 
   Future<void> _fetchUserName() async {
@@ -63,7 +83,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userName = name;
         isLoading = false;
-        currentPageIndex = 0;
       });
     }
   }
@@ -90,22 +109,29 @@ class _HomePageState extends State<HomePage> {
     final docRef = FirebaseFirestore.instance.collection("Users").doc(user.uid);
     final doc = await docRef.get();
 
-    List<String> types = [];
+    List<String> arabicTypes = [];
+    List<String> translatedTypes = [];
 
     if (doc.exists && doc.data()?['userType'] != null) {
-      types = List<String>.from(doc['userType']);
+      arabicTypes = List<String>.from(doc['userType']);
+
+      // Translate each type to the current language
+      translatedTypes =
+          arabicTypes.map((type) => translateType(type, context)).toList();
     }
 
     // Default fallback to "Client"
-    if (types.isEmpty) {
-      types = ["Client"];
+    if (arabicTypes.isEmpty) {
+      arabicTypes = ["عميل"]; // Default is "عميل" in Arabic
+      translatedTypes = [S.of(context).client]; // Translate to current language
+
       await docRef.set({
-        "userType": types,
-        "activeType": "Client",
+        "userType": arabicTypes,
+        "activeType": "عميل",
       }, SetOptions(merge: true));
     }
 
-    return types;
+    return translatedTypes;
   }
 
   Future<void> _loadLastSelectedPage() async {
@@ -127,35 +153,33 @@ class _HomePageState extends State<HomePage> {
       context,
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => const HomePage(),
-        transitionDuration: Duration.zero, // بدون تأثيرات انتقال
+        transitionDuration: Duration.zero,
       ),
     );
   }
 
-  Future<String?> getActiveTypeFromFirestore() async {
+  Future<String> getActiveTypeArabicOnly() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return null;
+    if (user == null) return "عميل";
 
     final doc = await FirebaseFirestore.instance
         .collection("Users")
         .doc(user.uid)
         .get();
-
     if (doc.exists) {
       final data = doc.data();
-      return data?['activeType'] ?? "Client";
+      return data?['activeType'] ?? "عميل";
     }
 
-    return "Client"; // Default fallback
+    return "عميل";
   }
 
   void navigateToUserPage(BuildContext context) async {
-    String? selectedType = await getActiveTypeFromFirestore();
+    String? arabicType = await getActiveTypeArabicOnly();
 
-    if (selectedType == null) {
-      print("🚨 User type not found!");
-      return;
-    }
+    String translatedType = translateType(arabicType, context);
+
+    print("✅ Active user type: $translatedType");
   }
 
   void showMessagePopup(String? value) {
@@ -182,6 +206,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
+
+// List of types that need "l’" in French
+    final lAList = [
+      "agriculteur",
+      "entreprise",
+      "expert Agricole",
+      "éleveur de bétail"
+    ];
+
+    final startsWithL = selectedType != null &&
+        lAList.any((term) => selectedType!.contains(term));
+
+    final article = locale == 'fr'
+        ? (startsWithL ? "L’" : S.of(context).the)
+        : S.of(context).the;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -222,12 +262,29 @@ class _HomePageState extends State<HomePage> {
                             : S.of(context).welcomeMessage,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                Text(
-                  selectedType != null
-                      ? "${S.of(context).the}$selectedType"
-                      : S.of(context).guestSubtitle,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                // Wrap the selectedType text in a Row + Flexible + FittedBox
+                if (selectedType != null)
+                  Row(
+                    children: [
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "$article $selectedType",
+                            style: Theme.of(context).textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Text(
+                    S.of(context).guestSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
               ],
             ],
           ),
@@ -241,7 +298,7 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 3),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(12)),
                         fixedSize: const Size.fromHeight(40),
                       ),
                       onPressed: () {
@@ -329,33 +386,34 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
         currentIndex: currentPageIndex,
         onTap: (index) async {
-          // Block guest users from accessing "Add"  and "messages" and  "Profile"
-         if ((Users.isGuestUser() &&
-                  (index == 2 || index == 3 || index == 4)) ||
-              index == 2 &&
-                  (selectedType == "Vétérinaire" ||
-                      selectedType == "Entreprise" ||
-                      selectedType == "Client")) {
+          final isGuest = Users.isGuestUser();
+          final isRestrictedIndex = index == 2 || index == 3 || index == 4;
+
+          // Convert restricted types to their translated equivalents for comparison
+          final restrictedTypesArabic = ["بيطري", "شركة", "عميل"];
+          final restrictedTypes = restrictedTypesArabic
+              .map((type) => translateType(type, context))
+              .toList();
+
+          final isRestrictedType =
+              !isGuest && index == 2 && restrictedTypes.contains(selectedType);
+
+          if ((isGuest && isRestrictedIndex) || isRestrictedType) {
+            final message = isGuest
+                ? S.of(context).guestAccessLimited
+                : "$selectedType ${S.of(context).userTypeCannotAdd}";
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Row(
                   children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: Colors.black,
-                    ),
+                    const Icon(Icons.error_outline, color: Colors.black),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        selectedType == "Vétérinaire" ||
-                                selectedType == "Entreprise" ||
-                                selectedType == "Client"
-                            ? " $selectedType can not add products"
-                            : S.of(context).guestAccessLimited,
-                        
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                        ),
+                        message,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ),
                   ],
@@ -366,37 +424,36 @@ class _HomePageState extends State<HomePage> {
             return;
           }
 
-          
-            setState(() {
-              currentPageIndex = index;
-            });
-          
+          setState(() {
+            currentPageIndex = index;
+          });
+
           _saveLastSelectedPage(index);
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.home),
-            label: "Home",
+            label: S.of(context).nav_home,
             activeIcon: Icon(IconlyBold.home),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.work),
-            label: "Services",
+            label: S.of(context).nav_services,
             activeIcon: Icon(IconlyBold.work),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.plus),
-            label: "Add",
+            label: S.of(context).nav_add,
             activeIcon: Icon(IconlyBold.plus),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.message),
-            label: "Messeges",
+            label: S.of(context).nav_messages,
             activeIcon: Icon(IconlyBold.message),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.profile),
-            label: "Profile",
+            label: S.of(context).nav_profile,
             activeIcon: Icon(IconlyBold.profile),
           ),
         ],

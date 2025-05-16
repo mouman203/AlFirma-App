@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DocumentPage extends StatelessWidget {
-  final String userType;
+  final String userType; // Arabic string e.g., "ناقل"
 
   const DocumentPage({Key? key, required this.userType}) : super(key: key);
 
@@ -19,7 +19,7 @@ class DocumentPage extends StatelessWidget {
 }
 
 class DocumentForm extends StatefulWidget {
-  final String userType;
+  final String userType; // Arabic string
 
   const DocumentForm({Key? key, required this.userType}) : super(key: key);
 
@@ -29,108 +29,163 @@ class DocumentForm extends StatefulWidget {
 
 class _DocumentFormState extends State<DocumentForm> {
   final ImagePicker _picker = ImagePicker();
-
-  // Store picked images in a Map
   final Map<String, XFile?> _pickedImages = {};
 
-
-   final Map<String, List<String>> requiredDocuments = {
-    'Transporteur': [
-      'بطاقة الهوية (الوجه)',
-      'بطاقة الهوية (الظهر)',
+  // Arabic user types and their document requirements (stored in Arabic)
+  final Map<String, List<String>> requiredDocuments = {
+    'ناقل': [
+      "بطاقة التعريف الوطنية (الوجه)",
+      "بطاقة التعريف الوطنية (الظهر)",
       'شهادة',
       'رخصة السياقة'
     ],
-    'Vétérinaire': [
-      'بطاقة الهوية (الوجه)',
-      'بطاقة الهوية (الظهر)',
+    'بيطري': [
+      "بطاقة التعريف الوطنية (الوجه)",
+      "بطاقة التعريف الوطنية (الظهر)",
       'شهادة بيطرية'
     ],
-    'Expert Agri': ['بطاقة الهوية (الوجه)', 'بطاقة الهوية (الظهر)', 'شهادة'],
-    'Réparateur': ['بطاقة الهوية (الوجه)', 'بطاقة الهوية (الظهر)', 'شهادة'],
-    'Entreprise': ['شهادة'],
-    'Commerçant': ['شهادة'],
+    'خبير زراعي': [
+      "بطاقة التعريف الوطنية (الوجه)",
+      "بطاقة التعريف الوطنية (الظهر)",
+      'شهادة'
+    ],
+    'مصلح': [
+      "بطاقة التعريف الوطنية (الوجه)",
+      "بطاقة التعريف الوطنية (الظهر)",
+      'شهادة'
+    ],
+    'شركة': ['سجل تجاري'],
+    'تاجر': ['سجل تجاري'],
   };
+
+  // Translate Arabic document labels to localized strings
+  String getLocalizedDocumentLabel(BuildContext context, String arabicLabel) {
+    switch (arabicLabel) {
+      case "بطاقة التعريف الوطنية (الوجه)":
+        return S.of(context).identityFront;
+      case "بطاقة التعريف الوطنية (الظهر)":
+        return S.of(context).identityBack;
+      case 'شهادة':
+        return S.of(context).certificate;
+      case 'رخصة السياقة':
+        return S.of(context).drivingLicense;
+      case 'شهادة بيطرية':
+        return S.of(context).veterinaryCertificate;
+      case 'سجل تجاري':
+        return S.of(context).commercialRegister;
+      default:
+        return arabicLabel; // fallback to Arabic if unknown
+    }
+  }
+
+  // Translate Arabic user type to localized string
+  String getLocalizedUserType(BuildContext context, String arabicUserType) {
+    switch (arabicUserType) {
+      case 'ناقل':
+        return S.of(context).transporteur;
+      case 'بيطري':
+        return S.of(context).veterinaire;
+      case 'خبير زراعي':
+        return S.of(context).expertAgri;
+      case 'مصلح':
+        return S.of(context).reparateur;
+      case 'شركة':
+        return S.of(context).entreprise;
+      case 'تاجر':
+        return S.of(context).commercant;
+      default:
+        return arabicUserType; // fallback to Arabic if unknown
+    }
+  }
+
   void updateUserType(String activeType) {
     setActiveType(activeType); // Calling the function
   }
 
-  Future<void> _pickImage(String label) async {
+  Future<void> _pickImage(String arabicLabel) async {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
-      builder: (_) => SafeArea(
-        child: AlertDialog(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title:  Text(S.of(context).choose_picture,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.photo_library,
-                    color: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C)),
-                title: Text(S.of(context).select_from_gallery),
-                onTap: () async {
-                  final picked =
-                      await _picker.pickImage(source: ImageSource.gallery);
-                  if (picked != null) {
-                    setState(() {
-                      _pickedImages[label] = picked;
-                    });
-                    Navigator.pop(context); // Close dialog
-                  }
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.camera_alt,
-                    color: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C)),
-                title:  Text(S.of(context).capture_with_camera),
-                onTap: () async {
-                  final picked =
-                      await _picker.pickImage(source: ImageSource.camera);
-                  if (picked != null) {
-                    setState(() {
-                      _pickedImages[label] = picked;
-                    });
-                    Navigator.pop(context); // Close dialog
-                  }
-                },
-              ),
-            ],
-          ),
+      builder: (_) => AlertDialog(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(S.of(context).choose_picture,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.photo_library,
+                  color: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C)),
+              title: Text(S.of(context).select_from_gallery),
+              onTap: () async {
+                final picked =
+                    await _picker.pickImage(source: ImageSource.gallery);
+                if (picked != null) {
+                  setState(() => _pickedImages[arabicLabel] = picked);
+                }
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.camera_alt,
+                  color: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C)),
+              title: Text(S.of(context).capture_with_camera),
+              onTap: () async {
+                final picked =
+                    await _picker.pickImage(source: ImageSource.camera);
+                if (picked != null) {
+                  setState(() => _pickedImages[arabicLabel] = picked);
+                }
+                Navigator.pop(context);
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget buildImageBox(String label) {
-    final image = _pickedImages[label];
+  Widget buildImageBox(String arabicLabel) {
+    final image = _pickedImages[arabicLabel];
+    final localizedLabel = getLocalizedDocumentLabel(context, arabicLabel);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
-      onTap: () => _pickImage(label),
+      onTap: () => _pickImage(arabicLabel),
       child: Container(
         height: 180,
         width: double.infinity,
         margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.green),
+          border: Border.all(
+              color: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C)),
           borderRadius: BorderRadius.circular(12),
-          color: Colors.green.shade50,
+          color: colorScheme.surface,
         ),
         child: image == null
             ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.photo, size: 40, color: Colors.grey),
+                    Icon(Icons.photo,
+                        size: 40,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C)),
                     const SizedBox(height: 10),
-                    Text(label, style: const TextStyle(color: Colors.grey)),
+                    Text(localizedLabel,
+                        style: TextStyle(
+                            color: isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C))),
                   ],
                 ),
               )
@@ -139,115 +194,145 @@ class _DocumentFormState extends State<DocumentForm> {
     );
   }
 
+  bool isLoading = false;
+
   Future<void> _submitDocuments() async {
     setState(() => isLoading = true);
 
-    // Fetch the userType you selected (could be passed from UI)
-    String selectedUserType = widget.userType;
+    String selectedUserTypeArabic = widget.userType;
+    List<String> userDocs = requiredDocuments[selectedUserTypeArabic] ?? [];
 
-    // Assume widget.userType is the selected userType
-    List<String> userDocs = requiredDocuments[selectedUserType] ?? [];
     try {
-      // Loop through the documents and upload them
-      for (String doc in userDocs) {
-        final pickedImage = _pickedImages[doc];
+      for (String docArabic in userDocs) {
+        final pickedImage = _pickedImages[docArabic];
         if (pickedImage == null) {
-         throw Exception('$doc ${S.of(context).document_not_attached}');
-
+          throw Exception(
+              '${getLocalizedDocumentLabel(context, docArabic)} ${S.of(context).document_not_attached}');
         }
 
-        // Generate a unique file name for the document
         String fileName =
-            "${selectedUserType}_${doc}_${DateTime.now().millisecondsSinceEpoch}";
+            "${selectedUserTypeArabic}_${docArabic}_${DateTime.now().millisecondsSinceEpoch}";
         final storageRef =
             FirebaseStorage.instance.ref().child('documents/$fileName');
-
-        // Upload the file to Firebase Storage
         await storageRef.putFile(File(pickedImage.path));
-
-        // Get the download URL of the uploaded file
         String downloadUrl = await storageRef.getDownloadURL();
 
-        try {
-          User? user = FirebaseAuth.instance.currentUser;
-          if (user != null) {
-            final docRef =
-                FirebaseFirestore.instance.collection('Users').doc(user.uid);
-            final snapshot = await docRef.get();
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          final docRef =
+              FirebaseFirestore.instance.collection('Users').doc(user.uid);
+          final snapshot = await docRef.get();
 
-            Map<String, dynamic> currentTypes =
-                Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
-
-            if (!currentTypes.containsKey(selectedUserType)) {
-              currentTypes[selectedUserType] = {
-                'validation': 'pending',
-                selectedUserType: {
-                  'documents': {
-                    doc: {
-                      'documentUrl': downloadUrl,
-                      'uploadedAt': FieldValue.serverTimestamp(),
-                    }
+          Map<String, dynamic> currentTypes =
+              Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
+          if (!currentTypes.containsKey(selectedUserTypeArabic)) {
+            currentTypes[selectedUserTypeArabic] = {
+              'validation': 'pending',
+              selectedUserTypeArabic: {
+                'documents': {
+                  docArabic: {
+                    'documentUrl': downloadUrl,
+                    'uploadedAt': FieldValue.serverTimestamp(),
                   }
-                },
-                'createdAt': FieldValue.serverTimestamp(),
-                // تضيف حقول حسب الحاجة
-              };
+                }
+              },
+              'createdAt': FieldValue.serverTimestamp(),
+            };
 
-              await docRef.update({
-                'userType': currentTypes,
-                'userTypeUpdatedAt': FieldValue.serverTimestamp(),
-              });
-
-              print(
-                  "✅ User type '$selectedUserType' added successfully as a map.");
-              /*if (selectedUserType == 'Agriculteur' ||
-                  selectedUserType == 'Éleveur') {
-                setActiveType(selectedUserType);
-              }*/
-            }
-          } else {
-            print("⚠️ No user is logged in.");
+            await docRef.update({
+              'userType': currentTypes,
+              'userTypeUpdatedAt': FieldValue.serverTimestamp(),
+            });
           }
-        } catch (e) {
-          print("❌ Error updating user type: $e");
         }
-        SetOptions(merge: true); // لتفادي مسح البيانات السابقة
       }
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text(S.of(context).documents_sent_successfully)),
+        SnackBar(
+          backgroundColor: const Color(0xFF256C4C),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.black),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  S.of(context).documents_sent_successfully,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
-      // 🔥 Wait for 1 second, then go back
+
       Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          Navigator.of(context).pop();
-        }
+        if (mounted) Navigator.of(context).pop();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("${S.of(context).error}: $e")),
+        SnackBar(
+          backgroundColor:
+              const Color.fromARGB(255, 247, 234, 117), // Yellow background
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.black),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "${S.of(context).error}: $e",
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+        ),
       );
     } finally {
       setState(() => isLoading = false);
     }
   }
 
-  bool isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     final documents = requiredDocuments[widget.userType] ?? [];
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    // Get localized user type for display
+    final localizedUserType = getLocalizedUserType(context, widget.userType);
 
     return Scaffold(
       appBar: AppBar(
-          title: Text('${S.of(context).document_title} ${widget.userType}'),
-
-          backgroundColor:
-              isDarkMode ? colorScheme.surface : colorScheme.surface),
+        title: Row(
+          children: [
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${S.of(context).document_title} $localizedUserType',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).appBarTheme.titleTextStyle ??
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
+        elevation: 5,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -255,35 +340,30 @@ class _DocumentFormState extends State<DocumentForm> {
             for (var doc in documents) buildImageBox(doc),
             const SizedBox(height: 20),
             SizedBox(
-              width: double.infinity, // Make the button full width
-              height: 50, // Match the height of text fields
+              width: double.infinity,
+              height: 50,
               child: isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator()) // Show progress
+                  ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade700,
+                        backgroundColor: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () {
-                        try {
-                          _submitDocuments();
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text("${S.of(context).error}: $e")),
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.upload, color: Colors.white),
-                      label:  Text(
+                      onPressed: _submitDocuments,
+                      icon: Icon(Icons.upload,
+                          color: isDarkMode ? Colors.black : Colors.white),
+                      label: Text(
                         S.of(context).submitDocuments,
-                        style: const TextStyle(color: Colors.white, fontSize: 18),
+                        style: TextStyle(
+                            color: isDarkMode ? Colors.black : Colors.white,
+                            fontSize: 18),
                       ),
                     ),
-            )
+            ),
           ],
         ),
       ),

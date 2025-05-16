@@ -1,4 +1,3 @@
-
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
 import 'package:agriplant/Front_end/Authentication/ProfilePicturePage.dart';
@@ -129,14 +128,37 @@ class Users {
 
         await AwesomeDialog(
           context: context,
-          dialogType: DialogType.info,
+          dialogBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           animType: AnimType.scale,
+          // Remove dialogType
+          customHeader: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            radius: 55,
+            child: Icon(
+              Icons.info_outline,
+              color: Color.fromARGB(255, 247, 234, 117),
+              size: 80,
+            ),
+          ),
           title: S.of(context).verify_email_title,
+          titleTextStyle: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
+
           desc:
-              '${S.of(context).verify_email_desc} ${user.email}', // email not in arb
+              '${S.of(context).verify_email_desc} ${user.email}\n\n${S.of(context).after_verification_login}',
+          descTextStyle: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
           btnOkOnPress: () {},
           btnOkText: S.of(context).ok,
-          btnOkColor: Colors.blue,
+          buttonsTextStyle: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
+          btnOkColor: Color.fromARGB(255, 247, 234, 117),
         ).show();
 
         FirebaseAuth.instance.signOut();
@@ -161,9 +183,9 @@ class Users {
       barrierDismissible: false, // منع الإغلاق أثناء التحميل
       builder: (context) {
         return Dialog(
-          backgroundColor: Colors.white, // لون الخلفية
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer, // لون الخلفية
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10)), // تدوير الحواف
+              borderRadius: BorderRadius.circular(12)), // تدوير الحواف
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Row(
@@ -172,7 +194,11 @@ class Users {
                 const CircularProgressIndicator(),
                 const SizedBox(width: 20),
                 Text(S.of(context).logging_in,
-                    style: const TextStyle(fontSize: 18)),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black)),
               ],
             ),
           ),
@@ -309,7 +335,7 @@ class Users {
           'email': email,
           'password': password,
           'userType': {},
-          'activeType': 'Client',
+          'activeType': 'عميل',
           'createdAt': FieldValue.serverTimestamp(),
           'Verify': verify,
           'wilaya': wilaya,
@@ -410,17 +436,6 @@ class Users {
         idToken: googleAuth.idToken,
       );
 
-      // Check if the current user is anonymous and delete if so
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null && currentUser.isAnonymous) {
-        try {
-          await currentUser.delete();
-          print("✅ Anonymous user deleted before Google sign-in.");
-        } catch (e) {
-          print("⚠️ Failed to delete anonymous user: $e");
-        }
-      }
-
       // Sign in to Firebase with Google credentials
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(googleCredential);
@@ -453,7 +468,7 @@ class Users {
             "password": "signed with Google",
             "photo": firebaseUser.photoURL ?? "",
             "userType": {},
-            'activeType': 'Client',
+            'activeType': 'عميل',
             "following": [],
             "followers": [],
             "wilaya": '',
@@ -620,10 +635,10 @@ class Users {
       String docPath;
 
       // Determine whether it's a Product or a Service
-      if (item.SP =="Product") {
-        docPath="Products";
-      } else if (item.SP =="Service") {
-        docPath="Services";
+      if (item.SP == "Product") {
+        docPath = "Products";
+      } else if (item.SP == "Service") {
+        docPath = "Services";
       } else {
         throw Exception("❌ Unknown item type!");
       }
@@ -671,13 +686,13 @@ class Users {
     dynamic item, // Product or Service
   ) async {
     try {
-     String docPath;
+      String docPath;
 
       // Determine whether it's a Product or a Service
-      if (item.SP =="Product") {
-        docPath="Products";
-      } else if (item.SP =="Service") {
-        docPath="Services";
+      if (item.SP == "Product") {
+        docPath = "Products";
+      } else if (item.SP == "Service") {
+        docPath = "Services";
       } else {
         throw Exception("❌ Unknown item type!");
       }
@@ -705,37 +720,62 @@ class Users {
     required String itemId,
     required String userId,
     required String text,
-    required Products item, // Product or Service
+    required Products item,
   }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(S.of(context).confirm_delete_title), // Localized title
-          content:
-              Text(S.of(context).confirm_delete_message), // Localized message
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(S.of(context).confirm_delete_title),
+          content: Text(S.of(context).confirm_delete_message),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(S.of(context).cancel,
-                  style: const TextStyle(
-                      color: Colors.grey)), // Localized "Cancel"
-            ),
-            TextButton(
-              onPressed: () {
-                deleteComment(
-                  itemId,
-                  userId,
-                  text,
-                  item,
-                );
-                Navigator.of(context).pop();
-              },
-              child: Text(S.of(context).delete,
-                  style:
-                      const TextStyle(color: Colors.red)), // Localized "Delete"
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    S.of(context).cancel,
+                    style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    deleteComment(itemId, userId, text, item);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(S.of(context).delete,
+                      style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black
+                              : Colors.white)),
+                ),
+              ],
             ),
           ],
         );

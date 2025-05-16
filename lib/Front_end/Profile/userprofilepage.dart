@@ -1,4 +1,3 @@
-
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
@@ -22,7 +21,7 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
- final notificationservice  =NotificationService() ;
+  final notificationservice = NotificationService();
 
   String username = "Loading...";
   String role = "";
@@ -35,8 +34,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void initState() {
     super.initState();
     _loadUserData();
-    
-  notificationservice.initNotification();
+
+    notificationservice.initNotification();
   }
 
   Future<void> _loadUserData() async {
@@ -83,28 +82,28 @@ class _UserProfilePageState extends State<UserProfilePage> {
       setState(() {
         isFollowing = true;
         followersCount++;
-        notificationservice
-            .showNotification(title:"Al Firma",body: "You have new follower !");
+        notificationservice.showNotification(
+            title: "Al Firma", body: "You have new follower !");
       });
     }
   }
 
   Future<List<Products>> fetchAllUserItems(String userId) async {
-      final firestore = FirebaseFirestore.instance;
+    final firestore = FirebaseFirestore.instance;
 
 // ===================================Fetching products===================================
 
     final productSnap = await firestore
-      .collection('item')
-      .doc('Products')
-      .collection('Products')
-      .where('ownerId', isEqualTo: userId)
-      .get();
-      final products = productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList();
+        .collection('item')
+        .doc('Products')
+        .collection('Products')
+        .where('ownerId', isEqualTo: userId)
+        .get();
+    final products =
+        productSnap.docs.map((doc) => Products.fromFirestore(doc)).toList();
 
-    
 // ===================================Fetching services===================================
-    
+
     final serviceSnap = await firestore
         .collection('item')
         .doc('Services')
@@ -114,15 +113,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
         .get();
     final services = serviceSnap.docs.map(Products.fromFirestore).toList();
 
-
-
     // Combine all items into one list
     return [
       ...products,
       ...services,
-
     ];
   }
+
+  // ... (everything above stays exactly the same)
 
   @override
   Widget build(BuildContext context) {
@@ -145,179 +143,192 @@ class _UserProfilePageState extends State<UserProfilePage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: DefaultTabController(
+        length: 1,
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            CircleAvatar(
-              radius: 93,
-              backgroundColor: isDarkMode
-                  ? const Color(0xFF90D5AE)
-                  : const Color(0xFF256C4C),
-              child: CircleAvatar(
-                radius: 90,
-                backgroundImage: profilePic.isNotEmpty
-                    ? NetworkImage(profilePic)
-                    : (isDarkMode
-                            ? const AssetImage("assets/anonymeD.png")
-                            : const AssetImage("assets/anonyme.png"))
-                        as ImageProvider,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(username, style: Theme.of(context).textTheme.displaySmall),
-            const SizedBox(height: 13),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Text("$followersCount",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text(S.of(context).followers,
-                        style: Theme.of(context).textTheme.titleMedium),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                Column(
-                  children: [
-                    Text("$followingCount",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text(S.of(context).following,
-                        style: Theme.of(context).textTheme.titleMedium),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!Users.isGuestUser()) ...[
-                    SizedBox(
-                      width: 140,
-                      height: 45,
-                      child: ElevatedButton(
-                        onPressed: _toggleFollow,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isFollowing
-                              ? Colors.red
-                              : isDarkMode
-                                  ? const Color(0xFF90D5AE)
-                                  : const Color(0xFF256C4C),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          isFollowing
-                              ? S.of(context).unfollow
-                              : S.of(context).follow,
-                          style: TextStyle(
-                              color: isDarkMode ? Colors.black : Colors.white,
-                              fontSize: 18),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    SizedBox(
-                      width: 140,
-                      height: 45,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ChatPage(receiverId: widget.userId),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
+            Expanded(
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        CircleAvatar(
+                          radius: 93,
                           backgroundColor: isDarkMode
                               ? const Color(0xFF90D5AE)
                               : const Color(0xFF256C4C),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                          child: CircleAvatar(
+                            radius: 90,
+                            backgroundImage: profilePic.isNotEmpty
+                                ? NetworkImage(profilePic)
+                                : (isDarkMode
+                                    ? const AssetImage("assets/anonymeD.png")
+                                    : const AssetImage(
+                                        "assets/anonyme.png")) as ImageProvider,
                           ),
                         ),
-                        child: Icon(
-                          IconlyBold.message,
-                          size: 30,
-                          color: isDarkMode ? Colors.black : Colors.white,
+                        const SizedBox(height: 16),
+                        Text(username,
+                            style: Theme.of(context).textTheme.displaySmall),
+                        const SizedBox(height: 13),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                Text("$followersCount",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                                Text(S.of(context).followers,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
+                              ],
+                            ),
+                            const SizedBox(width: 20),
+                            Column(
+                              children: [
+                                Text("$followingCount",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                                Text(S.of(context).following,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: 25),
-            DefaultTabController(
-              length: 1,
-              child: Column(
-                children: [
-                  TabBar(
-                    tabs: [
-                      const Tab(
-                        icon: Icon(
-                          IconlyBold.category,
-                          size: 32,
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (!Users.isGuestUser()) ...[
+                                SizedBox(
+                                  width: 140,
+                                  height: 45,
+                                  child: ElevatedButton(
+                                    onPressed: _toggleFollow,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: isFollowing
+                                          ? Colors.red
+                                          : isDarkMode
+                                              ? const Color(0xFF90D5AE)
+                                              : const Color(0xFF256C4C),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      isFollowing
+                                          ? S.of(context).unfollow
+                                          : S.of(context).follow,
+                                      style: TextStyle(
+                                          color: isDarkMode
+                                              ? Colors.black
+                                              : Colors.white,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                SizedBox(
+                                  width: 140,
+                                  height: 45,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ChatPage(
+                                              receiverId: widget.userId),
+                                        ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: isDarkMode
+                                          ? const Color(0xFF90D5AE)
+                                          : const Color(0xFF256C4C),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      IconlyBold.message,
+                                      size: 30,
+                                      color: isDarkMode
+                                          ? Colors.black
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                    indicator: UnderlineTabIndicator(
-                      borderSide: BorderSide(
-                        width: 3.5,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      insets: const EdgeInsets.symmetric(horizontal: 50.0),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  SizedBox(
-                    height: 500,
-                    child: TabBarView(
-                      children: [
-                        FutureBuilder<List<Products>>(
-                          future: fetchAllUserItems(widget.userId),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return Center(
-                                  child: Text(S.of(context).noItemsYet));
-                            }
-
-                            final itemList = snapshot.data!;
-                            return GridView.builder(
-                              itemCount: itemList.length,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.8,
-                                crossAxisSpacing: 9,
-                                mainAxisSpacing: 2,
+                        const SizedBox(height: 25),
+                        TabBar(
+                          tabs: const [
+                            Tab(
+                              icon: Icon(
+                                IconlyBold.category,
+                                size: 32,
                               ),
-                              itemBuilder: (context, index) {
-                                return ItemCard(item: itemList[index]);
-                              },
-                            );
-                          },
+                            ),
+                          ],
+                          indicator: UnderlineTabIndicator(
+                            borderSide: BorderSide(
+                              width: 3.5,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            insets:
+                                const EdgeInsets.symmetric(horizontal: 50.0),
+                          ),
                         ),
+                        const SizedBox(height: 15),
                       ],
                     ),
-                  ),
+                  )
                 ],
+                body: TabBarView(
+                  children: [
+                    FutureBuilder<List<Products>>(
+                      future: fetchAllUserItems(widget.userId),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(child: Text(S.of(context).noItemsYet));
+                        }
+
+                        final itemList = snapshot.data!;
+                        return GridView.builder(
+                          itemCount: itemList.length,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.8,
+                            crossAxisSpacing: 9,
+                            mainAxisSpacing: 2,
+                          ),
+                          itemBuilder: (context, index) {
+                            return ItemCard(item: itemList[index]);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

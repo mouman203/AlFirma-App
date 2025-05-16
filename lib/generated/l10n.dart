@@ -75,14 +75,14 @@ class S {
     );
   }
 
-  /// `الوضع الفاتح`
+  /// `الوضع المضيء`
   String get lightMode {
-    return Intl.message('الوضع الفاتح', name: 'lightMode', desc: '', args: []);
+    return Intl.message('الوضع المضيء', name: 'lightMode', desc: '', args: []);
   }
 
-  /// `الوضع الداكن`
+  /// `الوضع المظلم`
   String get darkMode {
-    return Intl.message('الوضع الداكن', name: 'darkMode', desc: '', args: []);
+    return Intl.message('الوضع المظلم', name: 'darkMode', desc: '', args: []);
   }
 
   /// `اللغة`
@@ -115,14 +115,9 @@ class S {
     return Intl.message('تسجيل الخروج', name: 'logout', desc: '', args: []);
   }
 
-  /// `  ! تحذير   `
+  /// ` تحذير !`
   String get alertWarning {
-    return Intl.message(
-      '  ! تحذير   ',
-      name: 'alertWarning',
-      desc: '',
-      args: [],
-    );
+    return Intl.message(' تحذير !', name: 'alertWarning', desc: '', args: []);
   }
 
   /// `هل أنت متأكد أنك تريد تسجيل الخروج؟`
@@ -195,10 +190,10 @@ class S {
     );
   }
 
-  /// `📸 اختر صورة`
+  /// `اختر صورة 📸`
   String get choose_picture {
     return Intl.message(
-      '📸 اختر صورة',
+      'اختر صورة 📸',
       name: 'choose_picture',
       desc: '',
       args: [],
@@ -245,9 +240,9 @@ class S {
     );
   }
 
-  /// ` ❌ خطأ`
+  /// `خطأ `
   String get error {
-    return Intl.message(' ❌ خطأ', name: 'error', desc: '', args: []);
+    return Intl.message('خطأ ', name: 'error', desc: '', args: []);
   }
 
   /// `الاسم`
@@ -485,9 +480,9 @@ class S {
     );
   }
 
-  /// ` ⚠️تنبيه `
+  /// ` ⚠️ تنبيه `
   String get attention {
-    return Intl.message(' ⚠️تنبيه ', name: 'attention', desc: '', args: []);
+    return Intl.message(' ⚠️ تنبيه ', name: 'attention', desc: '', args: []);
   }
 
   /// `هل أنت متأكد أنك تريد حذف هذا الحساب؟`
@@ -610,10 +605,10 @@ class S {
     return Intl.message('الموضوع', name: 'subject', desc: '', args: []);
   }
 
-  /// `وصف مشكلتك`
+  /// `صف مشكلتك`
   String get describeProblem {
     return Intl.message(
-      'وصف مشكلتك',
+      'صف مشكلتك',
       name: 'describeProblem',
       desc: '',
       args: [],
@@ -630,30 +625,30 @@ class S {
     );
   }
 
-  /// `أبلغ عن مشكلتك`
-  String get reportYourProblem {
+  /// `الإبلاغ عن مشكلة`
+  String get reportAProblem {
     return Intl.message(
-      'أبلغ عن مشكلتك',
-      name: 'reportYourProblem',
+      'الإبلاغ عن مشكلة',
+      name: 'reportAProblem',
       desc: '',
       args: [],
     );
   }
 
-  /// `✅ تم إرسال البريد الإلكتروني بنجاح! `
+  /// `تم إرسال البريد الإلكتروني بنجاح ! ✅`
   String get emailSentSuccess {
     return Intl.message(
-      '✅ تم إرسال البريد الإلكتروني بنجاح! ',
+      'تم إرسال البريد الإلكتروني بنجاح ! ✅',
       name: 'emailSentSuccess',
       desc: '',
       args: [],
     );
   }
 
-  /// ` ❌ حدث خطأ أثناء إرسال البريد الإلكتروني `
+  /// `حدث خطأ أثناء إرسال البريد الإلكتروني ❌`
   String get emailSendError {
     return Intl.message(
-      ' ❌ حدث خطأ أثناء إرسال البريد الإلكتروني ',
+      'حدث خطأ أثناء إرسال البريد الإلكتروني ❌',
       name: 'emailSendError',
       desc: '',
       args: [],
@@ -890,9 +885,9 @@ class S {
     return Intl.message('ناقل', name: 'transporteur', desc: '', args: []);
   }
 
-  /// `طبيب بيطرى`
+  /// `بيطري`
   String get veterinaire {
-    return Intl.message('طبيب بيطرى', name: 'veterinaire', desc: '', args: []);
+    return Intl.message('بيطري', name: 'veterinaire', desc: '', args: []);
   }
 
   /// `خبير زراعي`
@@ -920,9 +915,9 @@ class S {
     return Intl.message('فلاح', name: 'agriculteur', desc: '', args: []);
   }
 
-  /// `مربي`
+  /// `مربي الماشية`
   String get eleveur {
-    return Intl.message('مربي', name: 'eleveur', desc: '', args: []);
+    return Intl.message('مربي الماشية', name: 'eleveur', desc: '', args: []);
   }
 
   /// `عميل`
@@ -930,30 +925,30 @@ class S {
     return Intl.message('عميل', name: 'client', desc: '', args: []);
   }
 
-  /// `الهوية الأمامية`
+  /// `بطاقة التعريف الوطنية (الوجه)`
   String get identityFront {
     return Intl.message(
-      'الهوية الأمامية',
+      'بطاقة التعريف الوطنية (الوجه)',
       name: 'identityFront',
       desc: '',
       args: [],
     );
   }
 
-  /// `الهوية الخلفية`
+  /// `بطاقة التعريف الوطنية (الظهر)`
   String get identityBack {
     return Intl.message(
-      'الهوية الخلفية',
+      'بطاقة التعريف الوطنية (الظهر)',
       name: 'identityBack',
       desc: '',
       args: [],
     );
   }
 
-  /// `رخصة القيادة`
+  /// `رخصة السياقة`
   String get drivingLicense {
     return Intl.message(
-      'رخصة القيادة',
+      'رخصة السياقة',
       name: 'drivingLicense',
       desc: '',
       args: [],
@@ -995,10 +990,10 @@ class S {
     );
   }
 
-  /// `✅ تم إرسال الوثائق بنجاح`
+  /// `تم إرسال الوثائق بنجاح ✅`
   String get documents_sent_successfully {
     return Intl.message(
-      '✅ تم إرسال الوثائق بنجاح',
+      'تم إرسال الوثائق بنجاح ✅',
       name: 'documents_sent_successfully',
       desc: '',
       args: [],
@@ -1025,30 +1020,30 @@ class S {
     return Intl.message('من نحن', name: 'aboutUs', desc: '', args: []);
   }
 
-  /// `مرحبًا👋🏼`
+  /// `مرحبًا 👋🏼`
   String get welcomeMessage {
     return Intl.message(
-      'مرحبًا👋🏼',
+      'مرحبًا 👋🏼',
       name: 'welcomeMessage',
       desc: '',
       args: [],
     );
   }
 
-  /// `🔍استمتع بتصفح التطبيق `
+  /// `استمتع بتصفح التطبيق 🔍`
   String get guestSubtitle {
     return Intl.message(
-      '🔍استمتع بتصفح التطبيق ',
+      'استمتع بتصفح التطبيق 🔍',
       name: 'guestSubtitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `⏳ ... جار التحميل `
+  /// `جار التحميل ...⏳`
   String get loading {
     return Intl.message(
-      '⏳ ... جار التحميل ',
+      'جار التحميل ...⏳',
       name: 'loading',
       desc: '',
       args: [],
@@ -1080,10 +1075,10 @@ class S {
     );
   }
 
-  /// ` ⚠️ الوصول مقيد`
+  /// `الوصول مقيد ⚠️`
   String get accessRestricted {
     return Intl.message(
-      ' ⚠️ الوصول مقيد',
+      'الوصول مقيد ⚠️',
       name: 'accessRestricted',
       desc: '',
       args: [],
@@ -5170,30 +5165,40 @@ class S {
     );
   }
 
-  /// `  !  تبقّى القليل   `
+  /// ` تبقّى القليل ! `
   String get verify_email_title {
     return Intl.message(
-      '  !  تبقّى القليل   ',
+      ' تبقّى القليل ! ',
       name: 'verify_email_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط المرسل إلى`
+  /// `يرجى التحقق من بريدك الإلكتروني من خلال النقر على الرابط المرسل إلى`
   String get verify_email_desc {
     return Intl.message(
-      'يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط المرسل إلى',
+      'يرجى التحقق من بريدك الإلكتروني من خلال النقر على الرابط المرسل إلى',
       name: 'verify_email_desc',
       desc: '',
       args: [],
     );
   }
 
-  /// ` ⏳...جاري تسجيل الدخول`
+  /// `بعد التحقق، قم بتسجيل الدخول مرة أخرى`
+  String get after_verification_login {
+    return Intl.message(
+      'بعد التحقق، قم بتسجيل الدخول مرة أخرى',
+      name: 'after_verification_login',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `جاري تسجيل الدخول ... ⏳`
   String get logging_in {
     return Intl.message(
-      ' ⏳...جاري تسجيل الدخول',
+      'جاري تسجيل الدخول ... ⏳',
       name: 'logging_in',
       desc: '',
       args: [],
@@ -5375,9 +5380,9 @@ class S {
     );
   }
 
-  /// `⚠️ تنبيه!`
+  /// `⚠️ تنبيه`
   String get alert {
-    return Intl.message('⚠️ تنبيه!', name: 'alert', desc: '', args: []);
+    return Intl.message('⚠️ تنبيه', name: 'alert', desc: '', args: []);
   }
 
   /// `يجب عليك تحميل بعض الملفات .. بعد التحقق ستتلقى إشعارًا`
@@ -5398,11 +5403,6 @@ class S {
       desc: '',
       args: [],
     );
-  }
-
-  /// `تنبيه`
-  String get alertTitle {
-    return Intl.message('تنبيه', name: 'alertTitle', desc: '', args: []);
   }
 
   /// `هذا النوع غير مفعل من طرف الإدارة`
@@ -6155,6 +6155,801 @@ class S {
     return Intl.message(
       'نقل عام',
       name: 'generalTransport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `📸 الرجاء تحميل صورة المنتج أولًا`
+  String get pleaseUploadProductImageFirst {
+    return Intl.message(
+      '📸 الرجاء تحميل صورة المنتج أولًا',
+      name: 'pleaseUploadProductImageFirst',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نجاح`
+  String get success {
+    return Intl.message('نجاح', name: 'success', desc: '', args: []);
+  }
+
+  /// `تمت الإضافة بنجاح! ✅`
+  String get addedSuccessfully {
+    return Intl.message(
+      'تمت الإضافة بنجاح! ✅',
+      name: 'addedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اضغط لاختيار الصور`
+  String get tapToSelectImages {
+    return Intl.message(
+      'اضغط لاختيار الصور',
+      name: 'tapToSelectImages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الصنف`
+  String get category {
+    return Intl.message('الصنف', name: 'category', desc: '', args: []);
+  }
+
+  /// `الصنف الفرعي`
+  String get subCategory {
+    return Intl.message(
+      'الصنف الفرعي',
+      name: 'subCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `المنتج`
+  String get product {
+    return Intl.message('المنتج', name: 'product', desc: '', args: []);
+  }
+
+  /// `الكمية`
+  String get quantity {
+    return Intl.message('الكمية', name: 'quantity', desc: '', args: []);
+  }
+
+  /// `الرجاء ملء الحقل`
+  String get pleaseFillField {
+    return Intl.message(
+      'الرجاء ملء الحقل',
+      name: 'pleaseFillField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إيجار / بيع`
+  String get rentOrSell {
+    return Intl.message('إيجار / بيع', name: 'rentOrSell', desc: '', args: []);
+  }
+
+  /// `المساحة`
+  String get area {
+    return Intl.message('المساحة', name: 'area', desc: '', args: []);
+  }
+
+  /// `السعر`
+  String get price {
+    return Intl.message('السعر', name: 'price', desc: '', args: []);
+  }
+
+  /// `الوحدة`
+  String get unit {
+    return Intl.message('الوحدة', name: 'unit', desc: '', args: []);
+  }
+
+  /// `الولاية`
+  String get wilaya {
+    return Intl.message('الولاية', name: 'wilaya', desc: '', args: []);
+  }
+
+  /// `الدائرة`
+  String get daira {
+    return Intl.message('الدائرة', name: 'daira', desc: '', args: []);
+  }
+
+  /// `الوصف`
+  String get description {
+    return Intl.message('الوصف', name: 'description', desc: '', args: []);
+  }
+
+  /// `إعادة تعيين`
+  String get reset {
+    return Intl.message('إعادة تعيين', name: 'reset', desc: '', args: []);
+  }
+
+  /// `النموذج فارغ`
+  String get formIsEmpty {
+    return Intl.message(
+      'النموذج فارغ',
+      name: 'formIsEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `انشر`
+  String get share {
+    return Intl.message('انشر', name: 'share', desc: '', args: []);
+  }
+
+  /// `لا يمكنه إضافة عناصر`
+  String get userTypeCannotAdd {
+    return Intl.message(
+      'لا يمكنه إضافة عناصر',
+      name: 'userTypeCannotAdd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `منتج زراعي`
+  String get agriculturalProduct {
+    return Intl.message(
+      'منتج زراعي',
+      name: 'agriculturalProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `منتج حيواني`
+  String get animalProduct {
+    return Intl.message(
+      'منتج حيواني',
+      name: 'animalProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `منتج تجاري`
+  String get commercialProduct {
+    return Intl.message(
+      'منتج تجاري',
+      name: 'commercialProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `السعر الأدنى`
+  String get minPrice {
+    return Intl.message('السعر الأدنى', name: 'minPrice', desc: '', args: []);
+  }
+
+  /// `السعر الأقصى`
+  String get maxPrice {
+    return Intl.message('السعر الأقصى', name: 'maxPrice', desc: '', args: []);
+  }
+
+  /// `تطبيق`
+  String get apply {
+    return Intl.message('تطبيق', name: 'apply', desc: '', args: []);
+  }
+
+  /// `اختر المعدة`
+  String get chooseEquipment {
+    return Intl.message(
+      'اختر المعدة',
+      name: 'chooseEquipment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اختر المنتوج`
+  String get chooseProduct {
+    return Intl.message(
+      'اختر المنتوج',
+      name: 'chooseProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اختر التصنيف الفرعي`
+  String get chooseSubCategory {
+    return Intl.message(
+      'اختر التصنيف الفرعي',
+      name: 'chooseSubCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اختر الفئة`
+  String get chooseCategory {
+    return Intl.message(
+      'اختر الفئة',
+      name: 'chooseCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تصفية المنتجات`
+  String get filterProducts {
+    return Intl.message(
+      'تصفية المنتجات',
+      name: 'filterProducts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نوع المنتج`
+  String get productType {
+    return Intl.message('نوع المنتج', name: 'productType', desc: '', args: []);
+  }
+
+  /// `متوفر`
+  String get available {
+    return Intl.message('متوفر', name: 'available', desc: '', args: []);
+  }
+
+  /// `دج`
+  String get dinar {
+    return Intl.message('دج', name: 'dinar', desc: '', args: []);
+  }
+
+  /// `آلة قص الأعلاف`
+  String get forageCutter {
+    return Intl.message(
+      'آلة قص الأعلاف',
+      name: 'forageCutter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `آلة طحن الحبوب`
+  String get grainGrinder {
+    return Intl.message(
+      'آلة طحن الحبوب',
+      name: 'grainGrinder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ناقلة الأعلاف`
+  String get forageConveyor {
+    return Intl.message(
+      'ناقلة الأعلاف',
+      name: 'forageConveyor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `آلة تسوية الأرض`
+  String get landLeveler {
+    return Intl.message(
+      'آلة تسوية الأرض',
+      name: 'landLeveler',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مضخات غاطسة`
+  String get submersiblePumps {
+    return Intl.message(
+      'مضخات غاطسة',
+      name: 'submersiblePumps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أنظمة الري بالتنقيط`
+  String get dripIrrigationSystems {
+    return Intl.message(
+      'أنظمة الري بالتنقيط',
+      name: 'dripIrrigationSystems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `فلاتر مياه`
+  String get waterFilters {
+    return Intl.message('فلاتر مياه', name: 'waterFilters', desc: '', args: []);
+  }
+
+  /// `أجهزة تحكم في الري`
+  String get irrigationControllers {
+    return Intl.message(
+      'أجهزة تحكم في الري',
+      name: 'irrigationControllers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `صمامات تحكم`
+  String get controlValves {
+    return Intl.message(
+      'صمامات تحكم',
+      name: 'controlValves',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `خزان مياه بلاستيكي`
+  String get plasticWaterTank {
+    return Intl.message(
+      'خزان مياه بلاستيكي',
+      name: 'plasticWaterTank',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `معدات التخزين والتبريد`
+  String get storageAndCooling {
+    return Intl.message(
+      'معدات التخزين والتبريد',
+      name: 'storageAndCooling',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `غرف تبريد`
+  String get coldRoom {
+    return Intl.message('غرف تبريد', name: 'coldRoom', desc: '', args: []);
+  }
+
+  /// `ثلاجات صناعية`
+  String get industrialFridge {
+    return Intl.message(
+      'ثلاجات صناعية',
+      name: 'industrialFridge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `وحدات تبريد متنقلة`
+  String get mobileCoolingUnit {
+    return Intl.message(
+      'وحدات تبريد متنقلة',
+      name: 'mobileCoolingUnit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مبردات محمولة`
+  String get portableCooler {
+    return Intl.message(
+      'مبردات محمولة',
+      name: 'portableCooler',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `رفوف تخزين معدنية`
+  String get metalShelves {
+    return Intl.message(
+      'رفوف تخزين معدنية',
+      name: 'metalShelves',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `صناديق حفظ المحاصيل`
+  String get cropStorageBoxes {
+    return Intl.message(
+      'صناديق حفظ المحاصيل',
+      name: 'cropStorageBoxes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مستودعات معدنية جاهزة`
+  String get prefabWarehouse {
+    return Intl.message(
+      'مستودعات معدنية جاهزة',
+      name: 'prefabWarehouse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `معدات التعبئة والتغليف`
+  String get packagingEquipment {
+    return Intl.message(
+      'معدات التعبئة والتغليف',
+      name: 'packagingEquipment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `آلة تغليف بلاستيكي`
+  String get plasticWrappingMachine {
+    return Intl.message(
+      'آلة تغليف بلاستيكي',
+      name: 'plasticWrappingMachine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `آلة تلصيق الملصقات`
+  String get labelingMachine {
+    return Intl.message(
+      'آلة تلصيق الملصقات',
+      name: 'labelingMachine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `موازين رقمية`
+  String get digitalScales {
+    return Intl.message(
+      'موازين رقمية',
+      name: 'digitalScales',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أكياس تعبئة محاصيل`
+  String get cropBags {
+    return Intl.message(
+      'أكياس تعبئة محاصيل',
+      name: 'cropBags',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `صناديق كرتونية`
+  String get cardboardBoxes {
+    return Intl.message(
+      'صناديق كرتونية',
+      name: 'cardboardBoxes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `آلة تعقيم التعبئة`
+  String get packingSterilizer {
+    return Intl.message(
+      'آلة تعقيم التعبئة',
+      name: 'packingSterilizer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ميزان إلكتروني`
+  String get electronicScale {
+    return Intl.message(
+      'ميزان إلكتروني',
+      name: 'electronicScale',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أطبائنا البيطريين الموثوقين`
+  String get our_trusted_veterinarians {
+    return Intl.message(
+      'أطبائنا البيطريين الموثوقين',
+      name: 'our_trusted_veterinarians',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `النوع`
+  String get type_label {
+    return Intl.message('النوع', name: 'type_label', desc: '', args: []);
+  }
+
+  /// `وسيلة النقل`
+  String get transport_means_label {
+    return Intl.message(
+      'وسيلة النقل',
+      name: 'transport_means_label',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `معلومات خاطئة`
+  String get reportWrongInfo {
+    return Intl.message(
+      'معلومات خاطئة',
+      name: 'reportWrongInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `بريد عشوائي أو احتيال`
+  String get reportSpam {
+    return Intl.message(
+      'بريد عشوائي أو احتيال',
+      name: 'reportSpam',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أخرى`
+  String get reportOther {
+    return Intl.message('أخرى', name: 'reportOther', desc: '', args: []);
+  }
+
+  /// `لقد تلقينا إشارتك — شكرًا لدعمك مجتمعنا! 🤝`
+  String get reportConfirmation {
+    return Intl.message(
+      'لقد تلقينا إشارتك — شكرًا لدعمك مجتمعنا! 🤝',
+      name: 'reportConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `غير محددة`
+  String get unspecified {
+    return Intl.message('غير محددة', name: 'unspecified', desc: '', args: []);
+  }
+
+  /// `التفاصيل`
+  String get details {
+    return Intl.message('التفاصيل', name: 'details', desc: '', args: []);
+  }
+
+  /// `اقرأ المزيد`
+  String get readMore {
+    return Intl.message('اقرأ المزيد', name: 'readMore', desc: '', args: []);
+  }
+
+  /// `اقرأ أقل`
+  String get readLess {
+    return Intl.message('اقرأ أقل', name: 'readLess', desc: '', args: []);
+  }
+
+  /// `يرجى تسجيل الدخول للإعجاب أو عدم الإعجاب بالعناصر`
+  String get loginToLike {
+    return Intl.message(
+      'يرجى تسجيل الدخول للإعجاب أو عدم الإعجاب بالعناصر',
+      name: 'loginToLike',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تحتاج إلى تسجيل الدخول لإرسال رسالة`
+  String get loginToMessage {
+    return Intl.message(
+      'تحتاج إلى تسجيل الدخول لإرسال رسالة',
+      name: 'loginToMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `دردشة`
+  String get chat {
+    return Intl.message('دردشة', name: 'chat', desc: '', args: []);
+  }
+
+  /// `تعذر فتح تطبيق الاتصال`
+  String get cannotOpenDialer {
+    return Intl.message(
+      'تعذر فتح تطبيق الاتصال',
+      name: 'cannotOpenDialer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `رقم الهاتف غير متوفر`
+  String get noPhoneNumber {
+    return Intl.message(
+      'رقم الهاتف غير متوفر',
+      name: 'noPhoneNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اتصال`
+  String get call {
+    return Intl.message('اتصال', name: 'call', desc: '', args: []);
+  }
+
+  /// `غير معروف`
+  String get unknown {
+    return Intl.message('غير معروف', name: 'unknown', desc: '', args: []);
+  }
+
+  /// `المنتج :`
+  String get productLabel {
+    return Intl.message('المنتج :', name: 'productLabel', desc: '', args: []);
+  }
+
+  /// `الفئة :`
+  String get categoryLabel {
+    return Intl.message('الفئة :', name: 'categoryLabel', desc: '', args: []);
+  }
+
+  /// `الفئة الفرعية :`
+  String get subCategoryLabel {
+    return Intl.message(
+      'الفئة الفرعية :',
+      name: 'subCategoryLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الموقع :`
+  String get locationLabel {
+    return Intl.message('الموقع :', name: 'locationLabel', desc: '', args: []);
+  }
+
+  /// `اكتب تعليقًا...`
+  String get writeComment {
+    return Intl.message(
+      'اكتب تعليقًا...',
+      name: 'writeComment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حدث خطأ أثناء إضافة التعليق. حاول مرة أخرى لاحقًا`
+  String get errorAddingComment {
+    return Intl.message(
+      'حدث خطأ أثناء إضافة التعليق. حاول مرة أخرى لاحقًا',
+      name: 'errorAddingComment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `زائر`
+  String get guest {
+    return Intl.message('زائر', name: 'guest', desc: '', args: []);
+  }
+
+  /// `التعليقات`
+  String get comments {
+    return Intl.message('التعليقات', name: 'comments', desc: '', args: []);
+  }
+
+  /// `لا توجد تعليقات بعد`
+  String get noCommentsYet {
+    return Intl.message(
+      'لا توجد تعليقات بعد',
+      name: 'noCommentsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اختر منتجًا حيوانيًا`
+  String get chooseAnimalProduct {
+    return Intl.message(
+      'اختر منتجًا حيوانيًا',
+      name: 'chooseAnimalProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `رأس`
+  String get head {
+    return Intl.message('رأس', name: 'head', desc: '', args: []);
+  }
+
+  /// `علبة`
+  String get pack {
+    return Intl.message('علبة', name: 'pack', desc: '', args: []);
+  }
+
+  /// `يجب عليك تسجيل الدخول لإجراء المكالمة`
+  String get loginToCall {
+    return Intl.message(
+      'يجب عليك تسجيل الدخول لإجراء المكالمة',
+      name: 'loginToCall',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الرئيسية`
+  String get nav_home {
+    return Intl.message('الرئيسية', name: 'nav_home', desc: '', args: []);
+  }
+
+  /// `الخدمات`
+  String get nav_services {
+    return Intl.message('الخدمات', name: 'nav_services', desc: '', args: []);
+  }
+
+  /// `إضافة`
+  String get nav_add {
+    return Intl.message('إضافة', name: 'nav_add', desc: '', args: []);
+  }
+
+  /// `الرسائل`
+  String get nav_messages {
+    return Intl.message('الرسائل', name: 'nav_messages', desc: '', args: []);
+  }
+
+  /// `الملف الشخصي`
+  String get nav_profile {
+    return Intl.message(
+      'الملف الشخصي',
+      name: 'nav_profile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تم`
+  String get done {
+    return Intl.message('تم', name: 'done', desc: '', args: []);
+  }
+
+  /// `أضف صورة للملف الشخصي حتى يتمكن أصدقاؤك من التعرف عليك`
+  String get add_profile_picture_subtitle {
+    return Intl.message(
+      'أضف صورة للملف الشخصي حتى يتمكن أصدقاؤك من التعرف عليك',
+      name: 'add_profile_picture_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `صورة الملف الشخصي`
+  String get profile_picture {
+    return Intl.message(
+      'صورة الملف الشخصي',
+      name: 'profile_picture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تخطي`
+  String get skip {
+    return Intl.message('تخطي', name: 'skip', desc: '', args: []);
+  }
+
+  /// `تم تحديث صورة الملف الشخصي بنجاح`
+  String get profile_picture_updated_successfully {
+    return Intl.message(
+      'تم تحديث صورة الملف الشخصي بنجاح',
+      name: 'profile_picture_updated_successfully',
       desc: '',
       args: [],
     );

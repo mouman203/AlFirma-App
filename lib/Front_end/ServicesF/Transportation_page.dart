@@ -17,22 +17,21 @@ class _TransportationPageState extends State<TransportationPage> {
   String? selectedWilaya;
   String? selectedDaira;
 
-
   static Future<List<Products>> getTransportservicesOnce() async {
-      final snapshot = await FirebaseFirestore.instance
-            .collection('item')
-            .doc('Services')
-            .collection('Services')
-            .where('typeItem', isEqualTo: "Transportation")
-            .get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('item')
+        .doc('Services')
+        .collection('Services')
+        .where('typeItem', isEqualTo: "النقل")
+        .get();
 
-        return snapshot.docs.map(Products.fromFirestore).toList();
- }
+    return snapshot.docs.map(Products.fromFirestore).toList();
+  }
 
- 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     // Set localized defaults if not already selected
     selectedWilaya ??= S.of(context).all_wilayas;
@@ -40,7 +39,7 @@ class _TransportationPageState extends State<TransportationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).transport_service),
+        title: Text(S.of(context).transport_service,style:TextStyle(fontWeight: FontWeight.bold)),
         elevation: 5,
       ),
       body: SingleChildScrollView(
@@ -53,6 +52,15 @@ class _TransportationPageState extends State<TransportationPage> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField2<String>(
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 450,
+                        offset: const Offset(0, 0),
+                        width: MediaQuery.of(context).size.width - 220,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       isExpanded: true,
                       value: selectedWilaya,
                       onChanged: (newValue) {
@@ -62,14 +70,15 @@ class _TransportationPageState extends State<TransportationPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        // Custom border
+                        fillColor: colorScheme.secondaryContainer,
+                        filled: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -78,7 +87,7 @@ class _TransportationPageState extends State<TransportationPage> {
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
@@ -137,6 +146,15 @@ class _TransportationPageState extends State<TransportationPage> {
                   const SizedBox(width: 20),
                   Expanded(
                     child: DropdownButtonFormField2<String>(
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 450,
+                        offset: const Offset(0, 0),
+                        width: MediaQuery.of(context).size.width - 220,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       isExpanded: true,
                       value: selectedDaira,
                       items: selectedWilaya == S.of(context).all_wilayas
@@ -186,14 +204,15 @@ class _TransportationPageState extends State<TransportationPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        // Custom border for second dropdown, same as the first one
+                        fillColor: colorScheme.secondaryContainer,
+                        filled: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -202,7 +221,7 @@ class _TransportationPageState extends State<TransportationPage> {
                             color: isDarkMode
                                 ? Colors.white
                                 : const Color(0xFF256C4C),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
@@ -257,13 +276,30 @@ class _TransportationPageState extends State<TransportationPage> {
                       child: Text(S.of(context).no_transport_services_found));
                 }
 
+                // إنشاء خريطة ترجمة معكوسة: من المعروض إلى العربي
+                final translationMap =
+                    ProductData.buildDairaTranslationMap(context);
+                Map<String, String> reverseTranslationMap(
+                    Map<String, String> translationMap) {
+                  return translationMap
+                      .map((key, value) => MapEntry(value, key));
+                }
+
+                final reversedTranslationMap =
+                    reverseTranslationMap(translationMap);
+
+                // ترجمة الاختيارات إلى العربية قبل الفلترة
+                final selectedWilayaArabic =
+                    reversedTranslationMap[selectedWilaya] ?? selectedWilaya;
+                final selectedDairaArabic =
+                    reversedTranslationMap[selectedDaira] ?? selectedDaira;
+
                 var filtered = snapshot.data!.where((s) {
                   return (selectedWilaya == S.of(context).all_wilayas ||
-                          s.wilaya == selectedWilaya) &&
+                          s.wilaya == selectedWilayaArabic) &&
                       (selectedDaira == S.of(context).all_dairas ||
-                          s.daira == selectedDaira);
+                          s.daira == selectedDairaArabic);
                 }).toList();
-
                 return GridView.builder(
                   itemCount: filtered.length,
                   padding: const EdgeInsets.symmetric(horizontal: 12),

@@ -81,22 +81,22 @@ class _AddProductsState extends State<AddProducts> {
     // Initialize category translations
     if (typeItem != null) {
       switch (typeItem) {
-        case "Agricultural Product":
+        case "منتج زراعي":
           _initAgriCategoryTranslations();
           break;
-        case "Animal Product":
+        case "منتج حيواني":
           _initAnimalProductTranslations();
           break;
-        case "Commercial Product":
+        case "منتج تجاري":
           _initCommercialProductTranslations();
           break;
-        case "Expertise":
+        case "الخبرة":
           _initExpertiseTranslations();
           break;
-        case "Transportation":
+        case "النقل":
           _initTransportationTranslations();
           break;
-        case "Repairs":
+        case "الإصلاحات":
           _initRepairTranslations();
           break;
       }
@@ -105,7 +105,7 @@ class _AddProductsState extends State<AddProducts> {
     // Initialize service types translations
     serviceTypeTranslations = {
       "بيع": S.of(context).sell,
-      "كراء": S.of(context).rent,
+      "الإيجار": S.of(context).rent,
     };
 
     // Initialize units translations
@@ -118,6 +118,9 @@ class _AddProductsState extends State<AddProducts> {
       "هكتار": S.of(context).hectare,
       "قطعة": S.of(context).piece,
       "مجموعة": S.of(context).set,
+      "رأس": S.of(context).head,
+      "عبوة": S.of(context).pack,
+      "وحدة": S.of(context).unit,
     };
 
     // Initialize wilaya and daira translations
@@ -165,7 +168,7 @@ class _AddProductsState extends State<AddProducts> {
 
   void _initExpertiseTranslations() {
     final arabicMap = ProductData.ExpertProducts;
-    final localizedMap = ProductData.expertProductsT(context);
+    final localizedMap = ProductData.ExpertProductsT(context);
 
     _mapTranslations(arabicMap, localizedMap, categoryTranslations);
   }
@@ -236,41 +239,40 @@ class _AddProductsState extends State<AddProducts> {
     }
   }
 
-void _mapTranslations(Map<String, List<String>> arabicMap,
-    Map<String, List<String>> localizedMap, Map<String, String> targetMap) {
-  // Map main categories
-  arabicMap.forEach((arabicKey, arabicValues) {
-  
-    String? localizedKey;
-    for (var key in localizedMap.keys) {
-      // Look for position-based match in translated categories
-      int keyIndex = arabicMap.keys.toList().indexOf(arabicKey);
-      int matchingLocalizedIndex = localizedMap.keys.toList().indexOf(key);
-      
-      if (keyIndex == matchingLocalizedIndex && keyIndex >= 0) {
-        localizedKey = key;
-        break;
+  void _mapTranslations(Map<String, List<String>> arabicMap,
+      Map<String, List<String>> localizedMap, Map<String, String> targetMap) {
+    // Map main categories
+    arabicMap.forEach((arabicKey, arabicValues) {
+      String? localizedKey;
+      for (var key in localizedMap.keys) {
+        // Look for position-based match in translated categories
+        int keyIndex = arabicMap.keys.toList().indexOf(arabicKey);
+        int matchingLocalizedIndex = localizedMap.keys.toList().indexOf(key);
+
+        if (keyIndex == matchingLocalizedIndex && keyIndex >= 0) {
+          localizedKey = key;
+          break;
+        }
       }
-    }
-    
-    // Fallback in case we couldn't find a positional match
-    localizedKey ??= arabicKey;
 
-    // Add to translation map
-    targetMap[arabicKey] = localizedKey;
-    targetMap[localizedKey] = arabicKey; // Add reverse mapping
+      // Fallback in case we couldn't find a positional match
+      localizedKey ??= arabicKey;
 
-    // Map values (products)
-    List<String> localizedValues = localizedMap[localizedKey] ?? [];
-    for (int i = 0; i < arabicValues.length; i++) {
-      if (i < localizedValues.length) {
-        productTranslations[arabicValues[i]] = localizedValues[i];
-        productTranslations[localizedValues[i]] = arabicValues[i]; // Add reverse mapping
+      // Add to translation map
+      targetMap[arabicKey] = localizedKey;
+      targetMap[localizedKey] = arabicKey; // Add reverse mapping
+
+      // Map values (products)
+      List<String> localizedValues = localizedMap[localizedKey] ?? [];
+      for (int i = 0; i < arabicValues.length; i++) {
+        if (i < localizedValues.length) {
+          productTranslations[arabicValues[i]] = localizedValues[i];
+          productTranslations[localizedValues[i]] =
+              arabicValues[i]; // Add reverse mapping
+        }
       }
-    }
-  });
-}
-
+    });
+  }
 
   Future<void> fetchUserType() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -289,20 +291,20 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
           print("userType set to: $userType");
 
           switch (userType) {
-            case 'Agriculteur':
-              typeItem = "Agricultural Product";
+            case 'فلاح':
+              typeItem = "منتج زراعي";
               Category = ProductData.getMainCategories(typeItem, context);
               break;
-            case 'Éleveur':
-              typeItem = "Animal Product";
+            case 'مربي الماشية':
+              typeItem = "منتج حيواني";
               Category = ProductData.getMainCategories(typeItem, context);
               break;
-            case 'Commerçant':
-              typeItem = "Commercial Product";
+            case 'تاجر':
+              typeItem = "منتج تجاري";
               Category = ProductData.getMainCategories(typeItem, context);
               break;
-            case 'Expert Agri':
-              typeItem = "Expertise";
+            case 'خبير زراعي':
+              typeItem = "الخبرة";
               Category = [
                 S.of(context).agricultureConsulting,
                 S.of(context).trainingServices,
@@ -312,16 +314,16 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
                 S.of(context).financeAdminConsulting,
               ];
               break;
-            case 'Transporteur':
-              typeItem = "Transportation";
+            case 'ناقل':
+              typeItem = "النقل";
               Category = [
                 S.of(context).livestockTransport,
                 S.of(context).cropTransport,
                 S.of(context).generalTransport,
               ];
               break;
-            case 'Réparateur':
-              typeItem = "Repairs";
+            case 'مصلح':
+              typeItem = "الإصلاحات";
               Category = ProductData.reparationTypeT(context);
               break;
             default:
@@ -371,7 +373,28 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
       if (uploadedPhotos.isEmpty) {
         // منع الإرسال بدون صورة
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("📸 الرجاء تحميل صورة المنتج أولًا")),
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.black,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    S.of(context).pleaseUploadProductImageFirst,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor:
+                const Color.fromARGB(255, 247, 234, 117), // Soft warning yellow
+          ),
         );
         return;
       }
@@ -435,12 +458,11 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
         date_of_add: DateTime.now(),
         wilaya: arabicWilaya,
         daira: arabicDaira,
-        SP: typeItem == "Animal Product" ||
-                typeItem == "Commercial Product" ||
-                typeItem == "Agricultural Product"
+        SP: (typeItem == "منتج تجاري" && arabicService != "الإيجار") ||
+                typeItem == "منتج حيواني" ||
+                typeItem == "منتج زراعي"
             ? "Product"
             : "Service",
-        
       );
 
       await newProduct.addProduct(newProduct);
@@ -491,24 +513,17 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
     }
   }
 
-  Map<String, List<String>> unitsByCategory = {
-    "منتوجات فلاحية": ["كلغ", "طن", "لتر", "صندوق"],
-    "أراضي": ["م²", "هكتار"],
-    "معدات": ["قطعة", "مجموعة"]
-  };
-  List<String> serviceTypes = ["بيع", "كراء"];
-
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Success"),
-          content: const Text("Added Successfully! ✅"),
+          title: Text(S.of(context).success),
+          content: Text(S.of(context).addedSuccessfully),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
+              child: Text(S.of(context).ok),
             ),
           ],
         );
@@ -516,16 +531,36 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
     );
   }
 
-  Map<String, List<String>> getLocalizedUnitsByCategory() {
+  Map<String, List<String>> getLocalizedUnitsByCategory(BuildContext context) {
     return {
       S.of(context).agriculturalProducts: [
         S.of(context).kg,
         S.of(context).ton,
         S.of(context).liter,
-        S.of(context).box
+        S.of(context).box,
       ],
-      S.of(context).lands: [S.of(context).squareMeter, S.of(context).hectare],
-      S.of(context).equipment: [S.of(context).piece, S.of(context).set]
+      S.of(context).lands: [
+        S.of(context).squareMeter,
+        S.of(context).hectare,
+      ],
+      S.of(context).equipment: [
+        S.of(context).piece,
+        S.of(context).set,
+      ],
+      S.of(context).liveAnimals: [
+        S.of(context).head,
+      ],
+      S.of(context).dairyProducts: [
+        S.of(context).liter,
+        S.of(context).kg,
+        S.of(context).pack,
+        S.of(context).unit,
+      ],
+      S.of(context).animalByproducts: [
+        S.of(context).kg,
+        S.of(context).piece,
+        S.of(context).unit,
+      ],
     };
   }
 
@@ -535,7 +570,10 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
 
   @override
   Widget build(BuildContext context) {
-    final localizedUnitsByCategory = getLocalizedUnitsByCategory();
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final localizedUnitsByCategory = getLocalizedUnitsByCategory(context);
     final localizedServiceTypes = getLocalizedServiceTypes();
     return Scaffold(
       body: SingleChildScrollView(
@@ -552,19 +590,29 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green),
-                    color: Colors.green.shade50,
+                    border: Border.all(
+                        width: 1.3,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C)),
+                    color: colorScheme.onSecondary,
                   ),
                   child: selectedImages.isEmpty
-                      ? const Center(
+                      ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.photo_library,
-                                  size: 50, color: Colors.grey),
+                                  size: 50,
+                                  color: isDarkMode
+                                      ? const Color(0xFF90D5AE)
+                                      : const Color(0xFF256C4C)),
                               SizedBox(height: 8),
-                              Text("Tap to select images",
-                                  style: TextStyle(color: Colors.grey)),
+                              Text(S.of(context).tapToSelectImages,
+                                  style: TextStyle(
+                                      color: isDarkMode
+                                          ? const Color(0xFF90D5AE)
+                                          : const Color(0xFF256C4C))),
                             ],
                           ),
                         )
@@ -587,7 +635,6 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
                                     right: 0,
                                     child: GestureDetector(
                                       onTap: () {
-                                        // 👇 هذا التعديل يتم بأمان داخل setState وخارج التكرار
                                         setState(() {
                                           selectedImages.removeAt(index);
                                           if (uploadedPhotos.length > index) {
@@ -597,7 +644,7 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.red.withOpacity(0.7),
+                                          color: Colors.red,
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(Icons.close,
@@ -617,11 +664,11 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
 
 // ==========================CATEGORY================================
               //category
-              ProductData.buildDropdown(
+              ProductData.buildDropdown2(
                   context: context,
                   selectedValue: selectedCategory,
                   items: Category ?? [],
-                  label: 'category',
+                  label: S.of(context).category,
                   onChanged: (value) {
                     setState(() {
                       selectedCategory = value;
@@ -633,12 +680,14 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
 
 //============================SUB CATEGORIES==============================
 
-              if ( selectedCategory != "أراضي" &&(userType == 'Agriculteur' || userType == 'Commerçant') )
-                ProductData.buildDropdown(
+              if (selectedCategory != S.of(context).lands &&
+                  (userType == 'فلاح' || userType == 'تاجر'))
+                ProductData.buildDropdown2(
                   context: context,
                   selectedValue: selectedsubCategory,
-                  items: ProductData.getSubCategories(typeItem, selectedCategory, context),
-                  label: 'sub category',
+                  items: ProductData.getSubCategories(
+                      typeItem, selectedCategory, context),
+                  label: S.of(context).subCategory,
                   onChanged: (value) {
                     setState(() {
                       selectedsubCategory = value;
@@ -648,47 +697,55 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
                 ),
 
 //=============================PRODUCTS=========================================
-              if (userType != 'Réparateur' && selectedCategory != "أراضي"  && selectedCategory != null)
-                ProductData.buildDropdown(
-                    context: context,
-                    selectedValue: selectedproduct,
-                    items: userType == 'Transporteur'
-                        ? ProductData.moyensDeTransport
-                        : (selectedsubCategory != null
-                            ? ProductData.getProduct(
-                                typeItem, selectedsubCategory!, context)
-                            : ProductData.getProduct(
-                                typeItem, selectedCategory!, context)),
-                    label: 'product',
-                    onChanged: (value) {
-                      setState(() {
-                        selectedproduct = value;
-                      });
-                    }),
+              if (userType != 'مصلح' &&
+                  selectedCategory != S.of(context).lands &&
+                  selectedCategory != null)
+                ProductData.buildDropdown2(
+                  context: context,
+                  selectedValue: selectedproduct,
+                  items: userType == 'ناقل'
+                      ? ProductData.moyensDeTransport
+                      : (selectedsubCategory != null
+                          ? ProductData.getProduct(
+                              typeItem, selectedsubCategory!, context)
+                          : ProductData.getProduct(
+                              typeItem, selectedCategory!, context)),
+                  label: userType == 'ناقل'
+                      ? S.of(context).transport_means_label
+                      : (userType == 'خبير زراعي'
+                          ? S.of(context).type_label
+                          : S.of(context).product),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedproduct = value;
+                    });
+                  },
+                ),
 
 //===========================Quantity===================================
 
-              if (userType == "Agriculteur" || userType == "Éleveur") ...[
+              if (userType == "فلاح" || userType == "مربي الماشية") ...[
                 ProductData.buildTextField(
+                    context: context,
                     controller: quantiteController,
-                    hintText: "الكمية",
+                    hintText: S.of(context).quantity,
                     icon: Icons.scale,
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please fill the feild';
+                        return S.of(context).pleaseFillField;
                       }
                       return null;
                     }),
               ],
 
 //=======================SERVICES TYPE======================================
-              if (userType == "Commerçant" && selectedCategory != null)
-                ProductData.buildDropdown(
+              if (userType == "تاجر" && selectedCategory != null)
+                ProductData.buildDropdown2(
                   context: context,
                   selectedValue: selectedTypeService,
                   items: localizedServiceTypes,
-                  label: 'Rent / Sell',
+                  label: S.of(context).rentOrSell,
                   onChanged: (value) {
                     setState(() {
                       selectedTypeService = value;
@@ -697,27 +754,29 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
                 ),
 
 //=========================SURFACES====================================
-              if (selectedCategory == "أراضي")
+              if (selectedCategory == S.of(context).lands)
                 ProductData.buildTextField(
+                    context: context,
                     controller: surfaceController,
-                    hintText: "المساحة",
+                    hintText: S.of(context).area,
                     icon: Icons.landscape,
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please fill the feild';
+                        return S.of(context).pleaseFillField;
                       }
                       return null;
                     }),
 //===============================PRICE====================================
               ProductData.buildTextField(
+                  context: context,
                   controller: prixController,
-                  hintText: "السعر",
+                  hintText: S.of(context).price,
                   icon: Icons.attach_money,
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please fill the feild';
+                      return S.of(context).pleaseFillField;
                     }
                     return null;
                   }),
@@ -725,11 +784,11 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
 
               if (selectedCategory != null &&
                   localizedUnitsByCategory.containsKey(selectedCategory!))
-                ProductData.buildDropdown(
+                ProductData.buildDropdown2(
                   context: context,
                   selectedValue: selectedUnit,
                   items: localizedUnitsByCategory[selectedCategory!]!,
-                  label: 'Unit',
+                  label: S.of(context).unit,
                   onChanged: (value) {
                     setState(() {
                       selectedUnit = value;
@@ -738,11 +797,11 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
                 ),
 
 //==============================WILAYA================================
-              ProductData.buildDropdown(
+              ProductData.buildDropdown2(
                 context: context,
                 selectedValue: selectedWilaya,
                 items: ProductData.wilayasT(context).keys.toList(),
-                label: 'Wilaya',
+                label: S.of(context).wilaya,
                 onChanged: (value) {
                   setState(() {
                     selectedWilaya = value;
@@ -753,11 +812,11 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
 
 //==============================DAIRA================================
               if (selectedWilaya != null)
-                ProductData.buildDropdown(
+                ProductData.buildDropdown2(
                     context: context,
                     selectedValue: selectedDaira,
                     items: ProductData.wilayasT(context)[selectedWilaya]!,
-                    label: 'Daira',
+                    label: S.of(context).daira,
                     onChanged: (value) {
                       setState(() {
                         selectedDaira = value;
@@ -766,8 +825,9 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
 
 //==============================DESCRIPTION================================
               ProductData.buildTextField(
+                context: context,
                 controller: descriptionController,
-                hintText: "Description",
+                hintText: S.of(context).description,
                 icon: Icons.description,
                 maxLines: 4,
                 validator: (value) {
@@ -776,55 +836,109 @@ void _mapTranslations(Map<String, List<String>> arabicMap,
               ),
 
 //==============================RESET BUTTON======================================================
-ProductData.actionButton(
-  label: "Reset",
-  backgroundColor: Colors.blueGrey.shade700,
-  onPressed: _isFormEmpty()
-      ? () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "النموذج فارغ",
-                style: TextStyle(color: Colors.black),
+              ProductData.actionButton(
+                context: context,
+                label: S.of(context).reset,
+                backgroundColor: const Color.fromARGB(255, 93, 122, 132),
+                onPressed: _isFormEmpty()
+                    ? () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.warning,
+                                    color: Colors.black87),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    S.of(context).formIsEmpty,
+                                    style: const TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 247, 234, 117),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      }
+                    : () {
+                        try {
+                          _resetForm();
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(Icons.error, color: Colors.white),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      "${S.of(context).error}: $e",
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 247, 234, 117),
+                            ),
+                          );
+                        }
+                      },
               ),
-              backgroundColor: Color.fromARGB(255, 247, 234, 117),
-            ),
-          );
-        }
-      : () {
-          try {
-            _resetForm();
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Error: $e")),
-            );
-          }
-        },
-),
 
 //==============================SHARE BUTTON================================
-ProductData.actionButton(
-  label: "Share",
-  isLoading: _isLoading, // تأكد من أنه عند الضغط، يظل في حالة تحميل حتى تتم العملية
-  onPressed: () async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-      await _submitForm(); // استخدام await لضمان انتهاء العملية أولاً
-      setState(() {
-        _isLoading = false; // إيقاف حالة التحميل بعد الانتهاء
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false; // إيقاف حالة التحميل في حال حدوث خطأ
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
-    }
-  },
-),
+              ProductData.actionButton(
+                context: context,
+                label: S.of(context).share,
+                backgroundColor: isDarkMode
+                    ? const Color(0xFF90D5AE)
+                    : const Color(0xFF256C4C),
+                isLoading:
+                    _isLoading, // تأكد من أنه عند الضغط، يظل في حالة تحميل حتى تتم العملية
+                onPressed: () async {
+                  try {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    await _submitForm(); // استخدام await لضمان انتهاء العملية أولاً
+                    setState(() {
+                      _isLoading = false; // إيقاف حالة التحميل بعد الانتهاء
+                    });
+                  } catch (e) {
+                    setState(() {
+                      _isLoading = false; // إيقاف حالة التحميل في حال حدوث خطأ
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: Colors.black,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                "${S.of(context).error}: $e",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        backgroundColor:
+                            const Color.fromARGB(255, 247, 234, 117),
+                      ),
+                    );
+                  }
+                },
+              ),
 //==============================FIN================================
             ],
           ),

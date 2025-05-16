@@ -19,11 +19,34 @@ class ProfilePicturePage extends StatefulWidget {
   _ProfilePicturePageState createState() => _ProfilePicturePageState();
 }
 
-class _ProfilePicturePageState extends State<ProfilePicturePage> {
+class _ProfilePicturePageState extends State<ProfilePicturePage>
+    with SingleTickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
   bool isLoading = false;
   bool isImageSelected = false;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   // Pick Image from Gallery or Camera
   Future<void> _pickImage() async {
@@ -32,8 +55,8 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title:  Text(S.of(context).choose_picture,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(S.of(context).choose_picture,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -43,7 +66,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                   color: isDarkMode
                       ? const Color(0xFF90D5AE)
                       : const Color(0xFF256C4C)),
-              title:  Text(S.of(context).select_from_gallery),
+              title: Text(S.of(context).select_from_gallery),
               onTap: () async {
                 final picked =
                     await _picker.pickImage(source: ImageSource.gallery);
@@ -61,7 +84,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                   color: isDarkMode
                       ? const Color(0xFF90D5AE)
                       : const Color(0xFF256C4C)),
-              title:  Text(S.of(context).capture_with_camera),
+              title: Text(S.of(context).capture_with_camera),
               onTap: () async {
                 final picked =
                     await _picker.pickImage(source: ImageSource.camera);
@@ -99,12 +122,38 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
         'location': imagePath,
         'photo': imageUrl,
       });
+
+      // Show success animation
+     ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    backgroundColor: Color(0xFF256C4C), // Softer success green
+    
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    content: Row(
+      children: [
+        const Icon(Icons.check_circle, color: Colors.black),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            S.of(context).profile_picture_updated_successfully,
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    ),
+    duration: const Duration(seconds: 3),
+  ),
+);
     } catch (e) {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text("Error"),
+          title: Text(S.of(context).error),
           content: Text(e.toString()),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
     } finally {
@@ -113,16 +162,16 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
   }
 
   Future<void> onProceed() async {
- 
     bool isVerified = await Users.checkEmailVerification(context);
 
     if (!isVerified) {
       // If the email is not verified, navigate to the Login page
-     Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const LoginPage(frompage: 'ProfilPicture')),
-            );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
     } else {
       Navigator.pushReplacement(
         context,
@@ -134,23 +183,47 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // "Skip" Button if no image is selected
-            if (!isImageSelected)
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 120, right: 35),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDarkMode
+                ? [
+                    Color.fromARGB(255, 16, 24, 20),
+                    colorScheme.secondaryContainer
+                  ]
+                : [colorScheme.secondaryContainer, Colors.white],
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // Skip Button
+              if (!isImageSelected)
+                Positioned(
+                  top: 20,
+                  right: 20,
                   child: TextButton(
                     onPressed: () => onProceed(),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                     child: Text(
-                      "Skip",
+                      S.of(context).skip,
                       style: TextStyle(
-                        fontSize: 26,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                         color: isDarkMode
                             ? const Color(0xFF90D5AE)
                             : const Color(0xFF256C4C),
@@ -158,91 +231,182 @@ class _ProfilePicturePageState extends State<ProfilePicturePage> {
                     ),
                   ),
                 ),
-              ),
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Outer CircleAvatar for the border
-                  CircleAvatar(
-                    radius: 123, // Outer circle (border size)
-                    backgroundColor: isDarkMode
-                        ? const Color(0xFF90D5AE) // Border color for dark mode
-                        : const Color(
-                            0xFF256C4C), // Border color for light mode
-                    child: CircleAvatar(
-                      radius: 120, // Inner circle (profile picture size)
-                      backgroundImage: _selectedImage != null
-                          ? FileImage(_selectedImage!)
-                          : AssetImage(isDarkMode
-                              ? "assets/anonymeD.png"
-                              : "assets/anonyme.png") as ImageProvider,
-                    ),
+
+              // Title
+              Positioned(
+                top: size.height * 0.12,
+                left: 0,
+                right: 0,
+                child: Text(
+                  S.of(context).profile_picture,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black87,
                   ),
-                  const SizedBox(height: 30),
-                  if (isImageSelected)
-                    ElevatedButton.icon(
-                      onPressed: _pickImage,
-                      icon: Icon(
-                        Icons.edit,
-                        color: isDarkMode ? Colors.black : Colors.white,
-                        size: 20,
-                      ),
-                      label: Text(
-                        "Change Picture",
-                        style: TextStyle(
-                            color: isDarkMode ? Colors.black : Colors.white,
-                            fontSize: 20),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDarkMode
-                            ? const Color(0xFF90D5AE)
-                            : const Color(0xFF256C4C),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 15),
+                ),
+              ),
+
+              // Subtitle
+              Positioned(
+                top: size.height * 0.17,
+                left: 40,
+                right: 40,
+                child: Text(
+                  S.of(context).add_profile_picture_subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDarkMode ? Colors.white70 : Colors.black54,
+                  ),
+                ),
+              ),
+
+              // Profile Picture and Done Button
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 40),
+                    // Profile Picture
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Profile Picture
+                          Container(
+                            width: 180,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDarkMode
+                                    ? const Color(0xFF90D5AE)
+                                    : const Color(0xFF256C4C),
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                if (!isImageSelected)
+                                  BoxShadow(
+                                    color: isDarkMode
+                                        ? Colors.black.withOpacity(0.4)
+                                        : Colors.white.withOpacity(0.4),
+                                    spreadRadius: 3,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(90),
+                              child: _selectedImage != null
+                                  ? Image.file(
+                                      _selectedImage!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      isDarkMode
+                                          ? "assets/anonymeD.png"
+                                          : "assets/anonyme.png",
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
+
+                          // Camera Icon Overlay (only shown when no image is selected)
+                          if (!isImageSelected)
+                            Container(
+                              width: 180,
+                              height: 180,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isDarkMode
+                                    ? Colors.white.withOpacity(0.3)
+                                    : Colors.black.withOpacity(0.5),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 40,
+                                color: isDarkMode
+                                    ? Colors.black.withOpacity(0.8)
+                                    : Colors.white.withOpacity(0.8),
+                              ),
+                            ),
+
+                          // Edit Icon (only shown when image is selected)
+                          if (isImageSelected)
+                            Positioned(
+                              bottom: 5,
+                              right: 5,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: isDarkMode
+                                      ? const Color(0xFF90D5AE)
+                                      : const Color(0xFF256C4C),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isDarkMode
+                                        ? Colors.black
+                                        : Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.edit,
+                                  size: 20,
+                                  color:
+                                      isDarkMode ? Colors.black : Colors.white,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                  const SizedBox(height: 30),
-                  isLoading
-                      ? const CircularProgressIndicator()
-                      : ElevatedButton.icon(
+
+                    const SizedBox(height: 50),
+
+                    // Done Button
+                    if (isImageSelected && !isLoading)
+                      ScaleTransition(
+                        scale: _animation,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            await uploadImageAndSave();
+                            await onProceed();
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDarkMode
                                 ? const Color(0xFF90D5AE)
                                 : const Color(0xFF256C4C),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                            foregroundColor:
+                                isDarkMode ? Colors.black : Colors.white,
                             padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 20),
+                                horizontal: 40, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 5,
                           ),
-                          onPressed: () async {
-                            if (!isImageSelected) {
-                              await _pickImage();
-                            } else {
-                              await uploadImageAndSave();
-                              await onProceed();
-                            }
-                          },
-                          icon: Icon(
-                            isImageSelected ? Icons.check : Icons.photo_camera,
-                            color: isDarkMode ? Colors.black : Colors.white,
-                            size: 20,
-                          ),
-                          label: Text(
-                            isImageSelected ? "Done" : "Add picture",
-                            style: TextStyle(
-                                fontSize: 20,
-                                color:
-                                    isDarkMode ? Colors.black : Colors.white),
+                          child: Text(
+                            S.of(context).done,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                ],
+                      ),
+
+                    // Loading Indicator
+                    if (isLoading) const CircularProgressIndicator(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -28,44 +28,36 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-        appBar: widget.frompage == 'ProfilPicture'
-            ? const PreferredSize(
-                preferredSize: Size.fromHeight(30.0), // Set your desired height
-                child: SizedBox(height: 30.0), // SizedBox with height
-              )
-            : PreferredSize(
-                preferredSize:
-                    const Size.fromHeight(30.0), // Set your desired height
-                child: AppBar(
-                  leading: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 28,
-                        color: isDarkMode
-                            ? const Color(0xFF90D5AE)
-                            : const Color(0xFF256C4C),
-                      ),
-                      onPressed: () async {
-                        try {
-                          // Sign in anonymously
-                          await FirebaseAuth.instance.signInAnonymously();
-
-                          // Navigate to HomePage after successful anonymous login
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()),
-                          );
-                        } catch (e) {
-                          // Handle errors (e.g., show a dialog or snackbar)
-                          print("Anonymous sign-in failed: $e");
-                         
-                        }
-                      }),
-                  backgroundColor: Colors.transparent, // Transparent background
-                  elevation: 0, // Remove shadow
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(30.0), // Set your desired height
+          child: AppBar(
+            leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  size: 28,
+                  color: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C),
                 ),
-              ),
+                onPressed: () async {
+                  try {
+                    // Sign in anonymously
+                    await FirebaseAuth.instance.signInAnonymously();
+
+                    // Navigate to HomePage after successful anonymous login
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+                  } catch (e) {
+                    // Handle errors (e.g., show a dialog or snackbar)
+                    print("Anonymous sign-in failed: $e");
+                  }
+                }),
+            backgroundColor: Colors.transparent, // Transparent background
+            elevation: 0, // Remove shadow
+          ),
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -78,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 10),
 
                 // النص الترحيبي
-               Text(S.of(context).signIn,
+                Text(S.of(context).signIn,
                     style: GoogleFonts.roboto(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -233,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             children: [
                               TextSpan(
-                                 text: S.of(context).forgotPassword,
+                                text: S.of(context).forgotPassword,
                                 style: const TextStyle(
                                   decoration: TextDecoration
                                       .underline, // Underline the text
@@ -296,7 +288,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: isDarkMode ? Colors.white : Colors.black,
                     ),
                     children: [
-                       TextSpan(
+                      TextSpan(
                         text: S.of(context).noAccount,
                         style: const TextStyle(
                           color: Colors.grey,
