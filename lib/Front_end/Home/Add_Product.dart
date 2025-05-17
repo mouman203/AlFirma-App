@@ -889,13 +889,13 @@ class _AddProductsState extends State<AddProducts> {
                           SnackBar(
                             content: Row(
                               children: [
-                                const Icon(Icons.warning,
+                                const Icon(Icons.error_outline,
                                     color: Colors.black87),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     S.of(context).formIsEmpty,
-                                    style: const TextStyle(color: Colors.black),
+                                    style:const TextStyle(color: Colors.black, fontSize: 18),
                                   ),
                                 ),
                               ],
@@ -914,13 +914,13 @@ class _AddProductsState extends State<AddProducts> {
                             SnackBar(
                               content: Row(
                                 children: [
-                                  const Icon(Icons.error, color: Colors.white),
+                                  const Icon(Icons.error_outline, color: Colors.black),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       "${S.of(context).error}: $e",
                                       style:
-                                          const TextStyle(color: Colors.white),
+                                          const  TextStyle(color: Colors.black, fontSize: 18),
                                     ),
                                   ),
                                 ],

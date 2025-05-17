@@ -577,7 +577,7 @@ class VeterinarianCard extends StatelessWidget {
                                            S.of(context).loginToMessage,
                                           style: TextStyle(
                                               color: Colors.black,
-                                              fontSize: 16),
+                                              fontSize: 18),
                                         ),
                                       ),
                                     ],
@@ -627,7 +627,7 @@ class VeterinarianCard extends StatelessWidget {
                                            S.of(context).cannotOpenDialer,
                                           style: TextStyle(
                                               color: Colors.black,
-                                              fontSize: 16),
+                                              fontSize: 18),
                                         ),
                                       ),
                                     ],
@@ -649,7 +649,7 @@ class VeterinarianCard extends StatelessWidget {
                                       child: Text(
                                        S.of(context).noPhoneNumber,
                                         style: TextStyle(
-                                            color: Colors.black, fontSize: 16),
+                                            color: Colors.black, fontSize: 18),
                                       ),
                                     ),
                                   ],

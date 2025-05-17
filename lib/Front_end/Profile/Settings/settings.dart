@@ -136,15 +136,17 @@ class _SettingsPageState extends State<SettingsPage> {
               color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
             ),
             title: Text(
-              S.of(context).language, // localized "Language"
+              S.of(context).language,
               style: TextStyle(
                 color: isDarkMode ? Colors.white : Colors.black,
               ),
             ),
             trailing: Container(
-              width: 100, // adjust width as needed
+              width: 100,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondaryContainer,
+                color: isDarkMode
+                    ? const Color.fromARGB(255, 16, 24, 20)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: DropdownButtonHideUnderline(
@@ -153,15 +155,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     offset: const Offset(0, 0),
                     width: MediaQuery.of(context).size.width - 310,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      color: isDarkMode
+                          ? const Color.fromARGB(255, 16, 24, 20)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   value: languageProvider.locale,
                   decoration: const InputDecoration(
-                    border: InputBorder.none, 
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 8),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
                   ),
                   iconStyleData: IconStyleData(
                     iconEnabledColor: isDarkMode
@@ -195,10 +198,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Text(
                           text,
                           style: TextStyle(
-                            color: isDarkMode
-                                ? Colors.white
-                                : const Color(0xFF256C4C),
-                            fontWeight: FontWeight.w600,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       );
@@ -210,9 +211,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(
                         S.of(context).languageArabic,
                         style: TextStyle(
-                          color: isDarkMode
-                              ? Colors.white
-                              : const Color(0xFF256C4C),
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                     ),
@@ -221,9 +220,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(
                         S.of(context).languageFrench,
                         style: TextStyle(
-                          color: isDarkMode
-                              ? Colors.white
-                              : const Color(0xFF256C4C),
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                     ),
@@ -232,9 +229,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(
                         S.of(context).languageEnglish,
                         style: TextStyle(
-                          color: isDarkMode
-                              ? Colors.white
-                              : const Color(0xFF256C4C),
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                     ),

@@ -384,8 +384,10 @@ class _ItemCardState extends State<ItemCard> {
                                     ? localizedProduct
                                     : localizedCategory
                                 : item.typeItem == "منتج تجاري"
-                                    ? localizedProduct
-                                    : localizedCategory,
+                                    ? localizedProduct.isNotEmpty
+                                        ? localizedProduct
+                                        : localizedCategory
+                                    : localizedProduct,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
@@ -409,27 +411,21 @@ class _ItemCardState extends State<ItemCard> {
                   ),
 
                   const SizedBox(height: 5),
-                  // Display price
                   if (item.SP == "Product")
-                    Row(children: [
-                      Text(
-                        "${item.price}${S.of(context).dinar}/${localizedUnit}",
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ]),
-                  (item.SP == "Service" && item.category == "أراضي")
-                      ? Row(
-                          children: [
-                            Text(
-                              "${item.price}${S.of(context).dinar}/${localizedUnit}",
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          ],
-                        )
-                      : Text(
-                          '${S.of(context).dinar} ${item.price}',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
+                    Text(
+                      "${item.price}${S.of(context).dinar}/${localizedUnit}",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    )
+                  else if (item.SP == "Service" && item.category == "أراضي")
+                    Text(
+                      "${item.price}${S.of(context).dinar}/${localizedUnit}",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    )
+                  else
+                    Text(
+                      '${S.of(context).dinar} ${item.price}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   const SizedBox(height: 7),
 
                   // Reactions for Service and Product

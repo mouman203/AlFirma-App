@@ -210,7 +210,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF256C4C),
+          backgroundColor:Color.fromARGB(255, 54, 126, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -221,7 +221,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Expanded(
                 child: Text(
                   S.of(context).profile_updated,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ),
             ],
@@ -235,7 +235,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF256C4C),
+          backgroundColor: Color.fromARGB(255, 54, 126, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -246,7 +246,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Expanded(
                 child: Text(
                   S.of(context).no_changes_detected,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ),
             ],

@@ -141,13 +141,13 @@ void showAlertsPopup(BuildContext context) {
         title: Text(
           S.of(context).alert,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 24,
             color: Colors.red,
           ),
         ),
         content: Text(
           S.of(context).alertMessage,
-          style: const TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 20),
         ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [
@@ -164,7 +164,7 @@ void showAlertsPopup(BuildContext context) {
             child: Text(
               S.of(context).ok,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 color: Theme.of(context).brightness == Brightness.light
                     ? Colors.white
                     : Colors.black,

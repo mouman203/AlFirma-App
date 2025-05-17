@@ -176,12 +176,20 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       print('Signaled by $uid');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            S.of(context).reportConfirmation,
-            style: TextStyle(fontSize: 18),
+         content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.black),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  S.of(context).reportConfirmation,
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
+                ),
+              ),
+            ],
           ),
           duration: Duration(seconds: 1),
-          backgroundColor: Color(0xFF256C4C),
+          backgroundColor: Color.fromARGB(255, 54, 126, 44),
         ),
       );
     } catch (e) {

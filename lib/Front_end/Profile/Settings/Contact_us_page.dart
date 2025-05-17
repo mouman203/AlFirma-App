@@ -80,7 +80,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
       print("✅ Success: Email sent successfully!");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF256C4C), // Green background
+          backgroundColor: Color.fromARGB(255, 54, 126, 44), // Green background
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -92,7 +92,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
               Expanded(
                 child: Text(
                   S.of(context).emailSentSuccess,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ),
             ],
@@ -114,12 +114,12 @@ class _ContactUsPageState extends State<Contact_us_page> {
           duration: const Duration(seconds: 1),
           content: Row(
             children: [
-              const Icon(Icons.error_outline, color: Colors.black),
+              const Icon(Icons.warning_amber_outlined, color: Colors.black),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   S.of(context).emailSendError,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ),
             ],

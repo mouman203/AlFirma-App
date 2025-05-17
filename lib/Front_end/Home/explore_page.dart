@@ -427,11 +427,16 @@ class _ExplorePageState extends State<ExplorePage> {
     // إذا كان الحقل متركزًا وكان النص فارغ وعندنا عمليات بحث سابقة
     if (_controller.text.isEmpty && recentSearches.isNotEmpty) {
       return SizedBox(
-        height: 200,
+        height: 120,
         child: ListView(
           children: recentSearches
               .map((word) => ListTile(
-                    leading: const Icon(Icons.history),
+                    leading: Icon(
+                      Icons.history,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
+                    ),
                     title: Text(word),
                     onTap: () async {
                       _controller.text = word;
@@ -470,57 +475,55 @@ class _ExplorePageState extends State<ExplorePage> {
 
     // إذا كان في نتائج مفلترة بناءً على النص المدخل
     if (filteredNames.isNotEmpty) {
-      return SizedBox(
-        height: 200, // تأكد من تحديد ارتفاع لتجنب overflow
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.symmetric(vertical: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                spreadRadius: 2,
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color.fromARGB(255, 16, 24, 20)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        constraints: BoxConstraints(
+          maxHeight: 170,
+        ),
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          itemCount: filteredNames.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              dense: true, // Make the list tiles more compact
+              title: Text(
+                filteredNames[index],
+                style: TextStyle(fontSize: 16),
               ),
-            ],
-          ),
-          child: ListView.builder(
-            itemCount: filteredNames.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(filteredNames[index]),
-                onTap: () async {
-                  String searchTerm = filteredNames[index];
-                  await searchManager.addSearch(searchTerm);
-                  loadSearchHistory();
-                  _controller.text = searchTerm;
+              onTap: () async {
+                String searchTerm = filteredNames[index];
+                await searchManager.addSearch(searchTerm);
+                loadSearchHistory();
+                _controller.text = searchTerm;
 
-                  // Convert to Arabic for search if it's in our translation maps
-                  String arabicTerm = productTranslations[searchTerm] ??
-                      categoryTranslations[searchTerm] ??
-                      subCategoryTranslations[searchTerm] ??
-                      searchTerm;
+                // Convert to Arabic for search if it's in our translation maps
+                String arabicTerm = productTranslations[searchTerm] ??
+                    categoryTranslations[searchTerm] ??
+                    subCategoryTranslations[searchTerm] ??
+                    searchTerm;
 
-                  List<Products> results =
-                      await user.searchProducts(arabicTerm);
+                List<Products> results = await user.searchProducts(arabicTerm);
 
-                  // Localize the results
-                  List<Products> localizedResults = results
-                      .map((product) => localizeProduct(product))
-                      .toList();
+                // Localize the results
+                List<Products> localizedResults =
+                    results.map((product) => localizeProduct(product)).toList();
 
-                  setState(() {
-                    productList = localizedResults;
-                    filteredNames = [];
-                    _focusNode.unfocus();
-                    _controller.clear();
-                  });
-                },
-              );
-            },
-          ),
+                setState(() {
+                  productList = localizedResults;
+                  filteredNames = [];
+                  _focusNode.unfocus();
+                  _controller.clear();
+                });
+              },
+            );
+          },
         ),
       );
     }
@@ -660,10 +663,11 @@ class _ExplorePageState extends State<ExplorePage> {
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                            width: 1.5,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFF90D5AE)
+                                    : const Color(0xFF256C4C),
+                            width: 1,
                           ),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12)),
@@ -673,7 +677,7 @@ class _ExplorePageState extends State<ExplorePage> {
                             color: isDarkMode
                                 ? const Color(0xFF90D5AE)
                                 : const Color(0xFF256C4C),
-                            width: 2,
+                            width: 1.5,
                           ),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12)),
@@ -784,11 +788,11 @@ class _ExplorePageState extends State<ExplorePage> {
                                       style: const TextStyle(
                                           fontSize: 21,
                                           color:
-                                              Color.fromARGB(255, 47, 114, 38),
+                                              Color.fromARGB(255, 54, 126, 44),
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(S.of(context).aiDescription,
-                                        style: const TextStyle(fontSize: 14)),
+                                        style: const TextStyle(fontSize: 16)),
                                     FilledButton(
                                       onPressed: () {
                                         if (Users.isGuestUser()) {

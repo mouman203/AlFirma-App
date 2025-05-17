@@ -249,7 +249,7 @@ class _DocumentFormState extends State<DocumentForm> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF256C4C),
+          backgroundColor: Color.fromARGB(255, 54, 126, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -260,7 +260,7 @@ class _DocumentFormState extends State<DocumentForm> {
               Expanded(
                 child: Text(
                   S.of(context).documents_sent_successfully,
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ),
             ],

@@ -138,48 +138,71 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.only(top: 54, bottom: 16),
-                              child: CircleAvatar(
-                                radius: 93,
-                                backgroundColor: isDarkMode
-                                    ? const Color(0xFF90D5AE)
-                                    : const Color(0xFF256C4C),
-                                child: CircleAvatar(
-                                  radius: 90,
-                                  backgroundImage: (profilePic != null &&
-                                          profilePic!.isNotEmpty)
-                                      ? NetworkImage(profilePic!)
-                                      : (isDarkMode
-                                              ? const AssetImage(
-                                                  "assets/anonymeD.png")
-                                              : const AssetImage(
-                                                  "assets/anonyme.png"))
-                                          as ImageProvider,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 54,
-                            right: 100,
-                            child: CircleAvatar(
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .secondaryContainer,
-                              child: IconButton(
-                                icon: Icon(Icons.edit,
-                                    color: isDarkMode
-                                        ? Colors.white
-                                        : const Color(0xFF256C4C)),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const EditProfilePage(
-                                              frompage: "profile"),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Outer Circle (border color)
+                                  CircleAvatar(
+                                    radius: 93,
+                                    backgroundColor: isDarkMode
+                                        ? const Color(0xFF90D5AE)
+                                        : const Color(0xFF256C4C),
+                                    child: CircleAvatar(
+                                      radius: 90,
+                                      backgroundImage: (profilePic != null &&
+                                              profilePic!.isNotEmpty)
+                                          ? NetworkImage(profilePic!)
+                                          : (isDarkMode
+                                                  ? const AssetImage(
+                                                      "assets/anonymeD.png")
+                                                  : const AssetImage(
+                                                      "assets/anonyme.png"))
+                                              as ImageProvider,
                                     ),
-                                  );
-                                },
+                                  ),
+
+                                  Positioned(
+                                    top: 5,
+                                    right: 5,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: isDarkMode
+                                              ? const Color(0xFF90D5AE)
+                                              : const Color(0xFF256C4C),
+                                          width: 2.5,
+                                        ),
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .secondaryContainer,
+                                        child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          icon: Icon(
+                                            Icons.edit,
+                                            size: 26,
+                                            color: isDarkMode
+                                                ? Colors.white
+                                                : const Color(0xFF256C4C),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const EditProfilePage(
+                                                        frompage: "profile"),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                           ),

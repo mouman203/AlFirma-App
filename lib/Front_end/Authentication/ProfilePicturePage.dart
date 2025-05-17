@@ -126,8 +126,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage>
       // Show success animation
      ScaffoldMessenger.of(context).showSnackBar(
   SnackBar(
-    backgroundColor: Color(0xFF256C4C), // Softer success green
-    
+    backgroundColor: Color.fromARGB(255, 54, 126, 44),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
     ),
@@ -138,12 +137,12 @@ class _ProfilePicturePageState extends State<ProfilePicturePage>
         Expanded(
           child: Text(
             S.of(context).profile_picture_updated_successfully,
-            style: const TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black, fontSize: 18),
           ),
         ),
       ],
     ),
-    duration: const Duration(seconds: 3),
+    duration: const Duration(seconds: 1),
   ),
 );
     } catch (e) {
