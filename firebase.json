@@ -1,1 +1,38 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"agri-plantt","appId":"1:481243125761:android:b671e4f5fdc177e1324800","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"agri-plantt","configurations":{"android":"1:481243125761:android:b671e4f5fdc177e1324800","ios":"1:481243125761:ios:642c21467d013458324800","macos":"1:481243125761:ios:642c21467d013458324800","web":"1:481243125761:web:860b77b938079b74324800","windows":"1:481243125761:web:f08fd0fb59f109b1324800"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "agri-plantt",
+          "appId": "1:481243125761:android:b671e4f5fdc177e1324800",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "agri-plantt",
+          "configurations": {
+            "android": "1:481243125761:android:b671e4f5fdc177e1324800",
+            "ios": "1:481243125761:ios:642c21467d013458324800",
+            "macos": "1:481243125761:ios:642c21467d013458324800",
+            "web": "1:481243125761:web:860b77b938079b74324800",
+            "windows": "1:481243125761:web:f08fd0fb59f109b1324800"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

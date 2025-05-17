@@ -1,0 +1,2 @@
+E:/Start Up/AlFirma/codee/Start-up/android/app/.cxx/Debug/5cm5v4i6/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/Start Up/AlFirma/codee/Start-up/android/app/.cxx/Debug/5cm5v4i6/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -6,6 +6,7 @@ import 'package:agriplant/generated/l10n.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -324,11 +325,15 @@ class Users {
         // Do NOT send verification email here. Already handled in ProfilePicturePage
         String uid = userCredential.user!.uid;
 
+        //get the token
+        final token = await FirebaseMessaging.instance.getToken();
+
         // Step 2: Add user details to Firestore
         await FirebaseFirestore.instance.collection('Users').doc(uid).set({
           'first_name': first_name,
           'last_name': last_name,
           'phone': phone,
+          'fcmToken':token,
           'photo': "",
           'following': [],
           'followers': [],
@@ -375,7 +380,6 @@ class Users {
       showErrorDialog(context, S.of(context).error_enter_email);
       return;
     }
-
     if (!await checkIfEmailExists(email)) {
       showErrorDialog(context, S.of(context).error_no_account_for_email);
       return;
@@ -457,6 +461,7 @@ class Users {
           String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
           String lastName =
               nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+          final token = await FirebaseMessaging.instance.getToken();
 
           // Save new user data if not already present
           await userRef.set({
@@ -465,8 +470,9 @@ class Users {
             "first_name": firstName,
             "last_name": lastName,
             "phone": firebaseUser.phoneNumber ?? "",
-            "password": "signed with Google",
+            "password": "Signed with Google",
             "photo": firebaseUser.photoURL ?? "",
+            "fcmToken":token,
             "userType": {},
             'activeType': 'عميل',
             "following": [],

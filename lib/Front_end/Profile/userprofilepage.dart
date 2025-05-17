@@ -1,7 +1,6 @@
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
-import 'package:agriplant/Services/Notification_services.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,7 +20,6 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final notificationservice = NotificationService();
 
   String username = "Loading...";
   String role = "";
@@ -34,8 +32,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void initState() {
     super.initState();
     _loadUserData();
-
-    notificationservice.initNotification();
   }
 
   Future<void> _loadUserData() async {
@@ -82,8 +78,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
       setState(() {
         isFollowing = true;
         followersCount++;
-        notificationservice.showNotification(
-            title: "Al Firma", body: "You have new follower !");
       });
     }
   }
