@@ -20,16 +20,18 @@ class LanguageProvider with ChangeNotifier {
   }
 
   // Load saved language from preferences
-  Future<void> loadLanguage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? langCode = prefs.getString('languageCode');
-    final newLocale = langCode != null && langCode.isNotEmpty
-        ? Locale(langCode)
-        : const Locale('ar'); // Fallback to Arabic
+ Future<void> loadLanguage() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? langCode = prefs.getString('languageCode');
 
-    if (_locale != newLocale) {
-      _locale = newLocale;
-      notifyListeners();
-    }
+  final newLocale = (langCode != null && langCode.isNotEmpty)
+      ? Locale(langCode)
+      : const Locale('ar'); // Fallback to Arabic
+
+  if (_locale != newLocale) {
+    _locale = newLocale;
+    notifyListeners();
   }
+}
+
 }

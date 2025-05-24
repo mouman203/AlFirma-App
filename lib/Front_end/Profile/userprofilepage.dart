@@ -1,6 +1,5 @@
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
-import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:agriplant/widgets_UI/Item_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -232,36 +231,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   ),
                                 ),
                                 const SizedBox(width: 20),
-                                SizedBox(
-                                  width: 140,
-                                  height: 45,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ChatPage(
-                                              receiverId: widget.userId),
-                                        ),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: isDarkMode
-                                          ? const Color(0xFF90D5AE)
-                                          : const Color(0xFF256C4C),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      IconlyBold.message,
-                                      size: 30,
-                                      color: isDarkMode
-                                          ? Colors.black
-                                          : Colors.white,
-                                    ),
-                                  ),
-                                ),
+                               
                               ],
                             ],
                           ),

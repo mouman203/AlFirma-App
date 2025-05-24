@@ -1,7 +1,7 @@
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
-import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Front_end/Item%20detaille/fullscreanimage.dart';
+import 'package:agriplant/Front_end/Meseges/Chat.dart';
 import 'package:agriplant/Front_end/Profile/userprofilepage.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final Products product;
@@ -176,7 +175,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       print('Signaled by $uid');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-         content: Row(
+          content: Row(
             children: [
               const Icon(Icons.check_circle, color: Colors.black),
               const SizedBox(width: 12),
@@ -937,137 +936,48 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      child: Row(
+      child: widget.product.ownerId ==FirebaseAuth.instance.currentUser?.uid
+              ? const SizedBox()
+              : Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          
           // Chat button
+          
           Expanded(
-            child: FilledButton.icon(
-              onPressed: () {
-                if (!Users.isGuestUser()) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ChatPage(receiverId: widget.product.ownerId!),
+                  child: FilledButton.icon(
+                    onPressed: () {
+                      if (!Users.isGuestUser()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ChatPage(otherUserId: widget.product.ownerId!,
+                                    product: widget.product),
+                          ),
+                        );
+                      } else {
+                        showLoginRequiredSnackbar(S.of(context).loginToMessage);
+                      }
+                    },
+                    icon: const Icon(IconlyLight.message, size: 20),
+                    label: Text(
+                      "Negosier",
+                      style: const TextStyle(fontSize: 16),
                     ),
-                  );
-                } else {
-                  showLoginRequiredSnackbar(S.of(context).loginToMessage);
-                }
-              },
-              icon: const Icon(IconlyLight.message, size: 20),
-              label: Text(
-                S.of(context).chat,
-                style: const TextStyle(fontSize: 16),
-              ),
-              style: FilledButton.styleFrom(
-                backgroundColor: isDarkMode
-                    ? const Color(0xFF90D5AE)
-                    : const Color(0xFF256C4C),
-                foregroundColor: isDarkMode ? Colors.black : Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 16),
-
-          // Call button
-          Expanded(
-            child: FilledButton.icon(
-              onPressed: () async {
-                if (Users.isGuestUser()) {
-                  showLoginRequiredSnackbar(S.of(context).loginToCall);
-                } else {
-                  final ownerDoc = await FirebaseFirestore.instance
-                      .collection('Users')
-                      .doc(widget.product.ownerId)
-                      .get();
-
-                  final phoneNumber = ownerDoc.data()?['phone'];
-
-                  if (phoneNumber != null && phoneNumber.isNotEmpty) {
-                    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-                    try {
-                      await launchUrl(phoneUri);
-                    } catch (e) {
-                      print('Could not launch phone: $e');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.red, // Red background
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          content: Row(
-                            children: [
-                              const Icon(Icons.report_problem_outlined,
-                                  color: Colors.black),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  S.of(context).cannotOpenDialer,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.red, // Red background
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        content: Row(
-                          children: [
-                            const Icon(Icons.report_problem_outlined,
-                                color: Colors.black),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                S.of(context).noPhoneNumber,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        duration: const Duration(seconds: 2),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
+                      foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    );
-                  }
-                }
-              },
-              icon: const Icon(IconlyLight.call, size: 20),
-              label: Text(
-                S.of(context).call,
-                style: const TextStyle(fontSize: 16),
-              ),
-              style: FilledButton.styleFrom(
-                backgroundColor: isDarkMode
-                    ? const Color(0xFF90D5AE)
-                    : const Color(0xFF256C4C),
-                foregroundColor: isDarkMode ? Colors.black : Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
+       
         ],
       ),
     );

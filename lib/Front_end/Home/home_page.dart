@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   final pages = [
     const ExplorePage(),
     const ServicesPage(),
-    const AddProducts(),
+    AddProducts(),
     const MessagesPage(),
     const ProfilePage(),
   ];

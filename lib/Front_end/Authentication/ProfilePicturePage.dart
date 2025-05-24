@@ -13,7 +13,7 @@ import 'LoginPage.dart';
 class ProfilePicturePage extends StatefulWidget {
   final String userId;
 
-  const ProfilePicturePage({Key? key, required this.userId}) : super(key: key);
+  const ProfilePicturePage({super.key, required this.userId});
 
   @override
   _ProfilePicturePageState createState() => _ProfilePicturePageState();

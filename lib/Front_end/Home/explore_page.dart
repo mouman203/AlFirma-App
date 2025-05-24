@@ -361,6 +361,7 @@ class _ExplorePageState extends State<ExplorePage> {
           ? getLocalizedValue(dairaTranslations, product.daira!)
           : null,
       SP: product.SP,
+      sell: product.sell,
     );
 
     return localizedProduct;

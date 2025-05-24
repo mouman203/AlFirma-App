@@ -283,8 +283,7 @@ Object getDocumentPageForType(BuildContext context, String arabicType) {
 class BecomeTypeAction extends StatefulWidget {
   final VoidCallback onTypeChanged;
 
-  const BecomeTypeAction({Key? key, required this.onTypeChanged})
-      : super(key: key);
+  const BecomeTypeAction({super.key, required this.onTypeChanged});
 
   @override
   State<BecomeTypeAction> createState() => _BecomeTypeActionState();
@@ -444,7 +443,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
         });
       } else {
         // For other types, navigate to document page
-        await getDocumentPageForType(context, arabicType);
+        getDocumentPageForType(context, arabicType);
 
         // Check validation status
         final isValid = await getValidation(arabicType) ?? false;

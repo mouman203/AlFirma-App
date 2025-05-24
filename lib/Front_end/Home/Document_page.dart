@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 class DocumentPage extends StatelessWidget {
   final String userType; // Arabic string e.g., "ناقل"
 
-  const DocumentPage({Key? key, required this.userType}) : super(key: key);
+  const DocumentPage({super.key, required this.userType});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class DocumentPage extends StatelessWidget {
 class DocumentForm extends StatefulWidget {
   final String userType; // Arabic string
 
-  const DocumentForm({Key? key, required this.userType}) : super(key: key);
+  const DocumentForm({super.key, required this.userType});
 
   @override
   State<DocumentForm> createState() => _DocumentFormState();
@@ -215,12 +215,14 @@ class _DocumentFormState extends State<DocumentForm> {
         final storageRef =
             FirebaseStorage.instance.ref().child('documents/$fileName');
         await storageRef.putFile(File(pickedImage.path));
+
         String downloadUrl = await storageRef.getDownloadURL();
 
         User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           final docRef =
               FirebaseFirestore.instance.collection('Users').doc(user.uid);
+
           final snapshot = await docRef.get();
 
           Map<String, dynamic> currentTypes =
@@ -228,12 +230,10 @@ class _DocumentFormState extends State<DocumentForm> {
           if (!currentTypes.containsKey(selectedUserTypeArabic)) {
             currentTypes[selectedUserTypeArabic] = {
               'validation': 'pending',
-              selectedUserTypeArabic: {
-                'documents': {
-                  docArabic: {
-                    'documentUrl': downloadUrl,
-                    'uploadedAt': FieldValue.serverTimestamp(),
-                  }
+              'documents': {
+                docArabic: {
+                  'documentUrl': downloadUrl,
+                  'uploadedAt': FieldValue.serverTimestamp(),
                 }
               },
               'createdAt': FieldValue.serverTimestamp(),

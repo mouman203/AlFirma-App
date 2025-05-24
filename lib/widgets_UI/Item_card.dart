@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
+import 'package:agriplant/Front_end/Home/Add_Product.dart';
 import 'package:agriplant/Front_end/Item%20detaille/product_details_page.dart';
 import 'package:agriplant/Front_end/Item%20detaille/service_details_page.dart';
 import 'package:agriplant/data/ProductData.dart';
@@ -271,6 +272,7 @@ class _ItemCardState extends State<ItemCard> {
       wilaya: getLocalizedValue(wilayaTranslations, item.wilaya),
       daira: getLocalizedValue(dairaTranslations, item.daira),
       SP: item.SP,
+      sell: item.sell,
     );
 
     return translatedItem;
@@ -345,25 +347,70 @@ class _ItemCardState extends State<ItemCard> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: Users.isGuestUser()
-                    ? const SizedBox() // If guest, show nothing
-                    : SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: IconButton.filledTonal(
-                          padding: EdgeInsets.zero,
-                          iconSize: 18,
-                          onPressed: _toggleSavedStatus,
-                          icon: isSaved
-                              ? const Icon(IconlyBold.bookmark)
-                              : const Icon(IconlyLight.bookmark),
-                          color: isSaved
-                              ? Theme.of(context).colorScheme.primary
-                              : null,
-                        ),
-                      ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /// زر الحفظ (bookmark)
+                    Users.isGuestUser()
+                        ? const SizedBox()
+                        : SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: IconButton.filledTonal(
+                              padding: EdgeInsets.zero,
+                              iconSize: 18,
+                              onPressed: _toggleSavedStatus,
+                              icon: isSaved
+                                  ? const Icon(IconlyBold.bookmark)
+                                  : const Icon(IconlyLight.bookmark),
+                              color: isSaved
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                          ),
+
+                    /// زر النقاط الثلاثة
+                    widget.item.ownerId ==
+                            FirebaseAuth.instance.currentUser?.uid
+                        ? Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceVariant, // نفس خلفية filledTonal
+                              shape: BoxShape.circle, // دائرية مثل الزر الآخر
+                            ),
+                            child: PopupMenuButton<String>(
+                              padding: EdgeInsets.zero,
+                              iconSize: 18,
+                              icon: const Icon(Icons.more_vert,
+                                  color: Colors.black), // لون أيقونة داخلي
+                              onSelected: (value) {
+                                if (value == 'edit') {
+                                  EditItem(widget.item, true);
+                                } else if (value == 'delete') {
+                                  DeleterItem(widget.item);
+                                }
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  child: Text('تعديل'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('حذف'),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
               ),
             ),
+
             // Texts
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -399,13 +446,13 @@ class _ItemCardState extends State<ItemCard> {
                         ? S.of(context).available
                         : item.typeItem == "منتج زراعي" ||
                                 item.typeItem == "منتج حيواني"
-                            ? '${item.quantity?.toString()} ${localizedUnit}'
+                            ? '${item.quantity?.toString()} $localizedUnit'
                             : item.typeItem == "منتج تجاري" &&
                                     item.category == "أراضي"
-                                ? '${item.surface} ${localizedUnit}'
+                                ? '${item.surface} $localizedUnit'
                                 : item.typeItem == "منتج تجاري" &&
                                         item.category == "معدات"
-                                    ? '${localizedService}'
+                                    ? localizedService
                                     : '',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
@@ -413,12 +460,12 @@ class _ItemCardState extends State<ItemCard> {
                   const SizedBox(height: 5),
                   if (item.SP == "Product")
                     Text(
-                      "${item.price}${S.of(context).dinar}/${localizedUnit}",
+                      "${item.price}${S.of(context).dinar}/$localizedUnit",
                       style: Theme.of(context).textTheme.bodyLarge,
                     )
                   else if (item.SP == "Service" && item.category == "أراضي")
                     Text(
-                      "${item.price}${S.of(context).dinar}/${localizedUnit}",
+                      "${item.price}${S.of(context).dinar}/$localizedUnit",
                       style: Theme.of(context).textTheme.bodyLarge,
                     )
                   else
@@ -534,6 +581,43 @@ class _ItemCardState extends State<ItemCard> {
           ),
         ),
       ],
+    );
+  }
+
+  void DeleterItem(Products item) async {
+    if (widget.item.SP == "Service") {
+      await FirebaseFirestore.instance
+          .collection("item")
+          .doc("Services")
+          .collection("Services")
+          .doc(widget.item.id)
+          .delete();
+
+      print("✅ تم حذف الخدمة بنجاح.");
+    } else if (widget.item.SP == "Product") {
+      await FirebaseFirestore.instance
+          .collection("item")
+          .doc("Products")
+          .collection("Products")
+          .doc(widget.item.id)
+          .delete();
+
+      print("✅ تم حذف المنتج بنجاح.");
+      setState(() {});
+    } else {
+      print("❌ نوع العنصر غير معروف.");
+    }
+  }
+
+  void EditItem(Products item, bool isEditMode) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddProducts(
+          item: item,
+          isEditMode: isEditMode,
+        ),
+      ),
     );
   }
 }

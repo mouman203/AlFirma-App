@@ -103,7 +103,8 @@ class _ConsultationPageState extends State<ConsultationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).consultation,style:TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(S.of(context).consultation,
+            style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 5,
       ),
       // Using CustomScrollView instead of SingleChildScrollView
@@ -408,7 +409,7 @@ class VeterinarianCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const VeterinarianCard({
-    Key? key,
+    super.key,
     required this.firstName,
     required this.lastName,
     required this.wilaya,
@@ -416,7 +417,7 @@ class VeterinarianCard extends StatelessWidget {
     this.profileImageUrl,
     required this.vet, // Added this parameter
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -541,7 +542,7 @@ class VeterinarianCard extends StatelessWidget {
                 ),
               ),
               // Contact buttons in a column with defined width
-              Container(
+              SizedBox(
                 width: 80, // Fixed width for the buttons column
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -557,13 +558,13 @@ class VeterinarianCard extends StatelessWidget {
                           final vetId = vet['id'];
                           if (vetId != null) {
                             if (!Users.isGuestUser()) {
-                              Navigator.push(
+                              /* Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      ChatPage(receiverId: vetId),
+                                      ChatPage(receiverId: vetId,product: widget.vet['product'],),
                                 ),
-                              );
+                              );*/
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -572,9 +573,9 @@ class VeterinarianCard extends StatelessWidget {
                                       const Icon(Icons.error_outline,
                                           color: Colors.black),
                                       const SizedBox(width: 8),
-                                       Expanded(
+                                      Expanded(
                                         child: Text(
-                                           S.of(context).loginToMessage,
+                                          S.of(context).loginToMessage,
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 18),
@@ -622,9 +623,9 @@ class VeterinarianCard extends StatelessWidget {
                                       const Icon(Icons.error_outline,
                                           color: Colors.black),
                                       const SizedBox(width: 8),
-                                       Expanded(
+                                      Expanded(
                                         child: Text(
-                                           S.of(context).cannotOpenDialer,
+                                          S.of(context).cannotOpenDialer,
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 18),
@@ -645,9 +646,9 @@ class VeterinarianCard extends StatelessWidget {
                                     const Icon(Icons.error_outline,
                                         color: Colors.black),
                                     const SizedBox(width: 8),
-                                     Expanded(
+                                    Expanded(
                                       child: Text(
-                                       S.of(context).noPhoneNumber,
+                                        S.of(context).noPhoneNumber,
                                         style: TextStyle(
                                             color: Colors.black, fontSize: 18),
                                       ),

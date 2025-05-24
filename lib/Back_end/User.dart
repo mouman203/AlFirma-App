@@ -129,7 +129,8 @@ class Users {
 
         await AwesomeDialog(
           context: context,
-          dialogBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+          dialogBackgroundColor:
+              Theme.of(context).colorScheme.secondaryContainer,
           animType: AnimType.scale,
           // Remove dialogType
           customHeader: CircleAvatar(
@@ -184,7 +185,8 @@ class Users {
       barrierDismissible: false, // منع الإغلاق أثناء التحميل
       builder: (context) {
         return Dialog(
-          backgroundColor: Theme.of(context).colorScheme.secondaryContainer, // لون الخلفية
+          backgroundColor:
+              Theme.of(context).colorScheme.secondaryContainer, // لون الخلفية
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)), // تدوير الحواف
           child: Padding(
@@ -333,7 +335,7 @@ class Users {
           'first_name': first_name,
           'last_name': last_name,
           'phone': phone,
-          'fcmToken':token,
+          'fcmToken': token,
           'photo': "",
           'following': [],
           'followers': [],
@@ -472,7 +474,7 @@ class Users {
             "phone": firebaseUser.phoneNumber ?? "",
             "password": "Signed with Google",
             "photo": firebaseUser.photoURL ?? "",
-            "fcmToken":token,
+            "fcmToken": token,
             "userType": {},
             'activeType': 'عميل',
             "following": [],
@@ -685,41 +687,57 @@ class Users {
     }
   }
 
-  Future<void> deleteComment(
-    String itemId,
-    String userId,
-    String text,
-    dynamic item, // Product or Service
-  ) async {
-    try {
-      String docPath;
+Future<void> deleteComment(
+  String itemId,
+  String userId,
+  String text,
+  dynamic item,
+) async {
+  try {
+    String docPath;
 
-      // Determine whether it's a Product or a Service
-      if (item.SP == "Product") {
-        docPath = "Products";
-      } else if (item.SP == "Service") {
-        docPath = "Services";
-      } else {
-        throw Exception("❌ Unknown item type!");
-      }
-
-      DocumentReference ref = FirebaseFirestore.instance
-          .collection("item")
-          .doc(docPath)
-          .collection(docPath)
-          .doc(itemId);
-
-      await ref.update({
-        'comments': FieldValue.arrayRemove([
-          {'userId': userId, 'text': text}
-        ]),
-      });
-
-      print("✅ تم حذف التعليق بنجاح.");
-    } catch (e) {
-      print("⚠️ خطأ أثناء حذف التعليق: $e");
+    if (item.SP == "Product") {
+      docPath = "Products";
+    } else if (item.SP == "Service") {
+      docPath = "Services";
+    } else {
+      throw Exception("❌ Unknown item type!");
     }
+
+    DocumentReference ref = FirebaseFirestore.instance
+        .collection("item")
+        .doc(docPath)
+        .collection(docPath)
+        .doc(itemId);
+
+    DocumentSnapshot snapshot = await ref.get();
+
+    if (!snapshot.exists) {
+      print("❌ المستند غير موجود.");
+      return;
+    }
+
+    List<dynamic> comments = List.from(snapshot.get('comments') ?? []);
+
+    final commentToDelete = comments.firstWhere(
+      (comment) =>
+          comment['userId'] == userId &&
+          comment['text'] == text,
+      orElse: () => null,
+    );
+
+    if (commentToDelete != null) {
+      await ref.update({
+        'comments': FieldValue.arrayRemove([commentToDelete]),
+      });
+      print("✅ تم حذف التعليق بنجاح.");
+    } else {
+      print("❌ لم يتم العثور على التعليق.");
+    }
+  } catch (e) {
+    print("⚠️ خطأ أثناء حذف التعليق: $e");
   }
+}
 
   void showDeleteConfirmationDialog(
     BuildContext context, {
@@ -772,6 +790,11 @@ class Users {
                     ),
                   ),
                   onPressed: () {
+                    print("showDeleteConfirmationDialog :");
+                    print(itemId);
+                    print(userId);
+                    print(text);
+                    print(item);
                     deleteComment(itemId, userId, text, item);
                     Navigator.of(context).pop();
                   },

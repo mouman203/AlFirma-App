@@ -8,8 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:image_picker/image_picker.dart';
 
+// ignore: must_be_immutable
 class AddProducts extends StatefulWidget {
-  const AddProducts({super.key});
+  Products? item;
+  bool? isEditMode; // Flag to check if in edit mode
+  // Constructor
+  AddProducts({super.key, this.item, this.isEditMode});
 
   @override
   State<AddProducts> createState() => _AddProductsState();
@@ -25,6 +29,7 @@ class _AddProductsState extends State<AddProducts> {
 
   List<XFile> selectedImages = [];
   List<String> uploadedPhotos = [];
+  List<String> oldPhotos = [];
 
   List<String>? Category;
   List<String>? subCategory;
@@ -41,6 +46,8 @@ class _AddProductsState extends State<AddProducts> {
   String? typeItem;
 
   String? userType;
+
+  List<String>? Moumane;
 
   // Maps for translation
   Map<String, String> categoryTranslations = {};
@@ -344,7 +351,112 @@ class _AddProductsState extends State<AddProducts> {
   @override
   void initState() {
     super.initState();
-    fetchUserType();
+
+    _initializePage();
+  }
+
+  Future<void> _initializePage() async {
+    await fetchUserType();
+    await _handleEditMode();
+  }
+
+  Future<void> _handleEditMode() async {
+    if (widget.isEditMode == true && widget.item != null) {
+      try {
+        String type = await bring(); // استدعاء bring بشكل صحيح
+        print("✅ User type in state: $userType");
+        print("✅ Type brought from Firestore: $type");
+
+        if (userType == type && Category!.contains(widget.item!.category)) {
+          setState(() {
+            Moumane =
+                ProductData.getProduct(typeItem, selectedsubCategory, context);
+            oldPhotos = List<String>.from(widget.item!.photos ?? []);
+            print("✅ Old photos: $oldPhotos");
+            selectedCategory = widget.item!.category;
+            print("✅ Selected category: $selectedCategory");
+            selectedsubCategory = widget.item!.subCategory;
+            print("✅ Selected subCategory: $selectedsubCategory");
+            final productList = selectedsubCategory != null
+                ? ProductData.getProduct(
+                    typeItem, selectedsubCategory!, context)
+                : ProductData.getProduct(typeItem, selectedCategory!, context);
+            selectedproduct = productList.firstWhere(
+              (element) => element.trim() == widget.item!.product?.trim(),
+              orElse: () => "",
+            );
+
+            prixController.text = widget.item!.price?.toString() ?? '';
+            selectedWilaya = widget.item!.wilaya;
+            selectedUnit = widget.item!.unit;
+
+            final rawDaira = widget.item!.daira?.trim();
+            final trimmedDaira = rawDaira?.trim();
+
+            final dairaList = ProductData.wilayasT(context)[selectedWilaya]
+                    ?.map((e) => e.trim())
+                    .toList() ??
+                [];
+
+            if (dairaList.contains(trimmedDaira)) {
+              print("✅ الدائرة موجودة بدون فراغات: $trimmedDaira");
+              selectedDaira = trimmedDaira;
+            } else {
+              print("❌ الدائرة غير موجودة أو بها فراغات مختلفة: $trimmedDaira");
+            }
+
+            descriptionController.text = widget.item!.description ?? '';
+            print("✅ Description: ${descriptionController.text}");
+            quantiteController.text = widget.item!.quantity?.toString() ?? '';
+          });
+
+          // إذا كان المستخدم لديه صلاحية الوصول
+          print("❌❌❌❌❌❌❌❌❌❌❌❌");
+
+          for (var item in ProductData.getProduct(
+              typeItem, selectedsubCategory, context)) {
+            print("- ${item.toString()}");
+          }
+          print("❌❌❌❌❌❌❌❌❌❌❌❌");
+        } else {
+          _showAccessDeniedDialog();
+        }
+      } catch (e) {
+        print("❌ Error in _handleEditMode: $e");
+        _showAccessDeniedDialog();
+      }
+    }
+  }
+
+  Future<String> bring() async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(widget.item?.ownerId)
+        .get();
+
+    return userDoc.get("activeType") ?? '';
+  }
+
+  void _showAccessDeniedDialog() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(S.of(context).error),
+          content: Text("The current role can't access this page"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // غلق الـ dialog
+                Navigator.pop(context); // رجوع لصفحة سابقة
+              },
+              child: Text(S.of(context).ok),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   bool _isLoading = false; // To show a loading indicator
@@ -463,12 +575,116 @@ class _AddProductsState extends State<AddProducts> {
                 typeItem == "منتج زراعي"
             ? "Product"
             : "Service",
+        sell: false,
       );
 
       await newProduct.addProduct(newProduct);
       _showSuccessDialog(context);
       _resetForm();
 
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> updateForm() async {
+    await uploadSelectedImages();
+
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      if (uploadedPhotos.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.black),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    S.of(context).pleaseUploadProductImageFirst,
+                    style: const TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: const Color.fromARGB(255, 247, 234, 117),
+          ),
+        );
+        return;
+      }
+
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Localized to Arabic translation
+      String? arabicCategory = selectedCategory != null
+          ? getArabicValue(categoryTranslations, selectedCategory!)
+          : null;
+
+      String? arabicSubCategory = selectedsubCategory != null
+          ? getArabicValue(subCategoryTranslations, selectedsubCategory!)
+          : null;
+
+      String? arabicProduct = selectedproduct != null
+          ? getArabicValue(productTranslations, selectedproduct!)
+          : null;
+
+      String? arabicUnit = selectedUnit != null
+          ? getArabicValue(unitTranslations, selectedUnit!)
+          : null;
+
+      String? arabicService = selectedTypeService != null
+          ? getArabicValue(serviceTypeTranslations, selectedTypeService!)
+          : null;
+
+      String? arabicWilaya = selectedWilaya != null
+          ? getArabicValue(wilayaTranslations, selectedWilaya!)
+          : null;
+
+      String? arabicDaira = selectedDaira != null
+          ? getArabicValue(dairaTranslations, selectedDaira!)
+          : null;
+
+      // 🔁 Updated product
+      Products updatedProduct = Products(
+        id: widget.item!.id, // Keep the original ID
+        ownerId: widget.item!.ownerId, // Keep original owner
+        typeItem: typeItem ?? '',
+        category: arabicCategory,
+        subCategory: arabicSubCategory,
+        product: arabicProduct ?? '',
+        quantity: quantiteController.text.isNotEmpty
+            ? double.tryParse(quantiteController.text)
+            : null,
+        surface: surfaceController.text.isNotEmpty
+            ? double.tryParse(surfaceController.text)
+            : null,
+        unit: arabicUnit,
+        service: arabicService,
+        price: prixController.text.isNotEmpty
+            ? double.tryParse(prixController.text)!
+            : 0,
+        description: descriptionController.text,
+        comments: widget.item!.comments ?? [],
+        photos: [...oldPhotos, ...uploadedPhotos],
+        liked: widget.item!.liked ?? [],
+        disliked: widget.item!.disliked ?? [],
+        date_of_add: widget.item!.date_of_add, // keep original date
+        wilaya: arabicWilaya,
+        daira: arabicDaira,
+        SP: (typeItem == "منتج تجاري" && arabicService != "الإيجار") ||
+                typeItem == "منتج حيواني" ||
+                typeItem == "منتج زراعي"
+            ? "Product"
+            : "Service",
+        sell: widget.item!.sell,
+      );
+
+      await updatedProduct
+          .updateProduct(widget.item!); // <-- implement this in your model
+      _showSuccessDialog(context);
+      _resetForm();
       setState(() {
         _isLoading = false;
       });
@@ -614,89 +830,271 @@ class _AddProductsState extends State<AddProducts> {
     final localizedUnitsByCategory = getLocalizedUnitsByCategory(context);
     final localizedServiceTypes = getLocalizedServiceTypes();
     return Scaffold(
+      appBar: widget.isEditMode != null && widget.isEditMode! == true
+          ? AppBar(
+              title: Text(
+                widget.isEditMode == true ? "editProduct" : "addProduct",
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+              backgroundColor: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
+            )
+          : AppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              // add the images
-              GestureDetector(
-                onTap: _pickImages,
-                child: Container(
-                  height: 180,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        width: 1.3,
-                        color: isDarkMode
-                            ? const Color(0xFF90D5AE)
-                            : const Color(0xFF256C4C)),
-                    color: colorScheme.onSecondary,
-                  ),
-                  child: selectedImages.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.photo_library,
-                                  size: 50,
-                                  color: isDarkMode
-                                      ? const Color(0xFF90D5AE)
-                                      : const Color(0xFF256C4C)),
-                              SizedBox(height: 8),
-                              Text(S.of(context).tapToSelectImages,
-                                  style: TextStyle(
-                                      color: isDarkMode
-                                          ? const Color(0xFF90D5AE)
-                                          : const Color(0xFF256C4C))),
-                            ],
-                          ),
-                        )
-                      : ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: selectedImages.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Stack(
-                                children: [
-                                  Image.file(
-                                    File(selectedImages[index].path),
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedImages.removeAt(index);
-                                          if (uploadedPhotos.length > index) {
-                                            uploadedPhotos.removeAt(index);
-                                          }
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(Icons.close,
-                                            color: Colors.white, size: 20),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
+              //edit images
+              oldPhotos.isNotEmpty
+                  ? Container(
+                      height: 180,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          width: 1.3,
+                          color: isDarkMode
+                              ? const Color(0xFF90D5AE)
+                              : const Color(0xFF256C4C),
                         ),
-                ),
-              ),
+                        color: colorScheme.onSecondary,
+                      ),
+                      child: GestureDetector(
+                        onTap:
+                            _pickImages, // الخلفية كلها تضغط وتفتح اختيار الصور
+                        child: (oldPhotos.isEmpty && selectedImages.isEmpty)
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.photo_library,
+                                        size: 50,
+                                        color: isDarkMode
+                                            ? const Color(0xFF90D5AE)
+                                            : const Color(0xFF256C4C)),
+                                    SizedBox(height: 8),
+                                    Text(S.of(context).tapToSelectImages,
+                                        style: TextStyle(
+                                            color: isDarkMode
+                                                ? const Color(0xFF90D5AE)
+                                                : const Color(0xFF256C4C))),
+                                  ],
+                                ),
+                              )
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: oldPhotos.length +
+                                    selectedImages.length +
+                                    1, // +1 لزر الإضافة
+                                itemBuilder: (context, index) {
+                                  // إذا هذا آخر عنصر، نعرض زر الإضافة
+                                  if (index ==
+                                      oldPhotos.length +
+                                          selectedImages.length) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _pickImages();
+                                        },
+                                        child: Container(
+                                          width: 100,
+                                          height: 100,
+                                          decoration: BoxDecoration(
+                                            color: isDarkMode
+                                                ? const Color(0xFF90D5AE)
+                                                    .withOpacity(0.3)
+                                                : const Color(0xFF256C4C)
+                                                    .withOpacity(0.3),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: isDarkMode
+                                                  ? const Color(0xFF90D5AE)
+                                                  : const Color(0xFF256C4C),
+                                              width: 1.3,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.add_a_photo,
+                                              size: 40,
+                                              color: isDarkMode
+                                                  ? const Color(0xFF90D5AE)
+                                                  : const Color(0xFF256C4C),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  // عرض الصور القديمة
+                                  if (index < oldPhotos.length) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Stack(
+                                        children: [
+                                          Image.network(
+                                            oldPhotos[index],
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  oldPhotos.removeAt(index);
+                                                });
+                                              },
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.red,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(Icons.close,
+                                                    color: Colors.white,
+                                                    size: 20),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+
+                                  // عرض الصور الجديدة (بعد الصور القديمة)
+                                  final newIndex = index - oldPhotos.length;
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                      children: [
+                                        Image.file(
+                                          File(selectedImages[newIndex].path),
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                selectedImages
+                                                    .removeAt(newIndex);
+                                                if (uploadedPhotos.length >
+                                                    newIndex) {
+                                                  uploadedPhotos
+                                                      .removeAt(newIndex);
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: Colors.red,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.close,
+                                                  color: Colors.white,
+                                                  size: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                      ))
+                  : // add the images
+                  GestureDetector(
+                      onTap: _pickImages,
+                      child: Container(
+                        height: 180,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              width: 1.3,
+                              color: isDarkMode
+                                  ? const Color(0xFF90D5AE)
+                                  : const Color(0xFF256C4C)),
+                          color: colorScheme.onSecondary,
+                        ),
+                        child: selectedImages.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.photo_library,
+                                        size: 50,
+                                        color: isDarkMode
+                                            ? const Color(0xFF90D5AE)
+                                            : const Color(0xFF256C4C)),
+                                    SizedBox(height: 8),
+                                    Text(S.of(context).tapToSelectImages,
+                                        style: TextStyle(
+                                            color: isDarkMode
+                                                ? const Color(0xFF90D5AE)
+                                                : const Color(0xFF256C4C))),
+                                  ],
+                                ),
+                              )
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: selectedImages.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                      children: [
+                                        Image.file(
+                                          File(selectedImages[index].path),
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                selectedImages.removeAt(index);
+                                                if (uploadedPhotos.length >
+                                                    index) {
+                                                  uploadedPhotos
+                                                      .removeAt(index);
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.red,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.close,
+                                                  color: Colors.white,
+                                                  size: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                    ),
 
               const SizedBox(height: 15),
 
@@ -895,7 +1293,8 @@ class _AddProductsState extends State<AddProducts> {
                                 Expanded(
                                   child: Text(
                                     S.of(context).formIsEmpty,
-                                    style:const TextStyle(color: Colors.black, fontSize: 18),
+                                    style: const TextStyle(
+                                        color: Colors.black, fontSize: 18),
                                   ),
                                 ),
                               ],
@@ -914,13 +1313,14 @@ class _AddProductsState extends State<AddProducts> {
                             SnackBar(
                               content: Row(
                                 children: [
-                                  const Icon(Icons.error_outline, color: Colors.black),
+                                  const Icon(Icons.error_outline,
+                                      color: Colors.black),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       "${S.of(context).error}: $e",
-                                      style:
-                                          const  TextStyle(color: Colors.black, fontSize: 18),
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 18),
                                     ),
                                   ),
                                 ],
@@ -936,7 +1336,7 @@ class _AddProductsState extends State<AddProducts> {
 //==============================SHARE BUTTON================================
               ProductData.actionButton(
                 context: context,
-                label: S.of(context).share,
+                label: widget.isEditMode! ? "Edit" : S.of(context).share,
                 backgroundColor: isDarkMode
                     ? const Color(0xFF90D5AE)
                     : const Color(0xFF256C4C),
@@ -944,13 +1344,18 @@ class _AddProductsState extends State<AddProducts> {
                     _isLoading, // تأكد من أنه عند الضغط، يظل في حالة تحميل حتى تتم العملية
                 onPressed: () async {
                   try {
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    await _submitForm(); // استخدام await لضمان انتهاء العملية أولاً
-                    setState(() {
-                      _isLoading = false; // إيقاف حالة التحميل بعد الانتهاء
-                    });
+                    if (widget.isEditMode != true) {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await _submitForm(); // استخدام await لضمان انتهاء العملية أولاً
+                      setState(() {
+                        _isLoading = false; // إيقاف حالة التحميل بعد الانتهاء
+                      });
+                      return;
+                    } else {
+                      updateForm();
+                    }
                   } catch (e) {
                     setState(() {
                       _isLoading = false; // إيقاف حالة التحميل في حال حدوث خطأ
@@ -988,5 +1393,96 @@ class _AddProductsState extends State<AddProducts> {
         ),
       ),
     );
+  }
+
+  List<Widget> buildImageWidgets() {
+    List<Widget> widgets = [];
+
+    // أولاً، عرض الصور القديمة (روابط)
+    for (int i = 0; i < oldPhotos.length; i++) {
+      widgets.add(
+        Stack(
+          children: [
+            Image.network(
+              oldPhotos[i],
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    oldPhotos.removeAt(i);
+                  });
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // ثانياً، عرض الصور الجديدة (ملفات محلية)
+    for (int i = 0; i < selectedImages.length; i++) {
+      widgets.add(
+        Stack(
+          children: [
+            Image.file(
+              File(selectedImages[i].path),
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedImages.removeAt(i);
+                  });
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // ثالثاً، أضف زر اختيار صور جديدة
+    widgets.add(
+      GestureDetector(
+        onTap: _pickImages, // دالة اختيار الصور عند الضغط على الزر
+        child: Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey),
+          ),
+          child: const Icon(Icons.add_a_photo, size: 40, color: Colors.black54),
+        ),
+      ),
+    );
+
+    return widgets;
   }
 }

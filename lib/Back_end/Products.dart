@@ -21,6 +21,7 @@ class Products {
   String? daira;
   DateTime? date_of_add;
   String? SP;
+  bool? sell;
 
   Products({
     required this.id,
@@ -43,6 +44,7 @@ class Products {
     required this.wilaya,
     required this.daira,
     required this.date_of_add,
+    required this.sell,
   });
 
   // Convert object to a Firestore-compatible map
@@ -68,6 +70,7 @@ class Products {
       "daira": daira,
       "date_of_add": Timestamp.fromDate(date_of_add!),
       "SP": SP,
+      "sell": false
     };
     return data;
   }
@@ -97,6 +100,7 @@ class Products {
       wilaya: json['wilaya'],
       daira: json['daira'],
       SP: json['SP'],
+      sell: json['sell'],
     );
   }
 
@@ -117,25 +121,12 @@ class Products {
     }
   }
 
-/*
-  /// 2**Update an existing product**
-  Future<void> updateInFirestore() async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('Productsss')
-          .doc(id) // الوثيقة اللي تحب تحدثها
-          .update(toJson());
-    } catch (e) {
-      print("there is an error in updating an existing product $e");
-    }
+  Future<void> updateProduct(Products item) async {
+    await FirebaseFirestore.instance
+        .collection('item')
+        .doc(item.SP == "Product" ? 'Products' : 'Services')
+        .collection(item.SP == "Product" ? 'Products' : 'Services')
+        .doc(item.id)
+        .update(toJson()); // assuming you have a toMap() method
   }
-
-  /// 3**Delete a product from Firestore**
-  Future<void> deleteFromFirestore() async {
-    try {
-      await FirebaseFirestore.instance.collection('Products').doc(id).delete();
-    } catch (e) {
-      print("there is an error in deleting a product $e");
-    }
-  }*/
 }
