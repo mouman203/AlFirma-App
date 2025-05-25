@@ -686,8 +686,8 @@ class _ChatPageState extends State<ChatPage> {
     try {
       _UsersInfo();
       await _firestore.collection("Messages").add({
-        "senderId": otherUserId,
-        "receiverId": MyID,
+        "senderId": _auth.currentUser!.uid,
+        "receiverId": widget.otherUserId,
         "content": message,
         "timestamp": FieldValue.serverTimestamp(),
         "isSeen": false,
