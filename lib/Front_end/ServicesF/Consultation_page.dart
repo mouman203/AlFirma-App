@@ -34,7 +34,7 @@ class _ConsultationPageState extends State<ConsultationPage> {
     setState(() => isLoading = true);
     final snapshot = await FirebaseFirestore.instance
         .collection('Users')
-        .where('userType.بيطري.validation', isEqualTo: 'true')
+        .where('userType.بيطري.validation', isNotEqualTo: 'pendding')
         .get();
 
     allVeterinarians = snapshot.docs.map((doc) {

@@ -1,4 +1,5 @@
 import 'dart:io';
+//import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 import 'package:agriplant/data/ProductData.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,7 +48,8 @@ class _AddProductsState extends State<AddProducts> {
 
   String? userType;
 
-  List<String>? Moumane;
+  List<String>? productinfo_old;
+  bool isEditMode = false; // To track if in edit mode
 
   // Maps for translation
   Map<String, String> categoryTranslations = {};
@@ -351,7 +353,7 @@ class _AddProductsState extends State<AddProducts> {
   @override
   void initState() {
     super.initState();
-
+    isEditMode = widget.isEditMode ?? false;
     _initializePage();
   }
 
@@ -369,7 +371,7 @@ class _AddProductsState extends State<AddProducts> {
 
         if (userType == type && Category!.contains(widget.item!.category)) {
           setState(() {
-            Moumane =
+            productinfo_old =
                 ProductData.getProduct(typeItem, selectedsubCategory, context);
             oldPhotos = List<String>.from(widget.item!.photos ?? []);
             print("✅ Old photos: $oldPhotos");
@@ -1336,7 +1338,7 @@ class _AddProductsState extends State<AddProducts> {
 //==============================SHARE BUTTON================================
               ProductData.actionButton(
                 context: context,
-                label: widget.isEditMode! ? "Edit" : S.of(context).share,
+                label: isEditMode ? "Edit" : S.of(context).share,
                 backgroundColor: isDarkMode
                     ? const Color(0xFF90D5AE)
                     : const Color(0xFF256C4C),

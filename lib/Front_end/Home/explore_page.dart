@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Authentication/LoginPage.dart';
@@ -280,41 +283,105 @@ class _ExplorePageState extends State<ExplorePage> {
     return productTranslations[arabicName] ?? arabicName;
   }
 
+  Future<List<String>> fetchRecommendedProductIds(String userId) async {
+    try {
+      print("🔍 جاري جلب التوصيات للمستخدم: $userId");
+
+      final response = await http.post(
+        Uri.parse('https://recommendation-alfirma.onrender.com/recommend'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId}),
+      );
+
+      // التحقق من حالة الاستجابة
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // طباعة الاستجابة كاملة للتأكد من محتواها
+        print("✅ تم جلب البيانات بنجاح: $data");
+
+        // التحقق من وجود التوصيات
+        if (data['recommendations'] != null &&
+            data['recommendations'] is List) {
+          List<String> recommendedIds =
+              List<String>.from(data['recommendations']);
+
+          // طباعة التوصيات المسترجعة
+          print("✅ التوصيات المسترجعة: $recommendedIds");
+
+          return recommendedIds;
+        } else {
+          print("⚠️ لم يتم العثور على توصيات في الرد.");
+          return [];
+        }
+      } else {
+        print("❌ فشل في جلب التوصيات - كود الحالة: ${response.statusCode}");
+        print("🔁 محتوى الرد: ${response.body}");
+        return [];
+      }
+    } catch (e) {
+      print("❌ حدث خطأ أثناء الاتصال بالـ API: $e");
+      return [];
+    }
+  }
+
   // يستخدم هذا الدالة لجلب المنتجات من Firestore
   Future<void> fetchAllProducts() async {
     try {
       List<Products> allProducts = [];
+      List<String> recommendedIds = [];
+      // 1. جلب التوصيات أولاً
+      if (FirebaseAuth.instance.currentUser != null) {
+        recommendedIds = await fetchRecommendedProductIds(
+            FirebaseAuth.instance.currentUser!.uid);
+      }
 
-      // جلب منتجات الزراعة
+      // 2. جلب جميع المنتجات من Firestore
       QuerySnapshot productSnapshot = await FirebaseFirestore.instance
           .collection('item')
           .doc('Products')
           .collection('Products')
           .get();
 
-      List<Products> agricolProducts = productSnapshot.docs.map((doc) {
-        // Create the base product from Firestore
+      // 3. تحويل الوثائق إلى منتجات
+      Set<String> seenIds = {}; // لتفادي التكرار
+      List<Products> products = productSnapshot.docs.map((doc) {
         Products product = Products.fromFirestore(doc);
-
-        // Apply localization - create a localized version of the product for display
-        // We'll localize later when translations are initialized
         return product;
       }).toList();
 
-      allProducts.addAll(agricolProducts);
+      // 4. إضافة المنتجات الموصى بها أولاً
+      for (String id in recommendedIds) {
+        try {
+          final product = products.firstWhere((p) => p.id == id);
+          if (!seenIds.contains(product.id)) {
+            allProducts.add(product);
+            seenIds.add(product.id!);
+          }
+        } catch (e) {
+          // لم يتم العثور على المنتج، تجاهل
+        }
+      }
 
-      // تحديث حالة الواجهة
+      // 5. إضافة باقي المنتجات بدون تكرار
+      for (final product in products) {
+        if (!seenIds.contains(product.id)) {
+          allProducts.add(product);
+          seenIds.add(product.id!);
+        }
+      }
+
+      // 6. تحديث الواجهة
       if (mounted) {
         setState(() {
           productList = allProducts;
           showLoader = false;
-          // We'll localize products in didChangeDependencies if needed
         });
       }
 
-      print("✅ تم جلب جميع المنتجات بنجاح (${allProducts.length})");
+      print("✅ تم جلب ودمج المنتجات بنجاح (${allProducts.length})");
     } catch (e) {
-      print("❌ خطأ أثناء جلب المنتجات: $e");
+      print("❌ خطأ أثناء جلب المنتجات والتوصيات: $e");
       if (mounted) {
         setState(() {
           showLoader = false;
@@ -614,7 +681,11 @@ class _ExplorePageState extends State<ExplorePage> {
                           _focusNode.hasFocus;
                         });
                       },
-                      onChanged: filterNames,
+                      onChanged: (value) {
+                        filterNames(value);
+                        setState(() {
+                        });
+                      },
                       onSubmitted: (value) async {
                         print("✅🔍 بحث عن: $value");
                         await searchManager.addSearch(value);
