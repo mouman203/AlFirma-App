@@ -349,7 +349,7 @@ class _ExplorePageState extends State<ExplorePage> {
         Products product = Products.fromFirestore(doc);
         return product;
       }).toList();
-
+      
       // 4. إضافة المنتجات الموصى بها أولاً
       for (String id in recommendedIds) {
         try {
