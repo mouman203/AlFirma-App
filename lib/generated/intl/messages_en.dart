@@ -147,6 +147,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ammari": MessageLookupByLibrary.simpleMessage("Ammari"),
     "ammiMoussa": MessageLookupByLibrary.simpleMessage("Ammi Moussa"),
     "amoucha": MessageLookupByLibrary.simpleMessage("Amoucha"),
+    "analyzingImage": MessageLookupByLibrary.simpleMessage(
+      "Analyzing plant image...",
+    ),
     "animalByproducts": MessageLookupByLibrary.simpleMessage(
       "Animal Byproducts",
     ),
@@ -156,7 +159,56 @@ class MessageLookup extends MessageLookupByLibrary {
     "aouf": MessageLookupByLibrary.simpleMessage("Aouf"),
     "aougrout": MessageLookupByLibrary.simpleMessage("Aougrout"),
     "aoulef": MessageLookupByLibrary.simpleMessage("Aoulef"),
+    "appTitle": MessageLookupByLibrary.simpleMessage(
+      "AI-Powered Plant Health Analysis",
+    ),
     "apple": MessageLookupByLibrary.simpleMessage("Apple"),
+    "appleAppleScabLabel": MessageLookupByLibrary.simpleMessage(
+      "Apple Apple Scab",
+    ),
+    "appleAppleScabSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove fallen leaves and dispose of them.",
+    ),
+    "appleAppleScabSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides early in the season.",
+    ),
+    "appleAppleScabSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Ensure good air circulation.",
+    ),
+    "appleBlackRotLabel": MessageLookupByLibrary.simpleMessage(
+      "Apple Black Rot",
+    ),
+    "appleBlackRotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Prune infected branches.",
+    ),
+    "appleBlackRotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy mummified fruits.",
+    ),
+    "appleBlackRotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Use fungicides during the growing season.",
+    ),
+    "appleCedarAppleRustLabel": MessageLookupByLibrary.simpleMessage(
+      "Apple Cedar Apple Rust",
+    ),
+    "appleCedarAppleRustSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove nearby cedar trees if possible.",
+    ),
+    "appleCedarAppleRustSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides regularly.",
+    ),
+    "appleCedarAppleRustSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Plant resistant varieties.",
+    ),
+    "appleHealthyLabel": MessageLookupByLibrary.simpleMessage("Apple Healthy"),
+    "appleHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Ensure adequate watering and fertilization.",
+    ),
+    "appleHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Prune regularly to maintain airflow.",
+    ),
+    "appleHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Monitor for pests and diseases.",
+    ),
     "apply": MessageLookupByLibrary.simpleMessage("Apply"),
     "area": MessageLookupByLibrary.simpleMessage("Area"),
     "arris": MessageLookupByLibrary.simpleMessage("Arris"),
@@ -328,6 +380,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "cherchell": MessageLookupByLibrary.simpleMessage("Cherchell"),
     "cheria": MessageLookupByLibrary.simpleMessage("Cheria"),
     "cherry": MessageLookupByLibrary.simpleMessage("Cherry"),
+    "cherryHealthyLabel": MessageLookupByLibrary.simpleMessage(
+      "Cherry Healthy",
+    ),
+    "cherryHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Water adequately and fertilize properly.",
+    ),
+    "cherryHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Prune to improve air circulation.",
+    ),
+    "cherryHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Inspect regularly for pests.",
+    ),
+    "cherryPowderyMildewLabel": MessageLookupByLibrary.simpleMessage(
+      "Cherry Powdery Mildew",
+    ),
+    "cherryPowderyMildewSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove infected leaves.",
+    ),
+    "cherryPowderyMildewSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply sulfur-based fungicides.",
+    ),
+    "cherryPowderyMildewSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Ensure good air circulation.",
+    ),
     "chetaibi": MessageLookupByLibrary.simpleMessage("Chetaibi"),
     "chetouane": MessageLookupByLibrary.simpleMessage("Chetouane"),
     "chickpea": MessageLookupByLibrary.simpleMessage("Chickpea"),
@@ -337,12 +413,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chooseCategory": MessageLookupByLibrary.simpleMessage("Choose Category"),
     "chooseEquipment": MessageLookupByLibrary.simpleMessage("Choose Equipment"),
+    "chooseImageSource": MessageLookupByLibrary.simpleMessage(
+      "Choose Image Source",
+    ),
     "chooseProduct": MessageLookupByLibrary.simpleMessage("Choose Product"),
     "chooseSubCategory": MessageLookupByLibrary.simpleMessage(
       "Choose Subcategory",
-    ),
-    "choose_picture": MessageLookupByLibrary.simpleMessage(
-      "Choose a Picture 📸",
     ),
     "client": MessageLookupByLibrary.simpleMessage("Client"),
     "clover": MessageLookupByLibrary.simpleMessage("Clover"),
@@ -356,6 +432,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "commercialRegister": MessageLookupByLibrary.simpleMessage(
       "Commercial Register",
     ),
+    "confidence": MessageLookupByLibrary.simpleMessage("Confidence"),
     "confirmDeleteAccount": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete this account ? ",
     ),
@@ -385,6 +462,52 @@ class MessageLookup extends MessageLookupByLibrary {
     "controlValves": MessageLookupByLibrary.simpleMessage("Control Valves"),
     "coriander": MessageLookupByLibrary.simpleMessage("Coriander"),
     "corn": MessageLookupByLibrary.simpleMessage("Corn"),
+    "cornCercosporaLeafSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "Corn Cercospora Leaf Spot (Gray Leaf Spot)",
+    ),
+    "cornCercosporaLeafSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove crop residues after harvest.",
+    ),
+    "cornCercosporaLeafSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides if necessary.",
+    ),
+    "cornCercosporaLeafSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Plant resistant hybrids.",
+    ),
+    "cornCommonRustLabel": MessageLookupByLibrary.simpleMessage(
+      "Corn Common Rust",
+    ),
+    "cornCommonRustSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Plant resistant varieties.",
+    ),
+    "cornCommonRustSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides early in the season.",
+    ),
+    "cornCommonRustSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Remove infected plant debris.",
+    ),
+    "cornHealthyLabel": MessageLookupByLibrary.simpleMessage("Corn Healthy"),
+    "cornHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Ensure proper irrigation and fertilization.",
+    ),
+    "cornHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Use crop rotation.",
+    ),
+    "cornHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Monitor regularly for pests.",
+    ),
+    "cornNorthernLeafBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "Corn Northern Leaf Blight",
+    ),
+    "cornNorthernLeafBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Use resistant hybrids.",
+    ),
+    "cornNorthernLeafBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Rotate crops.",
+    ),
+    "cornNorthernLeafBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides if necessary.",
+    ),
     "cornSilage": MessageLookupByLibrary.simpleMessage("Corn Silage"),
     "cream": MessageLookupByLibrary.simpleMessage("Cream"),
     "cropBags": MessageLookupByLibrary.simpleMessage("Crop Bags"),
@@ -426,6 +549,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
     "details": MessageLookupByLibrary.simpleMessage("Details"),
+    "detectionResult": MessageLookupByLibrary.simpleMessage("Detection Result"),
     "dhalaa": MessageLookupByLibrary.simpleMessage("Dhalaa"),
     "digitalScales": MessageLookupByLibrary.simpleMessage("Digital Scales"),
     "dinar": MessageLookupByLibrary.simpleMessage("DA"),
@@ -655,6 +779,52 @@ class MessageLookup extends MessageLookupByLibrary {
     "grainSieve": MessageLookupByLibrary.simpleMessage("Grain Sieve"),
     "grains": MessageLookupByLibrary.simpleMessage("Grains"),
     "grape": MessageLookupByLibrary.simpleMessage("Grape"),
+    "grapeBlackRotLabel": MessageLookupByLibrary.simpleMessage(
+      "Grape Black Rot",
+    ),
+    "grapeBlackRotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove mummified berries and infected shoots.",
+    ),
+    "grapeBlackRotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides at early bloom and pre-bunch closure.",
+    ),
+    "grapeBlackRotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Ensure good air circulation through pruning.",
+    ),
+    "grapeEscaLabel": MessageLookupByLibrary.simpleMessage(
+      "Grape Esca (Black Measles)",
+    ),
+    "grapeEscaSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy affected vines.",
+    ),
+    "grapeEscaSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Avoid wounding vines during pruning.",
+    ),
+    "grapeEscaSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Use fungicide treatments if recommended.",
+    ),
+    "grapeHealthyLabel": MessageLookupByLibrary.simpleMessage("Grape Healthy"),
+    "grapeHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Maintain proper irrigation and fertilization.",
+    ),
+    "grapeHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Prune regularly to improve airflow.",
+    ),
+    "grapeHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Inspect for pests and diseases frequently.",
+    ),
+    "grapeLeafBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "Grape Leaf Blight (Isariopsis Leaf Spot)",
+    ),
+    "grapeLeafBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove infected leaves and debris.",
+    ),
+    "grapeLeafBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides regularly during the growing season.",
+    ),
+    "grapeLeafBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Promote good air circulation.",
+    ),
     "graremGouga": MessageLookupByLibrary.simpleMessage("Grarem Gouga"),
     "greenBeans": MessageLookupByLibrary.simpleMessage("Green Beans"),
     "guelaatBouSbaa": MessageLookupByLibrary.simpleMessage("Guelaat Bou Sbaa"),
@@ -727,6 +897,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ighilAli": MessageLookupByLibrary.simpleMessage("Ighil Ali"),
     "igli": MessageLookupByLibrary.simpleMessage("Igli"),
     "illizi": MessageLookupByLibrary.simpleMessage("Illizi"),
+    "imageAnalysisError": MessageLookupByLibrary.simpleMessage(
+      "Error analyzing image",
+    ),
     "inAmenas": MessageLookupByLibrary.simpleMessage("In Amenas"),
     "inGhar": MessageLookupByLibrary.simpleMessage("In Ghar"),
     "inGuezzam": MessageLookupByLibrary.simpleMessage("In Guezzam"),
@@ -835,6 +1008,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "You need to log in to send a message",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Log Out"),
+    "lowConfidenceDetection": MessageLookupByLibrary.simpleMessage(
+      "Could not detect disease with sufficient confidence. Try another image.",
+    ),
     "mChedallah": MessageLookupByLibrary.simpleMessage("M\'Chedallah"),
     "mChouneche": MessageLookupByLibrary.simpleMessage("M\'Chouneche"),
     "mSila": MessageLookupByLibrary.simpleMessage("M\'Sila"),
@@ -1044,6 +1220,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwords_do_not_match": MessageLookupByLibrary.simpleMessage(
       "Passwords do not match",
     ),
+    "peachBacterialSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "Peach Bacterial Spot",
+    ),
+    "peachBacterialSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Apply copper-based bactericides.",
+    ),
+    "peachBacterialSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected plant material.",
+    ),
+    "peachBacterialSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Avoid overhead irrigation.",
+    ),
+    "peachHealthyLabel": MessageLookupByLibrary.simpleMessage("Peach Healthy"),
+    "peachHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Provide adequate watering and fertilization.",
+    ),
+    "peachHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Prune trees for good airflow.",
+    ),
+    "peachHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Monitor regularly for pests.",
+    ),
     "peanut": MessageLookupByLibrary.simpleMessage("Peanut"),
     "pear": MessageLookupByLibrary.simpleMessage("Pear"),
     "pepper": MessageLookupByLibrary.simpleMessage("Pepper"),
@@ -1068,6 +1266,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "plantAnimalHealth": MessageLookupByLibrary.simpleMessage(
       "Plant & Animal Health Monitoring",
     ),
+    "plant_apple": MessageLookupByLibrary.simpleMessage("Apple"),
+    "plant_cherry": MessageLookupByLibrary.simpleMessage("Cherry"),
+    "plant_corn": MessageLookupByLibrary.simpleMessage("Corn"),
+    "plant_grape": MessageLookupByLibrary.simpleMessage("Grape"),
+    "plant_peach": MessageLookupByLibrary.simpleMessage("Peach"),
+    "plant_potato": MessageLookupByLibrary.simpleMessage("Potato"),
+    "plant_strawberry": MessageLookupByLibrary.simpleMessage("Strawberry"),
+    "plant_tomato": MessageLookupByLibrary.simpleMessage("Tomato"),
     "plasticWaterTank": MessageLookupByLibrary.simpleMessage(
       "Plastic Water Tank",
     ),
@@ -1083,6 +1289,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseUploadProductImageFirst": MessageLookupByLibrary.simpleMessage(
       "📸 Please upload the product image first",
     ),
+    "pleaseWait": MessageLookupByLibrary.simpleMessage(
+      "This may take a few seconds",
+    ),
     "please_enter_all_info": MessageLookupByLibrary.simpleMessage(
       "Please enter all the information",
     ),
@@ -1094,6 +1303,42 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "portableCooler": MessageLookupByLibrary.simpleMessage("Portable Cooler"),
     "potato": MessageLookupByLibrary.simpleMessage("Potato"),
+    "potatoEarlyBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "Potato Early Blight",
+    ),
+    "potatoEarlyBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Rotate crops to non-host plants.",
+    ),
+    "potatoEarlyBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected foliage.",
+    ),
+    "potatoEarlyBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides preventively.",
+    ),
+    "potatoHealthyLabel": MessageLookupByLibrary.simpleMessage(
+      "Potato Healthy",
+    ),
+    "potatoHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Provide adequate irrigation and nutrition.",
+    ),
+    "potatoHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Practice crop rotation.",
+    ),
+    "potatoHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Inspect regularly for pests and diseases.",
+    ),
+    "potatoLateBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "Potato Late Blight",
+    ),
+    "potatoLateBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected plants promptly.",
+    ),
+    "potatoLateBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides regularly during wet weather.",
+    ),
+    "potatoLateBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Use resistant varieties.",
+    ),
     "poultry": MessageLookupByLibrary.simpleMessage(
       "Poultry (chicken, duck, turkey)",
     ),
@@ -1180,6 +1425,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "seggana": MessageLookupByLibrary.simpleMessage("Seggana"),
     "seghouane": MessageLookupByLibrary.simpleMessage("Seghouane"),
     "selectDaira": MessageLookupByLibrary.simpleMessage("Select Daira"),
+    "selectImageSource": MessageLookupByLibrary.simpleMessage(
+      "Select from gallery or take a photo",
+    ),
     "selectWilaya": MessageLookupByLibrary.simpleMessage("Select Wilaya"),
     "select_from_gallery": MessageLookupByLibrary.simpleMessage(
       "Select from Gallery",
@@ -1251,6 +1499,30 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "straw": MessageLookupByLibrary.simpleMessage("Straw"),
     "strawberry": MessageLookupByLibrary.simpleMessage("Strawberry"),
+    "strawberryHealthyLabel": MessageLookupByLibrary.simpleMessage(
+      "Strawberry Healthy",
+    ),
+    "strawberryHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Maintain balanced watering and fertilization.",
+    ),
+    "strawberryHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Remove weeds and debris regularly.",
+    ),
+    "strawberryHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Inspect plants frequently for pests and diseases.",
+    ),
+    "strawberryLeafScorchLabel": MessageLookupByLibrary.simpleMessage(
+      "Strawberry Leaf Scorch",
+    ),
+    "strawberryLeafScorchSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected leaves.",
+    ),
+    "strawberryLeafScorchSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides during early disease stages.",
+    ),
+    "strawberryLeafScorchSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Avoid overhead irrigation to reduce moisture.",
+    ),
     "subCategory": MessageLookupByLibrary.simpleMessage("Sub Category"),
     "subCategoryLabel": MessageLookupByLibrary.simpleMessage("Subcategory:"),
     "subject": MessageLookupByLibrary.simpleMessage("Subject"),
@@ -1264,6 +1536,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Yeeey! You are now a",
     ),
     "sunflowerSeeds": MessageLookupByLibrary.simpleMessage("Sunflower Seeds"),
+    "supported": MessageLookupByLibrary.simpleMessage("Supported :"),
     "sustainableFarmingConsulting": MessageLookupByLibrary.simpleMessage(
       "Sustainable Farming Consulting",
     ),
@@ -1282,6 +1555,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tamanrasset": MessageLookupByLibrary.simpleMessage("Tamanrasset"),
     "taougrit": MessageLookupByLibrary.simpleMessage("Taougrit"),
     "taoura": MessageLookupByLibrary.simpleMessage("Taoura"),
+    "tapToAddImage": MessageLookupByLibrary.simpleMessage(
+      "Tap to add leaf image",
+    ),
+    "tapToAddImages": MessageLookupByLibrary.simpleMessage("Tap to add images"),
     "tapToSelectImages": MessageLookupByLibrary.simpleMessage(
       "Tap to select images",
     ),
@@ -1326,6 +1603,125 @@ class MessageLookup extends MessageLookupByLibrary {
     "tlemcen": MessageLookupByLibrary.simpleMessage("Tlemcen"),
     "tolga": MessageLookupByLibrary.simpleMessage("Tolga"),
     "tomato": MessageLookupByLibrary.simpleMessage("Tomato"),
+    "tomatoBacterialSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Bacterial Spot",
+    ),
+    "tomatoBacterialSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Use copper-based bactericides.",
+    ),
+    "tomatoBacterialSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected plants.",
+    ),
+    "tomatoBacterialSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Avoid working with wet plants to prevent spread.",
+    ),
+    "tomatoEarlyBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Early Blight",
+    ),
+    "tomatoEarlyBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Rotate crops to reduce disease buildup.",
+    ),
+    "tomatoEarlyBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Remove infected leaves promptly.",
+    ),
+    "tomatoEarlyBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides preventively.",
+    ),
+    "tomatoHealthyLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Healthy",
+    ),
+    "tomatoHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Maintain balanced watering and fertilization.",
+    ),
+    "tomatoHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Ensure good airflow around plants.",
+    ),
+    "tomatoHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Inspect regularly for pests and diseases.",
+    ),
+    "tomatoLateBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Late Blight",
+    ),
+    "tomatoLateBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected plants.",
+    ),
+    "tomatoLateBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides regularly, especially in wet conditions.",
+    ),
+    "tomatoLateBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Use resistant tomato varieties.",
+    ),
+    "tomatoLeafMoldLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Leaf Mold",
+    ),
+    "tomatoLeafMoldSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Ensure good air circulation.",
+    ),
+    "tomatoLeafMoldSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Avoid overhead watering.",
+    ),
+    "tomatoLeafMoldSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Apply appropriate fungicides when necessary.",
+    ),
+    "tomatoMosaicVirusLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Mosaic Virus",
+    ),
+    "tomatoMosaicVirusSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Use virus-free seeds and transplants.",
+    ),
+    "tomatoMosaicVirusSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected plants.",
+    ),
+    "tomatoMosaicVirusSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Sanitize tools to prevent spread.",
+    ),
+    "tomatoSeptoriaLeafSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Septoria Leaf Spot",
+    ),
+    "tomatoSeptoriaLeafSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove and destroy infected leaves.",
+    ),
+    "tomatoSeptoriaLeafSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Practice crop rotation.",
+    ),
+    "tomatoSeptoriaLeafSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides preventively.",
+    ),
+    "tomatoSpiderMitesLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Spider Mites (Two-spotted spider mite)",
+    ),
+    "tomatoSpiderMitesSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Use miticides or insecticidal soaps.",
+    ),
+    "tomatoSpiderMitesSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Encourage natural predators like ladybugs.",
+    ),
+    "tomatoSpiderMitesSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Maintain adequate irrigation to reduce stress.",
+    ),
+    "tomatoTargetSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Target Spot",
+    ),
+    "tomatoTargetSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "Remove infected leaves and debris.",
+    ),
+    "tomatoTargetSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "Apply fungicides during early infection.",
+    ),
+    "tomatoTargetSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "Practice crop rotation.",
+    ),
+    "tomatoYellowLeafCurlVirusLabel": MessageLookupByLibrary.simpleMessage(
+      "Tomato Yellow Leaf Curl Virus",
+    ),
+    "tomatoYellowLeafCurlVirusSuggestion1":
+        MessageLookupByLibrary.simpleMessage("Use resistant tomato varieties."),
+    "tomatoYellowLeafCurlVirusSuggestion2":
+        MessageLookupByLibrary.simpleMessage("Control whitefly populations."),
+    "tomatoYellowLeafCurlVirusSuggestion3":
+        MessageLookupByLibrary.simpleMessage(
+          "Remove infected plants promptly.",
+        ),
     "ton": MessageLookupByLibrary.simpleMessage("Ton"),
     "touggourt": MessageLookupByLibrary.simpleMessage("Touggourt"),
     "tractor": MessageLookupByLibrary.simpleMessage("Tractor"),
@@ -1340,6 +1736,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "transportation": MessageLookupByLibrary.simpleMessage("Transportation"),
     "transporteur": MessageLookupByLibrary.simpleMessage("Transporter"),
+    "treatmentRecommendations": MessageLookupByLibrary.simpleMessage(
+      "Treatment Recommendations",
+    ),
     "tsabit": MessageLookupByLibrary.simpleMessage("Tsabit"),
     "type_label": MessageLookupByLibrary.simpleMessage("Type"),
     "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
@@ -1349,6 +1748,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateEmail": MessageLookupByLibrary.simpleMessage("Update Email"),
     "updatePhoneNumber": MessageLookupByLibrary.simpleMessage(
       "Update Phone Number",
+    ),
+    "uploadInstruction": MessageLookupByLibrary.simpleMessage(
+      "Upload a clear image of a plant leaf to detect diseases",
     ),
     "userTypeCannotAdd": MessageLookupByLibrary.simpleMessage(
       "can\'t add items",

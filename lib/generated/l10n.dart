@@ -190,11 +190,11 @@ class S {
     );
   }
 
-  /// `اختر صورة 📸`
-  String get choose_picture {
+  /// `اختر مصدر الصورة`
+  String get chooseImageSource {
     return Intl.message(
-      'اختر صورة 📸',
-      name: 'choose_picture',
+      'اختر مصدر الصورة',
+      name: 'chooseImageSource',
       desc: '',
       args: [],
     );
@@ -6960,6 +6960,1406 @@ class S {
     return Intl.message(
       'أرض صالحة للزراعة',
       name: 'landSuitableForAgriculture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تفاح`
+  String get plant_apple {
+    return Intl.message('تفاح', name: 'plant_apple', desc: '', args: []);
+  }
+
+  /// `كرز`
+  String get plant_cherry {
+    return Intl.message('كرز', name: 'plant_cherry', desc: '', args: []);
+  }
+
+  /// `ذرة`
+  String get plant_corn {
+    return Intl.message('ذرة', name: 'plant_corn', desc: '', args: []);
+  }
+
+  /// `عنب`
+  String get plant_grape {
+    return Intl.message('عنب', name: 'plant_grape', desc: '', args: []);
+  }
+
+  /// `خوخ`
+  String get plant_peach {
+    return Intl.message('خوخ', name: 'plant_peach', desc: '', args: []);
+  }
+
+  /// `بطاطا`
+  String get plant_potato {
+    return Intl.message('بطاطا', name: 'plant_potato', desc: '', args: []);
+  }
+
+  /// `فراولة`
+  String get plant_strawberry {
+    return Intl.message('فراولة', name: 'plant_strawberry', desc: '', args: []);
+  }
+
+  /// `طماطم`
+  String get plant_tomato {
+    return Intl.message('طماطم', name: 'plant_tomato', desc: '', args: []);
+  }
+
+  /// `جرب التفاح`
+  String get appleAppleScabLabel {
+    return Intl.message(
+      'جرب التفاح',
+      name: 'appleAppleScabLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة الأوراق المتساقطة وتخلص منها.`
+  String get appleAppleScabSuggestion1 {
+    return Intl.message(
+      'قم بإزالة الأوراق المتساقطة وتخلص منها.',
+      name: 'appleAppleScabSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات في وقت مبكر من الموسم.`
+  String get appleAppleScabSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات في وقت مبكر من الموسم.',
+      name: 'appleAppleScabSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تأكد من وجود تهوية جيدة.`
+  String get appleAppleScabSuggestion3 {
+    return Intl.message(
+      'تأكد من وجود تهوية جيدة.',
+      name: 'appleAppleScabSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تعفن التفاح الأسود`
+  String get appleBlackRotLabel {
+    return Intl.message(
+      'تعفن التفاح الأسود',
+      name: 'appleBlackRotLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتقليم الفروع المصابة.`
+  String get appleBlackRotSuggestion1 {
+    return Intl.message(
+      'قم بتقليم الفروع المصابة.',
+      name: 'appleBlackRotSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تخلص من الثمار المتحللة أو الجافة.`
+  String get appleBlackRotSuggestion2 {
+    return Intl.message(
+      'تخلص من الثمار المتحللة أو الجافة.',
+      name: 'appleBlackRotSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات أثناء موسم النمو.`
+  String get appleBlackRotSuggestion3 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات أثناء موسم النمو.',
+      name: 'appleBlackRotSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `صدأ التفاح والعرعر`
+  String get appleCedarAppleRustLabel {
+    return Intl.message(
+      'صدأ التفاح والعرعر',
+      name: 'appleCedarAppleRustLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة أشجار العرعر القريبة إن أمكن.`
+  String get appleCedarAppleRustSuggestion1 {
+    return Intl.message(
+      'قم بإزالة أشجار العرعر القريبة إن أمكن.',
+      name: 'appleCedarAppleRustSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات بانتظام.`
+  String get appleCedarAppleRustSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات بانتظام.',
+      name: 'appleCedarAppleRustSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ازرع أنواعاً مقاومة للمرض.`
+  String get appleCedarAppleRustSuggestion3 {
+    return Intl.message(
+      'ازرع أنواعاً مقاومة للمرض.',
+      name: 'appleCedarAppleRustSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تفاح سليم`
+  String get appleHealthyLabel {
+    return Intl.message(
+      'تفاح سليم',
+      name: 'appleHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تأكد من الري والتسميد المناسب.`
+  String get appleHealthySuggestion1 {
+    return Intl.message(
+      'تأكد من الري والتسميد المناسب.',
+      name: 'appleHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بالتقليم المنتظم لتحسين التهوية.`
+  String get appleHealthySuggestion2 {
+    return Intl.message(
+      'قم بالتقليم المنتظم لتحسين التهوية.',
+      name: 'appleHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `راقب الآفات والأمراض باستمرار.`
+  String get appleHealthySuggestion3 {
+    return Intl.message(
+      'راقب الآفات والأمراض باستمرار.',
+      name: 'appleHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `البياض الدقيقي في الكرز`
+  String get cherryPowderyMildewLabel {
+    return Intl.message(
+      'البياض الدقيقي في الكرز',
+      name: 'cherryPowderyMildewLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة الأوراق المصابة.`
+  String get cherryPowderyMildewSuggestion1 {
+    return Intl.message(
+      'قم بإزالة الأوراق المصابة.',
+      name: 'cherryPowderyMildewSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات فطرية تحتوي على الكبريت.`
+  String get cherryPowderyMildewSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات فطرية تحتوي على الكبريت.',
+      name: 'cherryPowderyMildewSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تأكد من وجود تهوية جيدة.`
+  String get cherryPowderyMildewSuggestion3 {
+    return Intl.message(
+      'تأكد من وجود تهوية جيدة.',
+      name: 'cherryPowderyMildewSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `كرز سليم`
+  String get cherryHealthyLabel {
+    return Intl.message(
+      'كرز سليم',
+      name: 'cherryHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بري النبات بشكل كافٍ وسمّده بشكل مناسب.`
+  String get cherryHealthySuggestion1 {
+    return Intl.message(
+      'قم بري النبات بشكل كافٍ وسمّده بشكل مناسب.',
+      name: 'cherryHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قُم بالتقليم لتحسين التهوية.`
+  String get cherryHealthySuggestion2 {
+    return Intl.message(
+      'قُم بالتقليم لتحسين التهوية.',
+      name: 'cherryHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `افحص النبات بانتظام لاكتشاف الآفات.`
+  String get cherryHealthySuggestion3 {
+    return Intl.message(
+      'افحص النبات بانتظام لاكتشاف الآفات.',
+      name: 'cherryHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `بقعة أوراق السركوسبورا في الذرة (البقعة الرمادية)`
+  String get cornCercosporaLeafSpotLabel {
+    return Intl.message(
+      'بقعة أوراق السركوسبورا في الذرة (البقعة الرمادية)',
+      name: 'cornCercosporaLeafSpotLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة بقايا المحصول بعد الحصاد.`
+  String get cornCercosporaLeafSpotSuggestion1 {
+    return Intl.message(
+      'قم بإزالة بقايا المحصول بعد الحصاد.',
+      name: 'cornCercosporaLeafSpotSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات عند الضرورة.`
+  String get cornCercosporaLeafSpotSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات عند الضرورة.',
+      name: 'cornCercosporaLeafSpotSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ازرع هجنًا مقاومة.`
+  String get cornCercosporaLeafSpotSuggestion3 {
+    return Intl.message(
+      'ازرع هجنًا مقاومة.',
+      name: 'cornCercosporaLeafSpotSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الصدأ الشائع في الذرة`
+  String get cornCommonRustLabel {
+    return Intl.message(
+      'الصدأ الشائع في الذرة',
+      name: 'cornCommonRustLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ازرع أصنافًا مقاومة.`
+  String get cornCommonRustSuggestion1 {
+    return Intl.message(
+      'ازرع أصنافًا مقاومة.',
+      name: 'cornCommonRustSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات في بداية الموسم.`
+  String get cornCommonRustSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات في بداية الموسم.',
+      name: 'cornCommonRustSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة بقايا النباتات المصابة.`
+  String get cornCommonRustSuggestion3 {
+    return Intl.message(
+      'قم بإزالة بقايا النباتات المصابة.',
+      name: 'cornCommonRustSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `لفحة الأوراق الشمالية في الذرة`
+  String get cornNorthernLeafBlightLabel {
+    return Intl.message(
+      'لفحة الأوراق الشمالية في الذرة',
+      name: 'cornNorthernLeafBlightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم هجنًا مقاومة.`
+  String get cornNorthernLeafBlightSuggestion1 {
+    return Intl.message(
+      'استخدم هجنًا مقاومة.',
+      name: 'cornNorthernLeafBlightSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتدوير المحاصيل.`
+  String get cornNorthernLeafBlightSuggestion2 {
+    return Intl.message(
+      'قم بتدوير المحاصيل.',
+      name: 'cornNorthernLeafBlightSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات عند الضرورة.`
+  String get cornNorthernLeafBlightSuggestion3 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات عند الضرورة.',
+      name: 'cornNorthernLeafBlightSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ذرة سليمة`
+  String get cornHealthyLabel {
+    return Intl.message(
+      'ذرة سليمة',
+      name: 'cornHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تأكد من الري والتسميد الجيد.`
+  String get cornHealthySuggestion1 {
+    return Intl.message(
+      'تأكد من الري والتسميد الجيد.',
+      name: 'cornHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتدوير المحاصيل.`
+  String get cornHealthySuggestion2 {
+    return Intl.message(
+      'قم بتدوير المحاصيل.',
+      name: 'cornHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `راقب الآفات بانتظام.`
+  String get cornHealthySuggestion3 {
+    return Intl.message(
+      'راقب الآفات بانتظام.',
+      name: 'cornHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تعفن العنب الأسود`
+  String get grapeBlackRotLabel {
+    return Intl.message(
+      'تعفن العنب الأسود',
+      name: 'grapeBlackRotLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة الثمار المجففة والفسائل المصابة.`
+  String get grapeBlackRotSuggestion1 {
+    return Intl.message(
+      'قم بإزالة الثمار المجففة والفسائل المصابة.',
+      name: 'grapeBlackRotSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات فطرية عند بداية التزهير وقبل إغلاق العناقيد.`
+  String get grapeBlackRotSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات فطرية عند بداية التزهير وقبل إغلاق العناقيد.',
+      name: 'grapeBlackRotSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `وفر تهوية جيدة من خلال التقليم.`
+  String get grapeBlackRotSuggestion3 {
+    return Intl.message(
+      'وفر تهوية جيدة من خلال التقليم.',
+      name: 'grapeBlackRotSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إسكا العنب (الحصبة السوداء)`
+  String get grapeEscaLabel {
+    return Intl.message(
+      'إسكا العنب (الحصبة السوداء)',
+      name: 'grapeEscaLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة وتدمير الكروم المصابة.`
+  String get grapeEscaSuggestion1 {
+    return Intl.message(
+      'قم بإزالة وتدمير الكروم المصابة.',
+      name: 'grapeEscaSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تجنب جرح الكروم أثناء التقليم.`
+  String get grapeEscaSuggestion2 {
+    return Intl.message(
+      'تجنب جرح الكروم أثناء التقليم.',
+      name: 'grapeEscaSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم المعالجات الفطرية إذا كانت موصى بها.`
+  String get grapeEscaSuggestion3 {
+    return Intl.message(
+      'استخدم المعالجات الفطرية إذا كانت موصى بها.',
+      name: 'grapeEscaSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `لفحة أوراق العنب (بقعة إيساريوبيسيس)`
+  String get grapeLeafBlightLabel {
+    return Intl.message(
+      'لفحة أوراق العنب (بقعة إيساريوبيسيس)',
+      name: 'grapeLeafBlightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أزل الأوراق والحطام المصابة.`
+  String get grapeLeafBlightSuggestion1 {
+    return Intl.message(
+      'أزل الأوراق والحطام المصابة.',
+      name: 'grapeLeafBlightSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات بانتظام خلال موسم النمو.`
+  String get grapeLeafBlightSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات بانتظام خلال موسم النمو.',
+      name: 'grapeLeafBlightSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `شجع على التهوية الجيدة.`
+  String get grapeLeafBlightSuggestion3 {
+    return Intl.message(
+      'شجع على التهوية الجيدة.',
+      name: 'grapeLeafBlightSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `عنب سليم`
+  String get grapeHealthyLabel {
+    return Intl.message(
+      'عنب سليم',
+      name: 'grapeHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حافظ على ري وتسميد مناسب.`
+  String get grapeHealthySuggestion1 {
+    return Intl.message(
+      'حافظ على ري وتسميد مناسب.',
+      name: 'grapeHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قُم بالتقليم المنتظم لتحسين التهوية.`
+  String get grapeHealthySuggestion2 {
+    return Intl.message(
+      'قُم بالتقليم المنتظم لتحسين التهوية.',
+      name: 'grapeHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `افحص بشكل متكرر بحثًا عن الأمراض والآفات.`
+  String get grapeHealthySuggestion3 {
+    return Intl.message(
+      'افحص بشكل متكرر بحثًا عن الأمراض والآفات.',
+      name: 'grapeHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `البقعة البكتيرية في الخوخ`
+  String get peachBacterialSpotLabel {
+    return Intl.message(
+      'البقعة البكتيرية في الخوخ',
+      name: 'peachBacterialSpotLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات بكتيرية تعتمد على النحاس.`
+  String get peachBacterialSpotSuggestion1 {
+    return Intl.message(
+      'استخدم مبيدات بكتيرية تعتمد على النحاس.',
+      name: 'peachBacterialSpotSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة المواد النباتية المصابة وتدميرها.`
+  String get peachBacterialSpotSuggestion2 {
+    return Intl.message(
+      'قم بإزالة المواد النباتية المصابة وتدميرها.',
+      name: 'peachBacterialSpotSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تجنب الري العلوي.`
+  String get peachBacterialSpotSuggestion3 {
+    return Intl.message(
+      'تجنب الري العلوي.',
+      name: 'peachBacterialSpotSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `خوخ سليم`
+  String get peachHealthyLabel {
+    return Intl.message(
+      'خوخ سليم',
+      name: 'peachHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `وفر الري والتسميد الكافي.`
+  String get peachHealthySuggestion1 {
+    return Intl.message(
+      'وفر الري والتسميد الكافي.',
+      name: 'peachHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قُم بتقليم الأشجار لضمان تهوية جيدة.`
+  String get peachHealthySuggestion2 {
+    return Intl.message(
+      'قُم بتقليم الأشجار لضمان تهوية جيدة.',
+      name: 'peachHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `راقب الآفات بانتظام.`
+  String get peachHealthySuggestion3 {
+    return Intl.message(
+      'راقب الآفات بانتظام.',
+      name: 'peachHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اللفحة المبكرة في البطاطا`
+  String get potatoEarlyBlightLabel {
+    return Intl.message(
+      'اللفحة المبكرة في البطاطا',
+      name: 'potatoEarlyBlightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتدوير المحاصيل إلى نباتات غير عائلة.`
+  String get potatoEarlyBlightSuggestion1 {
+    return Intl.message(
+      'قم بتدوير المحاصيل إلى نباتات غير عائلة.',
+      name: 'potatoEarlyBlightSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة وتدمير الأوراق المصابة.`
+  String get potatoEarlyBlightSuggestion2 {
+    return Intl.message(
+      'قم بإزالة وتدمير الأوراق المصابة.',
+      name: 'potatoEarlyBlightSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات بشكل وقائي.`
+  String get potatoEarlyBlightSuggestion3 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات بشكل وقائي.',
+      name: 'potatoEarlyBlightSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اللفحة المتأخرة في البطاطا`
+  String get potatoLateBlightLabel {
+    return Intl.message(
+      'اللفحة المتأخرة في البطاطا',
+      name: 'potatoLateBlightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أزل النباتات المصابة فورًا وتخلص منها.`
+  String get potatoLateBlightSuggestion1 {
+    return Intl.message(
+      'أزل النباتات المصابة فورًا وتخلص منها.',
+      name: 'potatoLateBlightSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات بانتظام خلال الطقس الرطب.`
+  String get potatoLateBlightSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات بانتظام خلال الطقس الرطب.',
+      name: 'potatoLateBlightSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم أصنافًا مقاومة.`
+  String get potatoLateBlightSuggestion3 {
+    return Intl.message(
+      'استخدم أصنافًا مقاومة.',
+      name: 'potatoLateBlightSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `بطاطا سليمة`
+  String get potatoHealthyLabel {
+    return Intl.message(
+      'بطاطا سليمة',
+      name: 'potatoHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `وفر ريًا وتغذية مناسبة.`
+  String get potatoHealthySuggestion1 {
+    return Intl.message(
+      'وفر ريًا وتغذية مناسبة.',
+      name: 'potatoHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتطبيق تدوير المحاصيل.`
+  String get potatoHealthySuggestion2 {
+    return Intl.message(
+      'قم بتطبيق تدوير المحاصيل.',
+      name: 'potatoHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `افحص بانتظام الآفات والأمراض.`
+  String get potatoHealthySuggestion3 {
+    return Intl.message(
+      'افحص بانتظام الآفات والأمراض.',
+      name: 'potatoHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `احتراق أوراق الفراولة`
+  String get strawberryLeafScorchLabel {
+    return Intl.message(
+      'احتراق أوراق الفراولة',
+      name: 'strawberryLeafScorchLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة وتدمير الأوراق المصابة.`
+  String get strawberryLeafScorchSuggestion1 {
+    return Intl.message(
+      'قم بإزالة وتدمير الأوراق المصابة.',
+      name: 'strawberryLeafScorchSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات في المراحل المبكرة للمرض.`
+  String get strawberryLeafScorchSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات في المراحل المبكرة للمرض.',
+      name: 'strawberryLeafScorchSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تجنب الري العلوي لتقليل الرطوبة.`
+  String get strawberryLeafScorchSuggestion3 {
+    return Intl.message(
+      'تجنب الري العلوي لتقليل الرطوبة.',
+      name: 'strawberryLeafScorchSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `فراولة سليمة`
+  String get strawberryHealthyLabel {
+    return Intl.message(
+      'فراولة سليمة',
+      name: 'strawberryHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حافظ على توازن الري والتسميد.`
+  String get strawberryHealthySuggestion1 {
+    return Intl.message(
+      'حافظ على توازن الري والتسميد.',
+      name: 'strawberryHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة الأعشاب الضارة والحطام بانتظام.`
+  String get strawberryHealthySuggestion2 {
+    return Intl.message(
+      'قم بإزالة الأعشاب الضارة والحطام بانتظام.',
+      name: 'strawberryHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `افحص النباتات بشكل متكرر لاكتشاف الآفات والأمراض.`
+  String get strawberryHealthySuggestion3 {
+    return Intl.message(
+      'افحص النباتات بشكل متكرر لاكتشاف الآفات والأمراض.',
+      name: 'strawberryHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `البقعة البكتيرية في الطماطم`
+  String get tomatoBacterialSpotLabel {
+    return Intl.message(
+      'البقعة البكتيرية في الطماطم',
+      name: 'tomatoBacterialSpotLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات بكتيرية تعتمد على النحاس.`
+  String get tomatoBacterialSpotSuggestion1 {
+    return Intl.message(
+      'استخدم مبيدات بكتيرية تعتمد على النحاس.',
+      name: 'tomatoBacterialSpotSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة وتدمير النباتات المصابة.`
+  String get tomatoBacterialSpotSuggestion2 {
+    return Intl.message(
+      'قم بإزالة وتدمير النباتات المصابة.',
+      name: 'tomatoBacterialSpotSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تجنب التعامل مع النباتات المبللة لتفادي انتشار المرض.`
+  String get tomatoBacterialSpotSuggestion3 {
+    return Intl.message(
+      'تجنب التعامل مع النباتات المبللة لتفادي انتشار المرض.',
+      name: 'tomatoBacterialSpotSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اللفحة المبكرة في الطماطم`
+  String get tomatoEarlyBlightLabel {
+    return Intl.message(
+      'اللفحة المبكرة في الطماطم',
+      name: 'tomatoEarlyBlightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتدوير المحاصيل لتقليل تراكم الأمراض.`
+  String get tomatoEarlyBlightSuggestion1 {
+    return Intl.message(
+      'قم بتدوير المحاصيل لتقليل تراكم الأمراض.',
+      name: 'tomatoEarlyBlightSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أزل الأوراق المصابة فورًا.`
+  String get tomatoEarlyBlightSuggestion2 {
+    return Intl.message(
+      'أزل الأوراق المصابة فورًا.',
+      name: 'tomatoEarlyBlightSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات بشكل وقائي.`
+  String get tomatoEarlyBlightSuggestion3 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات بشكل وقائي.',
+      name: 'tomatoEarlyBlightSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اللفحة المتأخرة في الطماطم`
+  String get tomatoLateBlightLabel {
+    return Intl.message(
+      'اللفحة المتأخرة في الطماطم',
+      name: 'tomatoLateBlightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة وتدمير النباتات المصابة.`
+  String get tomatoLateBlightSuggestion1 {
+    return Intl.message(
+      'قم بإزالة وتدمير النباتات المصابة.',
+      name: 'tomatoLateBlightSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات بانتظام، خصوصًا في الظروف الرطبة.`
+  String get tomatoLateBlightSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات بانتظام، خصوصًا في الظروف الرطبة.',
+      name: 'tomatoLateBlightSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم أصناف طماطم مقاومة.`
+  String get tomatoLateBlightSuggestion3 {
+    return Intl.message(
+      'استخدم أصناف طماطم مقاومة.',
+      name: 'tomatoLateBlightSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `عفن أوراق الطماطم`
+  String get tomatoLeafMoldLabel {
+    return Intl.message(
+      'عفن أوراق الطماطم',
+      name: 'tomatoLeafMoldLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `وفر تهوية جيدة للنباتات.`
+  String get tomatoLeafMoldSuggestion1 {
+    return Intl.message(
+      'وفر تهوية جيدة للنباتات.',
+      name: 'tomatoLeafMoldSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تجنب الري العلوي.`
+  String get tomatoLeafMoldSuggestion2 {
+    return Intl.message(
+      'تجنب الري العلوي.',
+      name: 'tomatoLeafMoldSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم المبيدات المناسبة عند الحاجة.`
+  String get tomatoLeafMoldSuggestion3 {
+    return Intl.message(
+      'استخدم المبيدات المناسبة عند الحاجة.',
+      name: 'tomatoLeafMoldSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `بقعة أوراق السبتوريا في الطماطم`
+  String get tomatoSeptoriaLeafSpotLabel {
+    return Intl.message(
+      'بقعة أوراق السبتوريا في الطماطم',
+      name: 'tomatoSeptoriaLeafSpotLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة وتدمير الأوراق المصابة.`
+  String get tomatoSeptoriaLeafSpotSuggestion1 {
+    return Intl.message(
+      'قم بإزالة وتدمير الأوراق المصابة.',
+      name: 'tomatoSeptoriaLeafSpotSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مارس تدوير المحاصيل.`
+  String get tomatoSeptoriaLeafSpotSuggestion2 {
+    return Intl.message(
+      'مارس تدوير المحاصيل.',
+      name: 'tomatoSeptoriaLeafSpotSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات بشكل وقائي.`
+  String get tomatoSeptoriaLeafSpotSuggestion3 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات بشكل وقائي.',
+      name: 'tomatoSeptoriaLeafSpotSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `العنكبوت الأحمر (ذو البقعتين) في الطماطم`
+  String get tomatoSpiderMitesLabel {
+    return Intl.message(
+      'العنكبوت الأحمر (ذو البقعتين) في الطماطم',
+      name: 'tomatoSpiderMitesLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات العناكب أو الصابون الحشري.`
+  String get tomatoSpiderMitesSuggestion1 {
+    return Intl.message(
+      'استخدم مبيدات العناكب أو الصابون الحشري.',
+      name: 'tomatoSpiderMitesSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `شجع على وجود الأعداء الحيوية مثل الدعسوقة.`
+  String get tomatoSpiderMitesSuggestion2 {
+    return Intl.message(
+      'شجع على وجود الأعداء الحيوية مثل الدعسوقة.',
+      name: 'tomatoSpiderMitesSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حافظ على ري كافٍ لتقليل التوتر النباتي.`
+  String get tomatoSpiderMitesSuggestion3 {
+    return Intl.message(
+      'حافظ على ري كافٍ لتقليل التوتر النباتي.',
+      name: 'tomatoSpiderMitesSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `بقعة الهدف في الطماطم`
+  String get tomatoTargetSpotLabel {
+    return Intl.message(
+      'بقعة الهدف في الطماطم',
+      name: 'tomatoTargetSpotLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة الأوراق والحطام المصاب.`
+  String get tomatoTargetSpotSuggestion1 {
+    return Intl.message(
+      'قم بإزالة الأوراق والحطام المصاب.',
+      name: 'tomatoTargetSpotSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم مبيدات الفطريات في المراحل المبكرة.`
+  String get tomatoTargetSpotSuggestion2 {
+    return Intl.message(
+      'استخدم مبيدات الفطريات في المراحل المبكرة.',
+      name: 'tomatoTargetSpotSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتدوير المحاصيل.`
+  String get tomatoTargetSpotSuggestion3 {
+    return Intl.message(
+      'قم بتدوير المحاصيل.',
+      name: 'tomatoTargetSpotSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `فيروس تجعد أوراق الطماطم الأصفر`
+  String get tomatoYellowLeafCurlVirusLabel {
+    return Intl.message(
+      'فيروس تجعد أوراق الطماطم الأصفر',
+      name: 'tomatoYellowLeafCurlVirusLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم أصناف طماطم مقاومة.`
+  String get tomatoYellowLeafCurlVirusSuggestion1 {
+    return Intl.message(
+      'استخدم أصناف طماطم مقاومة.',
+      name: 'tomatoYellowLeafCurlVirusSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تحكم في أعداد الذباب الأبيض.`
+  String get tomatoYellowLeafCurlVirusSuggestion2 {
+    return Intl.message(
+      'تحكم في أعداد الذباب الأبيض.',
+      name: 'tomatoYellowLeafCurlVirusSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة النباتات المصابة بسرعة.`
+  String get tomatoYellowLeafCurlVirusSuggestion3 {
+    return Intl.message(
+      'قم بإزالة النباتات المصابة بسرعة.',
+      name: 'tomatoYellowLeafCurlVirusSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `فيروس موزاييك الطماطم`
+  String get tomatoMosaicVirusLabel {
+    return Intl.message(
+      'فيروس موزاييك الطماطم',
+      name: 'tomatoMosaicVirusLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `استخدم بذور وشتلات خالية من الفيروسات.`
+  String get tomatoMosaicVirusSuggestion1 {
+    return Intl.message(
+      'استخدم بذور وشتلات خالية من الفيروسات.',
+      name: 'tomatoMosaicVirusSuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بإزالة وتدمير النباتات المصابة.`
+  String get tomatoMosaicVirusSuggestion2 {
+    return Intl.message(
+      'قم بإزالة وتدمير النباتات المصابة.',
+      name: 'tomatoMosaicVirusSuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `عقّم الأدوات لتفادي الانتشار.`
+  String get tomatoMosaicVirusSuggestion3 {
+    return Intl.message(
+      'عقّم الأدوات لتفادي الانتشار.',
+      name: 'tomatoMosaicVirusSuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `طماطم سليمة`
+  String get tomatoHealthyLabel {
+    return Intl.message(
+      'طماطم سليمة',
+      name: 'tomatoHealthyLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حافظ على توازن الري والتسميد.`
+  String get tomatoHealthySuggestion1 {
+    return Intl.message(
+      'حافظ على توازن الري والتسميد.',
+      name: 'tomatoHealthySuggestion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `وفر تهوية جيدة حول النباتات.`
+  String get tomatoHealthySuggestion2 {
+    return Intl.message(
+      'وفر تهوية جيدة حول النباتات.',
+      name: 'tomatoHealthySuggestion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `افحص النباتات بانتظام لاكتشاف الآفات والأمراض.`
+  String get tomatoHealthySuggestion3 {
+    return Intl.message(
+      'افحص النباتات بانتظام لاكتشاف الآفات والأمراض.',
+      name: 'tomatoHealthySuggestion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تعذر اكتشاف المرض بدقة كافية. جرب صورة أخرى.`
+  String get lowConfidenceDetection {
+    return Intl.message(
+      'تعذر اكتشاف المرض بدقة كافية. جرب صورة أخرى.',
+      name: 'lowConfidenceDetection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حدث خطأ أثناء تحليل الصورة`
+  String get imageAnalysisError {
+    return Intl.message(
+      'حدث خطأ أثناء تحليل الصورة',
+      name: 'imageAnalysisError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مدعوم :`
+  String get supported {
+    return Intl.message('مدعوم :', name: 'supported', desc: '', args: []);
+  }
+
+  /// `اضغط لإضافة صورة ورقة`
+  String get tapToAddImage {
+    return Intl.message(
+      'اضغط لإضافة صورة ورقة',
+      name: 'tapToAddImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اختر من المعرض أو التقط صورة`
+  String get selectImageSource {
+    return Intl.message(
+      'اختر من المعرض أو التقط صورة',
+      name: 'selectImageSource',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `جارٍ تحليل صورة النبات...`
+  String get analyzingImage {
+    return Intl.message(
+      'جارٍ تحليل صورة النبات...',
+      name: 'analyzingImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قد يستغرق ذلك بضع ثوانٍ`
+  String get pleaseWait {
+    return Intl.message(
+      'قد يستغرق ذلك بضع ثوانٍ',
+      name: 'pleaseWait',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نتيجة الكشف`
+  String get detectionResult {
+    return Intl.message(
+      'نتيجة الكشف',
+      name: 'detectionResult',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نسبة الثقة`
+  String get confidence {
+    return Intl.message('نسبة الثقة', name: 'confidence', desc: '', args: []);
+  }
+
+  /// `توصيات العلاج`
+  String get treatmentRecommendations {
+    return Intl.message(
+      'توصيات العلاج',
+      name: 'treatmentRecommendations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تحليل ذكي لصحة النباتات`
+  String get appTitle {
+    return Intl.message(
+      'تحليل ذكي لصحة النباتات',
+      name: 'appTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قم بتحميل صورة واضحة لورقة نبات للكشف عن الأمراض`
+  String get uploadInstruction {
+    return Intl.message(
+      'قم بتحميل صورة واضحة لورقة نبات للكشف عن الأمراض',
+      name: 'uploadInstruction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اضغط لإضافة الصور`
+  String get tapToAddImages {
+    return Intl.message(
+      'اضغط لإضافة الصور',
+      name: 'tapToAddImages',
       desc: '',
       args: [],
     );

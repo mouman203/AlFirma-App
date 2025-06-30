@@ -1,5 +1,5 @@
 import 'package:agriplant/Back_end/User.dart';
-import 'package:agriplant/Front_end/Meseges/Chat.dart';
+import 'package:agriplant/Front_end/Meseges/Chat2.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -468,17 +468,28 @@ class VeterinarianCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Name
+                    // First Name
                     Text(
-                      '$firstName $lastName',
+                      firstName,
                       style: TextStyle(
                         color: isDarkMode ? Colors.white : Colors.black,
-                        fontSize: 27,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // Last Name
+                    Text(
+                      lastName,
+                      style: TextStyle(
+                        color: isDarkMode ? Colors.white : Colors.black,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
+
                     // Profession
                     Text(
                       S.of(context).veterinaire,
@@ -491,6 +502,7 @@ class VeterinarianCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
+
                     // Location - Wilaya
                     Row(
                       children: [
@@ -515,6 +527,7 @@ class VeterinarianCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
+
                     // Location - Daira
                     Row(
                       children: [
@@ -541,6 +554,7 @@ class VeterinarianCard extends StatelessWidget {
                   ],
                 ),
               ),
+
               // Contact buttons in a column with defined width
               SizedBox(
                 width: 80, // Fixed width for the buttons column
@@ -558,13 +572,12 @@ class VeterinarianCard extends StatelessWidget {
                           final vetId = vet['id'];
                           if (vetId != null) {
                             if (!Users.isGuestUser()) {
-                              /* Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChatPage(receiverId: vetId,product: widget.vet['product'],),
-                                ),
-                              );*/
+                                    builder: (context) =>
+                                        ChatPage2(otherUserId: vetId)),
+                              );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

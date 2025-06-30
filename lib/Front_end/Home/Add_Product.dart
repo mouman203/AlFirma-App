@@ -723,12 +723,149 @@ class _AddProductsState extends State<AddProducts> {
   }
 
   Future<void> _pickImages() async {
-    final List<XFile> images = await ImagePicker().pickMultiImage();
-    if (images.isNotEmpty) {
-      setState(() {
-        selectedImages = images;
-      });
-    }
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(
+              Icons.add_a_photo,
+              color: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              S.of(context).chooseImageSource,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // === Gallery Option ===
+            InkWell(
+              onTap: () async {
+                final List<XFile> images = await ImagePicker().pickMultiImage();
+                if (images.isNotEmpty) {
+                  setState(() {
+                    selectedImages = images;
+                  });
+                }
+                Navigator.pop(context);
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE).withOpacity(0.3)
+                        : const Color(0xFF256C4C).withOpacity(0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: (isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C))
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.photo_library,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        S.of(context).select_from_gallery,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // === Camera Option ===
+            InkWell(
+              onTap: () async {
+                final picked =
+                    await ImagePicker().pickImage(source: ImageSource.camera);
+                if (picked != null) {
+                  setState(() {
+                    selectedImages.add(picked);
+                  });
+                }
+                Navigator.pop(context);
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE).withOpacity(0.3)
+                        : const Color(0xFF256C4C).withOpacity(0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: (isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C))
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        S.of(context).capture_with_camera,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showSuccessDialog(BuildContext context) {
@@ -827,8 +964,7 @@ class _AddProductsState extends State<AddProducts> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final background = Theme.of(context).scaffoldBackgroundColor;
     final localizedUnitsByCategory = getLocalizedUnitsByCategory(context);
     final localizedServiceTypes = getLocalizedServiceTypes();
     return Scaffold(
@@ -854,39 +990,73 @@ class _AddProductsState extends State<AddProducts> {
               //edit images
               oldPhotos.isNotEmpty
                   ? Container(
-                      height: 180,
+                      height:
+                          220, // Changed from 180 to 220 to match no-edit mode
                       width: double.infinity,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 16), // Added margin to match
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius:
+                            BorderRadius.circular(16), // Changed from 12 to 16
                         border: Border.all(
-                          width: 1.3,
+                          width: 2, // Changed from 1.3 to 2
                           color: isDarkMode
                               ? const Color(0xFF90D5AE)
                               : const Color(0xFF256C4C),
                         ),
-                        color: colorScheme.onSecondary,
+                        color: background,
                       ),
                       child: GestureDetector(
                         onTap:
                             _pickImages, // الخلفية كلها تضغط وتفتح اختيار الصور
                         child: (oldPhotos.isEmpty && selectedImages.isEmpty)
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.photo_library,
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(
+                                        20), // Added container with padding
+                                    decoration: BoxDecoration(
+                                      color: (isDarkMode
+                                              ? const Color(0xFF90D5AE)
+                                              : const Color(0xFF256C4C))
+                                          .withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                        Icons
+                                            .add_a_photo, // Changed from Icons.photo_library
                                         size: 50,
                                         color: isDarkMode
                                             ? const Color(0xFF90D5AE)
                                             : const Color(0xFF256C4C)),
-                                    SizedBox(height: 8),
-                                    Text(S.of(context).tapToSelectImages,
-                                        style: TextStyle(
-                                            color: isDarkMode
-                                                ? const Color(0xFF90D5AE)
-                                                : const Color(0xFF256C4C))),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(
+                                      height: 20), // Increased from 8 to 20
+                                  Text(
+                                      S
+                                          .of(context)
+                                          .tapToAddImages, // Updated text
+                                      style: TextStyle(
+                                          fontSize: 18, // Added font size
+                                          fontWeight: FontWeight
+                                              .w600, // Added font weight
+                                          color: isDarkMode
+                                              ? Colors.white
+                                              : const Color(0xFF256C4C))),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    S
+                                        .of(context)
+                                        .selectImageSource, // Added subtitle
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: isDarkMode
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                ],
                               )
                             : ListView.builder(
                                 scrollDirection: Axis.horizontal,
@@ -919,7 +1089,7 @@ class _AddProductsState extends State<AddProducts> {
                                               color: isDarkMode
                                                   ? const Color(0xFF90D5AE)
                                                   : const Color(0xFF256C4C),
-                                              width: 1.3,
+                                              width: 2, // Changed from 1.3 to 2
                                             ),
                                           ),
                                           child: Center(
@@ -942,15 +1112,20 @@ class _AddProductsState extends State<AddProducts> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Stack(
                                         children: [
-                                          Image.network(
-                                            oldPhotos[index],
-                                            width: 100,
-                                            height: 100,
-                                            fit: BoxFit.cover,
+                                          ClipRRect(
+                                            // Added ClipRRect for rounded corners
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            child: Image.network(
+                                              oldPhotos[index],
+                                              width: 100,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                           Positioned(
-                                            top: 0,
-                                            right: 0,
+                                            top: 4, // Adjusted position
+                                            right: 4, // Adjusted position
                                             child: GestureDetector(
                                               onTap: () {
                                                 setState(() {
@@ -958,13 +1133,28 @@ class _AddProductsState extends State<AddProducts> {
                                                 });
                                               },
                                               child: Container(
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.red,
+                                                width:
+                                                    28, // Added explicit width
+                                                height:
+                                                    28, // Added explicit height
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red.withOpacity(
+                                                      0.9), // Added opacity
                                                   shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black26,
+                                                      blurRadius: 4,
+                                                      offset: Offset(0, 2),
+                                                    ),
+                                                  ],
                                                 ),
-                                                child: const Icon(Icons.close,
-                                                    color: Colors.white,
-                                                    size: 20),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  color: Colors.white,
+                                                  size:
+                                                      18, // Reduced from 20 to 18
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -979,15 +1169,20 @@ class _AddProductsState extends State<AddProducts> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Stack(
                                       children: [
-                                        Image.file(
-                                          File(selectedImages[newIndex].path),
-                                          width: 100,
-                                          height: 100,
-                                          fit: BoxFit.cover,
+                                        ClipRRect(
+                                          // Added ClipRRect for rounded corners
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          child: Image.file(
+                                            File(selectedImages[newIndex].path),
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                         Positioned(
-                                          top: 0,
-                                          right: 0,
+                                          top: 4, // Adjusted position
+                                          right: 4, // Adjusted position
                                           child: GestureDetector(
                                             onTap: () {
                                               setState(() {
@@ -1001,13 +1196,27 @@ class _AddProductsState extends State<AddProducts> {
                                               });
                                             },
                                             child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Colors.red,
+                                              width: 28, // Added explicit width
+                                              height:
+                                                  28, // Added explicit height
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.withOpacity(
+                                                    0.9), // Added opacity
                                                 shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 4,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
                                               ),
-                                              child: const Icon(Icons.close,
-                                                  color: Colors.white,
-                                                  size: 20),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: Colors.white,
+                                                size:
+                                                    18, // Reduced from 20 to 18
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -1021,35 +1230,64 @@ class _AddProductsState extends State<AddProducts> {
                   GestureDetector(
                       onTap: _pickImages,
                       child: Container(
-                        height: 180,
+                        height: 220, // Increased from 180 to 300
                         width: double.infinity,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 16), // Added margin
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(
+                              16), // Increased from 12 to 16
                           border: Border.all(
-                              width: 1.3,
+                              width: 2, // Increased from 1.3 to 2
                               color: isDarkMode
                                   ? const Color(0xFF90D5AE)
                                   : const Color(0xFF256C4C)),
-                          color: colorScheme.onSecondary,
+                          color: background,
                         ),
                         child: selectedImages.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.photo_library,
-                                        size: 50,
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(
+                                        20), // Added container with padding
+                                    decoration: BoxDecoration(
+                                      color: (isDarkMode
+                                              ? const Color(0xFF90D5AE)
+                                              : const Color(0xFF256C4C))
+                                          .withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                        Icons
+                                            .add_a_photo, // Changed from Icons.photo_library
+                                        size: 50, // Increased from 50 to 60
                                         color: isDarkMode
                                             ? const Color(0xFF90D5AE)
                                             : const Color(0xFF256C4C)),
-                                    SizedBox(height: 8),
-                                    Text(S.of(context).tapToSelectImages,
-                                        style: TextStyle(
-                                            color: isDarkMode
-                                                ? const Color(0xFF90D5AE)
-                                                : const Color(0xFF256C4C))),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(
+                                      height: 20), // Increased from 8 to 20
+                                  Text(
+                                      'Tap to add plant images', // Updated text
+                                      style: TextStyle(
+                                          fontSize: 18, // Added font size
+                                          fontWeight: FontWeight
+                                              .w600, // Added font weight
+                                          color: isDarkMode
+                                              ? Colors.white
+                                              : const Color(0xFF256C4C))),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Select from gallery or take photos', // Added subtitle
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: isDarkMode
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                ],
                               )
                             : ListView.builder(
                                 scrollDirection: Axis.horizontal,
@@ -1059,15 +1297,22 @@ class _AddProductsState extends State<AddProducts> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Stack(
                                       children: [
-                                        Image.file(
-                                          File(selectedImages[index].path),
-                                          width: 100,
-                                          height: 100,
-                                          fit: BoxFit.cover,
+                                        ClipRRect(
+                                          // Added ClipRRect for rounded corners
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          child: Image.file(
+                                            File(selectedImages[index].path),
+                                            width:
+                                                100, // Increased from 100 to 120
+                                            height:
+                                                100, // Increased from 100 to 120
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                         Positioned(
-                                          top: 0,
-                                          right: 0,
+                                          top: 4, // Adjusted position
+                                          right: 4, // Adjusted position
                                           child: GestureDetector(
                                             onTap: () {
                                               setState(() {
@@ -1080,13 +1325,27 @@ class _AddProductsState extends State<AddProducts> {
                                               });
                                             },
                                             child: Container(
+                                              width: 28, // Added explicit width
+                                              height:
+                                                  28, // Added explicit height
                                               decoration: BoxDecoration(
-                                                color: Colors.red,
+                                                color: Colors.red.withOpacity(
+                                                    0.9), // Added opacity
                                                 shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 4,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
                                               ),
-                                              child: const Icon(Icons.close,
-                                                  color: Colors.white,
-                                                  size: 20),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: Colors.white,
+                                                size:
+                                                    18, // Reduced from 20 to 18
+                                              ),
                                             ),
                                           ),
                                         ),

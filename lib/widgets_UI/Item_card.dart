@@ -569,12 +569,12 @@ class _ItemCardState extends State<ItemCard> {
     return Row(
       children: [
         GestureDetector(
-            onTap: onTap, child: Icon(icon, size: 20, color: color)),
+            onTap: onTap, child: Icon(icon, size: 18, color: color)),
         const SizedBox(width: 5),
         Text(
           "$count",
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 12,
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
                 : Colors.black,

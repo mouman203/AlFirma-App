@@ -1,5 +1,6 @@
 import 'package:agriplant/Back_end/Products.dart';
 import 'package:agriplant/Front_end/Meseges/Chat.dart';
+import 'package:agriplant/Front_end/Meseges/Chat2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,7 @@ class _MessagesPageState extends State<MessagesPage> {
       print("✅ Sent offers count: ${snapshot.docs.length}");
       return snapshot.docs;
     });
+    
     // Stream for received offers
     Stream<List<QueryDocumentSnapshot>> receivedOffers = _firestore
         .collection('item')
@@ -70,6 +72,7 @@ class _MessagesPageState extends State<MessagesPage> {
       print("📥 Received offers count: ${snapshot.docs.length}");
       return snapshot.docs;
     });
+    
     // Stream for sent messages
     Stream<List<QueryDocumentSnapshot>> sentMessages = _firestore
         .collection('Messages')
@@ -79,6 +82,7 @@ class _MessagesPageState extends State<MessagesPage> {
       print("✅ Sent messages count: ${snapshot.docs.length}");
       return snapshot.docs;
     });
+    
     // Stream for received messages
     Stream<List<QueryDocumentSnapshot>> receivedMessages = _firestore
         .collection('Messages')
@@ -89,7 +93,7 @@ class _MessagesPageState extends State<MessagesPage> {
       return snapshot.docs;
     });
 
-    // Combine both streams
+    // Combine all streams
     return Rx.combineLatest4(
       sentOffers,
       receivedOffers,
@@ -132,15 +136,17 @@ class _MessagesPageState extends State<MessagesPage> {
       var messageData = doc.data() as Map<String, dynamic>;
       String sender = messageData['senderId'];
       String receiver = messageData['receiverId'];
-      String productId = messageData['productid'];
+      String? productId = messageData['productid']; // Can be null for ChatPage2 messages
       String? content = messageData['content'];
 
       if (content == null || content.isEmpty) {
-        continue; // تجاهل الرسائل الفاضية
+        continue; // Skip empty messages
       }
 
       String otherUserId = sender == currentUserId ? receiver : sender;
-      String key = "${otherUserId}_$productId";
+      
+      // Create key based on whether productId exists
+      String key = productId != null ? "${otherUserId}_$productId" : "${otherUserId}_direct";
 
       if (!groupedMessages.containsKey(key)) {
         groupedMessages[key] = [];
@@ -161,8 +167,7 @@ class _MessagesPageState extends State<MessagesPage> {
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return ListTile(
-              title:
-                  Text(S.of(context).loading)); // Localized string for loading
+              title: Text(S.of(context).loading)); // Localized string for loading
         }
 
         if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
@@ -178,6 +183,9 @@ class _MessagesPageState extends State<MessagesPage> {
         DateTime time = timestamp.toDate();
         String formattedTime =
             "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+
+        // Check if this is a direct message from ChatPage2 (no productId)
+        bool isDirectMessage = messageData['productid'] == null;
 
         return Container(
             margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
@@ -197,15 +205,27 @@ class _MessagesPageState extends State<MessagesPage> {
                             : const AssetImage("assets/anonyme.png"))
                         as ImageProvider,
               ),
-              title: Text(
-                username,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                  color: isDarkMode
-                      ? const Color(0xFF90D5AE)
-                      : const Color(0xFF256C4C),
-                ),
+              title: Row(
+                children: [
+                  Text(
+                    username,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      color: isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
+                    ),
+                  ),
+                  // Add syringe emoji 💉 only for direct messages from ChatPage2
+                  if (isDirectMessage) ...[
+                    const SizedBox(width: 6),
+                    const Text(
+                      '💉',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ],
               ),
               subtitle: Row(
                 children: [
@@ -277,7 +297,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                       ),
                                       onPressed: () {
                                         Navigator.of(dialogContext)
-                                            .pop(false); // ✅ الحوار يخرج false
+                                            .pop(false); // Dialog returns false
                                       },
                                       child: Text(
                                         S.of(dialogContext).cancel,
@@ -300,7 +320,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                       ),
                                       onPressed: () {
                                         Navigator.of(dialogContext)
-                                            .pop(true); // ✅ الحوار يخرج true
+                                            .pop(true); // Dialog returns true
                                       },
                                       child: Text(
                                         S.of(dialogContext).delete,
@@ -318,58 +338,12 @@ class _MessagesPageState extends State<MessagesPage> {
                               ],
                             ),
                           ) ??
-                          false; // لو تم النقر خارج الحوار
+                          false; // If tapped outside dialog
 
                       if (!context.mounted) return;
 
                       if (confirm) {
-                        // حذف الرسائل
-                        final messagesQuery = await _firestore
-                            .collection("Messages")
-                            .where("productid",
-                                isEqualTo: messageData['productid'])
-                            .where(Filter.or(
-                              Filter.and(
-                                Filter("senderId",
-                                    isEqualTo: _auth.currentUser!.uid),
-                                Filter("receiverId", isEqualTo: userId),
-                              ),
-                              Filter.and(
-                                Filter("senderId", isEqualTo: userId),
-                                Filter("receiverId",
-                                    isEqualTo: _auth.currentUser!.uid),
-                              ),
-                            ))
-                            .get();
-
-                        for (var doc in messagesQuery.docs) {
-                          await doc.reference.delete();
-                        }
-
-                        // حذف العروض المرتبطة
-                        final offersQuery = await _firestore
-                            .collection('item')
-                            .doc("offers")
-                            .collection("offers")
-                            .where('productid',
-                                isEqualTo: messageData['productid'])
-                            .where(Filter.or(
-                              Filter("senderId",
-                                  isEqualTo: _auth.currentUser!.uid),
-                              Filter("receiverId",
-                                  isEqualTo: _auth.currentUser!.uid),
-                            ))
-                            .get();
-
-                        for (var doc in offersQuery.docs) {
-                          await doc.reference.delete();
-                        }
-
-                        if (!context.mounted) return;
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("conversationDeleted")),
-                        );
+                        await _deleteConversation(userId, messageData);
                       }
                     },
                     child: Icon(
@@ -380,61 +354,157 @@ class _MessagesPageState extends State<MessagesPage> {
                   )
                 ],
               ),
-              onTap: () async {
-                final firestore = FirebaseFirestore.instance;
-                final itemId = messageData['productid'];
-                Products? product;
-
-                // حاول جلبه من المسار Products
-                final productDoc = await firestore
-                    .collection('item')
-                    .doc('Products')
-                    .collection('Products')
-                    .doc(itemId)
-                    .get();
-
-                if (productDoc.exists) {
-                  product = Products.fromFirestore(productDoc);
-                  print("✅ Found in Products: $itemId");
-                } else {
-                  // جرب المسار Services
-                  final serviceDoc = await firestore
-                      .collection('item')
-                      .doc('Services')
-                      .collection('Services')
-                      .doc(itemId)
-                      .get();
-
-                  if (serviceDoc.exists) {
-                    product = Products.fromFirestore(serviceDoc);
-                    print("✅ Found in Services: $itemId");
-                  } else {
-                    print("❌ Item not found in Products or Services.");
-                  }
-                }
-
-                if (product != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatPage(
-                        otherUserId: userId,
-                        product: product!,
-                      ),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("العنصر غير موجود."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
+              onTap: () => _navigateToChat(userId, messageData),
             ));
       },
     );
+  }
+
+  Future<void> _deleteConversation(String userId, Map<String, dynamic> messageData) async {
+    try {
+      String? productId = messageData['productid'];
+      
+      if (productId != null) {
+        // Delete messages with productid (ChatPage messages)
+        final messagesQuery = await _firestore
+            .collection("Messages")
+            .where("productid", isEqualTo: productId)
+            .where(Filter.or(
+              Filter.and(
+                Filter("senderId", isEqualTo: _auth.currentUser!.uid),
+                Filter("receiverId", isEqualTo: userId),
+              ),
+              Filter.and(
+                Filter("senderId", isEqualTo: userId),
+                Filter("receiverId", isEqualTo: _auth.currentUser!.uid),
+              ),
+            ))
+            .get();
+
+        for (var doc in messagesQuery.docs) {
+          await doc.reference.delete();
+        }
+
+        // Delete related offers
+        final offersQuery = await _firestore
+            .collection('item')
+            .doc("offers")
+            .collection("offers")
+            .where('productid', isEqualTo: productId)
+            .where(Filter.or(
+              Filter("senderId", isEqualTo: _auth.currentUser!.uid),
+              Filter("receiverId", isEqualTo: _auth.currentUser!.uid),
+            ))
+            .get();
+
+        for (var doc in offersQuery.docs) {
+          await doc.reference.delete();
+        }
+      } else {
+        // Delete direct messages without productid (ChatPage2 messages)
+        final messagesQuery = await _firestore
+            .collection("Messages")
+            .where(Filter.or(
+              Filter.and(
+                Filter("senderId", isEqualTo: _auth.currentUser!.uid),
+                Filter("receiverId", isEqualTo: userId),
+              ),
+              Filter.and(
+                Filter("senderId", isEqualTo: userId),
+                Filter("receiverId", isEqualTo: _auth.currentUser!.uid),
+              ),
+            ))
+            .get();
+
+        // Filter messages that don't have productid
+        for (var doc in messagesQuery.docs) {
+          var data = doc.data();
+          if (data['productid'] == null) {
+            await doc.reference.delete();
+          }
+        }
+      }
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Conversation deleted successfully")),
+      );
+    } catch (e) {
+      print("Error deleting conversation: $e");
+      if (!context.mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error deleting conversation: $e")),
+      );
+    }
+  }
+
+  void _navigateToChat(String userId, Map<String, dynamic> messageData) async {
+    String? productId = messageData['productid'];
+    
+    if (productId != null) {
+      // This is a product-related chat (ChatPage)
+      final firestore = FirebaseFirestore.instance;
+      Products? product;
+
+      // Try to get from Products collection
+      final productDoc = await firestore
+          .collection('item')
+          .doc('Products')
+          .collection('Products')
+          .doc(productId)
+          .get();
+
+      if (productDoc.exists) {
+        product = Products.fromFirestore(productDoc);
+        print("✅ Found in Products: $productId");
+      } else {
+        // Try Services collection
+        final serviceDoc = await firestore
+            .collection('item')
+            .doc('Services')
+            .collection('Services')
+            .doc(productId)
+            .get();
+
+        if (serviceDoc.exists) {
+          product = Products.fromFirestore(serviceDoc);
+          print("✅ Found in Services: $productId");
+        } else {
+          print("❌ Item not found in Products or Services.");
+        }
+      }
+
+      if (product != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              otherUserId: userId,
+              product: product!,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Item not found."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } else {
+      // This is a direct chat (ChatPage2)
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage2(
+            otherUserId: userId,
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildMessagesList() {
@@ -453,16 +523,15 @@ class _MessagesPageState extends State<MessagesPage> {
         }
 
         String currentUserId = _auth.currentUser!.uid;
-        // 1. تعديل نوع lastMessages
         Map<String, List<Map<String, dynamic>>> lastMessages =
             _processMessages(snapshot.data!, currentUserId);
-// 2. تعديل ListView لتستخدم آخر رسالة من كل مجموعة
+
         return ListView(
           padding: const EdgeInsets.only(top: 0),
           children: lastMessages.entries.map((entry) {
             Map<String, dynamic> lastMessage = entry.value.first;
-            String fullKey = entry.key; // example: userId_productId
-            String userId = fullKey.split('_').first; //example : userId
+            String fullKey = entry.key; // example: userId_productId or userId_direct
+            String userId = fullKey.split('_').first; // example: userId
 
             return _buildUserListTile(userId, lastMessage);
           }).toList(),

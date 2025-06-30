@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
 
     final startsWithL = selectedType != null &&
         lAList.any((term) => selectedType!.contains(term));
-
+    final isArabic = locale == 'ar';
     final article = locale == 'fr'
         ? (startsWithL ? "L’" : S.of(context).the)
         : S.of(context).the;
@@ -240,50 +240,82 @@ class _HomePageState extends State<HomePage> {
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               if (Users.isGuestUser()) ...[
-                Text(
-                  S.of(context).welcomeMessage,
-                  style: Theme.of(context).textTheme.titleLarge,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      S.of(context).welcomeMessage,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                    ),
+                  ),
                 ),
-                Text(
-                  S.of(context).guestSubtitle,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      S.of(context).guestSubtitle,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                    ),
+                  ),
                 ),
               ] else ...[
-                isLoading
-                    ? Text(
-                        S.of(context).loading,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      )
-                    : Text(
-                        userName != null
-                            ? "${S.of(context).hi} ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
-                            : S.of(context).welcomeMessage,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                // Wrap the selectedType text in a Row + Flexible + FittedBox
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      isLoading
+                          ? S.of(context).loading
+                          : (userName != null
+                              ? "${S.of(context).hi} ${userName![0].toUpperCase()}${userName!.substring(1)} 👋🏼"
+                              : S.of(context).welcomeMessage),
+                      style: Theme.of(context).textTheme.titleMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
                 if (selectedType != null)
-                  Row(
-                    children: [
-                      Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "$article $selectedType",
-                            style: Theme.of(context).textTheme.bodySmall,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        isArabic
+                            ? "$article$selectedType" // Arabic (no space)
+                            : "$article $selectedType", // Other languages (with space)
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
                       ),
-                    ],
+                    ),
                   )
                 else
-                  Text(
-                    S.of(context).guestSubtitle,
-                    style: Theme.of(context).textTheme.bodySmall,
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        S.of(context).guestSubtitle,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                      ),
+                    ),
                   ),
               ],
             ],

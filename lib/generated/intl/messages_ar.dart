@@ -141,6 +141,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ammari": MessageLookupByLibrary.simpleMessage("عماري"),
     "ammiMoussa": MessageLookupByLibrary.simpleMessage("عمي موسى"),
     "amoucha": MessageLookupByLibrary.simpleMessage("عموشة"),
+    "analyzingImage": MessageLookupByLibrary.simpleMessage(
+      "جارٍ تحليل صورة النبات...",
+    ),
     "animalByproducts": MessageLookupByLibrary.simpleMessage(
       "المنتجات المشتقة من الحيوانات",
     ),
@@ -150,7 +153,52 @@ class MessageLookup extends MessageLookupByLibrary {
     "aouf": MessageLookupByLibrary.simpleMessage("عوف"),
     "aougrout": MessageLookupByLibrary.simpleMessage("أوقروت"),
     "aoulef": MessageLookupByLibrary.simpleMessage("أولف"),
+    "appTitle": MessageLookupByLibrary.simpleMessage("تحليل ذكي لصحة النباتات"),
     "apple": MessageLookupByLibrary.simpleMessage("تفاح"),
+    "appleAppleScabLabel": MessageLookupByLibrary.simpleMessage("جرب التفاح"),
+    "appleAppleScabSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة الأوراق المتساقطة وتخلص منها.",
+    ),
+    "appleAppleScabSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات في وقت مبكر من الموسم.",
+    ),
+    "appleAppleScabSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "تأكد من وجود تهوية جيدة.",
+    ),
+    "appleBlackRotLabel": MessageLookupByLibrary.simpleMessage(
+      "تعفن التفاح الأسود",
+    ),
+    "appleBlackRotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بتقليم الفروع المصابة.",
+    ),
+    "appleBlackRotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "تخلص من الثمار المتحللة أو الجافة.",
+    ),
+    "appleBlackRotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات أثناء موسم النمو.",
+    ),
+    "appleCedarAppleRustLabel": MessageLookupByLibrary.simpleMessage(
+      "صدأ التفاح والعرعر",
+    ),
+    "appleCedarAppleRustSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة أشجار العرعر القريبة إن أمكن.",
+    ),
+    "appleCedarAppleRustSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات بانتظام.",
+    ),
+    "appleCedarAppleRustSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "ازرع أنواعاً مقاومة للمرض.",
+    ),
+    "appleHealthyLabel": MessageLookupByLibrary.simpleMessage("تفاح سليم"),
+    "appleHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "تأكد من الري والتسميد المناسب.",
+    ),
+    "appleHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بالتقليم المنتظم لتحسين التهوية.",
+    ),
+    "appleHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "راقب الآفات والأمراض باستمرار.",
+    ),
     "apply": MessageLookupByLibrary.simpleMessage("تطبيق"),
     "area": MessageLookupByLibrary.simpleMessage("المساحة"),
     "arris": MessageLookupByLibrary.simpleMessage("أريس"),
@@ -318,6 +366,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "cherchell": MessageLookupByLibrary.simpleMessage("شرشال"),
     "cheria": MessageLookupByLibrary.simpleMessage("الشريعة"),
     "cherry": MessageLookupByLibrary.simpleMessage("كرز"),
+    "cherryHealthyLabel": MessageLookupByLibrary.simpleMessage("كرز سليم"),
+    "cherryHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بري النبات بشكل كافٍ وسمّده بشكل مناسب.",
+    ),
+    "cherryHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قُم بالتقليم لتحسين التهوية.",
+    ),
+    "cherryHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "افحص النبات بانتظام لاكتشاف الآفات.",
+    ),
+    "cherryPowderyMildewLabel": MessageLookupByLibrary.simpleMessage(
+      "البياض الدقيقي في الكرز",
+    ),
+    "cherryPowderyMildewSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة الأوراق المصابة.",
+    ),
+    "cherryPowderyMildewSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات فطرية تحتوي على الكبريت.",
+    ),
+    "cherryPowderyMildewSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "تأكد من وجود تهوية جيدة.",
+    ),
     "chetaibi": MessageLookupByLibrary.simpleMessage("شطايبي"),
     "chetouane": MessageLookupByLibrary.simpleMessage("شتوان"),
     "chickpea": MessageLookupByLibrary.simpleMessage("حمص"),
@@ -327,11 +397,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chooseCategory": MessageLookupByLibrary.simpleMessage("اختر الفئة"),
     "chooseEquipment": MessageLookupByLibrary.simpleMessage("اختر المعدة"),
+    "chooseImageSource": MessageLookupByLibrary.simpleMessage(
+      "اختر مصدر الصورة",
+    ),
     "chooseProduct": MessageLookupByLibrary.simpleMessage("اختر المنتوج"),
     "chooseSubCategory": MessageLookupByLibrary.simpleMessage(
       "اختر التصنيف الفرعي",
     ),
-    "choose_picture": MessageLookupByLibrary.simpleMessage("اختر صورة 📸"),
     "client": MessageLookupByLibrary.simpleMessage("عميل"),
     "clover": MessageLookupByLibrary.simpleMessage("نفل"),
     "coldRoom": MessageLookupByLibrary.simpleMessage("غرف تبريد"),
@@ -340,6 +412,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "commercant": MessageLookupByLibrary.simpleMessage("تاجر"),
     "commercialProduct": MessageLookupByLibrary.simpleMessage("منتج تجاري"),
     "commercialRegister": MessageLookupByLibrary.simpleMessage("السجل التجاري"),
+    "confidence": MessageLookupByLibrary.simpleMessage("نسبة الثقة"),
     "confirmDeleteAccount": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك تريد حذف هذا الحساب؟",
     ),
@@ -367,6 +440,52 @@ class MessageLookup extends MessageLookupByLibrary {
     "controlValves": MessageLookupByLibrary.simpleMessage("صمامات تحكم"),
     "coriander": MessageLookupByLibrary.simpleMessage("كزبرة"),
     "corn": MessageLookupByLibrary.simpleMessage("ذرة"),
+    "cornCercosporaLeafSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "بقعة أوراق السركوسبورا في الذرة (البقعة الرمادية)",
+    ),
+    "cornCercosporaLeafSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة بقايا المحصول بعد الحصاد.",
+    ),
+    "cornCercosporaLeafSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات عند الضرورة.",
+    ),
+    "cornCercosporaLeafSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "ازرع هجنًا مقاومة.",
+    ),
+    "cornCommonRustLabel": MessageLookupByLibrary.simpleMessage(
+      "الصدأ الشائع في الذرة",
+    ),
+    "cornCommonRustSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "ازرع أصنافًا مقاومة.",
+    ),
+    "cornCommonRustSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات في بداية الموسم.",
+    ),
+    "cornCommonRustSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة بقايا النباتات المصابة.",
+    ),
+    "cornHealthyLabel": MessageLookupByLibrary.simpleMessage("ذرة سليمة"),
+    "cornHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "تأكد من الري والتسميد الجيد.",
+    ),
+    "cornHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بتدوير المحاصيل.",
+    ),
+    "cornHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "راقب الآفات بانتظام.",
+    ),
+    "cornNorthernLeafBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "لفحة الأوراق الشمالية في الذرة",
+    ),
+    "cornNorthernLeafBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "استخدم هجنًا مقاومة.",
+    ),
+    "cornNorthernLeafBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بتدوير المحاصيل.",
+    ),
+    "cornNorthernLeafBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات عند الضرورة.",
+    ),
     "cornSilage": MessageLookupByLibrary.simpleMessage("سيلاج الذرة"),
     "cream": MessageLookupByLibrary.simpleMessage("القشطة"),
     "cropBags": MessageLookupByLibrary.simpleMessage("أكياس تعبئة محاصيل"),
@@ -406,6 +525,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "describeProblem": MessageLookupByLibrary.simpleMessage("صف مشكلتك"),
     "description": MessageLookupByLibrary.simpleMessage("الوصف"),
     "details": MessageLookupByLibrary.simpleMessage("التفاصيل"),
+    "detectionResult": MessageLookupByLibrary.simpleMessage("نتيجة الكشف"),
     "dhalaa": MessageLookupByLibrary.simpleMessage("الضلعة"),
     "digitalScales": MessageLookupByLibrary.simpleMessage("موازين رقمية"),
     "dinar": MessageLookupByLibrary.simpleMessage("دج"),
@@ -631,6 +751,52 @@ class MessageLookup extends MessageLookupByLibrary {
     "grainSieve": MessageLookupByLibrary.simpleMessage("غربال حبوب"),
     "grains": MessageLookupByLibrary.simpleMessage("الحبوب"),
     "grape": MessageLookupByLibrary.simpleMessage("عنب"),
+    "grapeBlackRotLabel": MessageLookupByLibrary.simpleMessage(
+      "تعفن العنب الأسود",
+    ),
+    "grapeBlackRotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة الثمار المجففة والفسائل المصابة.",
+    ),
+    "grapeBlackRotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات فطرية عند بداية التزهير وقبل إغلاق العناقيد.",
+    ),
+    "grapeBlackRotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "وفر تهوية جيدة من خلال التقليم.",
+    ),
+    "grapeEscaLabel": MessageLookupByLibrary.simpleMessage(
+      "إسكا العنب (الحصبة السوداء)",
+    ),
+    "grapeEscaSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة وتدمير الكروم المصابة.",
+    ),
+    "grapeEscaSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "تجنب جرح الكروم أثناء التقليم.",
+    ),
+    "grapeEscaSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم المعالجات الفطرية إذا كانت موصى بها.",
+    ),
+    "grapeHealthyLabel": MessageLookupByLibrary.simpleMessage("عنب سليم"),
+    "grapeHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "حافظ على ري وتسميد مناسب.",
+    ),
+    "grapeHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قُم بالتقليم المنتظم لتحسين التهوية.",
+    ),
+    "grapeHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "افحص بشكل متكرر بحثًا عن الأمراض والآفات.",
+    ),
+    "grapeLeafBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "لفحة أوراق العنب (بقعة إيساريوبيسيس)",
+    ),
+    "grapeLeafBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "أزل الأوراق والحطام المصابة.",
+    ),
+    "grapeLeafBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات بانتظام خلال موسم النمو.",
+    ),
+    "grapeLeafBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "شجع على التهوية الجيدة.",
+    ),
     "graremGouga": MessageLookupByLibrary.simpleMessage("قرارم قوقة"),
     "greenBeans": MessageLookupByLibrary.simpleMessage("فاصوليا خضراء"),
     "guelaatBouSbaa": MessageLookupByLibrary.simpleMessage("قلعة بوصبع"),
@@ -697,6 +863,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ighilAli": MessageLookupByLibrary.simpleMessage("إغيل علي"),
     "igli": MessageLookupByLibrary.simpleMessage("إقلي"),
     "illizi": MessageLookupByLibrary.simpleMessage("إليزي"),
+    "imageAnalysisError": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ أثناء تحليل الصورة",
+    ),
     "inAmenas": MessageLookupByLibrary.simpleMessage("عين أمناس"),
     "inGhar": MessageLookupByLibrary.simpleMessage("عين غار"),
     "inGuezzam": MessageLookupByLibrary.simpleMessage("عين قزام"),
@@ -801,6 +970,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "تحتاج إلى تسجيل الدخول لإرسال رسالة",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
+    "lowConfidenceDetection": MessageLookupByLibrary.simpleMessage(
+      "تعذر اكتشاف المرض بدقة كافية. جرب صورة أخرى.",
+    ),
     "mChedallah": MessageLookupByLibrary.simpleMessage("مشدالله"),
     "mChouneche": MessageLookupByLibrary.simpleMessage("مشونش"),
     "mSila": MessageLookupByLibrary.simpleMessage("المسيلة"),
@@ -1008,6 +1180,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwords_do_not_match": MessageLookupByLibrary.simpleMessage(
       "كلمة المرور غير متطابقة",
     ),
+    "peachBacterialSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "البقعة البكتيرية في الخوخ",
+    ),
+    "peachBacterialSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات بكتيرية تعتمد على النحاس.",
+    ),
+    "peachBacterialSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة المواد النباتية المصابة وتدميرها.",
+    ),
+    "peachBacterialSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "تجنب الري العلوي.",
+    ),
+    "peachHealthyLabel": MessageLookupByLibrary.simpleMessage("خوخ سليم"),
+    "peachHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "وفر الري والتسميد الكافي.",
+    ),
+    "peachHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قُم بتقليم الأشجار لضمان تهوية جيدة.",
+    ),
+    "peachHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "راقب الآفات بانتظام.",
+    ),
     "peanut": MessageLookupByLibrary.simpleMessage("فول سوداني"),
     "pear": MessageLookupByLibrary.simpleMessage("كمثرى"),
     "pepper": MessageLookupByLibrary.simpleMessage("فلفل"),
@@ -1028,6 +1222,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "plantAnimalHealth": MessageLookupByLibrary.simpleMessage(
       "مراقبة صحة النباتات والحيوانات",
     ),
+    "plant_apple": MessageLookupByLibrary.simpleMessage("تفاح"),
+    "plant_cherry": MessageLookupByLibrary.simpleMessage("كرز"),
+    "plant_corn": MessageLookupByLibrary.simpleMessage("ذرة"),
+    "plant_grape": MessageLookupByLibrary.simpleMessage("عنب"),
+    "plant_peach": MessageLookupByLibrary.simpleMessage("خوخ"),
+    "plant_potato": MessageLookupByLibrary.simpleMessage("بطاطا"),
+    "plant_strawberry": MessageLookupByLibrary.simpleMessage("فراولة"),
+    "plant_tomato": MessageLookupByLibrary.simpleMessage("طماطم"),
     "plasticWaterTank": MessageLookupByLibrary.simpleMessage(
       "خزان مياه بلاستيكي",
     ),
@@ -1038,6 +1240,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseSelectLabel": MessageLookupByLibrary.simpleMessage("يرجى اختيار "),
     "pleaseUploadProductImageFirst": MessageLookupByLibrary.simpleMessage(
       "📸 الرجاء تحميل صورة المنتج أولًا",
+    ),
+    "pleaseWait": MessageLookupByLibrary.simpleMessage(
+      "قد يستغرق ذلك بضع ثوانٍ",
     ),
     "please_enter_all_info": MessageLookupByLibrary.simpleMessage(
       "الرجاء إدخال جميع المعلومات",
@@ -1050,6 +1255,40 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "portableCooler": MessageLookupByLibrary.simpleMessage("مبردات محمولة"),
     "potato": MessageLookupByLibrary.simpleMessage("بطاطا"),
+    "potatoEarlyBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "اللفحة المبكرة في البطاطا",
+    ),
+    "potatoEarlyBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بتدوير المحاصيل إلى نباتات غير عائلة.",
+    ),
+    "potatoEarlyBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة وتدمير الأوراق المصابة.",
+    ),
+    "potatoEarlyBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات بشكل وقائي.",
+    ),
+    "potatoHealthyLabel": MessageLookupByLibrary.simpleMessage("بطاطا سليمة"),
+    "potatoHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "وفر ريًا وتغذية مناسبة.",
+    ),
+    "potatoHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بتطبيق تدوير المحاصيل.",
+    ),
+    "potatoHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "افحص بانتظام الآفات والأمراض.",
+    ),
+    "potatoLateBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "اللفحة المتأخرة في البطاطا",
+    ),
+    "potatoLateBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "أزل النباتات المصابة فورًا وتخلص منها.",
+    ),
+    "potatoLateBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات بانتظام خلال الطقس الرطب.",
+    ),
+    "potatoLateBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم أصنافًا مقاومة.",
+    ),
     "poultry": MessageLookupByLibrary.simpleMessage(
       "دواجن (دجاج، بط، ديك رومي)",
     ),
@@ -1134,6 +1373,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "seggana": MessageLookupByLibrary.simpleMessage("سقانة"),
     "seghouane": MessageLookupByLibrary.simpleMessage("السغوان"),
     "selectDaira": MessageLookupByLibrary.simpleMessage("اختر الدائرة"),
+    "selectImageSource": MessageLookupByLibrary.simpleMessage(
+      "اختر من المعرض أو التقط صورة",
+    ),
     "selectWilaya": MessageLookupByLibrary.simpleMessage("يرجى اختيار الولاية"),
     "select_from_gallery": MessageLookupByLibrary.simpleMessage(
       "اختيار من المعرض",
@@ -1203,6 +1445,30 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "straw": MessageLookupByLibrary.simpleMessage("تبن"),
     "strawberry": MessageLookupByLibrary.simpleMessage("فراولة"),
+    "strawberryHealthyLabel": MessageLookupByLibrary.simpleMessage(
+      "فراولة سليمة",
+    ),
+    "strawberryHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "حافظ على توازن الري والتسميد.",
+    ),
+    "strawberryHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة الأعشاب الضارة والحطام بانتظام.",
+    ),
+    "strawberryHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "افحص النباتات بشكل متكرر لاكتشاف الآفات والأمراض.",
+    ),
+    "strawberryLeafScorchLabel": MessageLookupByLibrary.simpleMessage(
+      "احتراق أوراق الفراولة",
+    ),
+    "strawberryLeafScorchSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة وتدمير الأوراق المصابة.",
+    ),
+    "strawberryLeafScorchSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات في المراحل المبكرة للمرض.",
+    ),
+    "strawberryLeafScorchSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "تجنب الري العلوي لتقليل الرطوبة.",
+    ),
     "subCategory": MessageLookupByLibrary.simpleMessage("الصنف الفرعي"),
     "subCategoryLabel": MessageLookupByLibrary.simpleMessage("الفئة الفرعية :"),
     "subject": MessageLookupByLibrary.simpleMessage("الموضوع"),
@@ -1212,6 +1478,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "success": MessageLookupByLibrary.simpleMessage("نجاح"),
     "successMessage": MessageLookupByLibrary.simpleMessage("واو! أنت الآن"),
     "sunflowerSeeds": MessageLookupByLibrary.simpleMessage("بذور عباد الشمس"),
+    "supported": MessageLookupByLibrary.simpleMessage("مدعوم :"),
     "sustainableFarmingConsulting": MessageLookupByLibrary.simpleMessage(
       "استشارات في الزراعة المستدامة",
     ),
@@ -1230,6 +1497,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tamanrasset": MessageLookupByLibrary.simpleMessage("تمنراست"),
     "taougrit": MessageLookupByLibrary.simpleMessage("تاوقريت"),
     "taoura": MessageLookupByLibrary.simpleMessage("تاورة"),
+    "tapToAddImage": MessageLookupByLibrary.simpleMessage(
+      "اضغط لإضافة صورة ورقة",
+    ),
+    "tapToAddImages": MessageLookupByLibrary.simpleMessage("اضغط لإضافة الصور"),
     "tapToSelectImages": MessageLookupByLibrary.simpleMessage(
       "اضغط لاختيار الصور",
     ),
@@ -1272,6 +1543,123 @@ class MessageLookup extends MessageLookupByLibrary {
     "tlemcen": MessageLookupByLibrary.simpleMessage("تلمسان"),
     "tolga": MessageLookupByLibrary.simpleMessage("طولقة"),
     "tomato": MessageLookupByLibrary.simpleMessage("طماطم"),
+    "tomatoBacterialSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "البقعة البكتيرية في الطماطم",
+    ),
+    "tomatoBacterialSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات بكتيرية تعتمد على النحاس.",
+    ),
+    "tomatoBacterialSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة وتدمير النباتات المصابة.",
+    ),
+    "tomatoBacterialSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "تجنب التعامل مع النباتات المبللة لتفادي انتشار المرض.",
+    ),
+    "tomatoEarlyBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "اللفحة المبكرة في الطماطم",
+    ),
+    "tomatoEarlyBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بتدوير المحاصيل لتقليل تراكم الأمراض.",
+    ),
+    "tomatoEarlyBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "أزل الأوراق المصابة فورًا.",
+    ),
+    "tomatoEarlyBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات بشكل وقائي.",
+    ),
+    "tomatoHealthyLabel": MessageLookupByLibrary.simpleMessage("طماطم سليمة"),
+    "tomatoHealthySuggestion1": MessageLookupByLibrary.simpleMessage(
+      "حافظ على توازن الري والتسميد.",
+    ),
+    "tomatoHealthySuggestion2": MessageLookupByLibrary.simpleMessage(
+      "وفر تهوية جيدة حول النباتات.",
+    ),
+    "tomatoHealthySuggestion3": MessageLookupByLibrary.simpleMessage(
+      "افحص النباتات بانتظام لاكتشاف الآفات والأمراض.",
+    ),
+    "tomatoLateBlightLabel": MessageLookupByLibrary.simpleMessage(
+      "اللفحة المتأخرة في الطماطم",
+    ),
+    "tomatoLateBlightSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة وتدمير النباتات المصابة.",
+    ),
+    "tomatoLateBlightSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات بانتظام، خصوصًا في الظروف الرطبة.",
+    ),
+    "tomatoLateBlightSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم أصناف طماطم مقاومة.",
+    ),
+    "tomatoLeafMoldLabel": MessageLookupByLibrary.simpleMessage(
+      "عفن أوراق الطماطم",
+    ),
+    "tomatoLeafMoldSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "وفر تهوية جيدة للنباتات.",
+    ),
+    "tomatoLeafMoldSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "تجنب الري العلوي.",
+    ),
+    "tomatoLeafMoldSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم المبيدات المناسبة عند الحاجة.",
+    ),
+    "tomatoMosaicVirusLabel": MessageLookupByLibrary.simpleMessage(
+      "فيروس موزاييك الطماطم",
+    ),
+    "tomatoMosaicVirusSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "استخدم بذور وشتلات خالية من الفيروسات.",
+    ),
+    "tomatoMosaicVirusSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة وتدمير النباتات المصابة.",
+    ),
+    "tomatoMosaicVirusSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "عقّم الأدوات لتفادي الانتشار.",
+    ),
+    "tomatoSeptoriaLeafSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "بقعة أوراق السبتوريا في الطماطم",
+    ),
+    "tomatoSeptoriaLeafSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة وتدمير الأوراق المصابة.",
+    ),
+    "tomatoSeptoriaLeafSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "مارس تدوير المحاصيل.",
+    ),
+    "tomatoSeptoriaLeafSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات بشكل وقائي.",
+    ),
+    "tomatoSpiderMitesLabel": MessageLookupByLibrary.simpleMessage(
+      "العنكبوت الأحمر (ذو البقعتين) في الطماطم",
+    ),
+    "tomatoSpiderMitesSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات العناكب أو الصابون الحشري.",
+    ),
+    "tomatoSpiderMitesSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "شجع على وجود الأعداء الحيوية مثل الدعسوقة.",
+    ),
+    "tomatoSpiderMitesSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "حافظ على ري كافٍ لتقليل التوتر النباتي.",
+    ),
+    "tomatoTargetSpotLabel": MessageLookupByLibrary.simpleMessage(
+      "بقعة الهدف في الطماطم",
+    ),
+    "tomatoTargetSpotSuggestion1": MessageLookupByLibrary.simpleMessage(
+      "قم بإزالة الأوراق والحطام المصاب.",
+    ),
+    "tomatoTargetSpotSuggestion2": MessageLookupByLibrary.simpleMessage(
+      "استخدم مبيدات الفطريات في المراحل المبكرة.",
+    ),
+    "tomatoTargetSpotSuggestion3": MessageLookupByLibrary.simpleMessage(
+      "قم بتدوير المحاصيل.",
+    ),
+    "tomatoYellowLeafCurlVirusLabel": MessageLookupByLibrary.simpleMessage(
+      "فيروس تجعد أوراق الطماطم الأصفر",
+    ),
+    "tomatoYellowLeafCurlVirusSuggestion1":
+        MessageLookupByLibrary.simpleMessage("استخدم أصناف طماطم مقاومة."),
+    "tomatoYellowLeafCurlVirusSuggestion2":
+        MessageLookupByLibrary.simpleMessage("تحكم في أعداد الذباب الأبيض."),
+    "tomatoYellowLeafCurlVirusSuggestion3":
+        MessageLookupByLibrary.simpleMessage(
+          "قم بإزالة النباتات المصابة بسرعة.",
+        ),
     "ton": MessageLookupByLibrary.simpleMessage("طن"),
     "touggourt": MessageLookupByLibrary.simpleMessage("تقرت"),
     "tractor": MessageLookupByLibrary.simpleMessage("جرار زراعي"),
@@ -1284,6 +1672,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "transport_service": MessageLookupByLibrary.simpleMessage("خدمة النقل"),
     "transportation": MessageLookupByLibrary.simpleMessage("النقل"),
     "transporteur": MessageLookupByLibrary.simpleMessage("ناقل"),
+    "treatmentRecommendations": MessageLookupByLibrary.simpleMessage(
+      "توصيات العلاج",
+    ),
     "tsabit": MessageLookupByLibrary.simpleMessage("تسابيت"),
     "type_label": MessageLookupByLibrary.simpleMessage("النوع"),
     "unfollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
@@ -1295,6 +1686,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "updatePhoneNumber": MessageLookupByLibrary.simpleMessage(
       "تحديث رقم الهاتف",
+    ),
+    "uploadInstruction": MessageLookupByLibrary.simpleMessage(
+      "قم بتحميل صورة واضحة لورقة نبات للكشف عن الأمراض",
     ),
     "userTypeCannotAdd": MessageLookupByLibrary.simpleMessage(
       "لا يمكنه إضافة عناصر",

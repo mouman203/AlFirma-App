@@ -210,7 +210,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor:Color.fromARGB(255, 54, 126, 44),
+          backgroundColor: Color.fromARGB(255, 54, 126, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -259,37 +259,130 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> showPopUp() async {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (_) => SafeArea(
         child: AlertDialog(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          title: Text(S.of(context).choose_picture,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              Icon(
+                Icons.add_a_photo,
+                color: isDarkMode
+                    ? const Color(0xFF90D5AE)
+                    : const Color(0xFF256C4C),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                S.of(context).chooseImageSource,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: Icon(Icons.photo_library,
-                    color: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C)),
-                title: Text(S.of(context).select_from_gallery),
-                onTap: () async {
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
                   pickImageGallery();
                 },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: isDarkMode
+                          ? const Color(0xFF90D5AE).withOpacity(0.3)
+                          : const Color(0xFF256C4C).withOpacity(0.3),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: (isDarkMode
+                                  ? const Color(0xFF90D5AE)
+                                  : const Color(0xFF256C4C))
+                              .withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          Icons.photo_library,
+                          color: isDarkMode
+                              ? const Color(0xFF90D5AE)
+                              : const Color(0xFF256C4C),
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          S.of(context).select_from_gallery,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              ListTile(
-                leading: Icon(Icons.camera_alt,
-                    color: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C)),
-                title: Text(S.of(context).capture_with_camera),
-                onTap: () async {
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
                   pickImageCamera();
                 },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: isDarkMode
+                          ? const Color(0xFF90D5AE).withOpacity(0.3)
+                          : const Color(0xFF256C4C).withOpacity(0.3),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: (isDarkMode
+                                  ? const Color(0xFF90D5AE)
+                                  : const Color(0xFF256C4C))
+                              .withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: isDarkMode
+                              ? const Color(0xFF90D5AE)
+                              : const Color(0xFF256C4C),
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          S.of(context).capture_with_camera,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

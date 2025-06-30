@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:agriplant/Front_end/Home/PlantDiseaseDetectionPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:agriplant/Back_end/Products.dart';
@@ -827,121 +828,121 @@ class _ExplorePageState extends State<ExplorePage> {
                 padding: const EdgeInsets.all(16.0),
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 25),
-                    child: SizedBox(
-                      height: [
-                        'ar',
-                        'fr'
-                      ].contains(Localizations.localeOf(context).languageCode)
-                          ? 210
-                          : 180,
-                      child: Card(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color.fromARGB(255, 39, 57, 48)
-                            : Theme.of(context).colorScheme.secondaryContainer,
-                        elevation: 0.1,
-                        shadowColor: Theme.of(context).brightness ==
-                                Brightness.dark
-                            ? const Color.fromARGB(255, 39, 57, 48)
-                            : Theme.of(context).colorScheme.secondaryContainer,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Flexible(
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      S.of(context).aiScanner,
-                                      style: const TextStyle(
-                                          fontSize: 21,
-                                          color:
-                                              Color.fromARGB(255, 54, 126, 44),
-                                          fontWeight: FontWeight.bold),
+  padding: const EdgeInsets.only(bottom: 25),
+  child: SizedBox(
+    height: Localizations.localeOf(context).languageCode == 'en' ? 200 : null,
+    child: Card(
+      color: Theme.of(context).brightness == Brightness.dark
+          ? const Color.fromARGB(255, 39, 57, 48)
+          : Theme.of(context).colorScheme.secondaryContainer,
+      elevation: 0.1,
+      shadowColor: Theme.of(context).brightness == Brightness.dark
+          ? const Color.fromARGB(255, 39, 57, 48)
+          : Theme.of(context).colorScheme.secondaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// ========== TEXT AREA ==========
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    S.of(context).aiScanner,
+                    style: const TextStyle(
+                      fontSize: 21,
+                      color: Color.fromARGB(255, 54, 126, 44),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    S.of(context).aiDescription,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton(
+                    onPressed: () {
+                      if (Users.isGuestUser()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.error_outline, color: Colors.black),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    S.of(context).aiScannerSignInMessage,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
                                     ),
-                                    Text(S.of(context).aiDescription,
-                                        style: const TextStyle(fontSize: 16)),
-                                    FilledButton(
-                                      onPressed: () {
-                                        if (Users.isGuestUser()) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.error_outline,
-                                                    color: Colors.black,
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Expanded(
-                                                    child: Text(
-                                                      S
-                                                          .of(context)
-                                                          .aiScannerSignInMessage,
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 247, 234, 117),
-                                            ),
-                                          );
-                                        } else {}
-                                      },
-                                      style: FilledButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        backgroundColor: isDarkMode
-                                            ? const Color(0xFF90D5AE)
-                                            : const Color(0xFF256C4C),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12, horizontal: 12),
-                                      ),
-                                      child: Text(
-                                        S.of(context).checkItOut,
-                                        style: TextStyle(
-                                          color: isDarkMode
-                                              ? const Color.fromARGB(
-                                                  255, 0, 0, 0)
-                                              : const Color.fromARGB(
-                                                  255, 255, 255, 255),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                              Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.identity()
-                                  ..scale(
-                                      Directionality.of(context) ==
-                                              TextDirection.rtl
-                                          ? -1.0
-                                          : 1.0,
-                                      1.0),
-                                child: Image.asset('assets/Ai.png'),
-                              )
-                            ],
+                              ],
+                            ),
+                            backgroundColor: const Color.fromARGB(255, 247, 234, 117),
                           ),
-                        ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlantDiseaseDetectionPage(),
+                          ),
+                        );
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 12),
+                    ),
+                    child: Text(
+                      S.of(context).checkItOut,
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? const Color.fromARGB(255, 0, 0, 0)
+                            : const Color.fromARGB(255, 255, 255, 255),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+
+            /// ========== IMAGE AREA ==========
+            const SizedBox(width: 12),
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..scale(
+                  Directionality.of(context) == TextDirection.rtl ? -1.0 : 1.0,
+                  1.0,
+                ),
+              child: Image.asset(
+                'assets/Ai.png',
+                height: 200,
+                width: 150,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+)
+,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

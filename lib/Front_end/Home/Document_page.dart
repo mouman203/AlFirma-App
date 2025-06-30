@@ -109,18 +109,26 @@ class _DocumentFormState extends State<DocumentForm> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        title: Text(S.of(context).choose_picture,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(
+              Icons.add_a_photo,
+              color: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              S.of(context).chooseImageSource,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: Icon(Icons.photo_library,
-                  color: isDarkMode
-                      ? const Color(0xFF90D5AE)
-                      : const Color(0xFF256C4C)),
-              title: Text(S.of(context).select_from_gallery),
+            InkWell(
               onTap: () async {
                 final picked =
                     await _picker.pickImage(source: ImageSource.gallery);
@@ -129,13 +137,52 @@ class _DocumentFormState extends State<DocumentForm> {
                 }
                 Navigator.pop(context);
               },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE).withOpacity(0.3)
+                        : const Color(0xFF256C4C).withOpacity(0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: (isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C))
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.photo_library,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        S.of(context).select_from_gallery,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.camera_alt,
-                  color: isDarkMode
-                      ? const Color(0xFF90D5AE)
-                      : const Color(0xFF256C4C)),
-              title: Text(S.of(context).capture_with_camera),
+            const SizedBox(height: 8),
+            InkWell(
               onTap: () async {
                 final picked =
                     await _picker.pickImage(source: ImageSource.camera);
@@ -144,6 +191,49 @@ class _DocumentFormState extends State<DocumentForm> {
                 }
                 Navigator.pop(context);
               },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE).withOpacity(0.3)
+                        : const Color(0xFF256C4C).withOpacity(0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: (isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C))
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        S.of(context).capture_with_camera,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

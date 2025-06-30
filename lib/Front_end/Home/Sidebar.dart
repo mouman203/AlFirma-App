@@ -4,7 +4,6 @@ import 'package:agriplant/Front_end/Providers/theme_provider.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
@@ -121,7 +120,8 @@ class Sidebar extends StatelessWidget {
                                   ),
                                   minimumSize: Size(90, 45), // Button size
                                 ),
-                                child: Text(S.of(context).no,style: TextStyle(fontSize: 18)),
+                                child: Text(S.of(context).no,
+                                    style: TextStyle(fontSize: 18)),
                               ),
                               SizedBox(width: 10), // Space between the buttons
                               ElevatedButton(
@@ -149,7 +149,8 @@ class Sidebar extends StatelessWidget {
                                   ),
                                   minimumSize: Size(90, 45), // Button size
                                 ),
-                                child: Text(S.of(context).yes,style: TextStyle(fontSize: 18)),
+                                child: Text(S.of(context).yes,
+                                    style: TextStyle(fontSize: 18)),
                               ),
                             ],
                           ),
@@ -160,14 +161,6 @@ class Sidebar extends StatelessWidget {
                 },
               )
             ],
-            ListTile(
-              title: Text(S.of(context).aboutUs),
-              leading: Icon(
-                IconlyLight.infoSquare,
-                color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
-              ),
-              onTap: () {},
-            ),
           ],
         ),
       ),

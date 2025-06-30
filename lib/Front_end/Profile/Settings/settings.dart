@@ -129,115 +129,118 @@ class _SettingsPageState extends State<SettingsPage> {
                 : Colors.white,
           ),
 
-          // Language Selection
-          ListTile(
-            leading: Icon(
-              Icons.language,
-              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
-            ),
-            title: Text(
-              S.of(context).language,
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            trailing: Container(
-              width: 100,
+         // Language Selection
+ListTile(
+  leading: Icon(
+    Icons.language,
+    color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+  ),
+  title: Text(
+    S.of(context).language,
+    style: TextStyle(
+      color: isDarkMode ? Colors.white : Colors.black,
+    ),
+  ),
+  trailing: LayoutBuilder(
+    builder: (context, constraints) {
+      return Container(
+        width: constraints.maxWidth * 0.4, // ✅ make it responsive instead of fixed width
+        decoration: BoxDecoration(
+          color: isDarkMode
+              ? const Color.fromARGB(255, 16, 24, 20)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButtonFormField2<Locale>(
+            dropdownStyleData: DropdownStyleData(
+              offset: const Offset(0, 0),
               decoration: BoxDecoration(
                 color: isDarkMode
                     ? const Color.fromARGB(255, 16, 24, 20)
                     : Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButtonFormField2<Locale>(
-                  dropdownStyleData: DropdownStyleData(
-                    offset: const Offset(0, 0),
-                    width: MediaQuery.of(context).size.width - 310,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? const Color.fromARGB(255, 16, 24, 20)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+            ),
+            value: languageProvider.locale,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+            ),
+            iconStyleData: IconStyleData(
+              iconEnabledColor: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
+              iconDisabledColor: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
+            ),
+            onChanged: (newLocale) {
+              if (newLocale != null) {
+                languageProvider.changeLanguage(newLocale);
+              }
+            },
+            selectedItemBuilder: (context) {
+              return [
+                const Locale('ar'),
+                const Locale('fr'),
+                const Locale('en'),
+              ].map((locale) {
+                String text;
+                if (locale.languageCode == 'ar') {
+                  text = S.of(context).languageArabic;
+                } else if (locale.languageCode == 'fr') {
+                  text = S.of(context).languageFrench;
+                } else {
+                  text = S.of(context).languageEnglish;
+                }
+                return Center(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  value: languageProvider.locale,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                );
+              }).toList();
+            },
+            items: [
+              DropdownMenuItem(
+                value: const Locale('ar'),
+                child: Text(
+                  S.of(context).languageArabic,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
-                  iconStyleData: IconStyleData(
-                    iconEnabledColor: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C),
-                    iconDisabledColor: isDarkMode
-                        ? const Color(0xFF90D5AE)
-                        : const Color(0xFF256C4C),
-                  ),
-                  onChanged: (newLocale) {
-                    if (newLocale != null) {
-                      languageProvider.changeLanguage(newLocale);
-                    }
-                  },
-                  // Centers the selected item text
-                  selectedItemBuilder: (context) {
-                    return [
-                      const Locale('ar'),
-                      const Locale('fr'),
-                      const Locale('en'),
-                    ].map((locale) {
-                      String text;
-                      if (locale.languageCode == 'ar') {
-                        text = S.of(context).languageArabic;
-                      } else if (locale.languageCode == 'fr') {
-                        text = S.of(context).languageFrench;
-                      } else {
-                        text = S.of(context).languageEnglish;
-                      }
-                      return Center(
-                        child: Text(
-                          text,
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      );
-                    }).toList();
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: const Locale('ar'),
-                      child: Text(
-                        S.of(context).languageArabic,
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: const Locale('fr'),
-                      child: Text(
-                        S.of(context).languageFrench,
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: const Locale('en'),
-                      child: Text(
-                        S.of(context).languageEnglish,
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
+              DropdownMenuItem(
+                value: const Locale('fr'),
+                child: Text(
+                  S.of(context).languageFrench,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+              DropdownMenuItem(
+                value: const Locale('en'),
+                child: Text(
+                  S.of(context).languageEnglish,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            ],
           ),
+        ),
+      );
+    },
+  ),
+),
 
           Divider(
             color: isDarkMode
