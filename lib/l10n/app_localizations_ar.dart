@@ -3705,4 +3705,89 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tapToAddImages => 'اضغط لإضافة الصور';
+
+  @override
+  String get worker => 'عامل';
+
+  @override
+  String get availableWorkers => 'العمّال المتاحون';
+
+  @override
+  String get no_workers_found => 'لم يتم العثور على عمّال';
+
+  @override
+  String get dailyFarmOperations => 'العمليات الزراعية اليومية';
+
+  @override
+  String get plantingAndWatering => 'زراعة وريّ النباتات';
+
+  @override
+  String get weedingAndPruning => 'تنقية الأعشاب وتقليم النباتات';
+
+  @override
+  String get cleaningAndCollecting => 'تنظيف وتجميع بقايا المحاصيل';
+
+  @override
+  String get seasonalHarvesting => 'أعمال الحصاد الموسمي';
+
+  @override
+  String get harvestingCrops => 'جمع المحاصيل والثمار الموسمية';
+
+  @override
+  String get pickingVegetablesAndFruits => 'قطف الخضروات والفواكه الناضجة';
+
+  @override
+  String get sortingAndPackaging => 'فرز وتغليف المنتجات بعد الحصاد';
+
+  @override
+  String get landPreparation => 'تهيئة الأرض للزراعة';
+
+  @override
+  String get plowingAndLeveling => 'حرث وتسوية التربة';
+
+  @override
+  String get removingObstacles => 'إزالة العوائق الطبيعية';
+
+  @override
+  String get fertilizingAndLining => 'نشر السماد وتحضير خطوط الزراعة';
+
+  @override
+  String get traditionalFarmConstruction => 'البناء الزراعي التقليدي';
+
+  @override
+  String get buildingWells => 'بناء الآبار اليدوية';
+
+  @override
+  String get diggingIrrigation => 'حفر قنوات الري';
+
+  @override
+  String get buildingBarriers => 'إقامة الحواجز والأسوار البسيطة';
+
+  @override
+  String get supportAndAssistance => 'الدعم والمساعدة';
+
+  @override
+  String get guardingAndMonitoring => 'حراسة ومراقبة المزرعة على مدار الساعة';
+
+  @override
+  String get helpingFarmer => 'مساعدة الفلاح في مختلف الأعمال اليومية';
+
+  @override
+  String get cleaningFarmArea => 'تنظيف وترتيب محيط العمل الزراعي';
+
+  @override
+  String get type_of_work => 'نوع العمل';
+
+  @override
+  String get documents_reused_notice =>
+      'سيتم استخدام بعض المستندات من ملفاتك الشخصية الأخرى. يمكنك تحميل مستندات جديدة إذا لزم الأمر.';
+
+  @override
+  String get existing => 'موجود';
+
+  @override
+  String get tap_to_upload_new => 'اضغط لتحميل مستند جديد';
+
+  @override
+  String get edit => 'تعديل';
 }

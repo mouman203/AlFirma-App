@@ -209,6 +209,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "معالف ومشارب أوتوماتيكية",
     ),
     "available": MessageLookupByLibrary.simpleMessage("متوفر"),
+    "availableWorkers": MessageLookupByLibrary.simpleMessage(
+      "العمّال المتاحون",
+    ),
     "azazga": MessageLookupByLibrary.simpleMessage("عزازقة"),
     "azeffoun": MessageLookupByLibrary.simpleMessage("أزفون"),
     "aziz": MessageLookupByLibrary.simpleMessage("عزيز"),
@@ -314,6 +317,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "brezina": MessageLookupByLibrary.simpleMessage("بريزينة"),
     "brida": MessageLookupByLibrary.simpleMessage("بريدة"),
     "broadBeans": MessageLookupByLibrary.simpleMessage("فول"),
+    "buildingBarriers": MessageLookupByLibrary.simpleMessage(
+      "إقامة الحواجز والأسوار البسيطة",
+    ),
+    "buildingWells": MessageLookupByLibrary.simpleMessage(
+      "بناء الآبار اليدوية",
+    ),
     "butter": MessageLookupByLibrary.simpleMessage("الزبدة الطبيعية"),
     "cabbage": MessageLookupByLibrary.simpleMessage("ملفوف"),
     "call": MessageLookupByLibrary.simpleMessage("اتصال"),
@@ -403,6 +412,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseProduct": MessageLookupByLibrary.simpleMessage("اختر المنتوج"),
     "chooseSubCategory": MessageLookupByLibrary.simpleMessage(
       "اختر التصنيف الفرعي",
+    ),
+    "cleaningAndCollecting": MessageLookupByLibrary.simpleMessage(
+      "تنظيف وتجميع بقايا المحاصيل",
+    ),
+    "cleaningFarmArea": MessageLookupByLibrary.simpleMessage(
+      "تنظيف وترتيب محيط العمل الزراعي",
     ),
     "client": MessageLookupByLibrary.simpleMessage("عميل"),
     "clover": MessageLookupByLibrary.simpleMessage("نفل"),
@@ -502,6 +517,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "cucumber": MessageLookupByLibrary.simpleMessage("خيار"),
     "dahmouni": MessageLookupByLibrary.simpleMessage("دحموني"),
     "daiaBenDahoua": MessageLookupByLibrary.simpleMessage("ضاية بن ضحوة"),
+    "dailyFarmOperations": MessageLookupByLibrary.simpleMessage(
+      "العمليات الزراعية اليومية",
+    ),
     "daira": MessageLookupByLibrary.simpleMessage("الدائرة"),
     "dairaError": MessageLookupByLibrary.simpleMessage("يرجى اختيار الدائرة"),
     "dairyCows": MessageLookupByLibrary.simpleMessage("أبقار حلوب"),
@@ -527,6 +545,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "details": MessageLookupByLibrary.simpleMessage("التفاصيل"),
     "detectionResult": MessageLookupByLibrary.simpleMessage("نتيجة الكشف"),
     "dhalaa": MessageLookupByLibrary.simpleMessage("الضلعة"),
+    "diggingIrrigation": MessageLookupByLibrary.simpleMessage("حفر قنوات الري"),
     "digitalScales": MessageLookupByLibrary.simpleMessage("موازين رقمية"),
     "dinar": MessageLookupByLibrary.simpleMessage("دج"),
     "diseasePestMonitoring": MessageLookupByLibrary.simpleMessage(
@@ -546,6 +565,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "djimla": MessageLookupByLibrary.simpleMessage("جيملة"),
     "document_not_attached": MessageLookupByLibrary.simpleMessage("غير مرفقة"),
     "document_title": MessageLookupByLibrary.simpleMessage("توثيق "),
+    "documents_reused_notice": MessageLookupByLibrary.simpleMessage(
+      "سيتم استخدام بعض المستندات من ملفاتك الشخصية الأخرى. يمكنك تحميل مستندات جديدة إذا لزم الأمر.",
+    ),
     "documents_sent_successfully": MessageLookupByLibrary.simpleMessage(
       "تم إرسال الوثائق بنجاح ",
     ),
@@ -559,6 +581,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أنظمة الري بالتنقيط",
     ),
     "drivingLicense": MessageLookupByLibrary.simpleMessage("رخصة السياقة"),
+    "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
     "eggplant": MessageLookupByLibrary.simpleMessage("باذنجان"),
     "eggs": MessageLookupByLibrary.simpleMessage("البيض (بلدي، مزارع)"),
@@ -683,6 +706,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "🔑 كلمة المرور غير صحيحة",
     ),
     "esSenia": MessageLookupByLibrary.simpleMessage("السانية"),
+    "existing": MessageLookupByLibrary.simpleMessage("موجود"),
     "expertAgri": MessageLookupByLibrary.simpleMessage("خبير زراعي"),
     "expertise": MessageLookupByLibrary.simpleMessage("الخبرة"),
     "expertise_services": MessageLookupByLibrary.simpleMessage("خدمات الخبرة"),
@@ -711,6 +735,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fenoughil": MessageLookupByLibrary.simpleMessage("فنوغيل"),
     "ferdjioua": MessageLookupByLibrary.simpleMessage("فرجيوة"),
     "fertilizerSpreader": MessageLookupByLibrary.simpleMessage("آلة التسميد"),
+    "fertilizingAndLining": MessageLookupByLibrary.simpleMessage(
+      "نشر السماد وتحضير خطوط الزراعة",
+    ),
     "fig": MessageLookupByLibrary.simpleMessage("تين"),
     "filterProducts": MessageLookupByLibrary.simpleMessage("تصفية المنتجات"),
     "financeAdminConsulting": MessageLookupByLibrary.simpleMessage(
@@ -799,6 +826,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "graremGouga": MessageLookupByLibrary.simpleMessage("قرارم قوقة"),
     "greenBeans": MessageLookupByLibrary.simpleMessage("فاصوليا خضراء"),
+    "guardingAndMonitoring": MessageLookupByLibrary.simpleMessage(
+      "حراسة ومراقبة المزرعة على مدار الساعة",
+    ),
     "guelaatBouSbaa": MessageLookupByLibrary.simpleMessage("قلعة بوصبع"),
     "guelma": MessageLookupByLibrary.simpleMessage("قالمة"),
     "gueltetSidiSaad": MessageLookupByLibrary.simpleMessage("قلتة سيدي سعد"),
@@ -827,6 +857,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "hammamRigha": MessageLookupByLibrary.simpleMessage("حمام ريغة"),
     "hammamSoukhna": MessageLookupByLibrary.simpleMessage("حمام السخنة"),
     "harvester": MessageLookupByLibrary.simpleMessage("آلة الحصاد"),
+    "harvestingCrops": MessageLookupByLibrary.simpleMessage(
+      "جمع المحاصيل والثمار الموسمية",
+    ),
     "hassiBahbah": MessageLookupByLibrary.simpleMessage("حاسي بحبح"),
     "hassiKhalifa": MessageLookupByLibrary.simpleMessage("حاسي خليفة"),
     "hassiMameche": MessageLookupByLibrary.simpleMessage("حاسي مماش"),
@@ -840,6 +873,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "hectare": MessageLookupByLibrary.simpleMessage("هكتار"),
     "heddada": MessageLookupByLibrary.simpleMessage("الحدادة"),
     "heliopolis": MessageLookupByLibrary.simpleMessage("هيليوبوليس"),
+    "helpingFarmer": MessageLookupByLibrary.simpleMessage(
+      "مساعدة الفلاح في مختلف الأعمال اليومية",
+    ),
     "hennaya": MessageLookupByLibrary.simpleMessage("الحناية"),
     "hi": MessageLookupByLibrary.simpleMessage("مرحبًا"),
     "hireWorker": MessageLookupByLibrary.simpleMessage("توظيف عامل"),
@@ -923,6 +959,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "lahmar": MessageLookupByLibrary.simpleMessage("لحمر"),
     "lakhdaria": MessageLookupByLibrary.simpleMessage("الأخضرية"),
     "landLeveler": MessageLookupByLibrary.simpleMessage("آلة تسوية الأرض"),
+    "landPreparation": MessageLookupByLibrary.simpleMessage(
+      "تهيئة الأرض للزراعة",
+    ),
     "landSuitableForAgriculture": MessageLookupByLibrary.simpleMessage(
       "أرض صالحة للزراعة",
     ),
@@ -1094,6 +1133,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_veterinarians_found": MessageLookupByLibrary.simpleMessage(
       "لا يوجد أطباء بيطريين",
     ),
+    "no_workers_found": MessageLookupByLibrary.simpleMessage(
+      "لم يتم العثور على عمّال",
+    ),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "oats": MessageLookupByLibrary.simpleMessage("شوفان"),
     "oggaz": MessageLookupByLibrary.simpleMessage("عقاز"),
@@ -1217,6 +1259,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
     "phoneOptions": MessageLookupByLibrary.simpleMessage("خيارات رقم الهاتف"),
+    "pickingVegetablesAndFruits": MessageLookupByLibrary.simpleMessage(
+      "قطف الخضروات والفواكه الناضجة",
+    ),
     "piece": MessageLookupByLibrary.simpleMessage("قطعة"),
     "pineapple": MessageLookupByLibrary.simpleMessage("أناناس"),
     "plantAnimalHealth": MessageLookupByLibrary.simpleMessage(
@@ -1230,6 +1275,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "plant_potato": MessageLookupByLibrary.simpleMessage("بطاطا"),
     "plant_strawberry": MessageLookupByLibrary.simpleMessage("فراولة"),
     "plant_tomato": MessageLookupByLibrary.simpleMessage("طماطم"),
+    "plantingAndWatering": MessageLookupByLibrary.simpleMessage(
+      "زراعة وريّ النباتات",
+    ),
     "plasticWaterTank": MessageLookupByLibrary.simpleMessage(
       "خزان مياه بلاستيكي",
     ),
@@ -1249,6 +1297,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "plow": MessageLookupByLibrary.simpleMessage("محراث"),
     "plowMachine": MessageLookupByLibrary.simpleMessage("آلة الحرث"),
+    "plowingAndLeveling": MessageLookupByLibrary.simpleMessage(
+      "حرث وتسوية التربة",
+    ),
     "pomegranate": MessageLookupByLibrary.simpleMessage("رمان"),
     "portableCages": MessageLookupByLibrary.simpleMessage(
       "أقفاص وحظائر متنقلة",
@@ -1330,6 +1381,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reguiba": MessageLookupByLibrary.simpleMessage("الرقيبة"),
     "relizane": MessageLookupByLibrary.simpleMessage("غليزان"),
     "remchi": MessageLookupByLibrary.simpleMessage("الرمشي"),
+    "removingObstacles": MessageLookupByLibrary.simpleMessage(
+      "إزالة العوائق الطبيعية",
+    ),
     "rent": MessageLookupByLibrary.simpleMessage("الإيجار"),
     "rentOrSell": MessageLookupByLibrary.simpleMessage("إيجار / بيع"),
     "rent_services": MessageLookupByLibrary.simpleMessage("خدمات الإيجار"),
@@ -1357,6 +1411,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "saida": MessageLookupByLibrary.simpleMessage("سعيدة"),
     "salahBey": MessageLookupByLibrary.simpleMessage("صالح باي"),
     "searchHere": MessageLookupByLibrary.simpleMessage("ابحث هنا"),
+    "seasonalHarvesting": MessageLookupByLibrary.simpleMessage(
+      "أعمال الحصاد الموسمي",
+    ),
     "sebdou": MessageLookupByLibrary.simpleMessage("سبدو"),
     "security": MessageLookupByLibrary.simpleMessage("الأمان"),
     "securityCard": MessageLookupByLibrary.simpleMessage("بطاقة الأمان"),
@@ -1430,6 +1487,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "soilAnalysis": MessageLookupByLibrary.simpleMessage("تحليل التربة"),
     "sorghum": MessageLookupByLibrary.simpleMessage("سورغم"),
+    "sortingAndPackaging": MessageLookupByLibrary.simpleMessage(
+      "فرز وتغليف المنتجات بعد الحصاد",
+    ),
     "souagui": MessageLookupByLibrary.simpleMessage("السواقي"),
     "sougueur": MessageLookupByLibrary.simpleMessage("السوقر"),
     "soukAhras": MessageLookupByLibrary.simpleMessage("سوق أهراس"),
@@ -1478,6 +1538,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "success": MessageLookupByLibrary.simpleMessage("نجاح"),
     "successMessage": MessageLookupByLibrary.simpleMessage("واو! أنت الآن"),
     "sunflowerSeeds": MessageLookupByLibrary.simpleMessage("بذور عباد الشمس"),
+    "supportAndAssistance": MessageLookupByLibrary.simpleMessage(
+      "الدعم والمساعدة",
+    ),
     "supported": MessageLookupByLibrary.simpleMessage("مدعوم :"),
     "sustainableFarmingConsulting": MessageLookupByLibrary.simpleMessage(
       "استشارات في الزراعة المستدامة",
@@ -1503,6 +1566,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tapToAddImages": MessageLookupByLibrary.simpleMessage("اضغط لإضافة الصور"),
     "tapToSelectImages": MessageLookupByLibrary.simpleMessage(
       "اضغط لاختيار الصور",
+    ),
+    "tap_to_upload_new": MessageLookupByLibrary.simpleMessage(
+      "اضغط لتحميل مستند جديد",
     ),
     "tassadaneHaddada": MessageLookupByLibrary.simpleMessage("تسدان حدادة"),
     "tazmalt": MessageLookupByLibrary.simpleMessage("تازمالت"),
@@ -1663,6 +1729,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ton": MessageLookupByLibrary.simpleMessage("طن"),
     "touggourt": MessageLookupByLibrary.simpleMessage("تقرت"),
     "tractor": MessageLookupByLibrary.simpleMessage("جرار زراعي"),
+    "traditionalFarmConstruction": MessageLookupByLibrary.simpleMessage(
+      "البناء الزراعي التقليدي",
+    ),
     "trainingServices": MessageLookupByLibrary.simpleMessage(
       "خدمات التوعية والتدريب",
     ),
@@ -1677,6 +1746,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tsabit": MessageLookupByLibrary.simpleMessage("تسابيت"),
     "type_label": MessageLookupByLibrary.simpleMessage("النوع"),
+    "type_of_work": MessageLookupByLibrary.simpleMessage("نوع العمل"),
     "unfollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
     "unit": MessageLookupByLibrary.simpleMessage("الوحدة"),
     "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
@@ -1713,6 +1783,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterPump": MessageLookupByLibrary.simpleMessage("مضخة مياه"),
     "waterSprinklers": MessageLookupByLibrary.simpleMessage("رشاشات مياه"),
     "watermelon": MessageLookupByLibrary.simpleMessage("بطيخ"),
+    "weedingAndPruning": MessageLookupByLibrary.simpleMessage(
+      "تنقية الأعشاب وتقليم النباتات",
+    ),
     "welcome": MessageLookupByLibrary.simpleMessage("مرحبًا"),
     "welcomeMessage": MessageLookupByLibrary.simpleMessage("مرحبًا 👋🏼"),
     "welcomeMessage2": MessageLookupByLibrary.simpleMessage(
@@ -1780,6 +1853,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "wilaya57": MessageLookupByLibrary.simpleMessage("57 - المغير"),
     "wilaya58": MessageLookupByLibrary.simpleMessage("58 - المنيعة"),
     "wilayaError": MessageLookupByLibrary.simpleMessage("يرجى اختيار الولاية"),
+    "worker": MessageLookupByLibrary.simpleMessage("عامل"),
     "writeComment": MessageLookupByLibrary.simpleMessage("اكتب تعليقًا..."),
     "yellel": MessageLookupByLibrary.simpleMessage("يلل"),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),

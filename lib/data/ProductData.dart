@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:agriplant/generated/l10n.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -472,6 +474,60 @@ class ProductData {
         S.of(context).largeTruck,
         S.of(context).refrigeratedTruck,
       ];
+  static Map<String, List<String>> WorkerTasks = {
+    "العمليات الزراعية اليومية": [
+      "زراعة وريّ النباتات ",
+      "تنقية الأعشاب وتقليم النباتات",
+      "تنظيف وتجميع بقايا المحاصيل"
+    ],
+    "أعمال الحصاد الموسمي": [
+      "جمع المحاصيل والثمار الموسمية",
+      "قطف الخضروات والفواكه الناضجة",
+      "فرز وتغليف المنتجات بعد الحصاد"
+    ],
+    "تهيئة الأرض للزراعة": [
+      "حرث وتسوية التربة",
+      "إزالة العوائق الطبيعية",
+      "نشر السماد وتحضير خطوط الزراعة"
+    ],
+    "البناء الزراعي التقليدي": [
+      "بناء الآبار اليدوية",
+      "حفر قنوات الري",
+      "إقامة الحواجز والأسوار البسيطة"
+    ],
+    "الدعم والمساعدة": [
+      "حراسة ومراقبة المزرعة على مدار الساعة",
+      "مساعدة الفلاح في مختلف الأعمال اليومية",
+      "تنظيف وترتيب محيط العمل الزراعي"
+    ]
+  };
+  static Map<String, List<String>> WorkerTasksT(BuildContext context) => {
+        S.of(context).dailyFarmOperations: [
+          S.of(context).plantingAndWatering,
+          S.of(context).weedingAndPruning,
+          S.of(context).cleaningAndCollecting
+        ],
+        S.of(context).seasonalHarvesting: [
+          S.of(context).harvestingCrops,
+          S.of(context).pickingVegetablesAndFruits,
+          S.of(context).sortingAndPackaging
+        ],
+        S.of(context).landPreparation: [
+          S.of(context).plowingAndLeveling,
+          S.of(context).removingObstacles,
+          S.of(context).fertilizingAndLining
+        ],
+        S.of(context).traditionalFarmConstruction: [
+          S.of(context).buildingWells,
+          S.of(context).diggingIrrigation,
+          S.of(context).buildingBarriers
+        ],
+        S.of(context).supportAndAssistance: [
+          S.of(context).guardingAndMonitoring,
+          S.of(context).helpingFarmer,
+          S.of(context).cleaningFarmArea
+        ]
+      };
 
   static Map<String, Map<String, List<String>>> productTypeCategories(
       BuildContext context) {

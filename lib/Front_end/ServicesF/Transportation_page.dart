@@ -133,7 +133,7 @@ class _TransportationPageState extends State<TransportationPage> {
                                       color: isDarkMode
                                           ? Colors.white
                                           : const Color(0xFF256C4C),
-                                      fontSize: 16,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                       overflow: TextOverflow.ellipsis,
                                     ),

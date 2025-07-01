@@ -369,23 +369,38 @@ class _ItemCardState extends State<ItemCard> {
                             ),
                           ),
 
-                    /// زر النقاط الثلاثة
+                    /// زر النقاط الثلاثة المحسن مع الأيقونات
                     widget.item.ownerId ==
                             FirebaseAuth.instance.currentUser?.uid
                         ? Container(
                             width: 30,
                             height: 30,
                             decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceVariant, // نفس خلفية filledTonal
-                              shape: BoxShape.circle, // دائرية مثل الزر الآخر
+                              color:
+                                  Theme.of(context).colorScheme.surfaceVariant,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: PopupMenuButton<String>(
                               padding: EdgeInsets.zero,
                               iconSize: 18,
-                              icon: const Icon(Icons.more_vert,
-                                  color: Colors.black), // لون أيقونة داخلي
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surface,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 8,
+                              shadowColor: Colors.black.withOpacity(0.15),
                               onSelected: (value) {
                                 if (value == 'edit') {
                                   EditItem(widget.item, true);
@@ -394,13 +409,70 @@ class _ItemCardState extends State<ItemCard> {
                                 }
                               },
                               itemBuilder: (BuildContext context) => [
-                                const PopupMenuItem(
+                                PopupMenuItem(
                                   value: 'edit',
-                                  child: Text('تعديل'),
+                                  height: 48,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryContainer,
+                                      
+                                        ),
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 18,
+                                          color: isDarkMode
+                                              ? Colors.white
+                                              : const Color(0xFF256C4C),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        S.of(context).edit,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const PopupMenuItem(
+                                PopupMenuItem(
                                   value: 'delete',
-                                  child: Text('حذف'),
+                                  height: 48,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withOpacity(0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.delete_outline,
+                                          size: 18,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        S.of(context).delete,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -419,7 +491,9 @@ class _ItemCardState extends State<ItemCard> {
                 children: [
                   Text(
                     item.SP == "Service"
-                        ? localizedCategory
+                        ? localizedProduct.isNotEmpty
+                            ? localizedProduct
+                            : localizedCategory
                         : item.typeItem == "منتج زراعي"
                             ? localizedProduct != ""
                                 ? localizedProduct
@@ -442,7 +516,8 @@ class _ItemCardState extends State<ItemCard> {
                   Text(
                     item.typeItem == "النقل" ||
                             item.typeItem == "الخبرة" ||
-                            item.typeItem == "الإصلاحات"
+                            item.typeItem == "الإصلاحات" ||
+                            item.typeItem == "طلب عمل"
                         ? S.of(context).available
                         : item.typeItem == "منتج زراعي" ||
                                 item.typeItem == "منتج حيواني"

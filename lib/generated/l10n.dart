@@ -8364,6 +8364,266 @@ class S {
       args: [],
     );
   }
+
+  /// `عامل`
+  String get worker {
+    return Intl.message('عامل', name: 'worker', desc: '', args: []);
+  }
+
+  /// `العمّال المتاحون`
+  String get availableWorkers {
+    return Intl.message(
+      'العمّال المتاحون',
+      name: 'availableWorkers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `لم يتم العثور على عمّال`
+  String get no_workers_found {
+    return Intl.message(
+      'لم يتم العثور على عمّال',
+      name: 'no_workers_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `العمليات الزراعية اليومية`
+  String get dailyFarmOperations {
+    return Intl.message(
+      'العمليات الزراعية اليومية',
+      name: 'dailyFarmOperations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `زراعة وريّ النباتات`
+  String get plantingAndWatering {
+    return Intl.message(
+      'زراعة وريّ النباتات',
+      name: 'plantingAndWatering',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تنقية الأعشاب وتقليم النباتات`
+  String get weedingAndPruning {
+    return Intl.message(
+      'تنقية الأعشاب وتقليم النباتات',
+      name: 'weedingAndPruning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تنظيف وتجميع بقايا المحاصيل`
+  String get cleaningAndCollecting {
+    return Intl.message(
+      'تنظيف وتجميع بقايا المحاصيل',
+      name: 'cleaningAndCollecting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `أعمال الحصاد الموسمي`
+  String get seasonalHarvesting {
+    return Intl.message(
+      'أعمال الحصاد الموسمي',
+      name: 'seasonalHarvesting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `جمع المحاصيل والثمار الموسمية`
+  String get harvestingCrops {
+    return Intl.message(
+      'جمع المحاصيل والثمار الموسمية',
+      name: 'harvestingCrops',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قطف الخضروات والفواكه الناضجة`
+  String get pickingVegetablesAndFruits {
+    return Intl.message(
+      'قطف الخضروات والفواكه الناضجة',
+      name: 'pickingVegetablesAndFruits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `فرز وتغليف المنتجات بعد الحصاد`
+  String get sortingAndPackaging {
+    return Intl.message(
+      'فرز وتغليف المنتجات بعد الحصاد',
+      name: 'sortingAndPackaging',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تهيئة الأرض للزراعة`
+  String get landPreparation {
+    return Intl.message(
+      'تهيئة الأرض للزراعة',
+      name: 'landPreparation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حرث وتسوية التربة`
+  String get plowingAndLeveling {
+    return Intl.message(
+      'حرث وتسوية التربة',
+      name: 'plowingAndLeveling',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إزالة العوائق الطبيعية`
+  String get removingObstacles {
+    return Intl.message(
+      'إزالة العوائق الطبيعية',
+      name: 'removingObstacles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نشر السماد وتحضير خطوط الزراعة`
+  String get fertilizingAndLining {
+    return Intl.message(
+      'نشر السماد وتحضير خطوط الزراعة',
+      name: 'fertilizingAndLining',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `البناء الزراعي التقليدي`
+  String get traditionalFarmConstruction {
+    return Intl.message(
+      'البناء الزراعي التقليدي',
+      name: 'traditionalFarmConstruction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `بناء الآبار اليدوية`
+  String get buildingWells {
+    return Intl.message(
+      'بناء الآبار اليدوية',
+      name: 'buildingWells',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حفر قنوات الري`
+  String get diggingIrrigation {
+    return Intl.message(
+      'حفر قنوات الري',
+      name: 'diggingIrrigation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إقامة الحواجز والأسوار البسيطة`
+  String get buildingBarriers {
+    return Intl.message(
+      'إقامة الحواجز والأسوار البسيطة',
+      name: 'buildingBarriers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الدعم والمساعدة`
+  String get supportAndAssistance {
+    return Intl.message(
+      'الدعم والمساعدة',
+      name: 'supportAndAssistance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حراسة ومراقبة المزرعة على مدار الساعة`
+  String get guardingAndMonitoring {
+    return Intl.message(
+      'حراسة ومراقبة المزرعة على مدار الساعة',
+      name: 'guardingAndMonitoring',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `مساعدة الفلاح في مختلف الأعمال اليومية`
+  String get helpingFarmer {
+    return Intl.message(
+      'مساعدة الفلاح في مختلف الأعمال اليومية',
+      name: 'helpingFarmer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تنظيف وترتيب محيط العمل الزراعي`
+  String get cleaningFarmArea {
+    return Intl.message(
+      'تنظيف وترتيب محيط العمل الزراعي',
+      name: 'cleaningFarmArea',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `نوع العمل`
+  String get type_of_work {
+    return Intl.message('نوع العمل', name: 'type_of_work', desc: '', args: []);
+  }
+
+  /// `سيتم استخدام بعض المستندات من ملفاتك الشخصية الأخرى. يمكنك تحميل مستندات جديدة إذا لزم الأمر.`
+  String get documents_reused_notice {
+    return Intl.message(
+      'سيتم استخدام بعض المستندات من ملفاتك الشخصية الأخرى. يمكنك تحميل مستندات جديدة إذا لزم الأمر.',
+      name: 'documents_reused_notice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `موجود`
+  String get existing {
+    return Intl.message('موجود', name: 'existing', desc: '', args: []);
+  }
+
+  /// `اضغط لتحميل مستند جديد`
+  String get tap_to_upload_new {
+    return Intl.message(
+      'اضغط لتحميل مستند جديد',
+      name: 'tap_to_upload_new',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تعديل`
+  String get edit {
+    return Intl.message('تعديل', name: 'edit', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

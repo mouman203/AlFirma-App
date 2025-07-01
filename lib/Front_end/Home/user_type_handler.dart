@@ -16,6 +16,7 @@ final Map<String, dynamic> userTypes = {
   'ناقل': {},
   'مصلح': {},
   'تاجر': {},
+  'عامل': {},
 };
 
 // Emoji map using Arabic keys
@@ -28,6 +29,7 @@ final emojiMap = {
   'ناقل': '🛻',
   'مصلح': '👨🏻‍🔧',
   'تاجر': '🛍️',
+  'عامل': '🤝🏽',
 };
 
 // Map from localized strings to Arabic keys - for displaying the correct label but saving the Arabic key
@@ -41,6 +43,7 @@ Map<String, String> TranslatedToArabicMap(BuildContext context) {
     S.of(context).transporteur: 'ناقل',
     S.of(context).reparateur: 'مصلح',
     S.of(context).commercant: 'تاجر',
+    S.of(context).worker: 'عامل',
   };
 }
 
@@ -55,6 +58,7 @@ Map<String, String> ArabicToTranslatedMap(BuildContext context) {
     'ناقل': S.of(context).transporteur,
     'مصلح': S.of(context).reparateur,
     'تاجر': S.of(context).commercant,
+    'عامل': S.of(context).worker,
   };
 }
 
@@ -275,6 +279,13 @@ Object getDocumentPageForType(BuildContext context, String arabicType) {
           builder: (context) => const DocumentPage(userType: 'تاجر'),
         ),
       );
+    case 'عامل':
+      return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DocumentPage(userType: 'عامل'),
+        ),
+      );
     default:
       return Null;
   }
@@ -489,7 +500,7 @@ class _BecomeTypeActionState extends State<BecomeTypeAction> {
           final userTypeMap = Map<String, dynamic>.from(data['userType']);
           final typeData = userTypeMap[type];
 
-          if (typeData != null && typeData['validation'] == 'pending') {
+          if (typeData != null && typeData['validation'] == false) {
             return false;
           } else {
             return true;

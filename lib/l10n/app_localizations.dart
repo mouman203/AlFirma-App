@@ -7353,6 +7353,174 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اضغط لإضافة الصور'**
   String get tapToAddImages;
+
+  /// No description provided for @worker.
+  ///
+  /// In ar, this message translates to:
+  /// **'عامل'**
+  String get worker;
+
+  /// No description provided for @availableWorkers.
+  ///
+  /// In ar, this message translates to:
+  /// **'العمّال المتاحون'**
+  String get availableWorkers;
+
+  /// No description provided for @no_workers_found.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على عمّال'**
+  String get no_workers_found;
+
+  /// No description provided for @dailyFarmOperations.
+  ///
+  /// In ar, this message translates to:
+  /// **'العمليات الزراعية اليومية'**
+  String get dailyFarmOperations;
+
+  /// No description provided for @plantingAndWatering.
+  ///
+  /// In ar, this message translates to:
+  /// **'زراعة وريّ النباتات'**
+  String get plantingAndWatering;
+
+  /// No description provided for @weedingAndPruning.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنقية الأعشاب وتقليم النباتات'**
+  String get weedingAndPruning;
+
+  /// No description provided for @cleaningAndCollecting.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنظيف وتجميع بقايا المحاصيل'**
+  String get cleaningAndCollecting;
+
+  /// No description provided for @seasonalHarvesting.
+  ///
+  /// In ar, this message translates to:
+  /// **'أعمال الحصاد الموسمي'**
+  String get seasonalHarvesting;
+
+  /// No description provided for @harvestingCrops.
+  ///
+  /// In ar, this message translates to:
+  /// **'جمع المحاصيل والثمار الموسمية'**
+  String get harvestingCrops;
+
+  /// No description provided for @pickingVegetablesAndFruits.
+  ///
+  /// In ar, this message translates to:
+  /// **'قطف الخضروات والفواكه الناضجة'**
+  String get pickingVegetablesAndFruits;
+
+  /// No description provided for @sortingAndPackaging.
+  ///
+  /// In ar, this message translates to:
+  /// **'فرز وتغليف المنتجات بعد الحصاد'**
+  String get sortingAndPackaging;
+
+  /// No description provided for @landPreparation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تهيئة الأرض للزراعة'**
+  String get landPreparation;
+
+  /// No description provided for @plowingAndLeveling.
+  ///
+  /// In ar, this message translates to:
+  /// **'حرث وتسوية التربة'**
+  String get plowingAndLeveling;
+
+  /// No description provided for @removingObstacles.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة العوائق الطبيعية'**
+  String get removingObstacles;
+
+  /// No description provided for @fertilizingAndLining.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشر السماد وتحضير خطوط الزراعة'**
+  String get fertilizingAndLining;
+
+  /// No description provided for @traditionalFarmConstruction.
+  ///
+  /// In ar, this message translates to:
+  /// **'البناء الزراعي التقليدي'**
+  String get traditionalFarmConstruction;
+
+  /// No description provided for @buildingWells.
+  ///
+  /// In ar, this message translates to:
+  /// **'بناء الآبار اليدوية'**
+  String get buildingWells;
+
+  /// No description provided for @diggingIrrigation.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفر قنوات الري'**
+  String get diggingIrrigation;
+
+  /// No description provided for @buildingBarriers.
+  ///
+  /// In ar, this message translates to:
+  /// **'إقامة الحواجز والأسوار البسيطة'**
+  String get buildingBarriers;
+
+  /// No description provided for @supportAndAssistance.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعم والمساعدة'**
+  String get supportAndAssistance;
+
+  /// No description provided for @guardingAndMonitoring.
+  ///
+  /// In ar, this message translates to:
+  /// **'حراسة ومراقبة المزرعة على مدار الساعة'**
+  String get guardingAndMonitoring;
+
+  /// No description provided for @helpingFarmer.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعدة الفلاح في مختلف الأعمال اليومية'**
+  String get helpingFarmer;
+
+  /// No description provided for @cleaningFarmArea.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنظيف وترتيب محيط العمل الزراعي'**
+  String get cleaningFarmArea;
+
+  /// No description provided for @type_of_work.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع العمل'**
+  String get type_of_work;
+
+  /// No description provided for @documents_reused_notice.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم استخدام بعض المستندات من ملفاتك الشخصية الأخرى. يمكنك تحميل مستندات جديدة إذا لزم الأمر.'**
+  String get documents_reused_notice;
+
+  /// No description provided for @existing.
+  ///
+  /// In ar, this message translates to:
+  /// **'موجود'**
+  String get existing;
+
+  /// No description provided for @tap_to_upload_new.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لتحميل مستند جديد'**
+  String get tap_to_upload_new;
+
+  /// No description provided for @edit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل'**
+  String get edit;
 }
 
 class _AppLocalizationsDelegate

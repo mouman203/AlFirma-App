@@ -30,6 +30,10 @@ class DocumentForm extends StatefulWidget {
 class _DocumentFormState extends State<DocumentForm> {
   final ImagePicker _picker = ImagePicker();
   final Map<String, XFile?> _pickedImages = {};
+  
+  // Store existing documents from other user types
+  Map<String, Map<String, dynamic>> _existingDocuments = {};
+  bool _isLoadingExistingDocs = true;
 
   // Arabic user types and their document requirements (stored in Arabic)
   final Map<String, List<String>> requiredDocuments = {
@@ -56,7 +60,72 @@ class _DocumentFormState extends State<DocumentForm> {
     ],
     'شركة': ['سجل تجاري'],
     'تاجر': ['سجل تجاري'],
+    'عامل': [
+      "بطاقة التعريف الوطنية (الوجه)",
+      "بطاقة التعريف الوطنية (الظهر)",
+    ]
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingDocuments();
+  }
+
+  // Load existing documents from all user types
+  Future<void> _loadExistingDocuments() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final docRef = FirebaseFirestore.instance.collection('Users').doc(user.uid);
+      final snapshot = await docRef.get();
+      
+      if (snapshot.exists) {
+        final userData = snapshot.data() as Map<String, dynamic>;
+        final userTypes = userData['userType'] as Map<String, dynamic>? ?? {};
+        
+        // Collect all documents from all user types
+        Map<String, Map<String, dynamic>> allDocs = {};
+        
+        userTypes.forEach((userType, typeData) {
+          if (typeData is Map<String, dynamic> && typeData.containsKey('documents')) {
+            final documents = typeData['documents'] as Map<String, dynamic>;
+            documents.forEach((docName, docData) {
+              // Only add if we don't already have this document type
+              if (!allDocs.containsKey(docName)) {
+                allDocs[docName] = Map<String, dynamic>.from(docData);
+              }
+            });
+          }
+        });
+        
+        setState(() {
+          _existingDocuments = allDocs;
+          _isLoadingExistingDocs = false;
+        });
+      } else {
+        setState(() {
+          _isLoadingExistingDocs = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoadingExistingDocs = false;
+      });
+      print("Error loading existing documents: $e");
+    }
+  }
+
+  // Check if document already exists
+  bool _hasExistingDocument(String arabicLabel) {
+    return _existingDocuments.containsKey(arabicLabel);
+  }
+
+  // Get existing document URL
+  String? _getExistingDocumentUrl(String arabicLabel) {
+    return _existingDocuments[arabicLabel]?['documentUrl'] as String?;
+  }
 
   // Translate Arabic document labels to localized strings
   String getLocalizedDocumentLabel(BuildContext context, String arabicLabel) {
@@ -93,6 +162,8 @@ class _DocumentFormState extends State<DocumentForm> {
         return S.of(context).entreprise;
       case 'تاجر':
         return S.of(context).commercant;
+      case 'عامل':
+        return S.of(context).worker;
       default:
         return arabicUserType; // fallback to Arabic if unknown
     }
@@ -121,7 +192,7 @@ class _DocumentFormState extends State<DocumentForm> {
             const SizedBox(width: 8),
             Text(
               S.of(context).chooseImageSource,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 19),
             ),
           ],
         ),
@@ -246,6 +317,9 @@ class _DocumentFormState extends State<DocumentForm> {
     final localizedLabel = getLocalizedDocumentLabel(context, arabicLabel);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
+    final hasExisting = _hasExistingDocument(arabicLabel);
+    final existingUrl = _getExistingDocumentUrl(arabicLabel);
+
     return GestureDetector(
       onTap: () => _pickImage(arabicLabel),
       child: Container(
@@ -254,32 +328,138 @@ class _DocumentFormState extends State<DocumentForm> {
         margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           border: Border.all(
-              color: isDarkMode
-                  ? const Color(0xFF90D5AE)
-                  : const Color(0xFF256C4C)),
+              color: hasExisting 
+                  ? Colors.green 
+                  : (isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C))),
           borderRadius: BorderRadius.circular(12),
           color: colorScheme.surface,
         ),
-        child: image == null
-            ? Center(
+        child: Stack(
+          children: [
+            // Main content
+            if (image != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(11),
+                child: Image.file(File(image.path), 
+                    fit: BoxFit.cover, 
+                    width: double.infinity, 
+                    height: double.infinity),
+              )
+            else if (hasExisting && existingUrl != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(11),
+                child: Image.network(existingUrl, 
+                    fit: BoxFit.cover, 
+                    width: double.infinity, 
+                    height: double.infinity,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.error, 
+                                size: 40, 
+                                color: Colors.red),
+                            const SizedBox(height: 10),
+                            Text('Error loading image',
+                                style: TextStyle(color: Colors.red)),
+                          ],
+                        ),
+                      );
+                    }),
+              )
+            else
+              Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.photo,
+                    Icon(Icons.description,
                         size: 40,
                         color: isDarkMode
                             ? const Color(0xFF90D5AE)
                             : const Color(0xFF256C4C)),
                     const SizedBox(height: 10),
                     Text(localizedLabel,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             color: isDarkMode
                                 ? const Color(0xFF90D5AE)
                                 : const Color(0xFF256C4C))),
                   ],
                 ),
-              )
-            : Image.file(File(image.path), fit: BoxFit.cover),
+              ),
+            
+            // Status indicator with document name
+            if (hasExisting)
+              Positioned(
+                top: 8,
+                left: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check_circle, 
+                          color: Colors.white, size: 16),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          '${S.of(context).existing} : ${getLocalizedDocumentLabel(context, arabicLabel)}',
+                          style: const TextStyle(
+                              color: Colors.white, 
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+            // Tap to change overlay
+            if (hasExisting)
+              Positioned(
+                bottom: 8,
+                left: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    S.of(context).tap_to_upload_new,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: Colors.white, 
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -293,49 +473,69 @@ class _DocumentFormState extends State<DocumentForm> {
     List<String> userDocs = requiredDocuments[selectedUserTypeArabic] ?? [];
 
     try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
+
+      final docRef = FirebaseFirestore.instance.collection('Users').doc(user.uid);
+      final snapshot = await docRef.get();
+      
+      Map<String, dynamic> currentTypes =
+          Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
+
+      // Prepare the documents map for this user type
+      Map<String, dynamic> documentsMap = {};
+      
+      // Process each required document
       for (String docArabic in userDocs) {
         final pickedImage = _pickedImages[docArabic];
-        if (pickedImage == null) {
+        
+        if (pickedImage != null) {
+          // User uploaded a new image, use it
+          String fileName =
+              "${selectedUserTypeArabic}_${docArabic}_${DateTime.now().millisecondsSinceEpoch}";
+          final storageRef =
+              FirebaseStorage.instance.ref().child('documents/$fileName');
+          await storageRef.putFile(File(pickedImage.path));
+
+          String downloadUrl = await storageRef.getDownloadURL();
+          
+          documentsMap[docArabic] = {
+            'documentUrl': downloadUrl,
+            'uploadedAt': FieldValue.serverTimestamp(),
+          };
+        } else if (_hasExistingDocument(docArabic)) {
+          // Reuse existing document
+          documentsMap[docArabic] = _existingDocuments[docArabic]!;
+        } else {
+          // No document provided and none exists
           throw Exception(
               '${getLocalizedDocumentLabel(context, docArabic)} ${S.of(context).document_not_attached}');
         }
-
-        String fileName =
-            "${selectedUserTypeArabic}_${docArabic}_${DateTime.now().millisecondsSinceEpoch}";
-        final storageRef =
-            FirebaseStorage.instance.ref().child('documents/$fileName');
-        await storageRef.putFile(File(pickedImage.path));
-
-        String downloadUrl = await storageRef.getDownloadURL();
-
-        User? user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          final docRef =
-              FirebaseFirestore.instance.collection('Users').doc(user.uid);
-
-          final snapshot = await docRef.get();
-
-          Map<String, dynamic> currentTypes =
-              Map<String, dynamic>.from(snapshot.data()?['userType'] ?? {});
-          if (!currentTypes.containsKey(selectedUserTypeArabic)) {
-            currentTypes[selectedUserTypeArabic] = {
-              'validation': 'pending',
-              'documents': {
-                docArabic: {
-                  'documentUrl': downloadUrl,
-                  'uploadedAt': FieldValue.serverTimestamp(),
-                }
-              },
-              'createdAt': FieldValue.serverTimestamp(),
-            };
-
-            await docRef.update({
-              'userType': currentTypes,
-              'userTypeUpdatedAt': FieldValue.serverTimestamp(),
-            });
-          }
-        }
       }
+
+      // Update Firestore with documents
+      if (!currentTypes.containsKey(selectedUserTypeArabic)) {
+        // Create new user type with documents
+        currentTypes[selectedUserTypeArabic] = {
+          'validation': false,
+          'documents': documentsMap,
+          'createdAt': FieldValue.serverTimestamp(),
+        };
+      } else {
+        // Update existing user type with new/reused documents
+        currentTypes[selectedUserTypeArabic]['documents'] = {
+          ...currentTypes[selectedUserTypeArabic]['documents'] ?? {},
+          ...documentsMap,
+        };
+      }
+
+      // Single Firestore update with all documents
+      await docRef.update({
+        'userType': currentTypes,
+        'userTypeUpdatedAt': FieldValue.serverTimestamp(),
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -359,7 +559,7 @@ class _DocumentFormState extends State<DocumentForm> {
       );
 
       Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) Navigator.of(context).pop();
+        if (mounted) Navigator.of(context).maybePop();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -401,6 +601,19 @@ class _DocumentFormState extends State<DocumentForm> {
     // Get localized user type for display
     final localizedUserType = getLocalizedUserType(context, widget.userType);
 
+    if (_isLoadingExistingDocs) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('${S.of(context).document_title} $localizedUserType'),
+          backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
+          elevation: 5,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -427,6 +640,30 @@ class _DocumentFormState extends State<DocumentForm> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Show info message if any documents are being reused
+            if (documents.any((doc) => _hasExistingDocument(doc)))
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        S.of(context).documents_reused_notice,
+                        style: TextStyle(color: Colors.blue[700]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
             for (var doc in documents) buildImageBox(doc),
             const SizedBox(height: 20),
             SizedBox(

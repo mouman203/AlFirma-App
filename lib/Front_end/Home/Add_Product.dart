@@ -108,6 +108,9 @@ class _AddProductsState extends State<AddProducts> {
         case "الإصلاحات":
           _initRepairTranslations();
           break;
+        case "طلب عمل":
+          _initWorkerTranslations();
+          break;
       }
     }
 
@@ -178,6 +181,13 @@ class _AddProductsState extends State<AddProducts> {
   void _initExpertiseTranslations() {
     final arabicMap = ProductData.ExpertProducts;
     final localizedMap = ProductData.ExpertProductsT(context);
+
+    _mapTranslations(arabicMap, localizedMap, categoryTranslations);
+  }
+
+  void _initWorkerTranslations() {
+    final arabicMap = ProductData.WorkerTasks;
+    final localizedMap = ProductData.WorkerTasksT(context);
 
     _mapTranslations(arabicMap, localizedMap, categoryTranslations);
   }
@@ -322,6 +332,10 @@ class _AddProductsState extends State<AddProducts> {
                 S.of(context).plantAnimalHealth,
                 S.of(context).financeAdminConsulting,
               ];
+              break;
+            case 'عامل':
+              typeItem = "طلب عمل";
+              Category = ProductData.WorkerTasksT(context).keys.toList();
               break;
             case 'ناقل':
               typeItem = "النقل";
@@ -741,7 +755,7 @@ class _AddProductsState extends State<AddProducts> {
             const SizedBox(width: 8),
             Text(
               S.of(context).chooseImageSource,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
             ),
           ],
         ),
@@ -1269,7 +1283,7 @@ class _AddProductsState extends State<AddProducts> {
                                   const SizedBox(
                                       height: 20), // Increased from 8 to 20
                                   Text(
-                                      'Tap to add plant images', // Updated text
+                                      S.of(context).tapToAddImages, // Updated text
                                       style: TextStyle(
                                           fontSize: 18, // Added font size
                                           fontWeight: FontWeight
@@ -1279,7 +1293,7 @@ class _AddProductsState extends State<AddProducts> {
                                               : const Color(0xFF256C4C))),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Select from gallery or take photos', // Added subtitle
+                                    S.of(context).selectImageSource, // Added subtitle
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: isDarkMode
@@ -1399,24 +1413,36 @@ class _AddProductsState extends State<AddProducts> {
                   selectedValue: selectedproduct,
                   items: userType == 'ناقل'
                       ? ProductData.moyensDeTransport
-                      : (selectedCategory == S.of(context).lands
-                          ? [
-                              S.of(context).landSuitableForAgriculture
-                            ] // Show lands types directly in products
-                          : (selectedsubCategory != null
-                              ? ProductData.getProduct(
-                                  typeItem, selectedsubCategory!, context)
-                              : ProductData.getProduct(
-                                  typeItem, selectedCategory!, context))),
+                      : userType == 'عامل'
+                          ? (selectedCategory != null
+                              ? ProductData.WorkerTasksT(
+                                      context)[selectedCategory] ??
+                                  []
+                              : [])
+                          : (selectedCategory == S.of(context).lands
+                              ? [
+                                  S.of(context).landSuitableForAgriculture
+                                ] // Show lands types directly in products
+                              : (selectedsubCategory != null
+                                  ? ProductData.getProduct(
+                                      typeItem,
+                                      _getArabicKeyForCategory(
+                                          selectedsubCategory!),
+                                      context)
+                                  : ProductData.getProduct(
+                                      typeItem,
+                                      _getArabicKeyForCategory(
+                                          selectedCategory!),
+                                      context))),
                   label: selectedCategory == S.of(context).lands
-                      ? S
-                          .of(context)
-                          .type_label // Change label to "Type" for lands
+                      ? S.of(context).type_label
                       : (userType == 'ناقل'
                           ? S.of(context).transport_means_label
                           : (userType == 'خبير زراعي'
                               ? S.of(context).type_label
-                              : S.of(context).product)),
+                              : (userType == 'عامل'
+                                  ? S.of(context).type_of_work
+                                  : S.of(context).product))),
                   onChanged: (value) {
                     setState(() {
                       selectedproduct = value;
@@ -1745,5 +1771,15 @@ class _AddProductsState extends State<AddProducts> {
     );
 
     return widgets;
+  }
+
+  String? _getArabicKeyForCategory(String localizedCategory) {
+    // Look up the Arabic key for the localized category
+    for (var entry in categoryTranslations.entries) {
+      if (entry.value == localizedCategory) {
+        return entry.key;
+      }
+    }
+    return localizedCategory; // fallback if not found
   }
 }

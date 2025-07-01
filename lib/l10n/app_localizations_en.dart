@@ -3710,4 +3710,89 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tapToAddImages => 'Tap to add images';
+
+  @override
+  String get worker => 'Worker';
+
+  @override
+  String get availableWorkers => 'Available Workers';
+
+  @override
+  String get no_workers_found => 'No workers found';
+
+  @override
+  String get dailyFarmOperations => 'Daily Farm Operations';
+
+  @override
+  String get plantingAndWatering => 'Planting and watering crops';
+
+  @override
+  String get weedingAndPruning => 'Weeding and pruning plants';
+
+  @override
+  String get cleaningAndCollecting => 'Cleaning and collecting crop remains';
+
+  @override
+  String get seasonalHarvesting => 'Seasonal Harvesting Tasks';
+
+  @override
+  String get harvestingCrops => 'Harvesting seasonal crops and fruits';
+
+  @override
+  String get pickingVegetablesAndFruits => 'Picking ripe vegetables and fruits';
+
+  @override
+  String get sortingAndPackaging => 'Sorting and packaging harvested products';
+
+  @override
+  String get landPreparation => 'Land Preparation';
+
+  @override
+  String get plowingAndLeveling => 'Plowing and leveling soil';
+
+  @override
+  String get removingObstacles => 'Removing natural obstacles';
+
+  @override
+  String get fertilizingAndLining => 'Spreading fertilizer and preparing rows';
+
+  @override
+  String get traditionalFarmConstruction => 'Traditional Farm Construction';
+
+  @override
+  String get buildingWells => 'Building manual wells';
+
+  @override
+  String get diggingIrrigation => 'Digging irrigation channels';
+
+  @override
+  String get buildingBarriers => 'Building simple barriers and fences';
+
+  @override
+  String get supportAndAssistance => 'Support and Assistance';
+
+  @override
+  String get guardingAndMonitoring => 'Guarding and monitoring the farm 24/7';
+
+  @override
+  String get helpingFarmer => 'Helping the farmer with daily tasks';
+
+  @override
+  String get cleaningFarmArea => 'Cleaning and organizing the farm area';
+
+  @override
+  String get type_of_work => 'Type of Work';
+
+  @override
+  String get documents_reused_notice =>
+      'Some documents from your other profiles will be reused. You can upload new ones if needed.';
+
+  @override
+  String get existing => 'Existing';
+
+  @override
+  String get tap_to_upload_new => 'Tap to upload new document';
+
+  @override
+  String get edit => 'Edit';
 }

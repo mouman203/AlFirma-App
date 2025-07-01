@@ -361,7 +361,7 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
             ),
             const SizedBox(width: 8),
             Text(S.of(context).chooseImageSource,
-                style: TextStyle(fontWeight: FontWeight.bold)),
+                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 19)),
           ],
         ),
         content: Column(

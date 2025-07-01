@@ -67,7 +67,7 @@ class _ProfilePicturePageState extends State<ProfilePicturePage>
           const SizedBox(width: 8),
           Text(
             S.of(context).chooseImageSource,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 19),
           ),
         ],
       ),

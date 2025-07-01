@@ -144,7 +144,7 @@ ListTile(
   trailing: LayoutBuilder(
     builder: (context, constraints) {
       return Container(
-        width: constraints.maxWidth * 0.4, // ✅ make it responsive instead of fixed width
+        width: constraints.maxWidth * 0.42, // ✅ make it responsive instead of fixed width
         decoration: BoxDecoration(
           color: isDarkMode
               ? const Color.fromARGB(255, 16, 24, 20)

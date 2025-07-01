@@ -241,7 +241,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get consultation => 'Consultation';
 
   @override
-  String get hireWorker => 'Embaucher un Travailleur';
+  String get hireWorker => 'Embaucher un Travailleur ';
 
   @override
   String get transportation => 'Transport';
@@ -3766,4 +3766,93 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tapToAddImages => 'Appuyez pour ajouter des images';
+
+  @override
+  String get worker => 'Travailleur ';
+
+  @override
+  String get availableWorkers => 'Travailleurs disponibles';
+
+  @override
+  String get no_workers_found => 'Aucun travailleur trouvé';
+
+  @override
+  String get dailyFarmOperations => 'Opérations agricoles quotidiennes';
+
+  @override
+  String get plantingAndWatering => 'Planter et arroser les cultures';
+
+  @override
+  String get weedingAndPruning => 'Désherber et tailler les plantes';
+
+  @override
+  String get cleaningAndCollecting =>
+      'Nettoyer et ramasser les résidus agricoles';
+
+  @override
+  String get seasonalHarvesting => 'Travaux de récolte saisonnière';
+
+  @override
+  String get harvestingCrops => 'Récolter les cultures et fruits saisonniers';
+
+  @override
+  String get pickingVegetablesAndFruits =>
+      'Cueillir les légumes et fruits mûrs';
+
+  @override
+  String get sortingAndPackaging => 'Trier et emballer les produits récoltés';
+
+  @override
+  String get landPreparation => 'Préparation du sol';
+
+  @override
+  String get plowingAndLeveling => 'Labourer et niveler le sol';
+
+  @override
+  String get removingObstacles => 'Retirer les obstacles naturels';
+
+  @override
+  String get fertilizingAndLining => 'Étaler l\'engrais et tracer les lignes';
+
+  @override
+  String get traditionalFarmConstruction =>
+      'Construction agricole traditionnelle';
+
+  @override
+  String get buildingWells => 'Construire des puits manuels';
+
+  @override
+  String get diggingIrrigation => 'Creuser des canaux d\'irrigation';
+
+  @override
+  String get buildingBarriers => 'Construire des barrières et clôtures simples';
+
+  @override
+  String get supportAndAssistance => 'Soutien et assistance';
+
+  @override
+  String get guardingAndMonitoring => 'Surveiller la ferme 24h/24';
+
+  @override
+  String get helpingFarmer =>
+      'Aider l’agriculteur dans les tâches quotidiennes';
+
+  @override
+  String get cleaningFarmArea => 'Nettoyer et organiser la zone agricole';
+
+  @override
+  String get type_of_work => 'Type de travail';
+
+  @override
+  String get documents_reused_notice =>
+      'Certains documents de vos autres profils seront réutilisés. Vous pouvez en téléverser de nouveaux si nécessaire.';
+
+  @override
+  String get existing => 'Existant';
+
+  @override
+  String get tap_to_upload_new => 'Appuyez pour téléverser un nouveau document';
+
+  @override
+  String get edit => 'Modifier';
 }
