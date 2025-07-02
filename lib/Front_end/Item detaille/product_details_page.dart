@@ -164,13 +164,53 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           reportOptionsArabic[selectedOption] ?? selectedOption;
 
       // Save signal
-      await FirebaseFirestore.instance.collection('Signal').doc(uid).set({
-        'Signaler': uid,
-        'post': {
-          'Target  : $target': FieldValue.arrayUnion(['itemId : $itemId']),
-          'itemId : $itemId': FieldValue.arrayUnion([selectedOptionArabic]),
-        },
-      }, SetOptions(merge: true));
+final signalDoc = FirebaseFirestore.instance.collection('Signal').doc(itemId);
+final docSnapshot = await signalDoc.get();
+
+if (docSnapshot.exists) {
+  final data = docSnapshot.data();
+  final Map<String, dynamic> reports = Map<String, dynamic>.from(data?['reports'] ?? {});
+  final List<dynamic> signalers = data?['signalers'] ?? [];
+
+  final userReasons = List<String>.from(reports[uid] ?? []);
+
+  if (userReasons.contains(selectedOptionArabic)) {
+    print('Same reason already reported by this user.');
+  } else {
+    // Add new reason to user's reasons
+    userReasons.add(selectedOptionArabic);
+    reports[uid] = userReasons;
+
+    // Prepare update object
+    final Map<String, dynamic> updates = {
+      'reports': reports,
+    };
+
+    if (!signalers.contains(uid)) {
+      // Add signaler + increment signalCount (only inside update call)
+      updates['signalers'] = FieldValue.arrayUnion([uid]);
+      updates['signalCount'] = FieldValue.increment(1);
+    }
+
+    // Perform the update
+    await signalDoc.update(updates);
+  }
+} else {
+  // First signal for this post
+  await signalDoc.set({
+    'postType':'Products',
+    'postId': itemId,
+    'owner': target,
+    'signalCount': 1,
+    'signalers': [uid],
+    'reports': {
+      uid: [selectedOptionArabic]
+    },
+    'createdAt': FieldValue.serverTimestamp(),
+  });
+}
+
+
 
       print('Signaled by $uid');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -351,7 +391,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               selectedOption == S.of(context).reportOther
                                   ? otherController.text
                                   : selectedOption;
-                          signaler(widget.product.typeItem, selectedOption);
+                         if (reportText.trim().isEmpty) {
+                            // Show an alert if the user selected "Other" but didn't write anything
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Please enter a reason."),
+                              backgroundColor: Colors.red,
+                            ));
+                            return;
+                          }
+
+                          signaler(widget.product.typeItem, reportText);
                           print('Reported Problem: $reportText');
                           Navigator.pop(context);
                         },
@@ -936,24 +985,23 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      child: widget.product.ownerId ==FirebaseAuth.instance.currentUser?.uid
-              ? const SizedBox()
-              : Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          
-          // Chat button
-          
-          Expanded(
+      child: widget.product.ownerId == FirebaseAuth.instance.currentUser?.uid
+          ? const SizedBox()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Chat button
+
+                Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
                       if (!Users.isGuestUser()) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ChatPage(otherUserId: widget.product.ownerId!,
-                                    product: widget.product),
+                            builder: (context) => ChatPage(
+                                otherUserId: widget.product.ownerId!,
+                                product: widget.product),
                           ),
                         );
                       } else {
@@ -977,9 +1025,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     ),
                   ),
                 ),
-       
-        ],
-      ),
+              ],
+            ),
     );
   }
 

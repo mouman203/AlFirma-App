@@ -400,6 +400,10 @@ class _HomePageState extends State<HomePage> {
                     );
                   } else {
                     // navigate to notifications page or whatever you want
+                    /*showDialog(
+    context: context,
+    builder: (context) =>  NotificationPopup(), // your popup widget
+  );*/
                   }
                 },
                 icon: const Icon(
