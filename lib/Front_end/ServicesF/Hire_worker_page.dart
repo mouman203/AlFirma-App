@@ -16,7 +16,7 @@ class HireWorkerPage extends StatefulWidget {
 class _HireWorkerPageState extends State<HireWorkerPage> {
   String? selectedWilaya;
   String? selectedDaira;
-  static Future<List<Products>> getExpertiseServicesOnce() async {
+  static Future<List<Products>> getJobRequestOnce() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('item')
         .doc('Services')
@@ -262,7 +262,7 @@ class _HireWorkerPageState extends State<HireWorkerPage> {
             ),
             const SizedBox(height: 6),
             FutureBuilder<List<Products>>(
-              future: getExpertiseServicesOnce(),
+              future: getJobRequestOnce(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

@@ -3795,4 +3795,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit => 'Edit';
+
+  @override
+  String get notAPlantDetected => 'Not a Plant Detected';
+
+  @override
+  String get imageNotRecognized => 'Image Not Recognized';
+
+  @override
+  String get imageNotAPlant =>
+      'The image you uploaded doesn\'t appear to be a plant leaf or contains objects that our model can\'t analyze.';
+
+  @override
+  String get whatToDoNext => 'What to do next:';
+
+  @override
+  String get takeClearPhoto => '📸 Take a clear photo of a plant leaf';
+
+  @override
+  String get ensureSupportedPlant =>
+      '🌿 Ensure the plant is one of our supported types';
+
+  @override
+  String get wellLitFocused => '💡 Make sure the image is well-lit and focused';
+
+  @override
+  String get tryDifferentAngle => '🔄 Try capturing from a different angle';
+
+  @override
+  String get tryAnotherPhoto => 'Try Another Photo';
+
+  @override
+  String get plantDiseaseDetection => 'Plant Disease Detection';
 }

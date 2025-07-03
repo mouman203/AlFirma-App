@@ -1,5 +1,5 @@
 name: agriplant
-description: Agriculture plant app
+description: Agriculture market app
 publish_to: "none"
 version: 0.1.0
 
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_iconly: ^1.0.2
-  intl: 0.19.0
+  intl: ^0.20.2
   google_fonts: ^6.2.1
   badges: ^3.1.1
   timelines: ^0.1.0
@@ -94,7 +94,7 @@ flutter:
 
   assets:
     - assets/
-    - assets/models/best_plant_disease_model.tflite
+    - assets/models/best_plant_disease_model_2.tflite
     - assets/services/
     - assets/become/
     - shorebird.yaml

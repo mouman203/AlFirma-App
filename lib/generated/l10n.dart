@@ -8624,6 +8624,106 @@ class S {
   String get edit {
     return Intl.message('تعديل', name: 'edit', desc: '', args: []);
   }
+
+  /// `لم يتم الكشف عن نبات`
+  String get notAPlantDetected {
+    return Intl.message(
+      'لم يتم الكشف عن نبات',
+      name: 'notAPlantDetected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `لم يتم التعرف على الصورة`
+  String get imageNotRecognized {
+    return Intl.message(
+      'لم يتم التعرف على الصورة',
+      name: 'imageNotRecognized',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الصورة التي قمت بتحميلها لا تبدو كأنها ورقة نبات أو تحتوي على أشياء لا يمكن لنموذجنا تحليلها.`
+  String get imageNotAPlant {
+    return Intl.message(
+      'الصورة التي قمت بتحميلها لا تبدو كأنها ورقة نبات أو تحتوي على أشياء لا يمكن لنموذجنا تحليلها.',
+      name: 'imageNotAPlant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ماذا تفعل بعد ذلك:`
+  String get whatToDoNext {
+    return Intl.message(
+      'ماذا تفعل بعد ذلك:',
+      name: 'whatToDoNext',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `📸 التقط صورة واضحة لورقة نبات`
+  String get takeClearPhoto {
+    return Intl.message(
+      '📸 التقط صورة واضحة لورقة نبات',
+      name: 'takeClearPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🌿 تأكد من أن النبات من الأنواع التي ندعمها`
+  String get ensureSupportedPlant {
+    return Intl.message(
+      '🌿 تأكد من أن النبات من الأنواع التي ندعمها',
+      name: 'ensureSupportedPlant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `💡 تأكد من أن الصورة مضيئة وواضحة`
+  String get wellLitFocused {
+    return Intl.message(
+      '💡 تأكد من أن الصورة مضيئة وواضحة',
+      name: 'wellLitFocused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🔄 جرّب الالتقاط من زاوية مختلفة`
+  String get tryDifferentAngle {
+    return Intl.message(
+      '🔄 جرّب الالتقاط من زاوية مختلفة',
+      name: 'tryDifferentAngle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `جرّب صورة أخرى`
+  String get tryAnotherPhoto {
+    return Intl.message(
+      'جرّب صورة أخرى',
+      name: 'tryAnotherPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `كشف أمراض النبات`
+  String get plantDiseaseDetection {
+    return Intl.message(
+      'كشف أمراض النبات',
+      name: 'plantDiseaseDetection',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

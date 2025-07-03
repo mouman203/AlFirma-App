@@ -3790,4 +3790,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get edit => 'تعديل';
+
+  @override
+  String get notAPlantDetected => 'لم يتم الكشف عن نبات';
+
+  @override
+  String get imageNotRecognized => 'لم يتم التعرف على الصورة';
+
+  @override
+  String get imageNotAPlant =>
+      'الصورة التي قمت بتحميلها لا تبدو كأنها ورقة نبات أو تحتوي على أشياء لا يمكن لنموذجنا تحليلها.';
+
+  @override
+  String get whatToDoNext => 'ماذا تفعل بعد ذلك:';
+
+  @override
+  String get takeClearPhoto => '📸 التقط صورة واضحة لورقة نبات';
+
+  @override
+  String get ensureSupportedPlant =>
+      '🌿 تأكد من أن النبات من الأنواع التي ندعمها';
+
+  @override
+  String get wellLitFocused => '💡 تأكد من أن الصورة مضيئة وواضحة';
+
+  @override
+  String get tryDifferentAngle => '🔄 جرّب الالتقاط من زاوية مختلفة';
+
+  @override
+  String get tryAnotherPhoto => 'جرّب صورة أخرى';
+
+  @override
+  String get plantDiseaseDetection => 'كشف أمراض النبات';
 }

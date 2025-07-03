@@ -1236,5 +1236,15 @@
   "documents_reused_notice": "Some documents from your other profiles will be reused. You can upload new ones if needed.",
   "existing": "Existing",
   "tap_to_upload_new": "Tap to upload new document",
-  "edit": "Edit"
+  "edit": "Edit",
+  "notAPlantDetected": "Not a Plant Detected",
+  "imageNotRecognized": "Image Not Recognized",
+  "imageNotAPlant": "The image you uploaded doesn't appear to be a plant leaf or contains objects that our model can't analyze.",
+  "whatToDoNext": "What to do next:",
+  "takeClearPhoto": "📸 Take a clear photo of a plant leaf",
+  "ensureSupportedPlant": "🌿 Ensure the plant is one of our supported types",
+  "wellLitFocused": "💡 Make sure the image is well-lit and focused",
+  "tryDifferentAngle": "🔄 Try capturing from a different angle",
+  "tryAnotherPhoto": "Try Another Photo",
+  "plantDiseaseDetection": "Plant Disease Detection"
 }

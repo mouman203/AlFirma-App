@@ -680,6 +680,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "emailSentSuccess": MessageLookupByLibrary.simpleMessage(
       "Email sent successfully",
     ),
+    "ensureSupportedPlant": MessageLookupByLibrary.simpleMessage(
+      "🌿 Ensure the plant is one of our supported types",
+    ),
     "enterNewEmail": MessageLookupByLibrary.simpleMessage("Enter new email"),
     "enterNewPhoneNumber": MessageLookupByLibrary.simpleMessage(
       "Enter new phone number",
@@ -938,6 +941,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "imageAnalysisError": MessageLookupByLibrary.simpleMessage(
       "Error analyzing image",
     ),
+    "imageNotAPlant": MessageLookupByLibrary.simpleMessage(
+      "The image you uploaded doesn\'t appear to be a plant leaf or contains objects that our model can\'t analyze.",
+    ),
+    "imageNotRecognized": MessageLookupByLibrary.simpleMessage(
+      "Image Not Recognized",
+    ),
     "inAmenas": MessageLookupByLibrary.simpleMessage("In Amenas"),
     "inGhar": MessageLookupByLibrary.simpleMessage("In Ghar"),
     "inGuezzam": MessageLookupByLibrary.simpleMessage("In Guezzam"),
@@ -1174,6 +1183,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_workers_found": MessageLookupByLibrary.simpleMessage(
       "No workers found",
     ),
+    "notAPlantDetected": MessageLookupByLibrary.simpleMessage(
+      "Not a Plant Detected",
+    ),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "oats": MessageLookupByLibrary.simpleMessage("Oats"),
     "oggaz": MessageLookupByLibrary.simpleMessage("Oggaz"),
@@ -1310,6 +1322,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pineapple": MessageLookupByLibrary.simpleMessage("Pineapple"),
     "plantAnimalHealth": MessageLookupByLibrary.simpleMessage(
       "Plant & Animal Health Monitoring",
+    ),
+    "plantDiseaseDetection": MessageLookupByLibrary.simpleMessage(
+      "Plant Disease Detection",
     ),
     "plant_apple": MessageLookupByLibrary.simpleMessage("Apple"),
     "plant_cherry": MessageLookupByLibrary.simpleMessage("Cherry"),
@@ -1612,6 +1627,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "taghit": MessageLookupByLibrary.simpleMessage("Taghit"),
     "taher": MessageLookupByLibrary.simpleMessage("Taher"),
     "taibet": MessageLookupByLibrary.simpleMessage("Taibet"),
+    "takeClearPhoto": MessageLookupByLibrary.simpleMessage(
+      "📸 Take a clear photo of a plant leaf",
+    ),
     "talebLarbi": MessageLookupByLibrary.simpleMessage("Taleb Larbi"),
     "tamacine": MessageLookupByLibrary.simpleMessage("Tamacine"),
     "tamalous": MessageLookupByLibrary.simpleMessage("Tamalous"),
@@ -1808,6 +1826,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "treatmentRecommendations": MessageLookupByLibrary.simpleMessage(
       "Treatment Recommendations",
     ),
+    "tryAnotherPhoto": MessageLookupByLibrary.simpleMessage(
+      "Try Another Photo",
+    ),
+    "tryDifferentAngle": MessageLookupByLibrary.simpleMessage(
+      "🔄 Try capturing from a different angle",
+    ),
     "tsabit": MessageLookupByLibrary.simpleMessage("Tsabit"),
     "type_label": MessageLookupByLibrary.simpleMessage("Type"),
     "type_of_work": MessageLookupByLibrary.simpleMessage("Type of Work"),
@@ -1851,6 +1875,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeMessage2": MessageLookupByLibrary.simpleMessage(
       "Welcome to our platform",
     ),
+    "wellLitFocused": MessageLookupByLibrary.simpleMessage(
+      "💡 Make sure the image is well-lit and focused",
+    ),
+    "whatToDoNext": MessageLookupByLibrary.simpleMessage("What to do next:"),
     "wheat": MessageLookupByLibrary.simpleMessage("Wheat"),
     "whiteBeans": MessageLookupByLibrary.simpleMessage("White Beans"),
     "wilaya": MessageLookupByLibrary.simpleMessage("Wilaya"),

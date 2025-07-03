@@ -7521,6 +7521,66 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تعديل'**
   String get edit;
+
+  /// No description provided for @notAPlantDetected.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم الكشف عن نبات'**
+  String get notAPlantDetected;
+
+  /// No description provided for @imageNotRecognized.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم التعرف على الصورة'**
+  String get imageNotRecognized;
+
+  /// No description provided for @imageNotAPlant.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة التي قمت بتحميلها لا تبدو كأنها ورقة نبات أو تحتوي على أشياء لا يمكن لنموذجنا تحليلها.'**
+  String get imageNotAPlant;
+
+  /// No description provided for @whatToDoNext.
+  ///
+  /// In ar, this message translates to:
+  /// **'ماذا تفعل بعد ذلك:'**
+  String get whatToDoNext;
+
+  /// No description provided for @takeClearPhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'📸 التقط صورة واضحة لورقة نبات'**
+  String get takeClearPhoto;
+
+  /// No description provided for @ensureSupportedPlant.
+  ///
+  /// In ar, this message translates to:
+  /// **'🌿 تأكد من أن النبات من الأنواع التي ندعمها'**
+  String get ensureSupportedPlant;
+
+  /// No description provided for @wellLitFocused.
+  ///
+  /// In ar, this message translates to:
+  /// **'💡 تأكد من أن الصورة مضيئة وواضحة'**
+  String get wellLitFocused;
+
+  /// No description provided for @tryDifferentAngle.
+  ///
+  /// In ar, this message translates to:
+  /// **'🔄 جرّب الالتقاط من زاوية مختلفة'**
+  String get tryDifferentAngle;
+
+  /// No description provided for @tryAnotherPhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب صورة أخرى'**
+  String get tryAnotherPhoto;
+
+  /// No description provided for @plantDiseaseDetection.
+  ///
+  /// In ar, this message translates to:
+  /// **'كشف أمراض النبات'**
+  String get plantDiseaseDetection;
 }
 
 class _AppLocalizationsDelegate

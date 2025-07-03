@@ -1236,5 +1236,15 @@
   "documents_reused_notice": "Certains documents de vos autres profils seront réutilisés. Vous pouvez en téléverser de nouveaux si nécessaire.",
   "existing": "Existant",
   "tap_to_upload_new": "Appuyez pour téléverser un nouveau document",
-  "edit": "Modifier"
+  "edit": "Modifier",
+  "notAPlantDetected": "Aucune plante détectée",
+  "imageNotRecognized": "Image non reconnue",
+  "imageNotAPlant": "L'image que vous avez téléchargée ne semble pas être une feuille de plante ou contient des objets que notre modèle ne peut pas analyser.",
+  "whatToDoNext": "Que faire ensuite :",
+  "takeClearPhoto": "📸 Prenez une photo claire d'une feuille de plante",
+  "ensureSupportedPlant": "🌿 Assurez-vous que la plante fait partie de nos types pris en charge",
+  "wellLitFocused": "💡 Assurez-vous que l'image est bien éclairée et nette",
+  "tryDifferentAngle": "🔄 Essayez de capturer sous un angle différent",
+  "tryAnotherPhoto": "Essayer une autre photo",
+  "plantDiseaseDetection": "Détection des maladies des plantes"
 }

@@ -22,6 +22,7 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
   String? _detectedDisease;
   double? _confidence;
   List<String>? _suggestions;
+  bool _isUnknownObject = false;
 
   // Minimum confidence threshold for detection
   static const double _confidenceThreshold = 0.5;
@@ -71,6 +72,7 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
     'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
     'Tomato___Tomato_mosaic_virus',
     'Tomato___healthy',
+    'Unknown'
   ];
 
   // Disease information map
@@ -327,6 +329,7 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
     };
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -336,7 +339,7 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
   Future<void> _loadModel() async {
     try {
       _interpreter = await Interpreter.fromAsset(
-          'assets/models/best_plant_disease_model.tflite');
+          'assets/models/best_plant_disease_model_2.tflite');
       print('Model loaded successfully');
     } catch (e) {
       print('Error loading model: $e');
@@ -454,6 +457,7 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
         _detectedDisease = null;
         _confidence = null;
         _suggestions = null;
+        _isUnknownObject = false;
       });
       await _analyzeImage();
     }
@@ -525,34 +529,48 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
         }
       }
 
-      // Only show results if confidence is above threshold
-      if (maxConfidence >= _confidenceThreshold) {
-        String predictedClass = _classNames[maxIndex];
-        Map<String, dynamic>? diseaseData =
-            _diseaseInfo(context)[predictedClass];
+      String predictedClass = _classNames[maxIndex];
 
+      // Check if it's an unknown object
+      if (predictedClass == 'Unknown') {
         setState(() {
-          _detectedDisease = diseaseData?['label'] ?? predictedClass;
-          _confidence = maxConfidence * 100;
-          _suggestions = List<String>.from(diseaseData?['suggestions'] ?? []);
-          _isLoading = false;
-        });
-      } else {
-        // If confidence is too low, just reset without showing anything
-        setState(() {
+          _isUnknownObject = true;
           _detectedDisease = null;
           _confidence = null;
           _suggestions = null;
           _isLoading = false;
         });
+      } else {
+        // Only show results if confidence is above threshold for plant classes
+        if (maxConfidence >= _confidenceThreshold) {
+          Map<String, dynamic>? diseaseData =
+              _diseaseInfo(context)[predictedClass];
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(S.of(context).lowConfidenceDetection),
-            backgroundColor: Colors.orange,
-            duration: const Duration(seconds: 2),
-          ),
-        );
+          setState(() {
+            _detectedDisease = diseaseData?['label'] ?? predictedClass;
+            _confidence = maxConfidence * 100;
+            _suggestions = List<String>.from(diseaseData?['suggestions'] ?? []);
+            _isUnknownObject = false;
+            _isLoading = false;
+          });
+        } else {
+          // If confidence is too low, just reset without showing anything
+          setState(() {
+            _detectedDisease = null;
+            _confidence = null;
+            _suggestions = null;
+            _isUnknownObject = false;
+            _isLoading = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(S.of(context).lowConfidenceDetection),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       }
     } catch (e) {
       print('Error analyzing image: $e');
@@ -699,10 +717,167 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
     );
   }
 
+  Widget _buildUnknownObjectCard() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.search_off,
+                  color: Colors.orange,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    S.of(context).notAPlantDetected,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.orange.withOpacity(0.3),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: Colors.orange,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        S.of(context).imageNotRecognized,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDarkMode ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    S.of(context).imageNotAPlant,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.4,
+                      color: isDarkMode ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Icon(
+                  Icons.tips_and_updates,
+                  color: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C),
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  S.of(context).whatToDoNext,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...[
+              S.of(context).takeClearPhoto,
+              S.of(context).ensureSupportedPlant,
+              S.of(context).wellLitFocused,
+              S.of(context).tryDifferentAngle
+            ].map((tip) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: (isDarkMode
+                          ? const Color(0xFF90D5AE)
+                          : const Color(0xFF256C4C))
+                      .withOpacity(0.2),
+                ),
+              ),
+              child: Text(
+                tip,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: isDarkMode ? Colors.white70 : Colors.black87,
+                ),
+              ),
+            )),
+            const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: _pickImage,
+                icon: Icon(Icons.photo_camera),
+                label: Text(S.of(context).tryAnotherPhoto),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isDarkMode
+                      ? const Color(0xFF90D5AE)
+                      : const Color(0xFF256C4C),
+                  foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildResultSection() {
     if (_pickedImage == null) return const SizedBox.shrink();
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // Show unknown object card if detected
+    if (_isUnknownObject) {
+      return _buildUnknownObjectCard();
+    }
 
     return Card(
       elevation: 4,
@@ -910,8 +1085,8 @@ class _PlantDiseaseDetectionPageState extends State<PlantDiseaseDetectionPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Plant Disease Detection',
+        title:  Text(
+          S.of(context).plantDiseaseDetection,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,

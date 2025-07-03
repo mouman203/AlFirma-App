@@ -3855,4 +3855,39 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get edit => 'Modifier';
+
+  @override
+  String get notAPlantDetected => 'Aucune plante détectée';
+
+  @override
+  String get imageNotRecognized => 'Image non reconnue';
+
+  @override
+  String get imageNotAPlant =>
+      'L\'image que vous avez téléchargée ne semble pas être une feuille de plante ou contient des objets que notre modèle ne peut pas analyser.';
+
+  @override
+  String get whatToDoNext => 'Que faire ensuite :';
+
+  @override
+  String get takeClearPhoto =>
+      '📸 Prenez une photo claire d\'une feuille de plante';
+
+  @override
+  String get ensureSupportedPlant =>
+      '🌿 Assurez-vous que la plante fait partie de nos types pris en charge';
+
+  @override
+  String get wellLitFocused =>
+      '💡 Assurez-vous que l\'image est bien éclairée et nette';
+
+  @override
+  String get tryDifferentAngle =>
+      '🔄 Essayez de capturer sous un angle différent';
+
+  @override
+  String get tryAnotherPhoto => 'Essayer une autre photo';
+
+  @override
+  String get plantDiseaseDetection => 'Détection des maladies des plantes';
 }

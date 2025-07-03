@@ -654,6 +654,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "emailSentSuccess": MessageLookupByLibrary.simpleMessage(
       "تم إرسال البريد الإلكتروني بنجاح ",
     ),
+    "ensureSupportedPlant": MessageLookupByLibrary.simpleMessage(
+      "🌿 تأكد من أن النبات من الأنواع التي ندعمها",
+    ),
     "enterNewEmail": MessageLookupByLibrary.simpleMessage(
       "أدخل بريدًا إلكترونيًا جديدًا",
     ),
@@ -902,6 +905,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "imageAnalysisError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ أثناء تحليل الصورة",
     ),
+    "imageNotAPlant": MessageLookupByLibrary.simpleMessage(
+      "الصورة التي قمت بتحميلها لا تبدو كأنها ورقة نبات أو تحتوي على أشياء لا يمكن لنموذجنا تحليلها.",
+    ),
+    "imageNotRecognized": MessageLookupByLibrary.simpleMessage(
+      "لم يتم التعرف على الصورة",
+    ),
     "inAmenas": MessageLookupByLibrary.simpleMessage("عين أمناس"),
     "inGhar": MessageLookupByLibrary.simpleMessage("عين غار"),
     "inGuezzam": MessageLookupByLibrary.simpleMessage("عين قزام"),
@@ -1136,6 +1145,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_workers_found": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على عمّال",
     ),
+    "notAPlantDetected": MessageLookupByLibrary.simpleMessage(
+      "لم يتم الكشف عن نبات",
+    ),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "oats": MessageLookupByLibrary.simpleMessage("شوفان"),
     "oggaz": MessageLookupByLibrary.simpleMessage("عقاز"),
@@ -1266,6 +1278,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pineapple": MessageLookupByLibrary.simpleMessage("أناناس"),
     "plantAnimalHealth": MessageLookupByLibrary.simpleMessage(
       "مراقبة صحة النباتات والحيوانات",
+    ),
+    "plantDiseaseDetection": MessageLookupByLibrary.simpleMessage(
+      "كشف أمراض النبات",
     ),
     "plant_apple": MessageLookupByLibrary.simpleMessage("تفاح"),
     "plant_cherry": MessageLookupByLibrary.simpleMessage("كرز"),
@@ -1554,6 +1569,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "taghit": MessageLookupByLibrary.simpleMessage("تاغيت"),
     "taher": MessageLookupByLibrary.simpleMessage("الطاهير"),
     "taibet": MessageLookupByLibrary.simpleMessage("الطيبات"),
+    "takeClearPhoto": MessageLookupByLibrary.simpleMessage(
+      "📸 التقط صورة واضحة لورقة نبات",
+    ),
     "talebLarbi": MessageLookupByLibrary.simpleMessage("الطالب العربي"),
     "tamacine": MessageLookupByLibrary.simpleMessage("تماسين"),
     "tamalous": MessageLookupByLibrary.simpleMessage("تمالوس"),
@@ -1744,6 +1762,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "treatmentRecommendations": MessageLookupByLibrary.simpleMessage(
       "توصيات العلاج",
     ),
+    "tryAnotherPhoto": MessageLookupByLibrary.simpleMessage("جرّب صورة أخرى"),
+    "tryDifferentAngle": MessageLookupByLibrary.simpleMessage(
+      "🔄 جرّب الالتقاط من زاوية مختلفة",
+    ),
     "tsabit": MessageLookupByLibrary.simpleMessage("تسابيت"),
     "type_label": MessageLookupByLibrary.simpleMessage("النوع"),
     "type_of_work": MessageLookupByLibrary.simpleMessage("نوع العمل"),
@@ -1791,6 +1813,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeMessage2": MessageLookupByLibrary.simpleMessage(
       "مرحبًا بك في منصتنا",
     ),
+    "wellLitFocused": MessageLookupByLibrary.simpleMessage(
+      "💡 تأكد من أن الصورة مضيئة وواضحة",
+    ),
+    "whatToDoNext": MessageLookupByLibrary.simpleMessage("ماذا تفعل بعد ذلك:"),
     "wheat": MessageLookupByLibrary.simpleMessage("قمح"),
     "whiteBeans": MessageLookupByLibrary.simpleMessage("فاصوليا بيضاء"),
     "wilaya": MessageLookupByLibrary.simpleMessage("الولاية"),
