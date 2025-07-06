@@ -26,6 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "abalessa": MessageLookupByLibrary.simpleMessage("أبلسة"),
     "abouElHassan": MessageLookupByLibrary.simpleMessage("أبو الحسن"),
     "aboutUs": MessageLookupByLibrary.simpleMessage("من نحن"),
+    "accept": MessageLookupByLibrary.simpleMessage("قبول"),
     "accessRestricted": MessageLookupByLibrary.simpleMessage("الوصول مقيد ⚠️"),
     "account": MessageLookupByLibrary.simpleMessage("الحساب"),
     "accountManagement": MessageLookupByLibrary.simpleMessage("إدارة الحساب"),
@@ -335,6 +336,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "cannotOpenDialer": MessageLookupByLibrary.simpleMessage(
       "تعذر فتح تطبيق الاتصال",
     ),
+    "cantUsePhoneUntilOfferAccepted": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن استخدام الهاتف حتى يتم قبول العرض",
+    ),
     "cantaloupe": MessageLookupByLibrary.simpleMessage("شمام"),
     "capture_with_camera": MessageLookupByLibrary.simpleMessage(
       "التقاط باستخدام الكاميرا",
@@ -582,6 +586,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "drivingLicense": MessageLookupByLibrary.simpleMessage("رخصة السياقة"),
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
+    "editYourProduct": MessageLookupByLibrary.simpleMessage("تعديل منتجك"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
     "eggplant": MessageLookupByLibrary.simpleMessage("باذنجان"),
     "eggs": MessageLookupByLibrary.simpleMessage("البيض (بلدي، مزارع)"),
@@ -775,6 +780,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ghardaia": MessageLookupByLibrary.simpleMessage("غرداية"),
     "ghazaouet": MessageLookupByLibrary.simpleMessage("الغزوات"),
     "ghriss": MessageLookupByLibrary.simpleMessage("غريس"),
+    "giveAnotherOffer": MessageLookupByLibrary.simpleMessage("قدّم عرضًا آخر"),
     "goats": MessageLookupByLibrary.simpleMessage("ماعز (جديان، إناث ماعز)"),
     "gouraya": MessageLookupByLibrary.simpleMessage("قوراية"),
     "grainGrinder": MessageLookupByLibrary.simpleMessage("آلة طحن الحبوب"),
@@ -1029,6 +1035,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "magra": MessageLookupByLibrary.simpleMessage("مقرة"),
     "magrane": MessageLookupByLibrary.simpleMessage("المقرن"),
     "mahdia": MessageLookupByLibrary.simpleMessage("مهدية"),
+    "makeYourOffer": MessageLookupByLibrary.simpleMessage("قدّم عرضك"),
     "makmanBenAmer": MessageLookupByLibrary.simpleMessage("مكمن بن عامر"),
     "makouda": MessageLookupByLibrary.simpleMessage("ماكودة"),
     "mango": MessageLookupByLibrary.simpleMessage("مانجو"),
@@ -1076,6 +1083,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "miliana": MessageLookupByLibrary.simpleMessage("مليانة"),
     "millet": MessageLookupByLibrary.simpleMessage("دخن"),
     "minPrice": MessageLookupByLibrary.simpleMessage("السعر الأدنى"),
+    "minimumPrice": MessageLookupByLibrary.simpleMessage("السعر الأدنى:"),
     "mint": MessageLookupByLibrary.simpleMessage("نعناع"),
     "mobileCoolingUnit": MessageLookupByLibrary.simpleMessage(
       "وحدات تبريد متنقلة",
@@ -1150,6 +1158,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "oats": MessageLookupByLibrary.simpleMessage("شوفان"),
+    "offerAccepted": MessageLookupByLibrary.simpleMessage("تم قبول العرض!"),
+    "offerRefused": MessageLookupByLibrary.simpleMessage("تم رفض العرض!"),
+    "offerSent": MessageLookupByLibrary.simpleMessage("تم إرسال العرض بنجاح."),
+    "offerTooLow": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن أن يكون العرض أقل من 20٪ من سعر المنتج",
+    ),
     "oggaz": MessageLookupByLibrary.simpleMessage("عقاز"),
     "oilCrops": MessageLookupByLibrary.simpleMessage("المحاصيل الزيتية"),
     "ok": MessageLookupByLibrary.simpleMessage("حسناً"),
@@ -1299,6 +1313,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "plasticWrappingMachine": MessageLookupByLibrary.simpleMessage(
       "آلة تغليف بلاستيكي",
     ),
+    "pleaseEnterOfferAmount": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال قيمة العرض",
+    ),
+    "pleaseEnterValidNumber": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال رقم صالح",
+    ),
     "pleaseFillField": MessageLookupByLibrary.simpleMessage("الرجاء ملء الحقل"),
     "pleaseSelectLabel": MessageLookupByLibrary.simpleMessage("يرجى اختيار "),
     "pleaseUploadProductImageFirst": MessageLookupByLibrary.simpleMessage(
@@ -1365,6 +1385,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "privacySecurity": MessageLookupByLibrary.simpleMessage("الخصوصية والأمان"),
     "product": MessageLookupByLibrary.simpleMessage("المنتج"),
     "productLabel": MessageLookupByLibrary.simpleMessage("المنتج :"),
+    "productPrice": MessageLookupByLibrary.simpleMessage("سعر المنتج"),
     "productType": MessageLookupByLibrary.simpleMessage("نوع المنتج"),
     "profile_picture": MessageLookupByLibrary.simpleMessage(
       "صورة الملف الشخصي",
@@ -1376,6 +1397,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "profile_updated": MessageLookupByLibrary.simpleMessage(
       "تم تحديث الملف الشخصي بنجاح",
     ),
+    "proposeYourOffer": MessageLookupByLibrary.simpleMessage("اقترح عرضك"),
+    "proposed": MessageLookupByLibrary.simpleMessage("تم اقتراح :"),
     "quantity": MessageLookupByLibrary.simpleMessage("الكمية"),
     "quinoa": MessageLookupByLibrary.simpleMessage("كينوا"),
     "rabbits": MessageLookupByLibrary.simpleMessage("أرانب"),
@@ -1392,6 +1415,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "readMore": MessageLookupByLibrary.simpleMessage("اقرأ المزيد"),
     "redBeans": MessageLookupByLibrary.simpleMessage("فاصوليا حمراء"),
     "refrigeratedTruck": MessageLookupByLibrary.simpleMessage("شاحنة مبردة"),
+    "refuse": MessageLookupByLibrary.simpleMessage("رفض"),
     "reggane": MessageLookupByLibrary.simpleMessage("رقان"),
     "reguiba": MessageLookupByLibrary.simpleMessage("الرقيبة"),
     "relizane": MessageLookupByLibrary.simpleMessage("غليزان"),
@@ -1453,6 +1477,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "اختيار من المعرض",
     ),
     "sell": MessageLookupByLibrary.simpleMessage("بيع"),
+    "sendOffer": MessageLookupByLibrary.simpleMessage("إرسال العرض"),
     "sendReport": MessageLookupByLibrary.simpleMessage("إرسال التقرير"),
     "seriana": MessageLookupByLibrary.simpleMessage("سريانة"),
     "sesameSeeds": MessageLookupByLibrary.simpleMessage("بذور السمسم"),
@@ -1767,6 +1792,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "🔄 جرّب الالتقاط من زاوية مختلفة",
     ),
     "tsabit": MessageLookupByLibrary.simpleMessage("تسابيت"),
+    "typeAccessDenied": MessageLookupByLibrary.simpleMessage(
+      "النوع الحالي لا يمكنه الوصول إلى هذه الصفحة",
+    ),
     "type_label": MessageLookupByLibrary.simpleMessage("النوع"),
     "type_of_work": MessageLookupByLibrary.simpleMessage("نوع العمل"),
     "unfollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),

@@ -24,11 +24,11 @@ class _ChatPage2State extends State<ChatPage2> {
 
   String otherUserName = "Loading...";
   String otherUserPhotoUrl = "";
-  
+
   // Timer to debounce the mark as seen operations
   Timer? _markAsSeenTimer;
   final Set<String> _processedMessages = <String>{};
-  
+
   // Stream subscription to better control the stream
   StreamSubscription<QuerySnapshot>? _messagesSubscription;
 
@@ -70,7 +70,8 @@ class _ChatPage2State extends State<ChatPage2> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => UserProfilePage(userId: widget.otherUserId),
+                builder: (context) =>
+                    UserProfilePage(userId: widget.otherUserId),
               ),
             );
           },
@@ -88,7 +89,8 @@ class _ChatPage2State extends State<ChatPage2> {
               const SizedBox(width: 14),
               Text(
                 otherUserName,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -126,7 +128,7 @@ class _ChatPage2State extends State<ChatPage2> {
                         children: [
                           const Icon(Icons.error_outline, size: 48),
                           const SizedBox(height: 16),
-                          Text( "Error loading messages"),
+                          Text("Error loading messages"),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => setState(() {}),
@@ -139,7 +141,29 @@ class _ChatPage2State extends State<ChatPage2> {
 
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return Center(
-                        child: Text(S.of(context).noMessages));
+                        child: Center(
+                            child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? Colors.black.withOpacity(0.8)
+                            : Colors.white
+                                .withOpacity(0.8), // White with transparency
+                        borderRadius:
+                            BorderRadius.circular(12), // Rounded corners
+                      ),
+                      child: Text(
+                        S.of(context).noMessages,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: isDarkMode
+                              ? Colors.white
+                              : Colors.black, // Keep readable contrast
+                        ),
+                      ),
+                    )));
                   }
 
                   var messages = snapshot.data!.docs;
@@ -167,14 +191,17 @@ class _ChatPage2State extends State<ChatPage2> {
                           children: [
                             if (!isMe)
                               Padding(
-                                padding: const EdgeInsets.only(right: 4.0, bottom: 4),
+                                padding: const EdgeInsets.only(
+                                    right: 4.0, bottom: 4),
                                 child: CircleAvatar(
                                   radius: 16,
                                   backgroundImage: otherUserPhotoUrl.isNotEmpty
                                       ? NetworkImage(otherUserPhotoUrl)
                                       : (isDarkMode
-                                              ? const AssetImage("assets/anonymeD.png")
-                                              : const AssetImage("assets/anonyme.png"))
+                                              ? const AssetImage(
+                                                  "assets/anonymeD.png")
+                                              : const AssetImage(
+                                                  "assets/anonyme.png"))
                                           as ImageProvider,
                                 ),
                               ),
@@ -191,7 +218,8 @@ class _ChatPage2State extends State<ChatPage2> {
                                           : const Color(0xFF256C4C))
                                       : (isDarkMode
                                           ? const Color(0xFFE6E6E6)
-                                          : const Color.fromARGB(255, 72, 72, 72)),
+                                          : const Color.fromARGB(
+                                              255, 72, 72, 72)),
                                   borderRadius: BorderRadius.only(
                                     topLeft: const Radius.circular(16),
                                     topRight: const Radius.circular(16),
@@ -206,7 +234,9 @@ class _ChatPage2State extends State<ChatPage2> {
                                       msg["content"] ?? "",
                                       style: TextStyle(
                                         fontSize: 18,
-                                        color: isDarkMode ? Colors.black : Colors.white,
+                                        color: isDarkMode
+                                            ? Colors.black
+                                            : Colors.white,
                                       ),
                                     ),
                                     const SizedBox(height: 6),
@@ -219,8 +249,8 @@ class _ChatPage2State extends State<ChatPage2> {
                                             size: 18,
                                             color: (msg["isSeen"] == true)
                                                 ? (isDarkMode
-                                                    ? const Color(0xFF1B503A)
-                                                    : const Color(0xFF64B58B))
+                                                    ? Colors.lightGreen.shade700
+                                                    : Colors.lightGreen)
                                                 : (isDarkMode
                                                     ? Colors.black54
                                                     : Colors.white70),
@@ -372,36 +402,33 @@ class _ChatPage2State extends State<ChatPage2> {
   // Safer function to mark messages as seen
   Future<void> _markMessagesAsSeenSafely(QuerySnapshot snapshot) async {
     if (!mounted) return;
-    
+
     try {
       List<Future<void>> updateFutures = [];
-      
+
       for (var doc in snapshot.docs) {
         var msg = doc.data() as Map<String, dynamic>;
-        
+
         // Only update if message is for current user, not already seen, and not already processed
-        if (msg["receiverId"] == _auth.currentUser!.uid && 
+        if (msg["receiverId"] == _auth.currentUser!.uid &&
             msg["isSeen"] != true &&
             !_processedMessages.contains(doc.id)) {
-          
           _processedMessages.add(doc.id);
-          
+
           // Add to futures list instead of awaiting immediately
-          updateFutures.add(
-            doc.reference.update({"isSeen": true}).catchError((error) {
-              print("❌ Error updating message ${doc.id}: $error");
-              // Remove from processed list if update failed
-              _processedMessages.remove(doc.id);
-            })
-          );
+          updateFutures
+              .add(doc.reference.update({"isSeen": true}).catchError((error) {
+            print("❌ Error updating message ${doc.id}: $error");
+            // Remove from processed list if update failed
+            _processedMessages.remove(doc.id);
+          }));
         }
       }
-      
+
       // Execute all updates in parallel
       if (updateFutures.isNotEmpty) {
         await Future.wait(updateFutures);
       }
-      
     } catch (e) {
       print("❌ Error marking messages as seen: $e");
     }

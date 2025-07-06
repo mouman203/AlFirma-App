@@ -3827,4 +3827,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plantDiseaseDetection => 'Plant Disease Detection';
+
+  @override
+  String get cantUsePhoneUntilOfferAccepted =>
+      'Can\'t use phone until offer accepted';
+
+  @override
+  String get proposed => 'Proposed :';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get refuse => 'Refuse';
+
+  @override
+  String get productPrice => 'Product Price';
+
+  @override
+  String get giveAnotherOffer => 'Give another offer';
+
+  @override
+  String get makeYourOffer => 'Make Your Offer';
+
+  @override
+  String get proposeYourOffer => 'Propose your offer';
+
+  @override
+  String get minimumPrice => 'Minimum price :';
+
+  @override
+  String get sendOffer => 'Send Offer';
+
+  @override
+  String get pleaseEnterOfferAmount => 'Please enter an offer amount';
+
+  @override
+  String get pleaseEnterValidNumber => 'Please enter a valid number';
+
+  @override
+  String get offerTooLow => 'Offer cannot be lower than 20% of product price';
+
+  @override
+  String get offerSent => 'Offer sent successfully.';
+
+  @override
+  String get offerAccepted => 'Offer accepted!';
+
+  @override
+  String get offerRefused => 'Offer refused!';
 }

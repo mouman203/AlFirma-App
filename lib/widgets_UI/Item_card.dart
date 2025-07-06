@@ -377,7 +377,7 @@ class _ItemCardState extends State<ItemCard> {
                             height: 30,
                             decoration: BoxDecoration(
                               color:
-                                  Theme.of(context).colorScheme.surfaceVariant,
+                                  Theme.of(context).colorScheme.secondaryContainer,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -391,10 +391,7 @@ class _ItemCardState extends State<ItemCard> {
                               padding: EdgeInsets.zero,
                               iconSize: 18,
                               icon: Icon(
-                                Icons.more_vert,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surface,
+                                Icons.more_vert
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -458,7 +455,7 @@ class _ItemCardState extends State<ItemCard> {
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(
-                                          Icons.delete_outline,
+                                          Icons.delete_forever,
                                           size: 18,
                                           color: Colors.red,
                                         ),

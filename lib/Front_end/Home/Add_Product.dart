@@ -460,7 +460,7 @@ class _AddProductsState extends State<AddProducts> {
         barrierDismissible: false,
         builder: (context) => AlertDialog(
           title: Text(S.of(context).error),
-          content: Text("The current role can't access this page"),
+          content: Text(S.of(context).typeAccessDenied),
           actions: [
             TextButton(
               onPressed: () {
@@ -985,16 +985,15 @@ class _AddProductsState extends State<AddProducts> {
       appBar: widget.isEditMode != null && widget.isEditMode! == true
           ? AppBar(
               title: Text(
-                widget.isEditMode == true ? "editProduct" : "addProduct",
+                widget.isEditMode == true ? S.of(context).editYourProduct : "",
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
                 ),
+                
               ),
-              backgroundColor: isDarkMode
-                  ? const Color(0xFF90D5AE)
-                  : const Color(0xFF256C4C),
+              elevation: 5,
             )
-          : AppBar(),
+          : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -1623,7 +1622,7 @@ class _AddProductsState extends State<AddProducts> {
 //==============================SHARE BUTTON================================
               ProductData.actionButton(
                 context: context,
-                label: isEditMode ? "Edit" : S.of(context).share,
+                label: isEditMode ? S.of(context).edit : S.of(context).share,
                 backgroundColor: isDarkMode
                     ? const Color(0xFF90D5AE)
                     : const Color(0xFF256C4C),

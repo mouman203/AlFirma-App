@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         followersCount = (userDoc["followers"] as List<dynamic>?)?.length ?? 0;
         followingCount = (userDoc["following"] as List<dynamic>?)?.length ?? 0;
-        username = userDoc["first_name"];
+        username = "${userDoc["first_name"]} ${userDoc["last_name"]}";
         profilePic = userDoc["photo"];
       });
     }

@@ -7581,6 +7581,102 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'كشف أمراض النبات'**
   String get plantDiseaseDetection;
+
+  /// No description provided for @cantUsePhoneUntilOfferAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن استخدام الهاتف حتى يتم قبول العرض'**
+  String get cantUsePhoneUntilOfferAccepted;
+
+  /// No description provided for @proposed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم اقتراح :'**
+  String get proposed;
+
+  /// No description provided for @accept.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول'**
+  String get accept;
+
+  /// No description provided for @refuse.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفض'**
+  String get refuse;
+
+  /// No description provided for @productPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر المنتج'**
+  String get productPrice;
+
+  /// No description provided for @giveAnotherOffer.
+  ///
+  /// In ar, this message translates to:
+  /// **'قدّم عرضًا آخر'**
+  String get giveAnotherOffer;
+
+  /// No description provided for @makeYourOffer.
+  ///
+  /// In ar, this message translates to:
+  /// **'قدّم عرضك'**
+  String get makeYourOffer;
+
+  /// No description provided for @proposeYourOffer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اقترح عرضك'**
+  String get proposeYourOffer;
+
+  /// No description provided for @minimumPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر الأدنى:'**
+  String get minimumPrice;
+
+  /// No description provided for @sendOffer.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال العرض'**
+  String get sendOffer;
+
+  /// No description provided for @pleaseEnterOfferAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إدخال قيمة العرض'**
+  String get pleaseEnterOfferAmount;
+
+  /// No description provided for @pleaseEnterValidNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إدخال رقم صالح'**
+  String get pleaseEnterValidNumber;
+
+  /// No description provided for @offerTooLow.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن أن يكون العرض أقل من 20٪ من سعر المنتج'**
+  String get offerTooLow;
+
+  /// No description provided for @offerSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال العرض بنجاح.'**
+  String get offerSent;
+
+  /// No description provided for @offerAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قبول العرض!'**
+  String get offerAccepted;
+
+  /// No description provided for @offerRefused.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض العرض!'**
+  String get offerRefused;
 }
 
 class _AppLocalizationsDelegate

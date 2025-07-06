@@ -20,9 +20,9 @@ class _RentPageState extends State<RentPage> {
   static Future<List<Products>> getrentServicesOnce() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('item')
-        .doc('Products')
-        .collection('Products')
-        .where('Service', isEqualTo: "كراء")
+        .doc('Services')
+        .collection('Services')
+        .where('Service', isEqualTo: "الإيجار")
         .get();
 
     return snapshot.docs.map(Products.fromFirestore).toList();

@@ -60,7 +60,7 @@ class _MessagesPageState extends State<MessagesPage> {
       print("✅ Sent offers count: ${snapshot.docs.length}");
       return snapshot.docs;
     });
-    
+
     // Stream for received offers
     Stream<List<QueryDocumentSnapshot>> receivedOffers = _firestore
         .collection('item')
@@ -72,7 +72,7 @@ class _MessagesPageState extends State<MessagesPage> {
       print("📥 Received offers count: ${snapshot.docs.length}");
       return snapshot.docs;
     });
-    
+
     // Stream for sent messages
     Stream<List<QueryDocumentSnapshot>> sentMessages = _firestore
         .collection('Messages')
@@ -82,7 +82,7 @@ class _MessagesPageState extends State<MessagesPage> {
       print("✅ Sent messages count: ${snapshot.docs.length}");
       return snapshot.docs;
     });
-    
+
     // Stream for received messages
     Stream<List<QueryDocumentSnapshot>> receivedMessages = _firestore
         .collection('Messages')
@@ -136,7 +136,8 @@ class _MessagesPageState extends State<MessagesPage> {
       var messageData = doc.data() as Map<String, dynamic>;
       String sender = messageData['senderId'];
       String receiver = messageData['receiverId'];
-      String? productId = messageData['productid']; // Can be null for ChatPage2 messages
+      String? productId =
+          messageData['productid']; // Can be null for ChatPage2 messages
       String? content = messageData['content'];
 
       if (content == null || content.isEmpty) {
@@ -144,9 +145,11 @@ class _MessagesPageState extends State<MessagesPage> {
       }
 
       String otherUserId = sender == currentUserId ? receiver : sender;
-      
+
       // Create key based on whether productId exists
-      String key = productId != null ? "${otherUserId}_$productId" : "${otherUserId}_direct";
+      String key = productId != null
+          ? "${otherUserId}_$productId"
+          : "${otherUserId}_direct";
 
       if (!groupedMessages.containsKey(key)) {
         groupedMessages[key] = [];
@@ -167,7 +170,8 @@ class _MessagesPageState extends State<MessagesPage> {
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return ListTile(
-              title: Text(S.of(context).loading)); // Localized string for loading
+              title:
+                  Text(S.of(context).loading)); // Localized string for loading
         }
 
         if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
@@ -244,11 +248,8 @@ class _MessagesPageState extends State<MessagesPage> {
                   Icon(
                     Icons.done_all,
                     size: 18,
-                    color: isSeen
-                        ? (isDarkMode
-                            ? const Color(0xFF1B503A)
-                            : const Color(0xFF64B58B))
-                        : Colors.transparent,
+                    color:
+                        isSeen ? const Color(0xFF64B58B) : Colors.transparent,
                   ),
                 ],
               ),
@@ -360,10 +361,11 @@ class _MessagesPageState extends State<MessagesPage> {
     );
   }
 
-  Future<void> _deleteConversation(String userId, Map<String, dynamic> messageData) async {
+  Future<void> _deleteConversation(
+      String userId, Map<String, dynamic> messageData) async {
     try {
       String? productId = messageData['productid'];
-      
+
       if (productId != null) {
         // Delete messages with productid (ChatPage messages)
         final messagesQuery = await _firestore
@@ -433,7 +435,7 @@ class _MessagesPageState extends State<MessagesPage> {
     } catch (e) {
       print("Error deleting conversation: $e");
       if (!context.mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error deleting conversation: $e")),
       );
@@ -442,7 +444,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
   void _navigateToChat(String userId, Map<String, dynamic> messageData) async {
     String? productId = messageData['productid'];
-    
+
     if (productId != null) {
       // This is a product-related chat (ChatPage)
       final firestore = FirebaseFirestore.instance;
@@ -530,7 +532,8 @@ class _MessagesPageState extends State<MessagesPage> {
           padding: const EdgeInsets.only(top: 0),
           children: lastMessages.entries.map((entry) {
             Map<String, dynamic> lastMessage = entry.value.first;
-            String fullKey = entry.key; // example: userId_productId or userId_direct
+            String fullKey =
+                entry.key; // example: userId_productId or userId_direct
             String userId = fullKey.split('_').first; // example: userId
 
             return _buildUserListTile(userId, lastMessage);

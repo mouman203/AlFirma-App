@@ -8724,6 +8724,156 @@ class S {
       args: [],
     );
   }
+
+  /// `لا يمكن استخدام الهاتف حتى يتم قبول العرض`
+  String get cantUsePhoneUntilOfferAccepted {
+    return Intl.message(
+      'لا يمكن استخدام الهاتف حتى يتم قبول العرض',
+      name: 'cantUsePhoneUntilOfferAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تم اقتراح :`
+  String get proposed {
+    return Intl.message('تم اقتراح :', name: 'proposed', desc: '', args: []);
+  }
+
+  /// `قبول`
+  String get accept {
+    return Intl.message('قبول', name: 'accept', desc: '', args: []);
+  }
+
+  /// `رفض`
+  String get refuse {
+    return Intl.message('رفض', name: 'refuse', desc: '', args: []);
+  }
+
+  /// `سعر المنتج`
+  String get productPrice {
+    return Intl.message('سعر المنتج', name: 'productPrice', desc: '', args: []);
+  }
+
+  /// `قدّم عرضًا آخر`
+  String get giveAnotherOffer {
+    return Intl.message(
+      'قدّم عرضًا آخر',
+      name: 'giveAnotherOffer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `قدّم عرضك`
+  String get makeYourOffer {
+    return Intl.message('قدّم عرضك', name: 'makeYourOffer', desc: '', args: []);
+  }
+
+  /// `اقترح عرضك`
+  String get proposeYourOffer {
+    return Intl.message(
+      'اقترح عرضك',
+      name: 'proposeYourOffer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `السعر الأدنى:`
+  String get minimumPrice {
+    return Intl.message(
+      'السعر الأدنى:',
+      name: 'minimumPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إرسال العرض`
+  String get sendOffer {
+    return Intl.message('إرسال العرض', name: 'sendOffer', desc: '', args: []);
+  }
+
+  /// `يرجى إدخال قيمة العرض`
+  String get pleaseEnterOfferAmount {
+    return Intl.message(
+      'يرجى إدخال قيمة العرض',
+      name: 'pleaseEnterOfferAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `يرجى إدخال رقم صالح`
+  String get pleaseEnterValidNumber {
+    return Intl.message(
+      'يرجى إدخال رقم صالح',
+      name: 'pleaseEnterValidNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `لا يمكن أن يكون العرض أقل من 20٪ من سعر المنتج`
+  String get offerTooLow {
+    return Intl.message(
+      'لا يمكن أن يكون العرض أقل من 20٪ من سعر المنتج',
+      name: 'offerTooLow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تم إرسال العرض بنجاح.`
+  String get offerSent {
+    return Intl.message(
+      'تم إرسال العرض بنجاح.',
+      name: 'offerSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تم قبول العرض!`
+  String get offerAccepted {
+    return Intl.message(
+      'تم قبول العرض!',
+      name: 'offerAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تم رفض العرض!`
+  String get offerRefused {
+    return Intl.message(
+      'تم رفض العرض!',
+      name: 'offerRefused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تعديل منتجك`
+  String get editYourProduct {
+    return Intl.message(
+      'تعديل منتجك',
+      name: 'editYourProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `النوع الحالي لا يمكنه الوصول إلى هذه الصفحة`
+  String get typeAccessDenied {
+    return Intl.message(
+      'النوع الحالي لا يمكنه الوصول إلى هذه الصفحة',
+      name: 'typeAccessDenied',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

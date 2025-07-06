@@ -26,6 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "abalessa": MessageLookupByLibrary.simpleMessage("Abalessa"),
     "abouElHassan": MessageLookupByLibrary.simpleMessage("Abou El Hassan"),
     "aboutUs": MessageLookupByLibrary.simpleMessage("About Us"),
+    "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "accessRestricted": MessageLookupByLibrary.simpleMessage(
       "Access Restricted ⚠️",
     ),
@@ -351,6 +352,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "cannotOpenDialer": MessageLookupByLibrary.simpleMessage(
       "Failed to open dialer",
     ),
+    "cantUsePhoneUntilOfferAccepted": MessageLookupByLibrary.simpleMessage(
+      "Can\'t use phone until offer accepted",
+    ),
     "cantaloupe": MessageLookupByLibrary.simpleMessage("Cantaloupe"),
     "capture_with_camera": MessageLookupByLibrary.simpleMessage(
       "Capture with Camera",
@@ -610,6 +614,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "drivingLicense": MessageLookupByLibrary.simpleMessage("Driving License"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+    "editYourProduct": MessageLookupByLibrary.simpleMessage(
+      "Edit Your Product",
+    ),
     "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "eggplant": MessageLookupByLibrary.simpleMessage("Eggplant"),
     "eggs": MessageLookupByLibrary.simpleMessage("Eggs (local, farmed)"),
@@ -805,6 +812,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ghardaia": MessageLookupByLibrary.simpleMessage("Ghardaia"),
     "ghazaouet": MessageLookupByLibrary.simpleMessage("Ghazaouet"),
     "ghriss": MessageLookupByLibrary.simpleMessage("Ghriss"),
+    "giveAnotherOffer": MessageLookupByLibrary.simpleMessage(
+      "Give another offer",
+    ),
     "goats": MessageLookupByLibrary.simpleMessage("Goats (kids, female goats)"),
     "gouraya": MessageLookupByLibrary.simpleMessage("Gouraya"),
     "grainGrinder": MessageLookupByLibrary.simpleMessage("Grain Grinder"),
@@ -1067,6 +1077,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "magra": MessageLookupByLibrary.simpleMessage("Magra"),
     "magrane": MessageLookupByLibrary.simpleMessage("Magrane"),
     "mahdia": MessageLookupByLibrary.simpleMessage("Mahdia"),
+    "makeYourOffer": MessageLookupByLibrary.simpleMessage("Make Your Offer"),
     "makmanBenAmer": MessageLookupByLibrary.simpleMessage("Makman Ben Amer"),
     "makouda": MessageLookupByLibrary.simpleMessage("Makouda"),
     "mango": MessageLookupByLibrary.simpleMessage("Mango"),
@@ -1114,6 +1125,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "miliana": MessageLookupByLibrary.simpleMessage("Miliana"),
     "millet": MessageLookupByLibrary.simpleMessage("Millet"),
     "minPrice": MessageLookupByLibrary.simpleMessage("Min Price"),
+    "minimumPrice": MessageLookupByLibrary.simpleMessage("Minimum price :"),
     "mint": MessageLookupByLibrary.simpleMessage("Mint"),
     "mobileCoolingUnit": MessageLookupByLibrary.simpleMessage(
       "Mobile Cooling Unit",
@@ -1188,6 +1200,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "oats": MessageLookupByLibrary.simpleMessage("Oats"),
+    "offerAccepted": MessageLookupByLibrary.simpleMessage("Offer accepted!"),
+    "offerRefused": MessageLookupByLibrary.simpleMessage("Offer refused!"),
+    "offerSent": MessageLookupByLibrary.simpleMessage(
+      "Offer sent successfully.",
+    ),
+    "offerTooLow": MessageLookupByLibrary.simpleMessage(
+      "Offer cannot be lower than 20% of product price",
+    ),
     "oggaz": MessageLookupByLibrary.simpleMessage("Oggaz"),
     "oilCrops": MessageLookupByLibrary.simpleMessage("Oil Crops"),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
@@ -1343,6 +1363,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "plasticWrappingMachine": MessageLookupByLibrary.simpleMessage(
       "Plastic Wrapping Machine",
     ),
+    "pleaseEnterOfferAmount": MessageLookupByLibrary.simpleMessage(
+      "Please enter an offer amount",
+    ),
+    "pleaseEnterValidNumber": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid number",
+    ),
     "pleaseFillField": MessageLookupByLibrary.simpleMessage(
       "Please fill the field",
     ),
@@ -1415,6 +1441,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "product": MessageLookupByLibrary.simpleMessage("Product"),
     "productLabel": MessageLookupByLibrary.simpleMessage("Product:"),
+    "productPrice": MessageLookupByLibrary.simpleMessage("Product Price"),
     "productType": MessageLookupByLibrary.simpleMessage("Product Type"),
     "profile_picture": MessageLookupByLibrary.simpleMessage("Profile Picture"),
     "profile_picture_updated_successfully":
@@ -1424,6 +1451,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "profile_updated": MessageLookupByLibrary.simpleMessage(
       "Profile updated successfully",
     ),
+    "proposeYourOffer": MessageLookupByLibrary.simpleMessage(
+      "Propose your offer",
+    ),
+    "proposed": MessageLookupByLibrary.simpleMessage("Proposed :"),
     "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
     "quinoa": MessageLookupByLibrary.simpleMessage("Quinoa"),
     "rabbits": MessageLookupByLibrary.simpleMessage("Rabbits"),
@@ -1442,6 +1473,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "refrigeratedTruck": MessageLookupByLibrary.simpleMessage(
       "Refrigerated Truck",
     ),
+    "refuse": MessageLookupByLibrary.simpleMessage("Refuse"),
     "reggane": MessageLookupByLibrary.simpleMessage("Reggane"),
     "reguiba": MessageLookupByLibrary.simpleMessage("Reguiba"),
     "relizane": MessageLookupByLibrary.simpleMessage("Relizane"),
@@ -1505,6 +1537,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Select from Gallery",
     ),
     "sell": MessageLookupByLibrary.simpleMessage("Sell"),
+    "sendOffer": MessageLookupByLibrary.simpleMessage("Send Offer"),
     "sendReport": MessageLookupByLibrary.simpleMessage("Send Report"),
     "seriana": MessageLookupByLibrary.simpleMessage("Seriana"),
     "sesameSeeds": MessageLookupByLibrary.simpleMessage("Sesame Seeds"),
@@ -1833,6 +1866,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "🔄 Try capturing from a different angle",
     ),
     "tsabit": MessageLookupByLibrary.simpleMessage("Tsabit"),
+    "typeAccessDenied": MessageLookupByLibrary.simpleMessage(
+      "The current type can\'t access this page",
+    ),
     "type_label": MessageLookupByLibrary.simpleMessage("Type"),
     "type_of_work": MessageLookupByLibrary.simpleMessage("Type of Work"),
     "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),

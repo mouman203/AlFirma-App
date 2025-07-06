@@ -3822,4 +3822,53 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get plantDiseaseDetection => 'كشف أمراض النبات';
+
+  @override
+  String get cantUsePhoneUntilOfferAccepted =>
+      'لا يمكن استخدام الهاتف حتى يتم قبول العرض';
+
+  @override
+  String get proposed => 'تم اقتراح :';
+
+  @override
+  String get accept => 'قبول';
+
+  @override
+  String get refuse => 'رفض';
+
+  @override
+  String get productPrice => 'سعر المنتج';
+
+  @override
+  String get giveAnotherOffer => 'قدّم عرضًا آخر';
+
+  @override
+  String get makeYourOffer => 'قدّم عرضك';
+
+  @override
+  String get proposeYourOffer => 'اقترح عرضك';
+
+  @override
+  String get minimumPrice => 'السعر الأدنى:';
+
+  @override
+  String get sendOffer => 'إرسال العرض';
+
+  @override
+  String get pleaseEnterOfferAmount => 'يرجى إدخال قيمة العرض';
+
+  @override
+  String get pleaseEnterValidNumber => 'يرجى إدخال رقم صالح';
+
+  @override
+  String get offerTooLow => 'لا يمكن أن يكون العرض أقل من 20٪ من سعر المنتج';
+
+  @override
+  String get offerSent => 'تم إرسال العرض بنجاح.';
+
+  @override
+  String get offerAccepted => 'تم قبول العرض!';
+
+  @override
+  String get offerRefused => 'تم رفض العرض!';
 }
