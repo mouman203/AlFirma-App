@@ -3876,4 +3876,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offerRefused => 'Offer refused!';
+
+  @override
+  String get editYourProduct => 'Edit Your Product';
+
+  @override
+  String get typeAccessDenied => 'The current type can\'t access this page';
 }

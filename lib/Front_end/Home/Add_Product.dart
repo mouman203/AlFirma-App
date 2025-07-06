@@ -982,703 +982,721 @@ class _AddProductsState extends State<AddProducts> {
     final localizedUnitsByCategory = getLocalizedUnitsByCategory(context);
     final localizedServiceTypes = getLocalizedServiceTypes();
     return Scaffold(
-      appBar: widget.isEditMode != null && widget.isEditMode! == true
-          ? AppBar(
-              title: Text(
-                widget.isEditMode == true ? S.of(context).editYourProduct : "",
-                style: TextStyle(
-                  color: isDarkMode ? Colors.white : Colors.black,
+        extendBodyBehindAppBar:
+            widget.isEditMode != null && widget.isEditMode! == false,
+        appBar: widget.isEditMode != null && widget.isEditMode! == true
+            ? AppBar(
+                title: Text(
+                  S.of(context).editYourProduct,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
-                
-              ),
-              elevation: 5,
-            )
-          : null,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              //edit images
-              oldPhotos.isNotEmpty
-                  ? Container(
-                      height:
-                          220, // Changed from 180 to 220 to match no-edit mode
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 16), // Added margin to match
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(16), // Changed from 12 to 16
-                        border: Border.all(
-                          width: 2, // Changed from 1.3 to 2
-                          color: isDarkMode
-                              ? const Color(0xFF90D5AE)
-                              : const Color(0xFF256C4C),
-                        ),
-                        color: background,
-                      ),
-                      child: GestureDetector(
-                        onTap:
-                            _pickImages, // الخلفية كلها تضغط وتفتح اختيار الصور
-                        child: (oldPhotos.isEmpty && selectedImages.isEmpty)
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(
-                                        20), // Added container with padding
-                                    decoration: BoxDecoration(
-                                      color: (isDarkMode
-                                              ? const Color(0xFF90D5AE)
-                                              : const Color(0xFF256C4C))
-                                          .withOpacity(0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                        Icons
-                                            .add_a_photo, // Changed from Icons.photo_library
-                                        size: 50,
-                                        color: isDarkMode
-                                            ? const Color(0xFF90D5AE)
-                                            : const Color(0xFF256C4C)),
-                                  ),
-                                  const SizedBox(
-                                      height: 20), // Increased from 8 to 20
-                                  Text(
-                                      S
-                                          .of(context)
-                                          .tapToAddImages, // Updated text
-                                      style: TextStyle(
-                                          fontSize: 18, // Added font size
-                                          fontWeight: FontWeight
-                                              .w600, // Added font weight
-                                          color: isDarkMode
-                                              ? Colors.white
-                                              : const Color(0xFF256C4C))),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    S
-                                        .of(context)
-                                        .selectImageSource, // Added subtitle
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: isDarkMode
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: oldPhotos.length +
-                                    selectedImages.length +
-                                    1, // +1 لزر الإضافة
-                                itemBuilder: (context, index) {
-                                  // إذا هذا آخر عنصر، نعرض زر الإضافة
-                                  if (index ==
-                                      oldPhotos.length +
-                                          selectedImages.length) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          _pickImages();
-                                        },
-                                        child: Container(
-                                          width: 100,
-                                          height: 100,
-                                          decoration: BoxDecoration(
-                                            color: isDarkMode
-                                                ? const Color(0xFF90D5AE)
-                                                    .withOpacity(0.3)
-                                                : const Color(0xFF256C4C)
-                                                    .withOpacity(0.3),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            border: Border.all(
-                                              color: isDarkMode
-                                                  ? const Color(0xFF90D5AE)
-                                                  : const Color(0xFF256C4C),
-                                              width: 2, // Changed from 1.3 to 2
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.add_a_photo,
-                                              size: 40,
-                                              color: isDarkMode
-                                                  ? const Color(0xFF90D5AE)
-                                                  : const Color(0xFF256C4C),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  // عرض الصور القديمة
-                                  if (index < oldPhotos.length) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Stack(
-                                        children: [
-                                          ClipRRect(
-                                            // Added ClipRRect for rounded corners
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            child: Image.network(
-                                              oldPhotos[index],
-                                              width: 100,
-                                              height: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 4, // Adjusted position
-                                            right: 4, // Adjusted position
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  oldPhotos.removeAt(index);
-                                                });
-                                              },
-                                              child: Container(
-                                                width:
-                                                    28, // Added explicit width
-                                                height:
-                                                    28, // Added explicit height
-                                                decoration: BoxDecoration(
-                                                  color: Colors.red.withOpacity(
-                                                      0.9), // Added opacity
-                                                  shape: BoxShape.circle,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black26,
-                                                      blurRadius: 4,
-                                                      offset: Offset(0, 2),
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: const Icon(
-                                                  Icons.close,
-                                                  color: Colors.white,
-                                                  size:
-                                                      18, // Reduced from 20 to 18
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-
-                                  // عرض الصور الجديدة (بعد الصور القديمة)
-                                  final newIndex = index - oldPhotos.length;
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Stack(
-                                      children: [
-                                        ClipRRect(
-                                          // Added ClipRRect for rounded corners
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          child: Image.file(
-                                            File(selectedImages[newIndex].path),
-                                            width: 100,
-                                            height: 100,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 4, // Adjusted position
-                                          right: 4, // Adjusted position
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                selectedImages
-                                                    .removeAt(newIndex);
-                                                if (uploadedPhotos.length >
-                                                    newIndex) {
-                                                  uploadedPhotos
-                                                      .removeAt(newIndex);
-                                                }
-                                              });
-                                            },
-                                            child: Container(
-                                              width: 28, // Added explicit width
-                                              height:
-                                                  28, // Added explicit height
-                                              decoration: BoxDecoration(
-                                                color: Colors.red.withOpacity(
-                                                    0.9), // Added opacity
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 4,
-                                                    offset: Offset(0, 2),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: const Icon(
-                                                Icons.close,
-                                                color: Colors.white,
-                                                size:
-                                                    18, // Reduced from 20 to 18
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                      ))
-                  : // add the images
-                  GestureDetector(
-                      onTap: _pickImages,
-                      child: Container(
-                        height: 220, // Increased from 180 to 300
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 16), // Added margin
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              16), // Increased from 12 to 16
-                          border: Border.all(
-                              width: 2, // Increased from 1.3 to 2
+                elevation: 5,
+              )
+            : null,
+        body: MediaQuery.removePadding(
+          context: context,
+          removeTop: widget.isEditMode != null && widget.isEditMode! == false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  //edit images
+                  oldPhotos.isNotEmpty
+                      ? Container(
+                          height:
+                              220, // Changed from 180 to 220 to match no-edit mode
+                          width: double.infinity,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 16), // Added margin to match
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                16), // Changed from 12 to 16
+                            border: Border.all(
+                              width: 2, // Changed from 1.3 to 2
                               color: isDarkMode
                                   ? const Color(0xFF90D5AE)
-                                  : const Color(0xFF256C4C)),
-                          color: background,
-                        ),
-                        child: selectedImages.isEmpty
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(
-                                        20), // Added container with padding
-                                    decoration: BoxDecoration(
-                                      color: (isDarkMode
-                                              ? const Color(0xFF90D5AE)
-                                              : const Color(0xFF256C4C))
-                                          .withOpacity(0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                        Icons
-                                            .add_a_photo, // Changed from Icons.photo_library
-                                        size: 50, // Increased from 50 to 60
-                                        color: isDarkMode
-                                            ? const Color(0xFF90D5AE)
-                                            : const Color(0xFF256C4C)),
-                                  ),
-                                  const SizedBox(
-                                      height: 20), // Increased from 8 to 20
-                                  Text(
-                                      S.of(context).tapToAddImages, // Updated text
-                                      style: TextStyle(
-                                          fontSize: 18, // Added font size
-                                          fontWeight: FontWeight
-                                              .w600, // Added font weight
-                                          color: isDarkMode
-                                              ? Colors.white
-                                              : const Color(0xFF256C4C))),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    S.of(context).selectImageSource, // Added subtitle
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: isDarkMode
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: selectedImages.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Stack(
-                                      children: [
-                                        ClipRRect(
-                                          // Added ClipRRect for rounded corners
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          child: Image.file(
-                                            File(selectedImages[index].path),
-                                            width:
-                                                100, // Increased from 100 to 120
-                                            height:
-                                                100, // Increased from 100 to 120
-                                            fit: BoxFit.cover,
-                                          ),
+                                  : const Color(0xFF256C4C),
+                            ),
+                            color: background,
+                          ),
+                          child: GestureDetector(
+                            onTap:
+                                _pickImages, // الخلفية كلها تضغط وتفتح اختيار الصور
+                            child: (oldPhotos.isEmpty && selectedImages.isEmpty)
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(
+                                            20), // Added container with padding
+                                        decoration: BoxDecoration(
+                                          color: (isDarkMode
+                                                  ? const Color(0xFF90D5AE)
+                                                  : const Color(0xFF256C4C))
+                                              .withOpacity(0.1),
+                                          shape: BoxShape.circle,
                                         ),
-                                        Positioned(
-                                          top: 4, // Adjusted position
-                                          right: 4, // Adjusted position
+                                        child: Icon(
+                                            Icons
+                                                .add_a_photo, // Changed from Icons.photo_library
+                                            size: 50,
+                                            color: isDarkMode
+                                                ? const Color(0xFF90D5AE)
+                                                : const Color(0xFF256C4C)),
+                                      ),
+                                      const SizedBox(
+                                          height: 20), // Increased from 8 to 20
+                                      Text(
+                                          S
+                                              .of(context)
+                                              .tapToAddImages, // Updated text
+                                          style: TextStyle(
+                                              fontSize: 18, // Added font size
+                                              fontWeight: FontWeight
+                                                  .w600, // Added font weight
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : const Color(0xFF256C4C))),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        S
+                                            .of(context)
+                                            .selectImageSource, // Added subtitle
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: isDarkMode
+                                              ? Colors.white70
+                                              : Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: oldPhotos.length +
+                                        selectedImages.length +
+                                        1, // +1 لزر الإضافة
+                                    itemBuilder: (context, index) {
+                                      // إذا هذا آخر عنصر، نعرض زر الإضافة
+                                      if (index ==
+                                          oldPhotos.length +
+                                              selectedImages.length) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
                                           child: GestureDetector(
                                             onTap: () {
-                                              setState(() {
-                                                selectedImages.removeAt(index);
-                                                if (uploadedPhotos.length >
-                                                    index) {
-                                                  uploadedPhotos
-                                                      .removeAt(index);
-                                                }
-                                              });
+                                              _pickImages();
                                             },
                                             child: Container(
-                                              width: 28, // Added explicit width
-                                              height:
-                                                  28, // Added explicit height
+                                              width: 100,
+                                              height: 100,
                                               decoration: BoxDecoration(
-                                                color: Colors.red.withOpacity(
-                                                    0.9), // Added opacity
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 4,
-                                                    offset: Offset(0, 2),
-                                                  ),
-                                                ],
+                                                color: isDarkMode
+                                                    ? const Color(0xFF90D5AE)
+                                                        .withOpacity(0.3)
+                                                    : const Color(0xFF256C4C)
+                                                        .withOpacity(0.3),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: isDarkMode
+                                                      ? const Color(0xFF90D5AE)
+                                                      : const Color(0xFF256C4C),
+                                                  width:
+                                                      2, // Changed from 1.3 to 2
+                                                ),
                                               ),
-                                              child: const Icon(
-                                                Icons.close,
-                                                color: Colors.white,
-                                                size:
-                                                    18, // Reduced from 20 to 18
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.add_a_photo,
+                                                  size: 40,
+                                                  color: isDarkMode
+                                                      ? const Color(0xFF90D5AE)
+                                                      : const Color(0xFF256C4C),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                      ),
-                    ),
+                                        );
+                                      }
 
-              const SizedBox(height: 15),
+                                      // عرض الصور القديمة
+                                      if (index < oldPhotos.length) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Stack(
+                                            children: [
+                                              ClipRRect(
+                                                // Added ClipRRect for rounded corners
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: Image.network(
+                                                  oldPhotos[index],
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              Positioned(
+                                                top: 4, // Adjusted position
+                                                right: 4, // Adjusted position
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      oldPhotos.removeAt(index);
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    width:
+                                                        28, // Added explicit width
+                                                    height:
+                                                        28, // Added explicit height
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red.withOpacity(
+                                                          0.9), // Added opacity
+                                                      shape: BoxShape.circle,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black26,
+                                                          blurRadius: 4,
+                                                          offset: Offset(0, 2),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.close,
+                                                      color: Colors.white,
+                                                      size:
+                                                          18, // Reduced from 20 to 18
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }
+
+                                      // عرض الصور الجديدة (بعد الصور القديمة)
+                                      final newIndex = index - oldPhotos.length;
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Stack(
+                                          children: [
+                                            ClipRRect(
+                                              // Added ClipRRect for rounded corners
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: Image.file(
+                                                File(selectedImages[newIndex]
+                                                    .path),
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 4, // Adjusted position
+                                              right: 4, // Adjusted position
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    selectedImages
+                                                        .removeAt(newIndex);
+                                                    if (uploadedPhotos.length >
+                                                        newIndex) {
+                                                      uploadedPhotos
+                                                          .removeAt(newIndex);
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width:
+                                                      28, // Added explicit width
+                                                  height:
+                                                      28, // Added explicit height
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.red.withOpacity(
+                                                        0.9), // Added opacity
+                                                    shape: BoxShape.circle,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black26,
+                                                        blurRadius: 4,
+                                                        offset: Offset(0, 2),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.white,
+                                                    size:
+                                                        18, // Reduced from 20 to 18
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ))
+                      : // add the images
+                      GestureDetector(
+                          onTap: _pickImages,
+                          child: Container(
+                            height: 220, // Increased from 180 to 300
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 16), // Added margin
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  16), // Increased from 12 to 16
+                              border: Border.all(
+                                  width: 2, // Increased from 1.3 to 2
+                                  color: isDarkMode
+                                      ? const Color(0xFF90D5AE)
+                                      : const Color(0xFF256C4C)),
+                              color: background,
+                            ),
+                            child: selectedImages.isEmpty
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(
+                                            20), // Added container with padding
+                                        decoration: BoxDecoration(
+                                          color: (isDarkMode
+                                                  ? const Color(0xFF90D5AE)
+                                                  : const Color(0xFF256C4C))
+                                              .withOpacity(0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                            Icons
+                                                .add_a_photo, // Changed from Icons.photo_library
+                                            size: 50, // Increased from 50 to 60
+                                            color: isDarkMode
+                                                ? const Color(0xFF90D5AE)
+                                                : const Color(0xFF256C4C)),
+                                      ),
+                                      const SizedBox(
+                                          height: 20), // Increased from 8 to 20
+                                      Text(
+                                          S
+                                              .of(context)
+                                              .tapToAddImages, // Updated text
+                                          style: TextStyle(
+                                              fontSize: 18, // Added font size
+                                              fontWeight: FontWeight
+                                                  .w600, // Added font weight
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : const Color(0xFF256C4C))),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        S
+                                            .of(context)
+                                            .selectImageSource, // Added subtitle
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: isDarkMode
+                                              ? Colors.white70
+                                              : Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: selectedImages.length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Stack(
+                                          children: [
+                                            ClipRRect(
+                                              // Added ClipRRect for rounded corners
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: Image.file(
+                                                File(
+                                                    selectedImages[index].path),
+                                                width:
+                                                    100, // Increased from 100 to 120
+                                                height:
+                                                    100, // Increased from 100 to 120
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 4, // Adjusted position
+                                              right: 4, // Adjusted position
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    selectedImages
+                                                        .removeAt(index);
+                                                    if (uploadedPhotos.length >
+                                                        index) {
+                                                      uploadedPhotos
+                                                          .removeAt(index);
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width:
+                                                      28, // Added explicit width
+                                                  height:
+                                                      28, // Added explicit height
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.red.withOpacity(
+                                                        0.9), // Added opacity
+                                                    shape: BoxShape.circle,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black26,
+                                                        blurRadius: 4,
+                                                        offset: Offset(0, 2),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.white,
+                                                    size:
+                                                        18, // Reduced from 20 to 18
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ),
+
+                  const SizedBox(height: 15),
 
 // ==========================CATEGORY================================
-              //category
-              ProductData.buildDropdown2(
-                  context: context,
-                  selectedValue: selectedCategory,
-                  items: Category ?? [],
-                  label: S.of(context).category,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCategory = value;
-                      selectedsubCategory = null;
-                      selectedproduct = null;
-                      print(selectedCategory);
-                    });
-                  }),
+                  //category
+                  ProductData.buildDropdown2(
+                      context: context,
+                      selectedValue: selectedCategory,
+                      items: Category ?? [],
+                      label: S.of(context).category,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCategory = value;
+                          selectedsubCategory = null;
+                          selectedproduct = null;
+                          print(selectedCategory);
+                        });
+                      }),
 
 //============================SUB CATEGORIES==============================
 
-              if (selectedCategory != S.of(context).lands &&
-                  (userType == 'فلاح' || userType == 'تاجر'))
-                ProductData.buildDropdown2(
-                  context: context,
-                  selectedValue: selectedsubCategory,
-                  items: ProductData.getSubCategories(
-                      typeItem, selectedCategory, context),
-                  label: S.of(context).subCategory,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedsubCategory = value;
-                      selectedproduct = null;
-                    });
-                  },
-                ),
+                  if (selectedCategory != S.of(context).lands &&
+                      (userType == 'فلاح' || userType == 'تاجر'))
+                    ProductData.buildDropdown2(
+                      context: context,
+                      selectedValue: selectedsubCategory,
+                      items: ProductData.getSubCategories(
+                          typeItem, selectedCategory, context),
+                      label: S.of(context).subCategory,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedsubCategory = value;
+                          selectedproduct = null;
+                        });
+                      },
+                    ),
 //=============================PRODUCTS=========================================
-              if (userType != 'مصلح' && selectedCategory != null)
-                ProductData.buildDropdown2(
-                  context: context,
-                  selectedValue: selectedproduct,
-                  items: userType == 'ناقل'
-                      ? ProductData.moyensDeTransport
-                      : userType == 'عامل'
-                          ? (selectedCategory != null
-                              ? ProductData.WorkerTasksT(
-                                      context)[selectedCategory] ??
-                                  []
-                              : [])
-                          : (selectedCategory == S.of(context).lands
-                              ? [
-                                  S.of(context).landSuitableForAgriculture
-                                ] // Show lands types directly in products
-                              : (selectedsubCategory != null
-                                  ? ProductData.getProduct(
-                                      typeItem,
-                                      _getArabicKeyForCategory(
-                                          selectedsubCategory!),
-                                      context)
-                                  : ProductData.getProduct(
-                                      typeItem,
-                                      _getArabicKeyForCategory(
-                                          selectedCategory!),
-                                      context))),
-                  label: selectedCategory == S.of(context).lands
-                      ? S.of(context).type_label
-                      : (userType == 'ناقل'
-                          ? S.of(context).transport_means_label
-                          : (userType == 'خبير زراعي'
-                              ? S.of(context).type_label
-                              : (userType == 'عامل'
-                                  ? S.of(context).type_of_work
-                                  : S.of(context).product))),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedproduct = value;
-                    });
-                  },
-                ),
+                  if (userType != 'مصلح' && selectedCategory != null)
+                    ProductData.buildDropdown2(
+                      context: context,
+                      selectedValue: selectedproduct,
+                      items: userType == 'ناقل'
+                          ? ProductData.moyensDeTransport
+                          : userType == 'عامل'
+                              ? (selectedCategory != null
+                                  ? ProductData.WorkerTasksT(
+                                          context)[selectedCategory] ??
+                                      []
+                                  : [])
+                              : (selectedCategory == S.of(context).lands
+                                  ? [
+                                      S.of(context).landSuitableForAgriculture
+                                    ] // Show lands types directly in products
+                                  : (selectedsubCategory != null
+                                      ? ProductData.getProduct(
+                                          typeItem,
+                                          _getArabicKeyForCategory(
+                                              selectedsubCategory!),
+                                          context)
+                                      : ProductData.getProduct(
+                                          typeItem,
+                                          _getArabicKeyForCategory(
+                                              selectedCategory!),
+                                          context))),
+                      label: selectedCategory == S.of(context).lands
+                          ? S.of(context).type_label
+                          : (userType == 'ناقل'
+                              ? S.of(context).transport_means_label
+                              : (userType == 'خبير زراعي'
+                                  ? S.of(context).type_label
+                                  : (userType == 'عامل'
+                                      ? S.of(context).type_of_work
+                                      : S.of(context).product))),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedproduct = value;
+                        });
+                      },
+                    ),
 
 //===========================Quantity===================================
 
-              if (userType == "فلاح" || userType == "مربي الماشية") ...[
-                ProductData.buildTextField(
-                    context: context,
-                    controller: quantiteController,
-                    hintText: S.of(context).quantity,
-                    icon: Icons.scale,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return S.of(context).pleaseFillField;
-                      }
-                      return null;
-                    }),
-              ],
+                  if (userType == "فلاح" || userType == "مربي الماشية") ...[
+                    ProductData.buildTextField(
+                        context: context,
+                        controller: quantiteController,
+                        hintText: S.of(context).quantity,
+                        icon: Icons.scale,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return S.of(context).pleaseFillField;
+                          }
+                          return null;
+                        }),
+                  ],
 
 //=======================SERVICES TYPE======================================
-              if (userType == "تاجر" && selectedCategory != null)
-                ProductData.buildDropdown2(
-                  context: context,
-                  selectedValue: selectedTypeService,
-                  items: localizedServiceTypes,
-                  label: S.of(context).rentOrSell,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedTypeService = value;
-                    });
-                  },
-                ),
+                  if (userType == "تاجر" && selectedCategory != null)
+                    ProductData.buildDropdown2(
+                      context: context,
+                      selectedValue: selectedTypeService,
+                      items: localizedServiceTypes,
+                      label: S.of(context).rentOrSell,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedTypeService = value;
+                        });
+                      },
+                    ),
 
 //=========================SURFACES====================================
-              if (selectedCategory == S.of(context).lands)
-                ProductData.buildTextField(
-                    context: context,
-                    controller: surfaceController,
-                    hintText: S.of(context).area,
-                    icon: Icons.landscape,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return S.of(context).pleaseFillField;
-                      }
-                      return null;
-                    }),
+                  if (selectedCategory == S.of(context).lands)
+                    ProductData.buildTextField(
+                        context: context,
+                        controller: surfaceController,
+                        hintText: S.of(context).area,
+                        icon: Icons.landscape,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return S.of(context).pleaseFillField;
+                          }
+                          return null;
+                        }),
 //===============================PRICE====================================
-              ProductData.buildTextField(
-                  context: context,
-                  controller: prixController,
-                  hintText: S.of(context).price,
-                  icon: Icons.attach_money,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return S.of(context).pleaseFillField;
-                    }
-                    return null;
-                  }),
+                  ProductData.buildTextField(
+                      context: context,
+                      controller: prixController,
+                      hintText: S.of(context).price,
+                      icon: Icons.attach_money,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S.of(context).pleaseFillField;
+                        }
+                        return null;
+                      }),
 //==============================UNITS================================
 
-              if (selectedCategory != null &&
-                  localizedUnitsByCategory.containsKey(selectedCategory!))
-                ProductData.buildDropdown2(
-                  context: context,
-                  selectedValue: selectedUnit,
-                  items: localizedUnitsByCategory[selectedCategory!]!,
-                  label: S.of(context).unit,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedUnit = value;
-                    });
-                  },
-                ),
+                  if (selectedCategory != null &&
+                      localizedUnitsByCategory.containsKey(selectedCategory!))
+                    ProductData.buildDropdown2(
+                      context: context,
+                      selectedValue: selectedUnit,
+                      items: localizedUnitsByCategory[selectedCategory!]!,
+                      label: S.of(context).unit,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedUnit = value;
+                        });
+                      },
+                    ),
 
 //==============================WILAYA================================
-              ProductData.buildDropdown2(
-                context: context,
-                selectedValue: selectedWilaya,
-                items: ProductData.wilayasT(context).keys.toList(),
-                label: S.of(context).wilaya,
-                onChanged: (value) {
-                  setState(() {
-                    selectedWilaya = value;
-                    selectedDaira = null;
-                  });
-                },
-              ),
-
-//==============================DAIRA================================
-              if (selectedWilaya != null)
-                ProductData.buildDropdown2(
+                  ProductData.buildDropdown2(
                     context: context,
-                    selectedValue: selectedDaira,
-                    items: ProductData.wilayasT(context)[selectedWilaya]!,
-                    label: S.of(context).daira,
+                    selectedValue: selectedWilaya,
+                    items: ProductData.wilayasT(context).keys.toList(),
+                    label: S.of(context).wilaya,
                     onChanged: (value) {
                       setState(() {
-                        selectedDaira = value;
+                        selectedWilaya = value;
+                        selectedDaira = null;
                       });
-                    }),
+                    },
+                  ),
+
+//==============================DAIRA================================
+                  if (selectedWilaya != null)
+                    ProductData.buildDropdown2(
+                        context: context,
+                        selectedValue: selectedDaira,
+                        items: ProductData.wilayasT(context)[selectedWilaya]!,
+                        label: S.of(context).daira,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDaira = value;
+                          });
+                        }),
 
 //==============================DESCRIPTION================================
-              ProductData.buildTextField(
-                context: context,
-                controller: descriptionController,
-                hintText: S.of(context).description,
-                icon: Icons.description,
-                maxLines: 4,
-                validator: (value) {
-                  return null;
-                },
-              ),
+                  ProductData.buildTextField(
+                    context: context,
+                    controller: descriptionController,
+                    hintText: S.of(context).description,
+                    icon: Icons.description,
+                    maxLines: 4,
+                    validator: (value) {
+                      return null;
+                    },
+                  ),
 
 //==============================RESET BUTTON======================================================
-              ProductData.actionButton(
-                context: context,
-                label: S.of(context).reset,
-                backgroundColor: const Color.fromARGB(255, 93, 122, 132),
-                onPressed: _isFormEmpty()
-                    ? () {
+                  ProductData.actionButton(
+                    context: context,
+                    label: S.of(context).reset,
+                    backgroundColor: const Color.fromARGB(255, 93, 122, 132),
+                    onPressed: _isFormEmpty()
+                        ? () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    const Icon(Icons.error_outline,
+                                        color: Colors.black87),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        S.of(context).formIsEmpty,
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 18),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 247, 234, 117),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          }
+                        : () {
+                            try {
+                              _resetForm();
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Row(
+                                    children: [
+                                      const Icon(Icons.error_outline,
+                                          color: Colors.black),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          "${S.of(context).error}: $e",
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 247, 234, 117),
+                                ),
+                              );
+                            }
+                          },
+                  ),
+
+//==============================SHARE BUTTON================================
+                  ProductData.actionButton(
+                    context: context,
+                    label:
+                        isEditMode ? S.of(context).edit : S.of(context).share,
+                    backgroundColor: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C),
+                    isLoading:
+                        _isLoading, // تأكد من أنه عند الضغط، يظل في حالة تحميل حتى تتم العملية
+                    onPressed: () async {
+                      try {
+                        if (widget.isEditMode != true) {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          await _submitForm(); // استخدام await لضمان انتهاء العملية أولاً
+                          setState(() {
+                            _isLoading =
+                                false; // إيقاف حالة التحميل بعد الانتهاء
+                          });
+                          return;
+                        } else {
+                          updateForm();
+                        }
+                      } catch (e) {
+                        setState(() {
+                          _isLoading =
+                              false; // إيقاف حالة التحميل في حال حدوث خطأ
+                        });
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Row(
                               children: [
-                                const Icon(Icons.error_outline,
-                                    color: Colors.black87),
-                                const SizedBox(width: 10),
+                                const Icon(
+                                  Icons.error_outline,
+                                  color: Colors.black,
+                                ),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    S.of(context).formIsEmpty,
+                                    "${S.of(context).error}: $e",
                                     style: const TextStyle(
-                                        color: Colors.black, fontSize: 18),
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                             backgroundColor:
                                 const Color.fromARGB(255, 247, 234, 117),
-                            duration: const Duration(seconds: 1),
                           ),
                         );
                       }
-                    : () {
-                        try {
-                          _resetForm();
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  const Icon(Icons.error_outline,
-                                      color: Colors.black),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      "${S.of(context).error}: $e",
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 18),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 247, 234, 117),
-                            ),
-                          );
-                        }
-                      },
-              ),
-
-//==============================SHARE BUTTON================================
-              ProductData.actionButton(
-                context: context,
-                label: isEditMode ? S.of(context).edit : S.of(context).share,
-                backgroundColor: isDarkMode
-                    ? const Color(0xFF90D5AE)
-                    : const Color(0xFF256C4C),
-                isLoading:
-                    _isLoading, // تأكد من أنه عند الضغط، يظل في حالة تحميل حتى تتم العملية
-                onPressed: () async {
-                  try {
-                    if (widget.isEditMode != true) {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      await _submitForm(); // استخدام await لضمان انتهاء العملية أولاً
-                      setState(() {
-                        _isLoading = false; // إيقاف حالة التحميل بعد الانتهاء
-                      });
-                      return;
-                    } else {
-                      updateForm();
-                    }
-                  } catch (e) {
-                    setState(() {
-                      _isLoading = false; // إيقاف حالة التحميل في حال حدوث خطأ
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Row(
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              color: Colors.black,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                "${S.of(context).error}: $e",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        backgroundColor:
-                            const Color.fromARGB(255, 247, 234, 117),
-                      ),
-                    );
-                  }
-                },
-              ),
+                    },
+                  ),
 //==============================FIN================================
-            ],
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   List<Widget> buildImageWidgets() {

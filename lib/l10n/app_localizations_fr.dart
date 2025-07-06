@@ -3940,4 +3940,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get offerRefused => 'Offre refusée !';
+
+  @override
+  String get editYourProduct => 'Modifier votre produit';
+
+  @override
+  String get typeAccessDenied => 'Ce type n\'a pas accès à cette page';
 }

@@ -7677,6 +7677,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم رفض العرض!'**
   String get offerRefused;
+
+  /// No description provided for @editYourProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل منتجك'**
+  String get editYourProduct;
+
+  /// No description provided for @typeAccessDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع الحالي لا يمكنه الوصول إلى هذه الصفحة'**
+  String get typeAccessDenied;
 }
 
 class _AppLocalizationsDelegate

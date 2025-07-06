@@ -3871,4 +3871,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get offerRefused => 'تم رفض العرض!';
+
+  @override
+  String get editYourProduct => 'تعديل منتجك';
+
+  @override
+  String get typeAccessDenied => 'النوع الحالي لا يمكنه الوصول إلى هذه الصفحة';
 }
