@@ -1026,6 +1026,7 @@ class _ChatPageState extends State<ChatPage> {
     if (offerAmount < minOffer) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
           backgroundColor:
               const Color.fromARGB(255, 247, 234, 117), // yellow warning
           content: Row(

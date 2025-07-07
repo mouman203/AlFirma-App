@@ -321,55 +321,58 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Users.isGuestUser()
-                  ? FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 3),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        fixedSize: const Size.fromHeight(40),
-                      ),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                const Icon(
-                                  Icons.error_outline,
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    S.of(context).guestAccessLimited,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
+            Container(
+              margin: const EdgeInsets.only(left: 8),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Users.isGuestUser()
+                    ? FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 3),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          fixedSize: const Size.fromHeight(40),
+                        ),
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.black,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      S.of(context).guestAccessLimited,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 247, 234, 117),
                             ),
-                            backgroundColor:
-                                const Color.fromARGB(255, 247, 234, 117),
+                          );
+                        },
+                        child: Center(
+                          child: Text(
+                            S.of(context).become,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
-                        );
-                      },
-                      child: Center(
-                        child: Text(
-                          S.of(context).become,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    )
-                  : BecomeTypeAction(onTypeChanged: _loadSelectedType),
+                      )
+                    : BecomeTypeAction(onTypeChanged: _loadSelectedType),
+              ),
             ),
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: IconButton.filledTonal(
                 onPressed: () {
@@ -410,7 +413,7 @@ class _HomePageState extends State<HomePage> {
                   IconlyBroken.notification,
                 ),
               ),
-            ),
+            ),*/
           ]),
       body: RefreshIndicator(
           onRefresh: _refreshPage, child: pages[currentPageIndex]),

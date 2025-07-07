@@ -60,6 +60,21 @@ exports.onUserUpdate = onDocumentUpdated("Users/{userId}", async (event) => {
 
 
     console.log("Notification sent successfully");
+
+     await admin.firestore()
+  .collection('Notifications')
+  .doc(event.params.userId)
+  .collection('items')
+  .add({
+    type: 'follow',
+    fromUserId: newFollowerId,
+    fromUserName: followerName,
+    timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    read: false,
+  });
+
+console.log("Notification document created in Firestore");
+
   } catch (error) {
     console.error("Error sending follower notification:", error);
   }
