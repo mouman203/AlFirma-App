@@ -164,53 +164,53 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           reportOptionsArabic[selectedOption] ?? selectedOption;
 
       // Save signal
-final signalDoc = FirebaseFirestore.instance.collection('Signal').doc(itemId);
-final docSnapshot = await signalDoc.get();
+      final signalDoc =
+          FirebaseFirestore.instance.collection('Signal').doc(itemId);
+      final docSnapshot = await signalDoc.get();
 
-if (docSnapshot.exists) {
-  final data = docSnapshot.data();
-  final Map<String, dynamic> reports = Map<String, dynamic>.from(data?['reports'] ?? {});
-  final List<dynamic> signalers = data?['signalers'] ?? [];
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data();
+        final Map<String, dynamic> reports =
+            Map<String, dynamic>.from(data?['reports'] ?? {});
+        final List<dynamic> signalers = data?['signalers'] ?? [];
 
-  final userReasons = List<String>.from(reports[uid] ?? []);
+        final userReasons = List<String>.from(reports[uid] ?? []);
 
-  if (userReasons.contains(selectedOptionArabic)) {
-    print('Same reason already reported by this user.');
-  } else {
-    // Add new reason to user's reasons
-    userReasons.add(selectedOptionArabic);
-    reports[uid] = userReasons;
+        if (userReasons.contains(selectedOptionArabic)) {
+          print('Same reason already reported by this user.');
+        } else {
+          // Add new reason to user's reasons
+          userReasons.add(selectedOptionArabic);
+          reports[uid] = userReasons;
 
-    // Prepare update object
-    final Map<String, dynamic> updates = {
-      'reports': reports,
-    };
+          // Prepare update object
+          final Map<String, dynamic> updates = {
+            'reports': reports,
+          };
 
-    if (!signalers.contains(uid)) {
-      // Add signaler + increment signalCount (only inside update call)
-      updates['signalers'] = FieldValue.arrayUnion([uid]);
-      updates['signalCount'] = FieldValue.increment(1);
-    }
+          if (!signalers.contains(uid)) {
+            // Add signaler + increment signalCount (only inside update call)
+            updates['signalers'] = FieldValue.arrayUnion([uid]);
+            updates['signalCount'] = FieldValue.increment(1);
+          }
 
-    // Perform the update
-    await signalDoc.update(updates);
-  }
-} else {
-  // First signal for this post
-  await signalDoc.set({
-    'postType':'Products',
-    'postId': itemId,
-    'owner': target,
-    'signalCount': 1,
-    'signalers': [uid],
-    'reports': {
-      uid: [selectedOptionArabic]
-    },
-    'createdAt': FieldValue.serverTimestamp(),
-  });
-}
-
-
+          // Perform the update
+          await signalDoc.update(updates);
+        }
+      } else {
+        // First signal for this post
+        await signalDoc.set({
+          'postType': 'Products',
+          'postId': itemId,
+          'owner': target,
+          'signalCount': 1,
+          'signalers': [uid],
+          'reports': {
+            uid: [selectedOptionArabic]
+          },
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
 
       print('Signaled by $uid');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -391,10 +391,10 @@ if (docSnapshot.exists) {
                               selectedOption == S.of(context).reportOther
                                   ? otherController.text
                                   : selectedOption;
-                         if (reportText.trim().isEmpty) {
+                          if (reportText.trim().isEmpty) {
                             // Show an alert if the user selected "Other" but didn't write anything
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Please enter a reason."),
+                              content: Text(S.of(context).pleaseEnterAReason),
                               backgroundColor: Colors.red,
                             ));
                             return;
@@ -723,7 +723,7 @@ if (docSnapshot.exists) {
           }
 
           if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-            return const Text("User not found");
+            return Text(S.of(context).userNotFound);
           }
 
           var userData = userSnapshot.data!;
@@ -1010,7 +1010,7 @@ if (docSnapshot.exists) {
                     },
                     icon: const Icon(IconlyLight.message, size: 20),
                     label: Text(
-                      "Negosier",
+                      S.of(context).negotiate,
                       style: const TextStyle(fontSize: 16),
                     ),
                     style: FilledButton.styleFrom(

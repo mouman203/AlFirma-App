@@ -8874,6 +8874,91 @@ class S {
       args: [],
     );
   }
+
+  /// `العنصر غير موجود`
+  String get itemNotFound {
+    return Intl.message(
+      'العنصر غير موجود',
+      name: 'itemNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حدث خطأ أثناء حذف المحادثة`
+  String get errorDeletingConversation {
+    return Intl.message(
+      'حدث خطأ أثناء حذف المحادثة',
+      name: 'errorDeletingConversation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تم حذف المحادثة بنجاح`
+  String get conversationDeletedSuccessfully {
+    return Intl.message(
+      'تم حذف المحادثة بنجاح',
+      name: 'conversationDeletedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `فشل في إرسال الرسالة. حاول مرة أخرى.`
+  String get failedToSendMessage {
+    return Intl.message(
+      'فشل في إرسال الرسالة. حاول مرة أخرى.',
+      name: 'failedToSendMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إعادة المحاولة`
+  String get retry {
+    return Intl.message('إعادة المحاولة', name: 'retry', desc: '', args: []);
+  }
+
+  /// `حدث خطأ أثناء تحميل الرسائل`
+  String get errorLoadingMessages {
+    return Intl.message(
+      'حدث خطأ أثناء تحميل الرسائل',
+      name: 'errorLoadingMessages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `المستخدم غير موجود`
+  String get userNotFound {
+    return Intl.message(
+      'المستخدم غير موجود',
+      name: 'userNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `يرجى إدخال سبب`
+  String get pleaseEnterAReason {
+    return Intl.message(
+      'يرجى إدخال سبب',
+      name: 'pleaseEnterAReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `إغلاق`
+  String get close {
+    return Intl.message('إغلاق', name: 'close', desc: '', args: []);
+  }
+
+  /// `ساوم`
+  String get negotiate {
+    return Intl.message('ساوم', name: 'negotiate', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

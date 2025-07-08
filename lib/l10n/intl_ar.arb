@@ -1264,5 +1264,15 @@
   "offerAccepted": "تم قبول العرض!",
   "offerRefused": "تم رفض العرض!",
   "editYourProduct": "تعديل منتجك",
-  "typeAccessDenied": "النوع الحالي لا يمكنه الوصول إلى هذه الصفحة"
+  "typeAccessDenied": "النوع الحالي لا يمكنه الوصول إلى هذه الصفحة",
+  "itemNotFound": "العنصر غير موجود",
+  "errorDeletingConversation": "حدث خطأ أثناء حذف المحادثة",
+  "conversationDeletedSuccessfully": "تم حذف المحادثة بنجاح",
+  "failedToSendMessage": "فشل في إرسال الرسالة. حاول مرة أخرى.",
+  "retry": "إعادة المحاولة",
+  "errorLoadingMessages": "حدث خطأ أثناء تحميل الرسائل",
+  "userNotFound": "المستخدم غير موجود",
+  "pleaseEnterAReason": "يرجى إدخال سبب",
+  "close": "إغلاق",
+  "negotiate": "ساوم"
 }

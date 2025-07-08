@@ -424,6 +424,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تنظيف وترتيب محيط العمل الزراعي",
     ),
     "client": MessageLookupByLibrary.simpleMessage("عميل"),
+    "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "clover": MessageLookupByLibrary.simpleMessage("نفل"),
     "coldRoom": MessageLookupByLibrary.simpleMessage("غرف تبريد"),
     "collo": MessageLookupByLibrary.simpleMessage("القل"),
@@ -457,6 +458,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "contactInfo": MessageLookupByLibrary.simpleMessage("معلومات الاتصال"),
     "contactUs": MessageLookupByLibrary.simpleMessage("اتصل بنا"),
     "controlValves": MessageLookupByLibrary.simpleMessage("صمامات تحكم"),
+    "conversationDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم حذف المحادثة بنجاح",
+    ),
     "coriander": MessageLookupByLibrary.simpleMessage("كزبرة"),
     "corn": MessageLookupByLibrary.simpleMessage("ذرة"),
     "cornCercosporaLeafSpotLabel": MessageLookupByLibrary.simpleMessage(
@@ -674,8 +678,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorAddingComment": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ أثناء إضافة التعليق. حاول مرة أخرى لاحقًا",
     ),
+    "errorDeletingConversation": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ أثناء حذف المحادثة",
+    ),
     "errorFetchingData": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ أثناء جلب البيانات",
+    ),
+    "errorLoadingMessages": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ أثناء تحميل الرسائل",
     ),
     "error_email_already_used": MessageLookupByLibrary.simpleMessage(
       "📧 البريد الإلكتروني مسجل مسبقًا",
@@ -722,6 +732,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "صيانة المنشآت",
     ),
     "faidhElBotma": MessageLookupByLibrary.simpleMessage("فيض البطمة"),
+    "failedToSendMessage": MessageLookupByLibrary.simpleMessage(
+      "فشل في إرسال الرسالة. حاول مرة أخرى.",
+    ),
     "farmManagementConsulting": MessageLookupByLibrary.simpleMessage(
       "استشارات في إدارة المزارع",
     ),
@@ -943,6 +956,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "إصلاح أنظمة الري",
     ),
     "isser": MessageLookupByLibrary.simpleMessage("يسر"),
+    "itemNotFound": MessageLookupByLibrary.simpleMessage("العنصر غير موجود"),
     "jijel": MessageLookupByLibrary.simpleMessage("جيجل"),
     "joinOurPlatform": MessageLookupByLibrary.simpleMessage(
       "انضم إلى منصتنا وابدأ الآن",
@@ -1113,6 +1127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "nav_profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "nav_services": MessageLookupByLibrary.simpleMessage("الخدمات"),
     "nedroma": MessageLookupByLibrary.simpleMessage("ندرومة"),
+    "negotiate": MessageLookupByLibrary.simpleMessage("ساوم"),
     "negrine": MessageLookupByLibrary.simpleMessage("نقرين"),
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "ngaous": MessageLookupByLibrary.simpleMessage("نقاوس"),
@@ -1313,6 +1328,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "plasticWrappingMachine": MessageLookupByLibrary.simpleMessage(
       "آلة تغليف بلاستيكي",
     ),
+    "pleaseEnterAReason": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال سبب",
+    ),
     "pleaseEnterOfferAmount": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال قيمة العرض",
     ),
@@ -1437,6 +1455,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reportSpam": MessageLookupByLibrary.simpleMessage("بريد عشوائي أو احتيال"),
     "reportWrongInfo": MessageLookupByLibrary.simpleMessage("معلومات خاطئة"),
     "reset": MessageLookupByLibrary.simpleMessage("إعادة تعيين"),
+    "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
     "rice": MessageLookupByLibrary.simpleMessage("أرز"),
     "robbah": MessageLookupByLibrary.simpleMessage("الرباح"),
     "rogassa": MessageLookupByLibrary.simpleMessage("رقاصة"),
@@ -1810,6 +1829,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadInstruction": MessageLookupByLibrary.simpleMessage(
       "قم بتحميل صورة واضحة لورقة نبات للكشف عن الأمراض",
     ),
+    "userNotFound": MessageLookupByLibrary.simpleMessage("المستخدم غير موجود"),
     "userTypeCannotAdd": MessageLookupByLibrary.simpleMessage(
       "لا يمكنه إضافة عناصر",
     ),

@@ -128,11 +128,11 @@ class _ChatPage2State extends State<ChatPage2> {
                         children: [
                           const Icon(Icons.error_outline, size: 48),
                           const SizedBox(height: 16),
-                          Text("Error loading messages"),
+                          Text(S.of(context).errorLoadingMessages),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => setState(() {}),
-                            child: const Text("Retry"),
+                            child: Text(S.of(context).retry),
                           ),
                         ],
                       ),
@@ -388,7 +388,7 @@ class _ChatPage2State extends State<ChatPage2> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text("Failed to send message. Please try again."),
+            content: Text(S.of(context).failedToSendMessage),
             backgroundColor: Colors.red,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

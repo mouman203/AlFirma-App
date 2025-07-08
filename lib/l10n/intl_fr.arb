@@ -1264,5 +1264,15 @@
   "offerAccepted": "Offre acceptée !",
   "offerRefused": "Offre refusée !",
   "editYourProduct": "Modifier votre produit",
-  "typeAccessDenied": "Ce type n'a pas accès à cette page"
+  "typeAccessDenied": "Ce type n'a pas accès à cette page",
+  "itemNotFound": "Élément non trouvé",
+  "errorDeletingConversation": "Erreur lors de la suppression de la conversation",
+  "conversationDeletedSuccessfully": "Conversation supprimée avec succès",
+  "failedToSendMessage": "Échec de l'envoi du message. Veuillez réessayer.",
+  "retry": "Réessayer",
+  "errorLoadingMessages": "Erreur lors du chargement des messages",
+  "userNotFound": "Utilisateur non trouvé",
+  "pleaseEnterAReason": "Veuillez entrer une raison",
+  "close": "Fermer",
+  "negotiate": "Négocier"
 }

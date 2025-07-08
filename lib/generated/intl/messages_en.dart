@@ -440,6 +440,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Cleaning and organizing the farm area",
     ),
     "client": MessageLookupByLibrary.simpleMessage("Client"),
+    "close": MessageLookupByLibrary.simpleMessage("Close"),
     "clover": MessageLookupByLibrary.simpleMessage("Clover"),
     "coldRoom": MessageLookupByLibrary.simpleMessage("Cold Room"),
     "collo": MessageLookupByLibrary.simpleMessage("Collo"),
@@ -479,6 +480,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "contactInfo": MessageLookupByLibrary.simpleMessage("Contact Information"),
     "contactUs": MessageLookupByLibrary.simpleMessage("Contact Us"),
     "controlValves": MessageLookupByLibrary.simpleMessage("Control Valves"),
+    "conversationDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Conversation deleted successfully",
+    ),
     "coriander": MessageLookupByLibrary.simpleMessage("Coriander"),
     "corn": MessageLookupByLibrary.simpleMessage("Corn"),
     "cornCercosporaLeafSpotLabel": MessageLookupByLibrary.simpleMessage(
@@ -700,8 +704,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorAddingComment": MessageLookupByLibrary.simpleMessage(
       "An error occurred while adding the comment. Please try again later",
     ),
+    "errorDeletingConversation": MessageLookupByLibrary.simpleMessage(
+      "Error deleting conversation",
+    ),
     "errorFetchingData": MessageLookupByLibrary.simpleMessage(
       "Error fetching data",
+    ),
+    "errorLoadingMessages": MessageLookupByLibrary.simpleMessage(
+      "Error loading messages",
     ),
     "error_email_already_used": MessageLookupByLibrary.simpleMessage(
       "📧 This email is already registered",
@@ -750,6 +760,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Facility Maintenance",
     ),
     "faidhElBotma": MessageLookupByLibrary.simpleMessage("Faidh El Botma"),
+    "failedToSendMessage": MessageLookupByLibrary.simpleMessage(
+      "Failed to send message. Please try again.",
+    ),
     "farmManagementConsulting": MessageLookupByLibrary.simpleMessage(
       "Farm Management Consulting",
     ),
@@ -987,6 +1000,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Irrigation System Repair",
     ),
     "isser": MessageLookupByLibrary.simpleMessage("Isser"),
+    "itemNotFound": MessageLookupByLibrary.simpleMessage("Item not found"),
     "jijel": MessageLookupByLibrary.simpleMessage("Jijel"),
     "joinOurPlatform": MessageLookupByLibrary.simpleMessage(
       "Join our platform and get started",
@@ -1157,6 +1171,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "nav_profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "nav_services": MessageLookupByLibrary.simpleMessage("Services"),
     "nedroma": MessageLookupByLibrary.simpleMessage("Nedroma"),
+    "negotiate": MessageLookupByLibrary.simpleMessage("Negotiate"),
     "negrine": MessageLookupByLibrary.simpleMessage("Negrine"),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
     "ngaous": MessageLookupByLibrary.simpleMessage("N\'Gaous"),
@@ -1363,6 +1378,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "plasticWrappingMachine": MessageLookupByLibrary.simpleMessage(
       "Plastic Wrapping Machine",
     ),
+    "pleaseEnterAReason": MessageLookupByLibrary.simpleMessage(
+      "Please enter a reason",
+    ),
     "pleaseEnterOfferAmount": MessageLookupByLibrary.simpleMessage(
       "Please enter an offer amount",
     ),
@@ -1497,6 +1515,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Wrong Information",
     ),
     "reset": MessageLookupByLibrary.simpleMessage("Reset"),
+    "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "rice": MessageLookupByLibrary.simpleMessage("Rice"),
     "robbah": MessageLookupByLibrary.simpleMessage("Robbah"),
     "rogassa": MessageLookupByLibrary.simpleMessage("Rogassa"),
@@ -1882,6 +1901,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadInstruction": MessageLookupByLibrary.simpleMessage(
       "Upload a clear image of a plant leaf to detect diseases",
     ),
+    "userNotFound": MessageLookupByLibrary.simpleMessage("User not found"),
     "userTypeCannotAdd": MessageLookupByLibrary.simpleMessage(
       "can\'t add items",
     ),

@@ -53,8 +53,25 @@ class ServicesPage extends StatelessWidget {
       Navigator.push(context, MaterialPageRoute(builder: (_) => page));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).pageNotFound)),
-      );
+  SnackBar(
+    content: Row(
+      children: [
+        Icon(Icons.warning_amber_rounded, color: Colors.black),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            S.of(context).pageNotFound,
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    ),
+    backgroundColor: Color.fromARGB(255, 247, 234, 117),
+    behavior: SnackBarBehavior.fixed,
+    duration: Duration(seconds: 3),
+  ),
+);
+
     }
   }
 

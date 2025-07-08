@@ -460,15 +460,49 @@ class _MessagesPageState extends State<MessagesPage> {
       if (!context.mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Conversation deleted successfully")),
-      );
+  SnackBar(
+    content: Row(
+      children: [
+        Icon(Icons.delete_forever, color: Colors.white),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            S.of(context).conversationDeletedSuccessfully,
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
+    ),
+    backgroundColor: Colors.green,
+    behavior: SnackBarBehavior.fixed, // not floating
+    duration: Duration(seconds: 1),
+  ),
+);
+
     } catch (e) {
       print("Error deleting conversation: $e");
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error deleting conversation: $e")),
-      );
+     ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Row(
+      children: [
+        Icon(Icons.error_outline, color: Colors.white),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            "${S.of(context).errorDeletingConversation} : $e",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
+    ),
+    backgroundColor: Colors.red,
+    behavior: SnackBarBehavior.fixed,
+    duration: Duration(seconds: 4),
+  ),
+);
+
     }
   }
 
@@ -521,7 +555,7 @@ class _MessagesPageState extends State<MessagesPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Item not found."),
+            content:Text(S.of(context).itemNotFound),
             backgroundColor: Colors.red,
           ),
         );

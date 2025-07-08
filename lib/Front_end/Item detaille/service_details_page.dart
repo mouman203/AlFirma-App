@@ -200,7 +200,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
       } else {
         // First signal for this post
         await signalDoc.set({
-          'postType':'Services',
+          'postType': 'Services',
           'postId': itemId,
           'owner': target,
           'signalCount': 1,
@@ -393,7 +393,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                           if (reportText.trim().isEmpty) {
                             // Show an alert if the user selected "Other" but didn't write anything
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Please enter a reason."),
+                              content: Text(S.of(context).pleaseEnterAReason),
                               backgroundColor: Colors.red,
                             ));
                             return;
@@ -722,7 +722,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
           }
 
           if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-            return const Text("User not found");
+            return Text(S.of(context).userNotFound);
           }
 
           var userData = userSnapshot.data!;
@@ -1009,7 +1009,7 @@ class _ServiceDetailsPageState extends State<ServiceDetailsPage> {
                     },
                     icon: const Icon(IconlyLight.message, size: 20),
                     label: Text(
-                      "Negosier",
+                      S.of(context).negotiate,
                       style: const TextStyle(fontSize: 16),
                     ),
                     style: FilledButton.styleFrom(

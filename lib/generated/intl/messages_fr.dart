@@ -446,6 +446,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Nettoyer et organiser la zone agricole",
     ),
     "client": MessageLookupByLibrary.simpleMessage("Client"),
+    "close": MessageLookupByLibrary.simpleMessage("Fermer"),
     "clover": MessageLookupByLibrary.simpleMessage("Trèfle"),
     "coldRoom": MessageLookupByLibrary.simpleMessage("Chambre froide"),
     "collo": MessageLookupByLibrary.simpleMessage("Collo"),
@@ -487,6 +488,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "contactUs": MessageLookupByLibrary.simpleMessage("Contactez-nous"),
     "controlValves": MessageLookupByLibrary.simpleMessage("Vannes de contrôle"),
+    "conversationDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Conversation supprimée avec succès",
+    ),
     "coriander": MessageLookupByLibrary.simpleMessage("Coriandre"),
     "corn": MessageLookupByLibrary.simpleMessage("Maïs"),
     "cornCercosporaLeafSpotLabel": MessageLookupByLibrary.simpleMessage(
@@ -726,8 +730,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorAddingComment": MessageLookupByLibrary.simpleMessage(
       "Une erreur s\'est produite lors de l\'ajout du commentaire. Veuillez réessayer plus tard",
     ),
+    "errorDeletingConversation": MessageLookupByLibrary.simpleMessage(
+      "Erreur lors de la suppression de la conversation",
+    ),
     "errorFetchingData": MessageLookupByLibrary.simpleMessage(
       "Erreur lors de la récupération des données",
+    ),
+    "errorLoadingMessages": MessageLookupByLibrary.simpleMessage(
+      "Erreur lors du chargement des messages",
     ),
     "error_email_already_used": MessageLookupByLibrary.simpleMessage(
       "📧 Cet e-mail est déjà enregistré",
@@ -776,6 +786,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Entretien des installations",
     ),
     "faidhElBotma": MessageLookupByLibrary.simpleMessage("Faïdh El Botma"),
+    "failedToSendMessage": MessageLookupByLibrary.simpleMessage(
+      "Échec de l\'envoi du message. Veuillez réessayer.",
+    ),
     "farmManagementConsulting": MessageLookupByLibrary.simpleMessage(
       "Consultation en gestion agricole",
     ),
@@ -1033,6 +1046,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Réparation des systèmes d\'irrigation",
     ),
     "isser": MessageLookupByLibrary.simpleMessage("Isser"),
+    "itemNotFound": MessageLookupByLibrary.simpleMessage("Élément non trouvé"),
     "jijel": MessageLookupByLibrary.simpleMessage("Jijel"),
     "joinOurPlatform": MessageLookupByLibrary.simpleMessage(
       "Rejoignez notre plateforme et commencez",
@@ -1209,6 +1223,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "nav_profile": MessageLookupByLibrary.simpleMessage("Profil"),
     "nav_services": MessageLookupByLibrary.simpleMessage("Services"),
     "nedroma": MessageLookupByLibrary.simpleMessage("Nedroma"),
+    "negotiate": MessageLookupByLibrary.simpleMessage("Négocier"),
     "negrine": MessageLookupByLibrary.simpleMessage("Negrine"),
     "newPassword": MessageLookupByLibrary.simpleMessage("Nouveau mot de passe"),
     "ngaous": MessageLookupByLibrary.simpleMessage("N\'Gaous"),
@@ -1423,6 +1438,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "plasticWrappingMachine": MessageLookupByLibrary.simpleMessage(
       "Machine d\'emballage plastique",
     ),
+    "pleaseEnterAReason": MessageLookupByLibrary.simpleMessage(
+      "Veuillez entrer une raison",
+    ),
     "pleaseEnterOfferAmount": MessageLookupByLibrary.simpleMessage(
       "Veuillez entrer un montant d\'offre",
     ),
@@ -1565,6 +1583,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Informations incorrectes",
     ),
     "reset": MessageLookupByLibrary.simpleMessage("Réinitialiser"),
+    "retry": MessageLookupByLibrary.simpleMessage("Réessayer"),
     "rice": MessageLookupByLibrary.simpleMessage("Riz"),
     "robbah": MessageLookupByLibrary.simpleMessage("Robbah"),
     "rogassa": MessageLookupByLibrary.simpleMessage("Rogassa"),
@@ -1967,6 +1986,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "uploadInstruction": MessageLookupByLibrary.simpleMessage(
       "Téléversez une image claire d’une feuille pour détecter les maladies",
+    ),
+    "userNotFound": MessageLookupByLibrary.simpleMessage(
+      "Utilisateur non trouvé",
     ),
     "userTypeCannotAdd": MessageLookupByLibrary.simpleMessage(
       "ne peut pas ajouter d\'éléments",

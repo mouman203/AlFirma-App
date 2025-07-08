@@ -1,3 +1,4 @@
+import 'package:agriplant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class NotificationPopup extends StatelessWidget {
@@ -31,7 +32,7 @@ class NotificationPopup extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Close"),
+              child:  Text(S.of(context).close),
             ),
           ],
         ),
