@@ -17,6 +17,8 @@ class MessagesPage extends StatefulWidget {
 class _MessagesPageState extends State<MessagesPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +75,8 @@ class _MessagesPageState extends State<MessagesPage> {
       return snapshot.docs;
     });
 
-    // Stream for sent messages
-    Stream<List<QueryDocumentSnapshot>> sentMessages = _firestore
+    // Stream for sent messages (ChatPage)
+    Stream<List<QueryDocumentSnapshot>> sentNegotiationMessages = _firestore
         .collection('Messages')
         .where("senderId", isEqualTo: currentUserId)
         .snapshots()
@@ -83,8 +85,8 @@ class _MessagesPageState extends State<MessagesPage> {
       return snapshot.docs;
     });
 
-    // Stream for received messages
-    Stream<List<QueryDocumentSnapshot>> receivedMessages = _firestore
+    // Stream for received messages (ChatPage)
+    Stream<List<QueryDocumentSnapshot>> receivedNegotiationMessages = _firestore
         .collection('Messages')
         .where("receiverId", isEqualTo: currentUserId)
         .snapshots()
@@ -93,30 +95,58 @@ class _MessagesPageState extends State<MessagesPage> {
       return snapshot.docs;
     });
 
+    // Stream for sent vet messages (ChatPage2)
+    Stream<List<QueryDocumentSnapshot>> sentVetMessages = _firestore
+        .collection('Vet Messages')
+        .where("senderId", isEqualTo: currentUserId)
+        .snapshots()
+        .map((snapshot) {
+      print("✅ Sent vet messages count: ${snapshot.docs.length}");
+      return snapshot.docs;
+    });
+
+    // Stream for received vet messages (ChatPage2)
+    Stream<List<QueryDocumentSnapshot>> receivedVetMessages = _firestore
+        .collection('Vet Messages')
+        .where("receiverId", isEqualTo: currentUserId)
+        .snapshots()
+        .map((snapshot) {
+      print("📥 Received vet messages count: ${snapshot.docs.length}");
+      return snapshot.docs;
+    });
+
     // Combine all streams
-    return Rx.combineLatest4(
+    return Rx.combineLatest6(
       sentOffers,
       receivedOffers,
-      sentMessages,
-      receivedMessages,
+      sentNegotiationMessages,
+      receivedNegotiationMessages,
+      sentVetMessages,
+      receivedVetMessages,
       (
         List<QueryDocumentSnapshot> sentOffers,
         List<QueryDocumentSnapshot> receivedOffers,
-        List<QueryDocumentSnapshot> sentMessages,
-        List<QueryDocumentSnapshot> receivedMessages,
+        List<QueryDocumentSnapshot> sentNegotiationMessages,
+        List<QueryDocumentSnapshot> receivedNegotiationMessages,
+        List<QueryDocumentSnapshot> sentVetMessages,
+        List<QueryDocumentSnapshot> receivedVetMessages,
       ) {
         print("✅ Sent offers count: ${sentOffers.length}");
         print("📥 Received offers count: ${receivedOffers.length}");
-        print("✅ Sent messages count: ${sentMessages.length}");
-        print("📥 Received messages count: ${receivedMessages.length}");
+        print("✅ Sent messages count: ${sentNegotiationMessages.length}");
+        print("📥 Received messages count: ${receivedNegotiationMessages.length}");
+        print("✅ Sent vet messages count: ${sentVetMessages.length}");
+        print("📥 Received vet messages count: ${receivedVetMessages.length}");
         print(
-            "🔄 Total combined messages: ${sentOffers.length + receivedOffers.length + sentMessages.length + receivedMessages.length}");
+            "🔄 Total combined messages: ${sentOffers.length + receivedOffers.length + sentNegotiationMessages.length + receivedNegotiationMessages.length + sentVetMessages.length + receivedVetMessages.length}");
 
         return [
           ...sentOffers,
           ...receivedOffers,
-          ...sentMessages,
-          ...receivedMessages
+          ...sentNegotiationMessages,
+          ...receivedNegotiationMessages,
+          ...sentVetMessages,
+          ...receivedVetMessages
         ];
       },
     );
@@ -136,8 +166,7 @@ class _MessagesPageState extends State<MessagesPage> {
       var messageData = doc.data() as Map<String, dynamic>;
       String sender = messageData['senderId'];
       String receiver = messageData['receiverId'];
-      String? productId =
-          messageData['productid']; // Can be null for ChatPage2 messages
+      String? productId = messageData['productid']; // Can be null for ChatPage2 messages
       String? content = messageData['content'];
 
       if (content == null || content.isEmpty) {
@@ -146,10 +175,15 @@ class _MessagesPageState extends State<MessagesPage> {
 
       String otherUserId = sender == currentUserId ? receiver : sender;
 
-      // Create key based on whether productId exists
-      String key = productId != null
-          ? "${otherUserId}_$productId"
-          : "${otherUserId}_direct";
+      // Modified key generation to always separate ChatPage and ChatPage2
+      String key;
+      if (productId != null) {
+        // ChatPage messages (negotiation) - include the specific productId
+        key = "${otherUserId}_product_$productId";
+      } else {
+        // ChatPage2 messages (veterinary) - always use 'veterinary' suffix
+        key = "${otherUserId}_veterinary";
+      }
 
       if (!groupedMessages.containsKey(key)) {
         groupedMessages[key] = [];
@@ -368,7 +402,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
       if (productId != null) {
         // Delete messages with productid (ChatPage messages)
-        final messagesQuery = await _firestore
+        final negotiationMessagesQuery = await _firestore
             .collection("Messages")
             .where("productid", isEqualTo: productId)
             .where(Filter.or(
@@ -383,7 +417,7 @@ class _MessagesPageState extends State<MessagesPage> {
             ))
             .get();
 
-        for (var doc in messagesQuery.docs) {
+        for (var doc in negotiationMessagesQuery.docs) {
           await doc.reference.delete();
         }
 
@@ -403,9 +437,9 @@ class _MessagesPageState extends State<MessagesPage> {
           await doc.reference.delete();
         }
       } else {
-        // Delete direct messages without productid (ChatPage2 messages)
-        final messagesQuery = await _firestore
-            .collection("Messages")
+        // Delete vet messages without productid (ChatPage2 messages)
+        final vetMessagesQuery = await _firestore
+            .collection("Vet Messages")
             .where(Filter.or(
               Filter.and(
                 Filter("senderId", isEqualTo: _auth.currentUser!.uid),
@@ -418,12 +452,8 @@ class _MessagesPageState extends State<MessagesPage> {
             ))
             .get();
 
-        // Filter messages that don't have productid
-        for (var doc in messagesQuery.docs) {
-          var data = doc.data();
-          if (data['productid'] == null) {
-            await doc.reference.delete();
-          }
+        for (var doc in vetMessagesQuery.docs) {
+          await doc.reference.delete();
         }
       }
 
@@ -510,6 +540,7 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   Widget _buildMessagesList() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return StreamBuilder<List<QueryDocumentSnapshot>>(
       stream: _getMessagesStream(),
       builder: (context, snapshot) {
@@ -519,9 +550,29 @@ class _MessagesPageState extends State<MessagesPage> {
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
-              child: Text(S
-                  .of(context)
-                  .noMessages)); // Localized string for no messages
+                        child: Center(
+                            child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? Colors.black.withOpacity(0.8)
+                            : Colors.white
+                                .withOpacity(0.8), // White with transparency
+                        borderRadius:
+                            BorderRadius.circular(12), // Rounded corners
+                      ),
+                      child: Text(
+                        S.of(context).noMessages,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: isDarkMode
+                              ? Colors.white
+                              : Colors.black, // Keep readable contrast
+                        ),
+                      ),
+                    )));
         }
 
         String currentUserId = _auth.currentUser!.uid;
@@ -532,8 +583,7 @@ class _MessagesPageState extends State<MessagesPage> {
           padding: const EdgeInsets.only(top: 0),
           children: lastMessages.entries.map((entry) {
             Map<String, dynamic> lastMessage = entry.value.first;
-            String fullKey =
-                entry.key; // example: userId_productId or userId_direct
+            String fullKey = entry.key; // example: userId_product_productId or userId_veterinary
             String userId = fullKey.split('_').first; // example: userId
 
             return _buildUserListTile(userId, lastMessage);

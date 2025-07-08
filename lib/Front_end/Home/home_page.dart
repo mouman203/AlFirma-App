@@ -322,7 +322,7 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             Container(
-              margin: const EdgeInsets.only(left: 8),
+              margin: const EdgeInsets.only(left: 10, right: 10),
               child: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Users.isGuestUser()

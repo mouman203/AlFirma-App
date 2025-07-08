@@ -334,7 +334,7 @@ class _ChatPage2State extends State<ChatPage2> {
   Stream<QuerySnapshot> _getMessagesStream() {
     try {
       return _firestore
-          .collection("Messages")
+          .collection("Vet Messages")
           .where(
             Filter.or(
               Filter.and(
@@ -374,7 +374,7 @@ class _ChatPage2State extends State<ChatPage2> {
     _messageController.clear();
 
     try {
-      await _firestore.collection("Messages").add({
+      await _firestore.collection("Vet Messages").add({
         "senderId": _auth.currentUser!.uid,
         "receiverId": otherUserId,
         "content": message,

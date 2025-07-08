@@ -133,6 +133,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
+    required IconData icon,
     bool readOnly = false,
     int maxLines = 1,
     bool boldItalicStyle = false,
@@ -151,19 +152,24 @@ class _ContactUsPageState extends State<Contact_us_page> {
       maxLines: maxLines,
       decoration: InputDecoration(
         labelText: labelText,
+        prefixIcon: Icon(
+          icon,
+          color: isDarkMode ? Colors.white70 : const Color(0xFF256C4C),
+          size: 22,
+        ),
         labelStyle: TextStyle(
-          color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+          color: isDarkMode ? Colors.white70 : const Color(0xFF256C4C),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12), // 👈 Rounded edges
           borderSide: BorderSide(
-            color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            color: isDarkMode ? Colors.white54 : const Color(0xFF256C4C),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+            color: isDarkMode ? Colors.white54 : const Color(0xFF256C4C),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -173,6 +179,10 @@ class _ContactUsPageState extends State<Contact_us_page> {
             width: 2.5,
           ),
         ),
+        filled: true,
+        fillColor: isDarkMode 
+            ? Colors.grey[850]?.withOpacity(0.3) 
+            : Colors.grey[50]?.withOpacity(0.5),
       ),
     );
   }
@@ -185,9 +195,19 @@ class _ContactUsPageState extends State<Contact_us_page> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          S.of(context).reportAProblem,
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Icon(
+              Icons.support_agent,
+              color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              S.of(context).reportAProblem,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         backgroundColor: isDarkMode ? colorScheme.surface : colorScheme.surface,
         elevation: 5,
@@ -201,6 +221,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
             _buildTextField(
               controller: _emailController,
               labelText: S.of(context).yourEmail,
+              icon: Icons.email_outlined,
               readOnly: true,
               boldItalicStyle: true,
             ),
@@ -208,6 +229,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
             _buildTextField(
               controller: _nameController,
               labelText: S.of(context).yourName,
+              icon: Icons.person_outline,
               readOnly: true,
               boldItalicStyle: true,
             ),
@@ -215,17 +237,19 @@ class _ContactUsPageState extends State<Contact_us_page> {
             _buildTextField(
               controller: _subjectController,
               labelText: S.of(context).subject,
+              icon: Icons.subject_outlined,
             ),
             const SizedBox(height: 20),
             _buildTextField(
               controller: _reportController,
               labelText: S.of(context).describeProblem,
+              icon: Icons.description_outlined,
               maxLines: 10,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: () async {
                   await sendEmail(
                     _nameController.text,
@@ -234,6 +258,18 @@ class _ContactUsPageState extends State<Contact_us_page> {
                     _reportController.text,
                   );
                 },
+                icon: Icon(
+                  Icons.send_outlined,
+                  color: isDarkMode ? Colors.black : Colors.white,
+                  size: 20,
+                ),
+                label: Text(
+                  S.of(context).sendReport,
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: isDarkMode ? Colors.black : Colors.white,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode
                       ? const Color(0xFF90D5AE)
@@ -242,13 +278,7 @@ class _ContactUsPageState extends State<Contact_us_page> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-                child: Text(
-                  S.of(context).sendReport,
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: isDarkMode ? Colors.black : Colors.white,
-                  ),
+                  elevation: 2,
                 ),
               ),
             ),
