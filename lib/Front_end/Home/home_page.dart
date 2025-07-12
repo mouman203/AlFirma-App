@@ -2,6 +2,7 @@ import 'package:agriplant/Back_end/User.dart';
 import 'package:agriplant/Front_end/Home/Add_Product.dart';
 import 'package:agriplant/Front_end/Home/Sidebar.dart';
 import 'package:agriplant/Front_end/Home/explore_page.dart';
+import 'package:agriplant/Front_end/Home/notification.dart';
 import 'package:agriplant/Front_end/Meseges/messeges.dart';
 import 'package:agriplant/Front_end/Profile/profile_page.dart';
 import 'package:agriplant/Front_end/ServicesF/services_page.dart';
@@ -21,6 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey notificationIconKey = GlobalKey();
   final pages = [
     const ExplorePage(),
     const ServicesPage(),
@@ -35,12 +37,139 @@ class _HomePageState extends State<HomePage> {
   String? selectedType;
   bool isLoading = true;
 
+  bool hasNotifications = false;
+
+  OverlayEntry? _overlayEntry;
+
+  int unreadMessagesCount = 0;
+
   @override
   void initState() {
     super.initState();
     _loadLastSelectedPage();
     _fetchUserName();
     _loadSelectedType();
+    _checkNotifications();
+    _listenToNotifications();
+    _listenToUnreadDiscussions();
+  }
+
+  void _listenToUnreadDiscussions() {
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+  if (userId == null) return;
+
+  final Set<String> uniqueSenders = {};
+
+  // 🔹 Vet Messages
+  FirebaseFirestore.instance
+      .collection('Vet Messages')
+      .where('receiverId', isEqualTo: userId)
+      .where('isSeen', isEqualTo: false)
+      .snapshots()
+      .listen((vetSnapshot) {
+    for (var doc in vetSnapshot.docs) {
+      uniqueSenders.add(doc['senderId']);
+    }
+
+    // 🔹 Regular Messages
+    FirebaseFirestore.instance
+        .collection('Messages')
+        .where('receiverId', isEqualTo: userId)
+        .where('isSeen', isEqualTo: false)
+        .get()
+        .then((msgSnapshot) {
+      for (var doc in msgSnapshot.docs) {
+        uniqueSenders.add(doc['senderId']);
+      }
+
+      setState(() {
+        unreadMessagesCount = uniqueSenders.length;
+      });
+    });
+  });
+}
+
+
+  void _listenToNotifications() {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    FirebaseFirestore.instance
+        .collection("Notifications")
+        .doc(userId)
+        .collection("items")
+        .snapshots()
+        .listen((snapshot) {
+      setState(() {
+        hasNotifications = snapshot.docs.isNotEmpty;
+      });
+    });
+  }
+
+  void _showNotificationOverlay(BuildContext context) {
+    final renderBox =
+        notificationIconKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final popupWidth = 300.0;
+
+    double leftPosition = offset.dx + size.width - popupWidth;
+    leftPosition = leftPosition.clamp(8.0, screenWidth - popupWidth - 8.0);
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          GestureDetector(
+            onTap: () {
+              _overlayEntry?.remove();
+              _overlayEntry = null;
+            },
+            child: Container(color: Colors.transparent),
+          ),
+          Positioned(
+            top: offset.dy + size.height + 10,
+            left: leftPosition,
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(15),
+              child: SizedBox(
+                width: popupWidth,
+                child: NotificationPopup(
+                  onClose: () {
+                    _overlayEntry?.remove();
+                    _overlayEntry = null;
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  Future<void> _checkNotifications() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection("Notifications")
+        .doc(userId)
+        .collection("items")
+        .limit(1) // just need to check existence
+        .get();
+
+    if (!mounted) return;
+
+    setState(() {
+      hasNotifications = snapshot.docs.isNotEmpty;
+    });
   }
 
   // Map to translate Arabic type names to the current language
@@ -321,99 +450,111 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           actions: [
-            Container(
-              margin: const EdgeInsets.only(left: 10, right: 10),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Users.isGuestUser()
-                    ? FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 3),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                          fixedSize: const Size.fromHeight(40),
-                        ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.error_outline,
-                                    color: Colors.black,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      S.of(context).guestAccessLimited,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                      ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Users.isGuestUser()
+                  ? FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 3),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        fixedSize: const Size.fromHeight(40),
+                      ),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  color: Colors.black,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    S.of(context).guestAccessLimited,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
                                     ),
                                   ),
-                                ],
-                              ),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 247, 234, 117),
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                        child: Center(
-                          child: Text(
-                            S.of(context).become,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            backgroundColor:
+                                const Color.fromARGB(255, 247, 234, 117),
                           ),
+                        );
+                      },
+                      child: Center(
+                        child: Text(
+                          S.of(context).become,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                      )
-                    : BecomeTypeAction(onTypeChanged: _loadSelectedType),
+                      ),
+                    )
+                  : BecomeTypeAction(onTypeChanged: _loadSelectedType),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton.filledTonal(
+                    key: notificationIconKey,
+                    onPressed: () {
+                      if (Users.isGuestUser()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.error_outline,
+                                    color: Colors.black),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    S.of(context).guestAccessLimited,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 247, 234, 117),
+                          ),
+                        );
+                      } else {
+                        setState(() {
+                          hasNotifications = false;
+                        });
+                        _showNotificationOverlay(context);
+                      }
+                    },
+                    icon: const Icon(IconlyBroken.notification),
+                  ),
+                  // Red Dot Badge
+                  if (hasNotifications)
+                    Positioned(
+                      right: 4,
+                      top: 4,
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-            /*Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: IconButton.filledTonal(
-                onPressed: () {
-                  if (Users.isGuestUser()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Row(
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              color: Colors.black,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                S.of(context).guestAccessLimited,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        backgroundColor:
-                            const Color.fromARGB(255, 247, 234, 117),
-                      ),
-                    );
-                  } else {
-                    // navigate to notifications page or whatever you want
-                    /*showDialog(
-    context: context,
-    builder: (context) =>  NotificationPopup(), // your popup widget
-  );*/
-                  }
-                },
-                icon: const Icon(
-                  IconlyBroken.notification,
-                ),
-              ),
-            ),*/
           ]),
       body: RefreshIndicator(
           onRefresh: _refreshPage, child: pages[currentPageIndex]),
@@ -486,9 +627,73 @@ class _HomePageState extends State<HomePage> {
             activeIcon: Icon(IconlyBold.plus),
           ),
           BottomNavigationBarItem(
-            icon: Icon(IconlyLight.message),
+            icon: Stack(
+              children: [
+                Icon(IconlyLight.message),
+                if (unreadMessagesCount > 0)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Center(
+                        child: Text(
+                          unreadMessagesCount > 9
+                              ? '9+'
+                              : '$unreadMessagesCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            activeIcon: Stack(
+              children: [
+                Icon(IconlyBold.message),
+                if (unreadMessagesCount > 0)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Center(
+                        child: Text(
+                          unreadMessagesCount > 9
+                              ? '9+'
+                              : '$unreadMessagesCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             label: S.of(context).nav_messages,
-            activeIcon: Icon(IconlyBold.message),
           ),
           BottomNavigationBarItem(
             icon: Icon(IconlyLight.profile),

@@ -24,6 +24,20 @@ class _LoginPageState extends State<LoginPage> {
   String? passwordError;
   bool _obscurePassword = true; // التحكم في إخفاء أو إظهار كلمة المرور
 
+  void showNotAvailableSnackBar(BuildContext context, String type) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("$type method of sign in is not available yet"),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.orangeAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -119,6 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                                       : const Color(0xFF256C4C),
                                   fontSize: 16),
                               controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: S.of(context).email,
@@ -332,6 +347,7 @@ class _LoginPageState extends State<LoginPage> {
                     IconButton(
                       onPressed: () {
                         print("Facebook button pressed!");
+                        showNotAvailableSnackBar(context, "Facebook");
                       },
                       icon: const Icon(
                         Icons.facebook,
@@ -343,6 +359,8 @@ class _LoginPageState extends State<LoginPage> {
                     IconButton(
                       onPressed: () {
                         print("Apple button pressed!");
+                        showNotAvailableSnackBar(context, "Apple");
+
                       },
                       icon: const Icon(
                         Icons.apple,

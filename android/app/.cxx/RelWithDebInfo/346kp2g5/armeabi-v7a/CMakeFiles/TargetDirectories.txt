@@ -1,0 +1,2 @@
+E:/Start Up/AlFirma/AlFirma/Start-up/android/app/.cxx/RelWithDebInfo/346kp2g5/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/Start Up/AlFirma/AlFirma/Start-up/android/app/.cxx/RelWithDebInfo/346kp2g5/armeabi-v7a/CMakeFiles/rebuild_cache.dir

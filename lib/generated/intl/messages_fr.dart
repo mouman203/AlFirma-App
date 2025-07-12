@@ -465,6 +465,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmDeleteItem": MessageLookupByLibrary.simpleMessage(
       "Êtes-vous sûr de vouloir supprimer ",
     ),
+    "confirmDeletePost": MessageLookupByLibrary.simpleMessage(
+      "Êtes-vous sûr de vouloir supprimer cette publication ?",
+    ),
     "confirmLogout": MessageLookupByLibrary.simpleMessage(
       "Êtes-vous sûr de vouloir vous déconnecter ?",
     ),

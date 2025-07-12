@@ -4,6 +4,7 @@ import 'package:agriplant/Front_end/Profile/Settings/settings.dart';
 import 'package:agriplant/Front_end/Profile/profile_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agriplant/Front_end/Home/home_page.dart';
@@ -14,7 +15,59 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:agriplant/generated/l10n.dart'; // <-- Localization import
+import 'package:agriplant/generated/l10n.dart';
+import 'package:agriplant/Services/Notification_services.dart';
+
+Future<void> setupFCMToken() async {
+  try {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Request permission
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+
+    //  Init foreground notification
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        NotificationService().showNotification(
+          title: message.notification?.title,
+          body: message.notification?.body,
+        );
+      }
+    });
+
+    // Get initial token
+    String? token = await messaging.getToken();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null && token != null) {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .update({'fcmToken': token});
+      print("FCM token saved to Firestore: $token");
+    }
+
+    // Listen for token refresh
+    messaging.onTokenRefresh.listen((newToken) async {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .update({'fcmToken': newToken});
+        print("FCM token updated in Firestore: $newToken");
+      }
+    });
+  } catch (e) {
+    print("Error setting up FCM: $e");
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +80,9 @@ Future<void> main() async {
     await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.debug,
     );
+
+    // Init local notifications
+    await NotificationService().initNotification();
 
     print("Firebase initialized successfully.");
   } catch (e) {
@@ -76,6 +132,7 @@ Future<Widget> initializeApp() async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
+      await setupFCMToken();
       bool isVerified = await fetchUserVerificationStatus();
       if (isVerified) {
         return const HomePage();

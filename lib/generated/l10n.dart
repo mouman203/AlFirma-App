@@ -60,6 +60,16 @@ class S {
     return Intl.message('الإعدادات', name: 'settings', desc: '', args: []);
   }
 
+  /// `هل أنت متأكد أنك تريد حذف هذا المنشور؟`
+  String get confirmDeletePost {
+    return Intl.message(
+      'هل أنت متأكد أنك تريد حذف هذا المنشور؟',
+      name: 'confirmDeletePost',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `الأمان`
   String get security {
     return Intl.message('الأمان', name: 'security', desc: '', args: []);

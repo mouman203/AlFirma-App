@@ -113,14 +113,69 @@ class _ItemCardState extends State<ItemCard> {
             ProductData.equipmentCategories,
             ProductData.equipmentCategoriesT(context));
         break;
-      case "الخبرة":
-        ProductData.ExpertProducts.forEach((category, arabicList) {
-          // Get the corresponding localized list for the category
-          List<String> localizedList =
-              ProductData.ExpertProductsT(context)[category] ?? [];
+     case "الخبرة":
+        // Create a mapping between Arabic and localized categories
+        Map<String, String> categoryMapping = {
+          "استشارات الزراعة": S.of(context).agricultureConsulting,
+          "خدمات التوعية والتدريب": S.of(context).trainingServices,
+          "التكنولوجيا الزراعية": S.of(context).agriTech,
+          "خدمات توجيهية للمزارعين": S.of(context).farmerGuidance,
+          "مراقبة صحة النباتات والحيوانات": S.of(context).plantAnimalHealth,
+          "الاستشارات المالية والإدارية": S.of(context).financeAdminConsulting,
+        };
 
-          // Call _mapSimpleList for each category and its lists
-          _mapSimpleList(arabicList, localizedList, categoryTranslations);
+        // First, map the categories
+        categoryMapping.forEach((arabicCategory, localizedCategory) {
+          categoryTranslations[arabicCategory] = localizedCategory;
+        });
+
+        // Then map the products for each category
+        ProductData.ExpertProducts.forEach((arabicCategory, arabicProductList) {
+          String? localizedCategory = categoryMapping[arabicCategory];
+          if (localizedCategory != null) {
+            List<String> localizedProductList =
+                ProductData.ExpertProductsT(context)[localizedCategory] ?? [];
+
+            // Map each product in the list
+            for (int i = 0;
+                i < arabicProductList.length && i < localizedProductList.length;
+                i++) {
+              productTranslations[arabicProductList[i]] =
+                  localizedProductList[i];
+            }
+          }
+        });
+        break;
+
+      case "طلب عمل":
+        // Create a mapping between Arabic and localized categories
+        Map<String, String> workerTaskMapping = {
+          "العمليات الزراعية اليومية": S.of(context).dailyFarmOperations,
+          "أعمال الحصاد الموسمي": S.of(context).seasonalHarvesting,
+          "تهيئة الأرض للزراعة": S.of(context).landPreparation,
+          "البناء الزراعي التقليدي": S.of(context).traditionalFarmConstruction,
+          "الدعم والمساعدة": S.of(context).supportAndAssistance,
+        };
+
+        // First, map the categories
+        workerTaskMapping.forEach((arabicCategory, localizedCategory) {
+          categoryTranslations[arabicCategory] = localizedCategory;
+        });
+
+        // Then map the products for each category
+        ProductData.WorkerTasks.forEach((arabicCategory, arabicTaskList) {
+          String? localizedCategory = workerTaskMapping[arabicCategory];
+          if (localizedCategory != null) {
+            List<String> localizedTaskList =
+                ProductData.WorkerTasksT(context)[localizedCategory] ?? [];
+
+            // Map each task in the list
+            for (int i = 0;
+                i < arabicTaskList.length && i < localizedTaskList.length;
+                i++) {
+              productTranslations[arabicTaskList[i]] = localizedTaskList[i];
+            }
+          }
         });
         break;
       case "النقل":
@@ -299,6 +354,82 @@ class _ItemCardState extends State<ItemCard> {
     }
   }
 
+  Future<void> showDeleteitemConfirmationDialog({
+    required BuildContext context,
+    required bool isDarkMode,
+    required ColorScheme colorScheme,
+  }) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: colorScheme.secondaryContainer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(
+            S.of(context).alertWarning,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+            ),
+          ),
+          content: Text(
+            S.of(context).confirmDeletePost,
+            style: TextStyle(
+              fontSize: 16,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: const Size(90, 45),
+                  ),
+                  child: Text(
+                    S.of(context).no,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    DeleterItem(widget.item);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDarkMode
+                        ? const Color(0xFF90D5AE)
+                        : const Color(0xFF256C4C),
+                    foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: const Size(90, 45),
+                  ),
+                  child: Text(
+                    S.of(context).yes,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
@@ -376,8 +507,9 @@ class _ItemCardState extends State<ItemCard> {
                             width: 30,
                             height: 30,
                             decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).colorScheme.secondaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -390,9 +522,7 @@ class _ItemCardState extends State<ItemCard> {
                             child: PopupMenuButton<String>(
                               padding: EdgeInsets.zero,
                               iconSize: 18,
-                              icon: Icon(
-                                Icons.more_vert
-                              ),
+                              icon: Icon(Icons.more_vert),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -402,7 +532,12 @@ class _ItemCardState extends State<ItemCard> {
                                 if (value == 'edit') {
                                   EditItem(widget.item, true);
                                 } else if (value == 'delete') {
-                                  DeleterItem(widget.item);
+                                  showDeleteitemConfirmationDialog(
+                                    context: context,
+                                    isDarkMode: Theme.of(context).brightness ==
+                                        Brightness.dark,
+                                    colorScheme: Theme.of(context).colorScheme,
+                                  );
                                 }
                               },
                               itemBuilder: (BuildContext context) => [
@@ -419,7 +554,6 @@ class _ItemCardState extends State<ItemCard> {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .secondaryContainer,
-                                      
                                         ),
                                         child: Icon(
                                           Icons.edit,

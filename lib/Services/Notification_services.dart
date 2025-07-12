@@ -1,58 +1,74 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
+  // Singleton pattern (optional, if used across app)
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
   final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  /// Call this during app startup
   Future<void> initNotification() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher'); // Make sure this icon exists in your android/app/src/main/res/drawable folder
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings(
+    const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
+    const settings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
     );
 
     await notificationsPlugin.initialize(
-      initializationSettings,
+      settings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
-        // Handle when a notification is tapped
+        // Handle tapped notification
+        final payload = response.payload;
+        if (payload != null) {
+          // TODO: Navigate or handle payload
+          print("Notification tapped with payload: $payload");
+        }
       },
     );
   }
 
-  NotificationDetails notificationDetails() {
+  /// Returns notification details for Android and iOS
+  NotificationDetails _notificationDetails() {
+    const androidDetails = AndroidNotificationDetails(
+      'high_importance_channel', // Must match channelId in AndroidManifest 
+      'High Importance Notifications',
+      channelDescription: 'Used for important notifications.',
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+    );
+
+    const iosDetails = DarwinNotificationDetails();
+
     return const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'channelId',
-        'channelName',
-        importance: Importance.max,
-        priority: Priority.high,
-        playSound: true,
-      ),
-      iOS: DarwinNotificationDetails(),
+      android: androidDetails,
+      iOS: iosDetails,
     );
   }
 
-   Future<void> showNotification({
+  /// Show a basic notification
+  Future<void> showNotification({
     int id = 0,
     String? title,
     String? body,
-    String? payLoad,
+    String? payload,
   }) async {
-    return notificationsPlugin.show(
+    await notificationsPlugin.show(
       id,
       title,
       body,
-      notificationDetails(),
-      payload: payLoad,
+      _notificationDetails(),
+      payload: payload,
     );
   }
 }

@@ -377,81 +377,172 @@ class _AddProductsState extends State<AddProducts> {
   }
 
   Future<void> _handleEditMode() async {
-    if (widget.isEditMode == true && widget.item != null) {
-      try {
-        String type = await bring(); // استدعاء bring بشكل صحيح
-        print("✅ User type in state: $userType");
-        print("✅ Type brought from Firestore: $type");
-
-        if (userType == type && Category!.contains(widget.item!.category)) {
-          setState(() {
-            productinfo_old =
-                ProductData.getProduct(typeItem, selectedsubCategory, context);
-            oldPhotos = List<String>.from(widget.item!.photos ?? []);
-            print("✅ Old photos: $oldPhotos");
-            selectedCategory = widget.item!.category;
-            print("✅ Selected category: $selectedCategory");
-            selectedsubCategory = widget.item!.subCategory;
-            print("✅ Selected subCategory: $selectedsubCategory");
-            final productList = selectedsubCategory != null
-                ? ProductData.getProduct(
-                    typeItem, selectedsubCategory!, context)
-                : ProductData.getProduct(typeItem, selectedCategory!, context);
-            selectedproduct = productList.firstWhere(
-              (element) => element.trim() == widget.item!.product?.trim(),
-              orElse: () => "",
-            );
-
-            prixController.text = widget.item!.price?.toString() ?? '';
-            selectedWilaya = widget.item!.wilaya;
-            selectedUnit = widget.item!.unit;
-
-            final rawDaira = widget.item!.daira?.trim();
-            final trimmedDaira = rawDaira?.trim();
-
-            final dairaList = ProductData.wilayasT(context)[selectedWilaya]
-                    ?.map((e) => e.trim())
-                    .toList() ??
-                [];
-
-            if (dairaList.contains(trimmedDaira)) {
-              print("✅ الدائرة موجودة بدون فراغات: $trimmedDaira");
-              selectedDaira = trimmedDaira;
-            } else {
-              print("❌ الدائرة غير موجودة أو بها فراغات مختلفة: $trimmedDaira");
-            }
-
-            descriptionController.text = widget.item!.description ?? '';
-            print("✅ Description: ${descriptionController.text}");
-            quantiteController.text = widget.item!.quantity?.toString() ?? '';
-          });
-
-          // إذا كان المستخدم لديه صلاحية الوصول
-          print("❌❌❌❌❌❌❌❌❌❌❌❌");
-
-          for (var item in ProductData.getProduct(
-              typeItem, selectedsubCategory, context)) {
-            print("- ${item.toString()}");
-          }
-          print("❌❌❌❌❌❌❌❌❌❌❌❌");
+  if (widget.isEditMode == true && widget.item != null) {
+    try {
+      // Get the item owner's active type from Firestore
+      String ownerActiveType = await bring();
+      print("✅ Owner's active type from Firestore: $ownerActiveType");
+      print("✅ Current user type: $userType");
+      
+      // Check if current user type matches owner's active type
+      bool hasAccess = false;
+      
+      // Get translation map
+      final translationMap = TranslatedToArabicMap(context);
+      
+      // Check direct match first
+      if (userType == ownerActiveType) {
+        hasAccess = true;
+        print("✅ Direct match found");
+      } else {
+        // Check if userType translated to Arabic matches ownerActiveType
+        String translatedUserType = _translateUserTypeToArabic(userType!);
+        if (translatedUserType == ownerActiveType) {
+          hasAccess = true;
+          print("✅ Translated match found: $translatedUserType");
         } else {
-          _showAccessDeniedDialog();
+          // Check if ownerActiveType translated to English matches userType
+          String? englishEquivalent = translationMap.entries
+              .firstWhere((entry) => entry.value == ownerActiveType, 
+                         orElse: () => const MapEntry('', ''))
+              .key;
+          if (englishEquivalent.isNotEmpty && englishEquivalent == userType) {
+            hasAccess = true;
+            print("✅ Reverse translation match found: $englishEquivalent");
+          }
         }
-      } catch (e) {
-        print("❌ Error in _handleEditMode: $e");
+      }
+      
+      print("✅ Category check: ${Category?.contains(widget.item!.category)}");
+      
+      // Check both user type access and category access
+      if (hasAccess && (Category?.contains(widget.item!.category) ?? false)) {
+        setState(() {
+          productinfo_old =
+              ProductData.getProduct(typeItem, selectedsubCategory, context);
+          oldPhotos = List<String>.from(widget.item!.photos ?? []);
+          print("✅ Old photos: $oldPhotos");
+          selectedCategory = widget.item!.category;
+          print("✅ Selected category: $selectedCategory");
+          selectedsubCategory = widget.item!.subCategory;
+          print("✅ Selected subCategory: $selectedsubCategory");
+          
+          final productList = selectedsubCategory != null
+              ? ProductData.getProduct(
+                  typeItem, selectedsubCategory!, context)
+              : ProductData.getProduct(typeItem, selectedCategory!, context);
+          selectedproduct = productList.firstWhere(
+            (element) => element.trim() == widget.item!.product?.trim(),
+            orElse: () => "",
+          );
+
+          prixController.text = widget.item!.price?.toString() ?? '';
+          selectedWilaya = widget.item!.wilaya;
+          selectedUnit = widget.item!.unit;
+
+          final rawDaira = widget.item!.daira?.trim();
+          final trimmedDaira = rawDaira?.trim();
+
+          final dairaList = ProductData.wilayasT(context)[selectedWilaya]
+                  ?.map((e) => e.trim())
+                  .toList() ??
+              [];
+
+          if (dairaList.contains(trimmedDaira)) {
+            print("✅ الدائرة موجودة بدون فراغات: $trimmedDaira");
+            selectedDaira = trimmedDaira;
+          } else {
+            print("❌ الدائرة غير موجودة أو بها فراغات مختلفة: $trimmedDaira");
+          }
+
+          descriptionController.text = widget.item!.description ?? '';
+          print("✅ Description: ${descriptionController.text}");
+          quantiteController.text = widget.item!.quantity?.toString() ?? '';
+        });
+
+        // إذا كان المستخدم لديه صلاحية الوصول
+        print("✅ Access granted - User can edit this item");
+        print("❌❌❌❌❌❌❌❌❌❌❌❌");
+
+        for (var item in ProductData.getProduct(
+            typeItem, selectedsubCategory, context)) {
+          print("- ${item.toString()}");
+        }
+        print("❌❌❌❌❌❌❌❌❌❌❌❌");
+      } else {
+        print("❌ Access denied.");
+        print("   - User type match: $hasAccess");
+        print("   - Category access: ${Category?.contains(widget.item!.category)}");
+        print("   - User type: $userType");
+        print("   - Owner active type: $ownerActiveType");
+        print("   - Item category: ${widget.item!.category}");
+        print("   - Available categories: $Category");
         _showAccessDeniedDialog();
       }
+    } catch (e) {
+      print("❌ Error in _handleEditMode: $e");
+      _showAccessDeniedDialog();
     }
   }
+}
 
-  Future<String> bring() async {
+// Improved translation method
+String _translateUserTypeToArabic(String userType) {
+  final translationMap = TranslatedToArabicMap(context);
+  
+  // Find the Arabic translation for the current userType
+  String? arabicType = translationMap[userType];
+  
+  if (arabicType != null) {
+    print("✅ Translated '$userType' to '$arabicType'");
+    return arabicType;
+  }
+  
+  // If no direct translation found, check if userType is already in Arabic
+  if (translationMap.containsValue(userType)) {
+    print("✅ UserType '$userType' is already in Arabic");
+    return userType; // Already in Arabic
+  }
+  
+  // If no translation found, return the original userType
+  print("⚠️ No translation found for userType: $userType");
+  return userType;
+}
+
+Map<String, String> TranslatedToArabicMap(BuildContext context) {
+  return {
+    S.of(context).agriculteur: 'فلاح',
+    S.of(context).eleveur: 'مربي الماشية',
+    S.of(context).expertAgri: 'خبير زراعي',
+    S.of(context).veterinaire: 'بيطري',
+    S.of(context).entreprise: 'شركة',
+    S.of(context).transporteur: 'ناقل',
+    S.of(context).reparateur: 'مصلح',
+    S.of(context).commercant: 'تاجر',
+    S.of(context).worker: 'عامل',
+  };
+}
+
+Future<String> bring() async {
+  try {
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection("Users")
         .doc(widget.item?.ownerId)
         .get();
 
-    return userDoc.get("activeType") ?? '';
+    if (userDoc.exists) {
+      String activeType = userDoc.get("activeType") ?? '';
+      print("✅ Successfully fetched activeType: $activeType");
+      return activeType;
+    } else {
+      print("❌ User document does not exist for ownerId: ${widget.item?.ownerId}");
+      return '';
+    }
+  } catch (e) {
+    print("❌ Error fetching user document: $e");
+    return '';
   }
+}
 
   void _showAccessDeniedDialog() {
     WidgetsBinding.instance.addPostFrameCallback((_) {

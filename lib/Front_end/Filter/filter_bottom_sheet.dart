@@ -729,8 +729,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                foregroundColor:
-                    isDarkMode ? Colors.white : Colors.black, // Text color
+                foregroundColor:Colors.white, // Text color
                 minimumSize:
                     Size(double.infinity, 50), // Increase button height
                 padding:

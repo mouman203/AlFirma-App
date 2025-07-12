@@ -502,7 +502,7 @@ class _ChatPageState extends State<ChatPage> {
                                         onPressed: () async {
                                           await _acceptOffer(offerDoc.id);
                                         },
-                                        icon: Icon(Icons.check),
+                                        icon: Icon(Icons.check,color: Colors.white,),
                                         label: Text(
                                           S.of(context).accept,
                                           style: TextStyle(
@@ -524,7 +524,7 @@ class _ChatPageState extends State<ChatPage> {
                                         onPressed: () async {
                                           await _refuseOffer(offerDoc.id);
                                         },
-                                        icon: const Icon(Icons.close),
+                                        icon: const Icon(Icons.close,color: Colors.white,),
                                         label: Text(
                                           S.of(context).refuse,
                                           style: TextStyle(

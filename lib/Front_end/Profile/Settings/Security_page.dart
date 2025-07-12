@@ -538,7 +538,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   ),
                   onTap: () => Email_PhoneOptions("Email"),
                 ),
-              ),
+              ),/*
 
               const SizedBox(height: 5),
 
@@ -580,7 +580,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   ),
                   onTap: () => Email_PhoneOptions("Phone Number"),
                 ),
-              ),
+              ),*/
             ],
           ),
 

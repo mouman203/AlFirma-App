@@ -1,6 +1,7 @@
 {
   "@@locale": "fr",
   "settings": "Paramètres",
+  "confirmDeletePost": "Êtes-vous sûr de vouloir supprimer cette publication ?",
   "security": "Sécurité",
   "securityMessage": "Vous devez être connecté pour accéder aux paramètres de sécurité",
   "lightMode": "Mode clair",
