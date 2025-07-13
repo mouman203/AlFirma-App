@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationPopup extends StatefulWidget {
-  final VoidCallback onClose;
-  const NotificationPopup({super.key, required this.onClose});
+  final VoidCallback? onClose;
+  const NotificationPopup({super.key, this.onClose});
 
   @override
   State<NotificationPopup> createState() => _NotificationPopupState();
@@ -21,6 +21,50 @@ class _NotificationPopupState extends State<NotificationPopup> {
     _loadNotifications();
   }
 
+  Future<void> deleteAllNotifications() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final notificationsRef = FirebaseFirestore.instance
+        .collection('Notifications')
+        .doc(user.uid)
+        .collection('items');
+
+    try {
+      final snapshot = await notificationsRef.get();
+      if (snapshot.docs.isNotEmpty) {
+        for (var doc in snapshot.docs) {
+          await doc.reference.delete();
+        }
+        widget.onClose?.call();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("All notifications deleted"),
+            duration: const Duration(seconds: 1),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.greenAccent.shade400,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to delete notifications"),
+          duration: const Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.redAccent.shade200,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    }
+  }
+
   Future<void> _loadNotifications() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
@@ -31,7 +75,7 @@ class _NotificationPopupState extends State<NotificationPopup> {
         .collection("items")
         .orderBy("timestamp", descending: true)
         .get();
-        if (!mounted) return;
+    if (!mounted) return;
 
     setState(() {
       notifications = snapshot.docs.map((doc) {
@@ -77,10 +121,14 @@ class _NotificationPopupState extends State<NotificationPopup> {
                 'Notifications',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: widget.onClose,
-              )
+              if (notifications.isNotEmpty)
+      IconButton(
+        icon: const Icon(Icons.delete_forever),
+        onPressed: () async {
+          await deleteAllNotifications();
+          await _loadNotifications(); // refresh after deletion
+        },
+      ),
             ],
           ),
 
@@ -129,6 +177,16 @@ class _NotificationPopupState extends State<NotificationPopup> {
                         case 'follow':
                           message = '$name started following you.';
                           iconData = Icons.person_add;
+                          iconColor = Colors.grey;
+                          break;
+                          case 'message':
+                          message = '$name sent you a message';
+                          iconData = Icons.message;
+                          iconColor = Colors.grey;
+                          break;
+                          case 'userType_verified':
+                          message = 'Your request has been approved';
+                          iconData = Icons.notifications;
                           iconColor = Colors.grey;
                           break;
                         default:

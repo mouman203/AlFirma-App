@@ -4,6 +4,7 @@ import 'package:agriplant/Front_end/Providers/theme_provider.dart';
 import 'package:agriplant/generated/l10n.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +26,28 @@ class Sidebar extends StatelessWidget {
                 .secondaryContainer, // Light green in light mode
         child: ListView(
           children: [
+            Column(
+  children: [
+    Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
+      child: Center(
+        child: Text(
+          "AL-FIRMA",
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2,
+            color: isDarkMode ? Colors.white : const Color(0xFF256C4C),
+          ),
+        ),
+      ),
+    ),
+    Divider(
+      color: isDarkMode ? Colors.white24 : Colors.black26,
+      thickness: 1,
+    ),
+  ],
+),
             ListTile(
               leading: Icon(
                 themeProvider.themeMode == ThemeMode.dark

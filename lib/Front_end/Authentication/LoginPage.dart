@@ -360,7 +360,6 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         print("Apple button pressed!");
                         showNotAvailableSnackBar(context, "Apple");
-
                       },
                       icon: const Icon(
                         Icons.apple,

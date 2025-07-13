@@ -48,150 +48,150 @@ class _ProfilePicturePageState extends State<ProfilePicturePage>
     super.dispose();
   }
 
- Future<void> _pickImage() async {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  Future<void> _pickImage() async {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-  showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Row(
-        children: [
-          Icon(
-            Icons.add_a_photo,
-            color: isDarkMode
-                ? const Color(0xFF90D5AE)
-                : const Color(0xFF256C4C),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            S.of(context).chooseImageSource,
-            style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 19),
-          ),
-        ],
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          InkWell(
-            onTap: () async {
-              final picked =
-                  await _picker.pickImage(source: ImageSource.gallery);
-              if (picked != null) {
-                setState(() {
-                  _selectedImage = File(picked.path);
-                  isImageSelected = true;
-                });
-                Navigator.pop(context);
-              }
-            },
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: isDarkMode
-                      ? const Color(0xFF90D5AE).withOpacity(0.3)
-                      : const Color(0xFF256C4C).withOpacity(0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: (isDarkMode
-                              ? const Color(0xFF90D5AE)
-                              : const Color(0xFF256C4C))
-                          .withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.photo_library,
-                      color: isDarkMode
-                          ? const Color(0xFF90D5AE)
-                          : const Color(0xFF256C4C),
-                      size: 24,
-                    ),
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(
+              Icons.add_a_photo,
+              color: isDarkMode
+                  ? const Color(0xFF90D5AE)
+                  : const Color(0xFF256C4C),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              S.of(context).chooseImageSource,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+              onTap: () async {
+                final picked =
+                    await _picker.pickImage(source: ImageSource.gallery);
+                if (picked != null) {
+                  setState(() {
+                    _selectedImage = File(picked.path);
+                    isImageSelected = true;
+                  });
+                  Navigator.pop(context);
+                }
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE).withOpacity(0.3)
+                        : const Color(0xFF256C4C).withOpacity(0.3),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      S.of(context).select_from_gallery,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: (isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C))
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.photo_library,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                        size: 24,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: () async {
-              final picked =
-                  await _picker.pickImage(source: ImageSource.camera);
-              if (picked != null) {
-                setState(() {
-                  _selectedImage = File(picked.path);
-                  isImageSelected = true;
-                });
-                Navigator.pop(context);
-              }
-            },
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: isDarkMode
-                      ? const Color(0xFF90D5AE).withOpacity(0.3)
-                      : const Color(0xFF256C4C).withOpacity(0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: (isDarkMode
-                              ? const Color(0xFF90D5AE)
-                              : const Color(0xFF256C4C))
-                          .withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: isDarkMode
-                          ? const Color(0xFF90D5AE)
-                          : const Color(0xFF256C4C),
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      S.of(context).capture_with_camera,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        S.of(context).select_from_gallery,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            InkWell(
+              onTap: () async {
+                final picked =
+                    await _picker.pickImage(source: ImageSource.camera);
+                if (picked != null) {
+                  setState(() {
+                    _selectedImage = File(picked.path);
+                    isImageSelected = true;
+                  });
+                  Navigator.pop(context);
+                }
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isDarkMode
+                        ? const Color(0xFF90D5AE).withOpacity(0.3)
+                        : const Color(0xFF256C4C).withOpacity(0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: (isDarkMode
+                                ? const Color(0xFF90D5AE)
+                                : const Color(0xFF256C4C))
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: isDarkMode
+                            ? const Color(0xFF90D5AE)
+                            : const Color(0xFF256C4C),
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        S.of(context).capture_with_camera,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   // Upload the selected image to Firebase Storage and save the URL in Firestore
   Future<void> uploadImageAndSave() async {
@@ -214,27 +214,27 @@ class _ProfilePicturePageState extends State<ProfilePicturePage>
       });
 
       // Show success animation
-     ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    backgroundColor: Color.fromARGB(255, 54, 126, 44),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    content: Row(
-      children: [
-        const Icon(Icons.check_circle, color: Colors.black),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            S.of(context).profile_picture_updated_successfully,
-            style: const TextStyle(color: Colors.black, fontSize: 18),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Color.fromARGB(255, 54, 126, 44),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.black),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  S.of(context).profile_picture_updated_successfully,
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 1),
         ),
-      ],
-    ),
-    duration: const Duration(seconds: 1),
-  ),
-);
+      );
     } catch (e) {
       showDialog(
         context: context,

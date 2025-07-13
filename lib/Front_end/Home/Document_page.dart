@@ -59,7 +59,7 @@ class _DocumentFormState extends State<DocumentForm> {
       "بطاقة التعريف الوطنية (الظهر)",
       'شهادة خاصة بالمصلح'
     ],
-    'شركة': ['سجل تجاري خاص بالشركة'],
+    //'شركة': ['سجل تجاري خاص بالشركة'],
     'تاجر': ['سجل تجاري الخاص بالتاجر'],
     'عامل': [
       "بطاقة التعريف الوطنية (الوجه)",
@@ -159,8 +159,8 @@ class _DocumentFormState extends State<DocumentForm> {
         return S.of(context).expertAgri;
       case 'مصلح':
         return S.of(context).reparateur;
-      case 'شركة':
-        return S.of(context).entreprise;
+      //case 'شركة':
+       // return S.of(context).entreprise;
       case 'تاجر':
         return S.of(context).commercant;
       case 'عامل':

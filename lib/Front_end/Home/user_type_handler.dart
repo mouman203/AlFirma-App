@@ -12,7 +12,7 @@ final Map<String, dynamic> userTypes = {
   'مربي الماشية': {},
   'خبير زراعي': {},
   'بيطري': {},
-  'شركة': {},
+  //'شركة': {},
   'ناقل': {},
   'مصلح': {},
   'تاجر': {},
@@ -25,7 +25,7 @@ final emojiMap = {
   'مربي الماشية': '🐮',
   'خبير زراعي': '🕵🏼',
   'بيطري': '💉',
-  'شركة': '🏢',
+  //'شركة': '🏢',
   'ناقل': '🛻',
   'مصلح': '👨🏻‍🔧',
   'تاجر': '🛍️',
@@ -39,7 +39,7 @@ Map<String, String> TranslatedToArabicMap(BuildContext context) {
     S.of(context).eleveur: 'مربي الماشية',
     S.of(context).expertAgri: 'خبير زراعي',
     S.of(context).veterinaire: 'بيطري',
-    S.of(context).entreprise: 'شركة',
+    //S.of(context).entreprise: 'شركة',
     S.of(context).transporteur: 'ناقل',
     S.of(context).reparateur: 'مصلح',
     S.of(context).commercant: 'تاجر',
@@ -54,7 +54,7 @@ Map<String, String> ArabicToTranslatedMap(BuildContext context) {
     'مربي الماشية': S.of(context).eleveur,
     'خبير زراعي': S.of(context).expertAgri,
     'بيطري': S.of(context).veterinaire,
-    'شركة': S.of(context).entreprise,
+    //'شركة': S.of(context).entreprise,
     'ناقل': S.of(context).transporteur,
     'مصلح': S.of(context).reparateur,
     'تاجر': S.of(context).commercant,
@@ -251,13 +251,13 @@ Object getDocumentPageForType(BuildContext context, String arabicType) {
           builder: (context) => const DocumentPage(userType: 'خبير زراعي'),
         ),
       );
-    case 'شركة':
+    /*case 'شركة':
       return Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const DocumentPage(userType: 'شركة'),
         ),
-      );
+      );*/
     case 'ناقل':
       return Navigator.push(
         context,

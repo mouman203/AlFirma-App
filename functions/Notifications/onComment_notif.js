@@ -42,8 +42,8 @@ async function handleCommentNotification(event, type) {
   await admin.messaging().send({
     token,
     notification: {
-      title: `New Comment 💬 from ${commenterName}`,
-      body: commentText,
+      title: `New Comment`,
+      body: `${commenterName} : `+commentText,
     },
   });
 

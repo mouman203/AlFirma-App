@@ -343,7 +343,7 @@ class Users {
           'password': password,
           'userType': {},
           'activeType': 'عميل',
-          'createdAt': FieldValue.serverTimestamp(),
+          'created_at': FieldValue.serverTimestamp(),
           'Verify': verify,
           'wilaya': wilaya,
           'daira': daira,

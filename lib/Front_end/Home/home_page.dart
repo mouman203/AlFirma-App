@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:agriplant/Front_end/Home/user_type_handler.dart';
 
 class HomePage extends StatefulWidget {
+  
   const HomePage({super.key});
 
   @override
@@ -115,10 +116,10 @@ class _HomePageState extends State<HomePage> {
     final size = renderBox.size;
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final popupWidth = 300.0;
+    final popupWidth = 340.0;
 
     double leftPosition = offset.dx + size.width - popupWidth;
-    leftPosition = leftPosition.clamp(8.0, screenWidth - popupWidth - 8.0);
+    leftPosition = leftPosition.clamp(8.0, screenWidth - popupWidth -6.0);
 
     _overlayEntry = OverlayEntry(
       builder: (context) => Stack(
