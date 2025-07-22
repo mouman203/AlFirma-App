@@ -64,7 +64,7 @@ import 'app_localizations_fr.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -87,17 +87,17 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
     Locale('fr'),
-    Locale('en')
+    Locale('en'),
   ];
 
   /// No description provided for @settings.
@@ -105,6 +105,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الإعدادات'**
   String get settings;
+
+  /// No description provided for @confirmDeletePost.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل أنت متأكد أنك تريد حذف هذا المنشور؟'**
+  String get confirmDeletePost;
 
   /// No description provided for @security.
   ///
@@ -7689,6 +7695,66 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'النوع الحالي لا يمكنه الوصول إلى هذه الصفحة'**
   String get typeAccessDenied;
+
+  /// No description provided for @itemNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنصر غير موجود'**
+  String get itemNotFound;
+
+  /// No description provided for @errorDeletingConversation.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء حذف المحادثة'**
+  String get errorDeletingConversation;
+
+  /// No description provided for @conversationDeletedSuccessfully.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف المحادثة بنجاح'**
+  String get conversationDeletedSuccessfully;
+
+  /// No description provided for @failedToSendMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل في إرسال الرسالة. حاول مرة أخرى.'**
+  String get failedToSendMessage;
+
+  /// No description provided for @retry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المحاولة'**
+  String get retry;
+
+  /// No description provided for @errorLoadingMessages.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء تحميل الرسائل'**
+  String get errorLoadingMessages;
+
+  /// No description provided for @userNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستخدم غير موجود'**
+  String get userNotFound;
+
+  /// No description provided for @pleaseEnterAReason.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إدخال سبب'**
+  String get pleaseEnterAReason;
+
+  /// No description provided for @close.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق'**
+  String get close;
+
+  /// No description provided for @negotiate.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساوم'**
+  String get negotiate;
 }
 
 class _AppLocalizationsDelegate
@@ -7720,8 +7786,9 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

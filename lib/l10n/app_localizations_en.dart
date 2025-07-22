@@ -12,6 +12,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
+  String get confirmDeletePost =>
+      'Are you sure you want to delete this post  ? ';
+
+  @override
   String get security => 'Security';
 
   @override
@@ -3882,4 +3886,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get typeAccessDenied => 'The current type can\'t access this page';
+
+  @override
+  String get itemNotFound => 'Item not found';
+
+  @override
+  String get errorDeletingConversation => 'Error deleting conversation';
+
+  @override
+  String get conversationDeletedSuccessfully =>
+      'Conversation deleted successfully';
+
+  @override
+  String get failedToSendMessage => 'Failed to send message. Please try again.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get errorLoadingMessages => 'Error loading messages';
+
+  @override
+  String get userNotFound => 'User not found';
+
+  @override
+  String get pleaseEnterAReason => 'Please enter a reason';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get negotiate => 'Negotiate';
 }

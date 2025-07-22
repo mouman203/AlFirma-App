@@ -12,6 +12,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings => 'الإعدادات';
 
   @override
+  String get confirmDeletePost => 'هل أنت متأكد أنك تريد حذف هذا المنشور؟';
+
+  @override
   String get security => 'الأمان';
 
   @override
@@ -3877,4 +3880,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get typeAccessDenied => 'النوع الحالي لا يمكنه الوصول إلى هذه الصفحة';
+
+  @override
+  String get itemNotFound => 'العنصر غير موجود';
+
+  @override
+  String get errorDeletingConversation => 'حدث خطأ أثناء حذف المحادثة';
+
+  @override
+  String get conversationDeletedSuccessfully => 'تم حذف المحادثة بنجاح';
+
+  @override
+  String get failedToSendMessage => 'فشل في إرسال الرسالة. حاول مرة أخرى.';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get errorLoadingMessages => 'حدث خطأ أثناء تحميل الرسائل';
+
+  @override
+  String get userNotFound => 'المستخدم غير موجود';
+
+  @override
+  String get pleaseEnterAReason => 'يرجى إدخال سبب';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get negotiate => 'ساوم';
 }

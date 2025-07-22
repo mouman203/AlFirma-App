@@ -12,6 +12,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings => 'Paramètres';
 
   @override
+  String get confirmDeletePost =>
+      'Êtes-vous sûr de vouloir supprimer cette publication ?';
+
+  @override
   String get security => 'Sécurité';
 
   @override
@@ -3946,4 +3950,37 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get typeAccessDenied => 'Ce type n\'a pas accès à cette page';
+
+  @override
+  String get itemNotFound => 'Élément non trouvé';
+
+  @override
+  String get errorDeletingConversation =>
+      'Erreur lors de la suppression de la conversation';
+
+  @override
+  String get conversationDeletedSuccessfully =>
+      'Conversation supprimée avec succès';
+
+  @override
+  String get failedToSendMessage =>
+      'Échec de l\'envoi du message. Veuillez réessayer.';
+
+  @override
+  String get retry => 'Réessayer';
+
+  @override
+  String get errorLoadingMessages => 'Erreur lors du chargement des messages';
+
+  @override
+  String get userNotFound => 'Utilisateur non trouvé';
+
+  @override
+  String get pleaseEnterAReason => 'Veuillez entrer une raison';
+
+  @override
+  String get close => 'Fermer';
+
+  @override
+  String get negotiate => 'Négocier';
 }
