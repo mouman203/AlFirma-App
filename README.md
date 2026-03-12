@@ -103,3 +103,19 @@ All within a **single mobile platform**.
 * Weather and crop advisory tools
 * Smart livestock monitoring
 * Expanded AI diagnostics for crops
+
+# 🌐 Live Demo
+
+You can try the web version of the application here:
+
+🔗 **Demo:** https://agri-plantt.web.app/
+
+This demo showcases the main functionalities of the platform, including:
+
+* Browsing agricultural products
+* Accessing farming services
+* Viewing recommendations
+* Exploring AI-powered plant disease detection
+
+The demo allows users to experience the **core workflow of the AL Firma ecosystem** directly from the browser.
+
